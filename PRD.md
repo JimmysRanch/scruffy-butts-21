@@ -54,8 +54,15 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 - **Progression**: Navigate settings tabs → Update business details/preferences → Save changes → Settings applied
 - **Success criteria**: Settings persist between sessions, business information displays throughout app, notifications work as configured
 
+### Staff Management
+- **Functionality**: Manage team member profiles, contact information, specialties, and employment details
+- **Purpose**: Organize staff information and track team member capabilities for optimal assignment and management
+- **Trigger**: Click "Staff" tab or staff member name
+- **Progression**: View staff list → Click member name → View profile details → Edit if needed → Save changes
+- **Success criteria**: Staff profiles persist, searchable/filterable list, detailed individual profiles with complete information
+
 ## Edge Case Handling
-- **Empty States**: Helpful guidance when no appointments, customers, services, or transactions exist yet
+- **Empty States**: Helpful guidance when no appointments, customers, services, staff, or transactions exist yet
 - **Scheduling Conflicts**: Prevent double-booking with clear error messages and alternative suggestions
 - **Missing Information**: Handle incomplete customer/pet profiles gracefully with optional field validation
 - **Long Names/Text**: Truncate and tooltip for lengthy pet names, customer notes, or service descriptions
@@ -95,9 +102,9 @@ Subtle, purposeful animations that guide user attention and provide feedback wit
 - **Hierarchy of Movement**: Priority on form feedback and navigation transitions, minimal decorative animation
 
 ## Component Selection
-- **Components**: Cards for appointments/customers/transactions/settings, Calendar for scheduling, Forms for data entry, Tables for service lists, Badges for appointment status, Shopping cart UI for POS, Switch components for settings toggles
+- **Components**: Cards for appointments/customers/transactions/settings/staff, Calendar for scheduling, Forms for data entry, Tables for service lists, Badges for appointment status, Shopping cart UI for POS, Switch components for settings toggles
 - **Customizations**: Custom calendar component optimized for daily/weekly appointment views, pet avatar placeholders, POS cart with quantity controls, tabbed settings interface
 - **States**: Buttons show loading states during saves, form inputs highlight validation errors, appointments show status colors, payment processing states, settings save confirmation
-- **Icon Selection**: Phosphor icons - Calendar for scheduling, User for customers, Heart for favorites, Phone for contact, CashRegister for POS, CreditCard/Money for payment methods, Gear for settings, Bell for notifications, Shield for security
+- **Icon Selection**: Phosphor icons - Calendar for scheduling, User for customers, Heart for favorites, Phone for contact, CashRegister for POS, CreditCard/Money for payment methods, Gear for settings, Bell for notifications, Shield for security, UserCircle for staff management
 - **Spacing**: Consistent 4/6/8 Tailwind spacing scale for tight/medium/loose layouts
 - **Mobile**: Collapsible sidebar navigation, stacked cards on mobile, touch-friendly appointment time slots, responsive POS interface for tablet use, responsive settings tabs
