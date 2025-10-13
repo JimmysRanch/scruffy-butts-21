@@ -261,80 +261,81 @@ export function CustomerManager() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {(customers || []).length === 0 ? (
-          <Card className="col-span-full">
-            <CardContent className="text-center py-12">
-              <User size={48} className="mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">No customers yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Add your first customer to get started with managing your grooming business
-              </p>
-              <Button onClick={() => setIsNewCustomerOpen(true)}>
-                Add First Customer
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          (customers || []).map((customer) => (
-            <Card key={customer.id}>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <User size={20} />
-                  <span>{customer.name}</span>
-                </CardTitle>
-                <CardDescription>
-                  {customer.pets.length} pet{customer.pets.length !== 1 ? 's' : ''}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2 text-sm">
-                    <Envelope size={16} className="text-muted-foreground" />
-                    <span className="truncate">{customer.email}</span>
+      {(customers || []).length === 0 ? (
+        <Card>
+          <CardContent className="text-center py-12">
+            <User size={48} className="mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium mb-2">No customers yet</h3>
+            <p className="text-muted-foreground mb-4">
+              Add your first customer to get started with managing your grooming business
+            </p>
+            <Button onClick={() => setIsNewCustomerOpen(true)}>
+              Add First Customer
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {(customers || []).map((customer) => (
+            <div key={customer.id} className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors">
+              <div className="flex items-center space-x-4 flex-1 min-w-0">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <User size={20} className="text-primary" />
                   </div>
-                  <div className="flex items-center space-x-2 text-sm">
-                    <Phone size={16} className="text-muted-foreground" />
-                    <span>{customer.phone}</span>
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center space-x-3 mb-1">
+                    <h3 className="font-medium text-foreground truncate">{customer.name}</h3>
+                    <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">
+                      {customer.pets.length} pet{customer.pets.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                    <div className="flex items-center space-x-1">
+                      <Envelope size={14} />
+                      <span className="truncate max-w-[200px]">{customer.email}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Phone size={14} />
+                      <span>{customer.phone}</span>
+                    </div>
                   </div>
                   
                   {customer.pets.length > 0 && (
-                    <div>
-                      <p className="text-sm font-medium mb-2">Pets:</p>
-                      <div className="space-y-2">
+                    <div className="flex items-center space-x-2 mt-2">
+                      <span className="text-xs text-muted-foreground">Pets:</span>
+                      <div className="flex flex-wrap gap-1">
                         {customer.pets.map((pet) => (
-                          <div key={pet.id} className="flex items-center justify-between p-2 bg-secondary rounded-md">
-                            <div>
-                              <p className="font-medium text-sm">{pet.name}</p>
-                              <p className="text-xs text-muted-foreground">{pet.breed}</p>
-                            </div>
-                            <Badge variant={getSizeColor(pet.size)} className="text-xs">
-                              {pet.size}
-                            </Badge>
-                          </div>
+                          <span key={pet.id} className="text-xs bg-accent/20 text-accent-foreground px-2 py-0.5 rounded">
+                            {pet.name} ({pet.breed})
+                          </span>
                         ))}
                       </div>
                     </div>
                   )}
-                  
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full mt-3"
-                    onClick={() => {
-                      setSelectedCustomerId(customer.id)
-                      setIsNewPetOpen(true)
-                    }}
-                  >
-                    <Heart size={16} className="mr-2" />
-                    Add Pet
-                  </Button>
                 </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+              </div>
+              
+              <div className="flex-shrink-0">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    setSelectedCustomerId(customer.id)
+                    setIsNewPetOpen(true)
+                  }}
+                >
+                  <Heart size={16} className="mr-2" />
+                  Add Pet
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
