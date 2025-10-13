@@ -16,7 +16,6 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
     { id: 'services' as View, label: 'Services', icon: Scissors },
     { id: 'staff' as View, label: 'Staff', icon: UserCircle },
     { id: 'pos' as View, label: 'POS', icon: CashRegister },
-    { id: 'settings' as View, label: 'Settings', icon: Gear },
   ]
 
   return (
@@ -28,24 +27,38 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
             <span className="text-2xl font-bold text-foreground">Scruffy Butts</span>
           </div>
           
-          <div className="flex space-x-1">
-            {navItems.map((item) => {
-              const Icon = item.icon
-              const isActive = currentView === item.id
-              
-              return (
-                <Button
-                  key={item.id}
-                  variant={isActive ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => onNavigate(item.id)}
-                  className="flex items-center space-x-2"
-                >
-                  <Icon size={18} />
-                  <span className="hidden sm:inline">{item.label}</span>
-                </Button>
-              )
-            })}
+          <div className="flex items-center space-x-1">
+            <div className="flex space-x-1">
+              {navItems.map((item) => {
+                const Icon = item.icon
+                const isActive = currentView === item.id
+                
+                return (
+                  <Button
+                    key={item.id}
+                    variant={isActive ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => onNavigate(item.id)}
+                    className="flex items-center space-x-2"
+                  >
+                    <Icon size={18} />
+                    <span className="hidden sm:inline">{item.label}</span>
+                  </Button>
+                )
+              })}
+            </div>
+            
+            <div className="ml-2 pl-2 border-l border-border">
+              <Button
+                variant={currentView === 'settings' ? "default" : "ghost"}
+                size="sm"
+                onClick={() => onNavigate('settings')}
+                className="flex items-center space-x-2"
+              >
+                <Gear size={18} />
+                <span className="hidden sm:inline">Settings</span>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
