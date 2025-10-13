@@ -44,7 +44,7 @@ export function PointOfSale() {
   const [customers] = useKV<Customer[]>('customers', [])
   const [transactions, setTransactions] = useKV<Transaction[]>('transactions', [])
   const [cart, setCart] = useState<CartItem[]>([])
-  const [selectedCustomer, setSelectedCustomer] = useState<string>('')
+  const [selectedCustomer, setSelectedCustomer] = useState<string>('walk-in')
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card'>('card')
 
   // Ensure we have arrays even if undefined
@@ -98,7 +98,7 @@ export function PointOfSale() {
 
     const transaction: Transaction = {
       id: Date.now().toString(),
-      customerId: selectedCustomer || undefined,
+      customerId: selectedCustomer === 'walk-in' ? undefined : selectedCustomer,
       items: [...cart],
       subtotal,
       tax,
@@ -109,7 +109,7 @@ export function PointOfSale() {
 
     setTransactions(prev => [transaction, ...(prev || [])])
     setCart([])
-    setSelectedCustomer('')
+    setSelectedCustomer('walk-in')
     toast.success(`Payment of $${total.toFixed(2)} processed successfully!`)
   }
 
@@ -177,7 +177,7 @@ export function PointOfSale() {
                     <SelectValue placeholder="Select customer" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Walk-in Customer</SelectItem>
+                    <SelectItem value="walk-in">Walk-in Customer</SelectItem>
                     {customersList.map(customer => (
                       <SelectItem key={customer.id} value={customer.id}>
                         {customer.name}
