@@ -7,8 +7,16 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Plus, UserCircle, Phone, EnvelopeSimple, MapPin, Calendar, Star } from '@phosphor-icons/react'
 import { toast } from 'sonner'
+
+export interface StaffPosition {
+  id: string
+  name: string
+  permissions: string[]
+  description?: string
+}
 
 export interface StaffMember {
   id: string
@@ -114,6 +122,14 @@ function StaffProfile({ staff, onBack, onEdit }: StaffProfileProps) {
 
 export function StaffManager() {
   const [staff, setStaff] = useKV<StaffMember[]>('staff-members', [])
+  const [staffPositions] = useKV<StaffPosition[]>('staff-positions', [
+    { id: 'owner', name: 'Owner', permissions: ['all'], description: 'Full access to all features' },
+    { id: 'admin', name: 'Admin', permissions: ['manage_staff', 'manage_customers', 'manage_services', 'view_reports', 'pos'], description: 'Administrative access' },
+    { id: 'manager', name: 'Manager', permissions: ['manage_staff', 'manage_customers', 'view_reports', 'pos'], description: 'Management level access' },
+    { id: 'groomer', name: 'Groomer', permissions: ['view_appointments', 'manage_customers', 'pos'], description: 'Professional groomer' },
+    { id: 'bather', name: 'Bather', permissions: ['view_appointments'], description: 'Bathing specialist' },
+    { id: 'front_desk', name: 'Front Desk', permissions: ['manage_customers', 'view_appointments', 'pos'], description: 'Customer service representative' }
+  ])
   const [showDialog, setShowDialog] = useState(false)
   const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null)
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null)
@@ -347,13 +363,28 @@ export function StaffManager() {
 
               <div className="space-y-2">
                 <Label htmlFor="position">Position *</Label>
-                <Input
-                  id="position"
+                <Select
                   value={formData.position}
-                  onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                  placeholder="e.g., Senior Groomer, Apprentice"
-                  required
-                />
+                  onValueChange={(value) => setFormData({ ...formData, position: value })}
+                >
+                  <SelectTrigger id="position">
+                    <SelectValue placeholder="Select a position" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {staffPositions?.map((position) => (
+                      <SelectItem key={position.id} value={position.name}>
+                        <div className="flex flex-col">
+                          <span>{position.name}</span>
+                          {position.description && (
+                            <span className="text-xs text-muted-foreground">
+                              {position.description}
+                            </span>
+                          )}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -388,15 +419,18 @@ export function StaffManager() {
 
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                <select
-                  id="status"
+                <Select
                   value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' })}
-                  className="w-full px-3 py-2 border border-input rounded-md text-sm"
+                  onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}
                 >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
+                  <SelectTrigger id="status">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="md:col-span-2 space-y-2">

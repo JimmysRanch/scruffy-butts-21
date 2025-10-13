@@ -7,6 +7,9 @@ import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
+import { Textarea } from '@/components/ui/textarea'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Checkbox } from '@/components/ui/checkbox'
 import { useKV } from '@github/spark/hooks'
 import { toast } from 'sonner'
 import { 
@@ -18,8 +21,13 @@ import {
   Envelope,
   FloppyDisk,
   PaintBrush,
-  Shield
+  Shield,
+  Users,
+  Plus,
+  Pencil,
+  Trash
 } from '@phosphor-icons/react'
+import { StaffPosition } from './StaffManager'
 
 interface BusinessSettings {
   name: string
@@ -70,7 +78,115 @@ export function Settings() {
     showWelcomeMessage: true
   })
 
-  const [activeTab, setActiveTab] = useState<'business' | 'notifications' | 'appearance' | 'security'>('business')
+  const [staffPositions, setStaffPositions] = useKV<StaffPosition[]>('staff-positions', [
+    { id: 'owner', name: 'Owner', permissions: ['all'], description: 'Full access to all features' },
+    { id: 'admin', name: 'Admin', permissions: ['manage_staff', 'manage_customers', 'manage_services', 'view_reports', 'pos'], description: 'Administrative access' },
+    { id: 'manager', name: 'Manager', permissions: ['manage_staff', 'manage_customers', 'view_reports', 'pos'], description: 'Management level access' },
+    { id: 'groomer', name: 'Groomer', permissions: ['view_appointments', 'manage_customers', 'pos'], description: 'Professional groomer' },
+    { id: 'bather', name: 'Bather', permissions: ['view_appointments'], description: 'Bathing specialist' },
+    { id: 'front_desk', name: 'Front Desk', permissions: ['manage_customers', 'view_appointments', 'pos'], description: 'Customer service representative' }
+  ])
+
+  const [activeTab, setActiveTab] = useState<'business' | 'notifications' | 'appearance' | 'security' | 'staff-positions'>('business')
+  const [showPositionDialog, setShowPositionDialog] = useState(false)
+  const [editingPosition, setEditingPosition] = useState<StaffPosition | null>(null)
+  const [positionFormData, setPositionFormData] = useState({
+    name: '',
+    description: '',
+    permissions: [] as string[]
+  })
+
+  const availablePermissions = [
+    { id: 'all', label: 'All Permissions', description: 'Full access to everything' },
+    { id: 'manage_staff', label: 'Manage Staff', description: 'Add, edit, and remove staff members' },
+    { id: 'manage_customers', label: 'Manage Customers', description: 'Add, edit, and view customer information' },
+    { id: 'manage_services', label: 'Manage Services', description: 'Add, edit, and remove services' },
+    { id: 'view_appointments', label: 'View Appointments', description: 'View appointment schedules' },
+    { id: 'manage_appointments', label: 'Manage Appointments', description: 'Create, edit, and cancel appointments' },
+    { id: 'view_reports', label: 'View Reports', description: 'Access business reports and analytics' },
+    { id: 'pos', label: 'Point of Sale', description: 'Process payments and sales' }
+  ]
+
+  const resetPositionForm = () => {
+    setPositionFormData({
+      name: '',
+      description: '',
+      permissions: []
+    })
+    setEditingPosition(null)
+  }
+
+  const handlePositionSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!positionFormData.name || positionFormData.permissions.length === 0) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
+    if (editingPosition) {
+      setStaffPositions(currentPositions => 
+        (currentPositions || []).map(p => 
+          p.id === editingPosition.id
+            ? {
+                ...editingPosition,
+                name: positionFormData.name,
+                description: positionFormData.description,
+                permissions: positionFormData.permissions
+              }
+            : p
+        )
+      )
+      toast.success('Position updated successfully')
+    } else {
+      const newPosition: StaffPosition = {
+        id: Date.now().toString(),
+        name: positionFormData.name,
+        description: positionFormData.description,
+        permissions: positionFormData.permissions
+      }
+
+      setStaffPositions(currentPositions => [...(currentPositions || []), newPosition])
+      toast.success('Position added successfully')
+    }
+
+    setShowPositionDialog(false)
+    resetPositionForm()
+  }
+
+  const handleEditPosition = (position: StaffPosition) => {
+    setEditingPosition(position)
+    setPositionFormData({
+      name: position.name,
+      description: position.description || '',
+      permissions: [...position.permissions]
+    })
+    setShowPositionDialog(true)
+  }
+
+  const handleDeletePosition = (id: string) => {
+    setStaffPositions(currentPositions => (currentPositions || []).filter(p => p.id !== id))
+    toast.success('Position deleted successfully')
+  }
+
+  const handlePermissionToggle = (permissionId: string, checked: boolean) => {
+    if (permissionId === 'all') {
+      if (checked) {
+        setPositionFormData(prev => ({ ...prev, permissions: ['all'] }))
+      } else {
+        setPositionFormData(prev => ({ ...prev, permissions: [] }))
+      }
+    } else {
+      setPositionFormData(prev => ({
+        ...prev,
+        permissions: prev.permissions.includes('all')
+          ? checked ? [permissionId] : []
+          : checked
+            ? [...prev.permissions, permissionId]
+            : prev.permissions.filter(p => p !== permissionId)
+      }))
+    }
+  }
 
   const handleSave = () => {
     toast.success('Settings saved successfully!')
@@ -78,6 +194,7 @@ export function Settings() {
 
   const tabs = [
     { id: 'business' as const, label: 'Business', icon: MapPin },
+    { id: 'staff-positions' as const, label: 'Staff Positions', icon: Users },
     { id: 'notifications' as const, label: 'Notifications', icon: Bell },
     { id: 'appearance' as const, label: 'Appearance', icon: PaintBrush },
     { id: 'security' as const, label: 'Security', icon: Shield }
@@ -225,6 +342,73 @@ export function Settings() {
                       onChange={(e) => setBusinessSettings(prev => ({ ...prev!, taxRate: parseFloat(e.target.value) || 0 }))}
                     />
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeTab === 'staff-positions' && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Users size={20} />
+                      Staff Positions
+                    </CardTitle>
+                    <CardDescription>
+                      Manage staff positions and their permissions
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => setShowPositionDialog(true)} className="flex items-center gap-2">
+                    <Plus size={18} />
+                    Add Position
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {(staffPositions || []).map((position) => (
+                    <div key={position.id} className="flex items-start justify-between p-4 border rounded-lg">
+                      <div className="flex-1">
+                        <h4 className="font-semibold">{position.name}</h4>
+                        {position.description && (
+                          <p className="text-sm text-muted-foreground mt-1">{position.description}</p>
+                        )}
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {position.permissions.includes('all') ? (
+                            <Badge variant="default">All Permissions</Badge>
+                          ) : (
+                            position.permissions.map((permission) => {
+                              const permissionInfo = availablePermissions.find(p => p.id === permission)
+                              return (
+                                <Badge key={permission} variant="outline">
+                                  {permissionInfo?.label || permission}
+                                </Badge>
+                              )
+                            })
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditPosition(position)}
+                        >
+                          <Pencil size={16} />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDeletePosition(position.id)}
+                          disabled={position.id === 'owner'}
+                        >
+                          <Trash size={16} />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -443,6 +627,91 @@ export function Settings() {
           )}
         </div>
       </div>
+
+      <Dialog open={showPositionDialog} onOpenChange={setShowPositionDialog}>
+        <DialogContent className="max-w-2xl">
+          <form onSubmit={handlePositionSubmit}>
+            <DialogHeader>
+              <DialogTitle>
+                {editingPosition ? 'Edit Staff Position' : 'Add New Staff Position'}
+              </DialogTitle>
+              <DialogDescription>
+                {editingPosition 
+                  ? 'Update the position details and permissions'
+                  : 'Create a new staff position with specific permissions'
+                }
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="position-name">Position Name *</Label>
+                <Input
+                  id="position-name"
+                  value={positionFormData.name}
+                  onChange={(e) => setPositionFormData({ ...positionFormData, name: e.target.value })}
+                  placeholder="e.g., Senior Groomer, Assistant Manager"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="position-description">Description</Label>
+                <Textarea
+                  id="position-description"
+                  value={positionFormData.description}
+                  onChange={(e) => setPositionFormData({ ...positionFormData, description: e.target.value })}
+                  placeholder="Brief description of this position"
+                  rows={2}
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label>Permissions *</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {availablePermissions.map((permission) => (
+                    <div key={permission.id} className="flex items-start space-x-3">
+                      <Checkbox
+                        id={`permission-${permission.id}`}
+                        checked={positionFormData.permissions.includes(permission.id) || positionFormData.permissions.includes('all')}
+                        disabled={permission.id !== 'all' && positionFormData.permissions.includes('all')}
+                        onCheckedChange={(checked) => handlePermissionToggle(permission.id, !!checked)}
+                      />
+                      <div className="grid gap-1.5 leading-none">
+                        <label
+                          htmlFor={`permission-${permission.id}`}
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          {permission.label}
+                        </label>
+                        <p className="text-xs text-muted-foreground">
+                          {permission.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => {
+                  setShowPositionDialog(false)
+                  resetPositionForm()
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">
+                {editingPosition ? 'Update Position' : 'Add Position'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
