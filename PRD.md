@@ -40,12 +40,21 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 - **Progression**: Load dashboard → Review today's appointments → Check recent activity → Navigate to needed functions
 - **Success criteria**: Real-time data display, intuitive navigation to other features
 
+### Point of Sale (POS)
+- **Functionality**: Process payments for services, manage cart, track transactions, support cash/card payments
+- **Purpose**: Complete the service delivery cycle by handling payments and generating sales records
+- **Trigger**: Click "POS" tab or complete service delivery
+- **Progression**: Select services → Add to cart → Choose customer (optional) → Select payment method → Process payment → Receipt generated
+- **Success criteria**: Payments process correctly, transactions persist, cart management works smoothly
+
 ## Edge Case Handling
-- **Empty States**: Helpful guidance when no appointments, customers, or services exist yet
+- **Empty States**: Helpful guidance when no appointments, customers, services, or transactions exist yet
 - **Scheduling Conflicts**: Prevent double-booking with clear error messages and alternative suggestions
 - **Missing Information**: Handle incomplete customer/pet profiles gracefully with optional field validation
 - **Long Names/Text**: Truncate and tooltip for lengthy pet names, customer notes, or service descriptions
 - **Mobile Usage**: Responsive design for groomers using tablets/phones in the salon
+- **Payment Processing**: Handle payment failures gracefully with retry options and clear error messages
+- **Cart Management**: Prevent accidental cart clearing with confirmation dialogs for significant actions
 
 ## Design Direction
 The design should feel professional yet warm - like a high-end veterinary clinic that genuinely loves animals. Clean, spacious interface with subtle pet-themed touches that don't compromise the business-focused functionality.
@@ -79,9 +88,9 @@ Subtle, purposeful animations that guide user attention and provide feedback wit
 - **Hierarchy of Movement**: Priority on form feedback and navigation transitions, minimal decorative animation
 
 ## Component Selection
-- **Components**: Cards for appointments/customers, Calendar for scheduling, Forms for data entry, Tables for service lists, Badges for appointment status
-- **Customizations**: Custom calendar component optimized for daily/weekly appointment views, pet avatar placeholders
-- **States**: Buttons show loading states during saves, form inputs highlight validation errors, appointments show status colors
-- **Icon Selection**: Phosphor icons - Calendar for scheduling, User for customers, Heart for favorites, Phone for contact
+- **Components**: Cards for appointments/customers/transactions, Calendar for scheduling, Forms for data entry, Tables for service lists, Badges for appointment status, Shopping cart UI for POS
+- **Customizations**: Custom calendar component optimized for daily/weekly appointment views, pet avatar placeholders, POS cart with quantity controls
+- **States**: Buttons show loading states during saves, form inputs highlight validation errors, appointments show status colors, payment processing states
+- **Icon Selection**: Phosphor icons - Calendar for scheduling, User for customers, Heart for favorites, Phone for contact, CashRegister for POS, CreditCard/Money for payment methods
 - **Spacing**: Consistent 4/6/8 Tailwind spacing scale for tight/medium/loose layouts
-- **Mobile**: Collapsible sidebar navigation, stacked cards on mobile, touch-friendly appointment time slots
+- **Mobile**: Collapsible sidebar navigation, stacked cards on mobile, touch-friendly appointment time slots, responsive POS interface for tablet use
