@@ -21,9 +21,12 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
     <nav className="bg-card border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-2">
-            <UserCircle size={32} className="text-accent" weight="fill" />
-            <span className="text-2xl font-bold text-foreground">Scruffy Butts</span>
+          <div className="flex items-center">
+            <img 
+              src="https://i.postimg.cc/cHY9xQmT/scruffy-butts-logo.png" 
+              alt="Scruffy Butts Dog Grooming" 
+              className="h-12 w-auto"
+            />
           </div>
           
           <div className="flex items-center space-x-1">
