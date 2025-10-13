@@ -1,4 +1,4 @@
-# Dog Grooming Management App
+# Scruffy Butts - Dog Grooming Management App
 
 A comprehensive digital solution for professional dog groomers to manage appointments, track customer pets, and streamline their business operations.
 
@@ -105,6 +105,6 @@ Subtle, purposeful animations that guide user attention and provide feedback wit
 - **Components**: Cards for appointments/customers/transactions/settings/staff, Calendar for scheduling, Forms for data entry, Tables for service lists, Badges for appointment status, Shopping cart UI for POS, Switch components for settings toggles
 - **Customizations**: Custom calendar component optimized for daily/weekly appointment views, pet avatar placeholders, POS cart with quantity controls, tabbed settings interface
 - **States**: Buttons show loading states during saves, form inputs highlight validation errors, appointments show status colors, payment processing states, settings save confirmation
-- **Icon Selection**: Phosphor icons - Calendar for scheduling, User for customers, Heart for favorites, Phone for contact, CashRegister for POS, CreditCard/Money for payment methods, Gear for settings, Bell for notifications, Shield for security, UserCircle for staff management
+- **Icon Selection**: Phosphor icons - Calendar for scheduling, User for customers, Scissors for services, Phone for contact, CashRegister for POS, CreditCard/Money for payment methods, Gear for settings, Bell for notifications, Shield for security, UserCircle for staff management
 - **Spacing**: Consistent 4/6/8 Tailwind spacing scale for tight/medium/loose layouts
 - **Mobile**: Collapsible sidebar navigation, stacked cards on mobile, touch-friendly appointment time slots, responsive POS interface for tablet use, responsive settings tabs

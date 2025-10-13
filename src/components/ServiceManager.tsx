@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Plus, Heart, Clock, CurrencyDollar, Scissors } from '@phosphor-icons/react'
+import { Plus, Clock, CurrencyDollar, Scissors } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 interface Service {
@@ -180,7 +180,7 @@ export function ServiceManager() {
               <Card key={service.id}>
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    <Heart size={20} className="text-accent" />
+                    <Scissors size={20} className="text-accent" />
                     <span>{service.name}</span>
                   </CardTitle>
                   <CardDescription>{service.category}</CardDescription>

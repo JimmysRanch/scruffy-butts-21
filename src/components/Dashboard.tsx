@@ -2,7 +2,7 @@ import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, Users, Heart, Plus } from '@phosphor-icons/react'
+import { Calendar, Users, ChartBar, Plus } from '@phosphor-icons/react'
 import { format } from 'date-fns'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'services'
@@ -61,7 +61,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         weekEnd.setDate(weekStart.getDate() + 6)
         return aptDate >= weekStart && aptDate <= weekEnd
       }).length,
-      icon: Heart,
+      icon: ChartBar,
       action: () => onNavigate('appointments'),
     },
   ]
