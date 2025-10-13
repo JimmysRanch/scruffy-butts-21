@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { 
   ArrowLeft, 
   User, 
@@ -19,7 +20,9 @@ import {
   Pencil, 
   Calendar,
   MapPin,
-  NotePencil
+  NotePencil,
+  CaretDown,
+  CaretRight
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
@@ -53,6 +56,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
   const [isEditCustomerOpen, setIsEditCustomerOpen] = useState(false)
   const [isEditPetOpen, setIsEditPetOpen] = useState(false)
   const [editingPet, setEditingPet] = useState<Pet | null>(null)
+  const [expandedPets, setExpandedPets] = useState<Set<string>>(new Set())
   
   const customer = (customers || []).find(c => c.id === customerId)
   
@@ -200,6 +204,18 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
 
   const getSizeLabel = (size: string) => {
     return size.charAt(0).toUpperCase() + size.slice(1)
+  }
+
+  const togglePetExpanded = (petId: string) => {
+    setExpandedPets(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(petId)) {
+        newSet.delete(petId)
+      } else {
+        newSet.add(petId)
+      }
+      return newSet
+    })
   }
 
   return (
@@ -443,39 +459,91 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                   </Button>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {customer.pets.map((pet) => (
-                    <div key={pet.id} className="p-4 border rounded-lg">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <h3 className="font-medium text-foreground">{pet.name}</h3>
-                            <Badge variant={getSizeColor(pet.size)}>
-                              {getSizeLabel(pet.size)}
-                            </Badge>
-                          </div>
+                <div className="space-y-3">
+                  {customer.pets.map((pet) => {
+                    const isExpanded = expandedPets.has(pet.id)
+                    return (
+                      <Collapsible key={pet.id} open={isExpanded} onOpenChange={() => togglePetExpanded(pet.id)}>
+                        <div className="border rounded-lg overflow-hidden">
+                          <CollapsibleTrigger asChild>
+                            <div className="p-4 hover:bg-muted/50 transition-colors cursor-pointer flex items-center justify-between w-full">
+                              <div className="flex items-center space-x-3">
+                                <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center">
+                                  <Heart size={16} className="text-accent" />
+                                </div>
+                                <div>
+                                  <h3 className="font-medium text-foreground">{pet.name}</h3>
+                                  <p className="text-sm text-muted-foreground">{pet.breed}</p>
+                                </div>
+                                <Badge variant={getSizeColor(pet.size)}>
+                                  {getSizeLabel(pet.size)}
+                                </Badge>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleEditPet(pet)
+                                  }}
+                                >
+                                  <Pencil size={16} />
+                                </Button>
+                                {isExpanded ? (
+                                  <CaretDown size={20} className="text-muted-foreground" />
+                                ) : (
+                                  <CaretRight size={20} className="text-muted-foreground" />
+                                )}
+                              </div>
+                            </div>
+                          </CollapsibleTrigger>
                           
-                          <p className="text-sm text-muted-foreground mb-1">
-                            <span className="font-medium">Breed:</span> {pet.breed}
-                          </p>
-                          
-                          {pet.notes && (
-                            <p className="text-sm text-muted-foreground">
-                              <span className="font-medium">Notes:</span> {pet.notes}
-                            </p>
-                          )}
+                          <CollapsibleContent>
+                            <div className="px-4 pb-4 border-t bg-muted/20">
+                              <div className="pt-4 space-y-3">
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Pet Name</p>
+                                    <p className="text-sm font-medium">{pet.name}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Size</p>
+                                    <p className="text-sm">{getSizeLabel(pet.size)}</p>
+                                  </div>
+                                  <div className="col-span-2">
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Breed</p>
+                                    <p className="text-sm">{pet.breed}</p>
+                                  </div>
+                                </div>
+                                
+                                {pet.notes && (
+                                  <div>
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Special Notes</p>
+                                    <p className="text-sm text-muted-foreground bg-background p-2 rounded border">
+                                      {pet.notes}
+                                    </p>
+                                  </div>
+                                )}
+                                
+                                <div className="pt-2 border-t">
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => handleEditPet(pet)}
+                                    className="w-full"
+                                  >
+                                    <Pencil size={16} className="mr-2" />
+                                    Edit Pet Information
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </CollapsibleContent>
                         </div>
-                        
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleEditPet(pet)}
-                        >
-                          <Pencil size={16} />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+                      </Collapsible>
+                    )
+                  })}
                 </div>
               )}
             </CardContent>
