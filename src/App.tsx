@@ -5,9 +5,10 @@ import { AppointmentScheduler } from '@/components/AppointmentScheduler'
 import { CustomerManager } from '@/components/CustomerManager'
 import { ServiceManager } from '@/components/ServiceManager'
 import { PointOfSale } from '@/components/PointOfSale'
+import { Settings } from '@/components/Settings'
 import { Navigation } from '@/components/Navigation'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'services' | 'pos'
+type View = 'dashboard' | 'appointments' | 'customers' | 'services' | 'pos' | 'settings'
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard')
@@ -24,6 +25,8 @@ function App() {
         return <ServiceManager />
       case 'pos':
         return <PointOfSale />
+      case 'settings':
+        return <Settings />
       default:
         return <Dashboard onNavigate={setCurrentView} />
     }
