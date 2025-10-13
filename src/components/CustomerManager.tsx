@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Badge } from '@/components/ui/badge'
 import { Plus, User, Phone, Envelope, Heart } from '@phosphor-icons/react'
 import { toast } from 'sonner'
+import { CustomerDetail } from './CustomerDetail'
 
 interface Pet {
   id: string
@@ -26,6 +27,8 @@ interface Customer {
   phone: string
   pets: Pet[]
   createdAt: string
+  address?: string
+  notes?: string
 }
 
 export function CustomerManager() {
@@ -33,6 +36,7 @@ export function CustomerManager() {
   const [isNewCustomerOpen, setIsNewCustomerOpen] = useState(false)
   const [isNewPetOpen, setIsNewPetOpen] = useState(false)
   const [selectedCustomerId, setSelectedCustomerId] = useState('')
+  const [viewingCustomerId, setViewingCustomerId] = useState<string | null>(null)
   
   const [customerForm, setCustomerForm] = useState({
     name: '',
@@ -59,11 +63,13 @@ export function CustomerManager() {
       email: customerForm.email,
       phone: customerForm.phone,
       pets: [],
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      address: '',
+      notes: ''
     }
 
     setCustomers((current) => [...(current || []), newCustomer])
-    toast.success('Customer added successfully!')
+    toast.success('Client added successfully!')
     
     setCustomerForm({ name: '', email: '', phone: '' })
     setIsNewCustomerOpen(false)
@@ -110,13 +116,23 @@ export function CustomerManager() {
     }
   }
 
+  // If viewing a specific customer, show the detail view
+  if (viewingCustomerId) {
+    return (
+      <CustomerDetail 
+        customerId={viewingCustomerId} 
+        onBack={() => setViewingCustomerId(null)} 
+      />
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Customers</h1>
+          <h1 className="text-3xl font-bold text-foreground">Clients & Pets</h1>
           <p className="text-muted-foreground">
-            Manage customer information and their pets
+            Manage client information and their pets
           </p>
         </div>
         
@@ -132,16 +148,16 @@ export function CustomerManager() {
               <DialogHeader>
                 <DialogTitle>Add New Pet</DialogTitle>
                 <DialogDescription>
-                  Add a pet to an existing customer's profile.
+                  Add a pet to an existing client's profile.
                 </DialogDescription>
               </DialogHeader>
               
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="customer-select">Customer</Label>
+                  <Label htmlFor="customer-select">Client</Label>
                   <Select value={selectedCustomerId} onValueChange={setSelectedCustomerId}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a customer" />
+                      <SelectValue placeholder="Select a client" />
                     </SelectTrigger>
                     <SelectContent>
                       {(customers || []).map((customer) => (
@@ -208,25 +224,25 @@ export function CustomerManager() {
             <DialogTrigger asChild>
               <Button className="flex items-center space-x-2">
                 <Plus size={18} />
-                <span>New Customer</span>
+                <span>New Client</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>Add New Customer</DialogTitle>
+                <DialogTitle>Add New Client</DialogTitle>
                 <DialogDescription>
-                  Create a new customer profile for your grooming business.
+                  Create a new client profile for your grooming business.
                 </DialogDescription>
               </DialogHeader>
               
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="customer-name">Customer Name</Label>
+                  <Label htmlFor="customer-name">Client Name</Label>
                   <Input
                     id="customer-name"
                     value={customerForm.name}
                     onChange={(e) => setCustomerForm({ ...customerForm, name: e.target.value })}
-                    placeholder="Enter customer name"
+                    placeholder="Enter client name"
                   />
                 </div>
 
@@ -253,7 +269,7 @@ export function CustomerManager() {
                 </div>
 
                 <Button onClick={handleCreateCustomer} className="w-full">
-                  Add Customer
+                  Add Client
                 </Button>
               </div>
             </DialogContent>
@@ -265,19 +281,23 @@ export function CustomerManager() {
         <Card>
           <CardContent className="text-center py-12">
             <User size={48} className="mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">No customers yet</h3>
+            <h3 className="text-lg font-medium mb-2">No clients yet</h3>
             <p className="text-muted-foreground mb-4">
-              Add your first customer to get started with managing your grooming business
+              Add your first client to get started with managing your grooming business
             </p>
             <Button onClick={() => setIsNewCustomerOpen(true)}>
-              Add First Customer
+              Add First Client
             </Button>
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-3">
           {(customers || []).map((customer) => (
-            <div key={customer.id} className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors">
+            <div 
+              key={customer.id} 
+              className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+              onClick={() => setViewingCustomerId(customer.id)}
+            >
               <div className="flex items-center space-x-4 flex-1 min-w-0">
                 <div className="flex-shrink-0">
                   <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
@@ -323,7 +343,8 @@ export function CustomerManager() {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation() // Prevent triggering the card click
                     setSelectedCustomerId(customer.id)
                     setIsNewPetOpen(true)
                   }}

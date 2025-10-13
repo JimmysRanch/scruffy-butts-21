@@ -12,7 +12,7 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
   const navItems = [
     { id: 'dashboard' as View, label: 'Dashboard', icon: ChartBar },
     { id: 'appointments' as View, label: 'Appointments', icon: Calendar },
-    { id: 'customers' as View, label: 'Customers', icon: Users },
+    { id: 'customers' as View, label: 'Clients & Pets', icon: Users },
     { id: 'services' as View, label: 'Services', icon: Heart },
     { id: 'staff' as View, label: 'Staff', icon: UserCircle },
     { id: 'pos' as View, label: 'POS', icon: CashRegister },
