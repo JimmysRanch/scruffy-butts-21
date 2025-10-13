@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Calendar, Users, ChartBar, Plus } from '@phosphor-icons/react'
 import { format } from 'date-fns'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'services'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'settings'
 
 interface DashboardProps {
   onNavigate: (view: View) => void

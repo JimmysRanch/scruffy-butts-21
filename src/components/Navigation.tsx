@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
-import { Calendar, Users, Scissors, ChartBar, CashRegister, Gear, UserCircle } from '@phosphor-icons/react'
+import { Calendar, Users, ChartBar, CashRegister, Gear, UserCircle } from '@phosphor-icons/react'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'services' | 'staff' | 'pos' | 'settings'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'settings'
 
 interface NavigationProps {
   currentView: View
@@ -13,7 +13,6 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
     { id: 'dashboard' as View, label: 'Dashboard', icon: ChartBar },
     { id: 'appointments' as View, label: 'Appointments', icon: Calendar },
     { id: 'customers' as View, label: 'Clients & Pets', icon: Users },
-    { id: 'services' as View, label: 'Services', icon: Scissors },
     { id: 'staff' as View, label: 'Staff', icon: UserCircle },
     { id: 'pos' as View, label: 'POS', icon: CashRegister },
   ]
@@ -23,7 +22,7 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-2">
-            <Scissors size={32} className="text-accent" weight="fill" />
+            <UserCircle size={32} className="text-accent" weight="fill" />
             <span className="text-2xl font-bold text-foreground">Scruffy Butts</span>
           </div>
           

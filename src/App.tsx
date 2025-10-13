@@ -3,13 +3,12 @@ import { Toaster } from '@/components/ui/sonner'
 import { Dashboard } from '@/components/Dashboard'
 import { AppointmentScheduler } from '@/components/AppointmentScheduler'
 import { CustomerManager } from '@/components/CustomerManager'
-import { ServiceManager } from '@/components/ServiceManager'
 import { StaffManager } from '@/components/StaffManager'
 import { PointOfSale } from '@/components/PointOfSale'
 import { Settings } from '@/components/Settings'
 import { Navigation } from '@/components/Navigation'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'services' | 'staff' | 'pos' | 'settings'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'settings'
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard')
@@ -22,8 +21,6 @@ function App() {
         return <AppointmentScheduler />
       case 'customers':
         return <CustomerManager />
-      case 'services':
-        return <ServiceManager />
       case 'staff':
         return <StaffManager />
       case 'pos':

@@ -25,9 +25,20 @@ import {
   Users,
   Plus,
   Pencil,
-  Trash
+  Trash,
+  Scissors
 } from '@phosphor-icons/react'
 import { StaffPosition } from './StaffManager'
+
+interface Service {
+  id: string
+  name: string
+  description: string
+  duration: number
+  price: number
+  category: string
+  createdAt: string
+}
 
 interface BusinessSettings {
   name: string
@@ -87,13 +98,25 @@ export function Settings() {
     { id: 'front_desk', name: 'Front Desk', permissions: ['manage_customers', 'view_appointments', 'pos'], description: 'Customer service representative' }
   ])
 
-  const [activeTab, setActiveTab] = useState<'business' | 'notifications' | 'appearance' | 'security' | 'staff-positions'>('business')
+  const [services, setServices] = useKV<Service[]>('services', [])
+
+  const [activeTab, setActiveTab] = useState<'business' | 'services' | 'notifications' | 'appearance' | 'security' | 'staff-positions'>('business')
   const [showPositionDialog, setShowPositionDialog] = useState(false)
   const [editingPosition, setEditingPosition] = useState<StaffPosition | null>(null)
   const [positionFormData, setPositionFormData] = useState({
     name: '',
     description: '',
     permissions: [] as string[]
+  })
+
+  const [showServiceDialog, setShowServiceDialog] = useState(false)
+  const [editingService, setEditingService] = useState<Service | null>(null)
+  const [serviceFormData, setServiceFormData] = useState({
+    name: '',
+    description: '',
+    duration: 60,
+    price: 50,
+    category: 'Basic Grooming'
   })
 
   const availablePermissions = [
@@ -188,12 +211,84 @@ export function Settings() {
     }
   }
 
+  const resetServiceForm = () => {
+    setServiceFormData({
+      name: '',
+      description: '',
+      duration: 60,
+      price: 50,
+      category: 'Basic Grooming'
+    })
+    setEditingService(null)
+  }
+
+  const handleServiceSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!serviceFormData.name || !serviceFormData.description || serviceFormData.duration <= 0 || serviceFormData.price <= 0) {
+      toast.error('Please fill in all required fields with valid values')
+      return
+    }
+
+    if (editingService) {
+      setServices(currentServices => 
+        (currentServices || []).map(s => 
+          s.id === editingService.id
+            ? {
+                ...editingService,
+                name: serviceFormData.name,
+                description: serviceFormData.description,
+                duration: serviceFormData.duration,
+                price: serviceFormData.price,
+                category: serviceFormData.category
+              }
+            : s
+        )
+      )
+      toast.success('Service updated successfully')
+    } else {
+      const newService: Service = {
+        id: `service-${Date.now()}`,
+        name: serviceFormData.name,
+        description: serviceFormData.description,
+        duration: serviceFormData.duration,
+        price: serviceFormData.price,
+        category: serviceFormData.category,
+        createdAt: new Date().toISOString()
+      }
+
+      setServices(currentServices => [...(currentServices || []), newService])
+      toast.success('Service added successfully')
+    }
+
+    setShowServiceDialog(false)
+    resetServiceForm()
+  }
+
+  const handleEditService = (service: Service) => {
+    setEditingService(service)
+    setServiceFormData({
+      name: service.name,
+      description: service.description,
+      duration: service.duration,
+      price: service.price,
+      category: service.category
+    })
+    setShowServiceDialog(true)
+  }
+
+  const handleDeleteService = (id: string) => {
+    setServices(currentServices => (currentServices || []).filter(s => s.id !== id))
+    toast.success('Service deleted successfully')
+  }
+
   const handleSave = () => {
     toast.success('Settings saved successfully!')
   }
 
   const tabs = [
     { id: 'business' as const, label: 'Business', icon: MapPin },
+    { id: 'services' as const, label: 'Services', icon: Scissors },
     { id: 'staff-positions' as const, label: 'Staff Positions', icon: Users },
     { id: 'notifications' as const, label: 'Notifications', icon: Bell },
     { id: 'appearance' as const, label: 'Appearance', icon: PaintBrush },
@@ -343,6 +438,84 @@ export function Settings() {
                     />
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeTab === 'services' && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Scissors size={20} />
+                      Services Management
+                    </CardTitle>
+                    <CardDescription>
+                      Manage your grooming services, pricing, and duration
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => setShowServiceDialog(true)} className="flex items-center gap-2">
+                    <Plus size={18} />
+                    Add Service
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {(services || []).length === 0 ? (
+                  <div className="text-center py-12">
+                    <Scissors size={48} className="mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No services yet</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Add your first grooming service to start building your service catalog
+                    </p>
+                    <Button onClick={() => setShowServiceDialog(true)}>
+                      Add First Service
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {(services || [])
+                      .sort((a, b) => a.category.localeCompare(b.category))
+                      .map((service) => (
+                        <div key={service.id} className="flex items-start justify-between p-4 border rounded-lg">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-semibold">{service.name}</h4>
+                              <Badge variant="outline" className="text-xs">{service.category}</Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-2">{service.description}</p>
+                            <div className="flex items-center gap-4 text-sm">
+                              <div className="flex items-center gap-1">
+                                <Clock size={16} className="text-muted-foreground" />
+                                <span>{service.duration} min</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <CurrencyDollar size={16} className="text-muted-foreground" />
+                                <span className="font-medium">${service.price}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex gap-2 ml-4">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEditService(service)}
+                            >
+                              <Pencil size={16} />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteService(service.id)}
+                            >
+                              <Trash size={16} />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}
@@ -707,6 +880,106 @@ export function Settings() {
               </Button>
               <Button type="submit">
                 {editingPosition ? 'Update Position' : 'Add Position'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showServiceDialog} onOpenChange={setShowServiceDialog}>
+        <DialogContent className="max-w-md">
+          <form onSubmit={handleServiceSubmit}>
+            <DialogHeader>
+              <DialogTitle>
+                {editingService ? 'Edit Service' : 'Add New Service'}
+              </DialogTitle>
+              <DialogDescription>
+                {editingService 
+                  ? 'Update the service details'
+                  : 'Create a new grooming service for your business'
+                }
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="service-name">Service Name *</Label>
+                <Input
+                  id="service-name"
+                  value={serviceFormData.name}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, name: e.target.value })}
+                  placeholder="e.g., Full Grooming Package"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="service-description">Description *</Label>
+                <Textarea
+                  id="service-description"
+                  value={serviceFormData.description}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, description: e.target.value })}
+                  placeholder="Describe what's included in this service..."
+                  rows={3}
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="service-duration">Duration (minutes) *</Label>
+                  <Input
+                    id="service-duration"
+                    type="number"
+                    value={serviceFormData.duration}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, duration: parseInt(e.target.value) || 0 })}
+                    placeholder="60"
+                    min="15"
+                    max="300"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="service-price">Price ($) *</Label>
+                  <Input
+                    id="service-price"
+                    type="number"
+                    value={serviceFormData.price}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, price: parseFloat(e.target.value) || 0 })}
+                    placeholder="50.00"
+                    min="0"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="service-category">Category *</Label>
+                <Input
+                  id="service-category"
+                  value={serviceFormData.category}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, category: e.target.value })}
+                  placeholder="e.g., Basic Grooming, Full Service"
+                  required
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => {
+                  setShowServiceDialog(false)
+                  resetServiceForm()
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">
+                {editingService ? 'Update Service' : 'Add Service'}
               </Button>
             </DialogFooter>
           </form>
