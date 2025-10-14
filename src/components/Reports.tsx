@@ -256,8 +256,12 @@ export function Reports() {
     const hourMap = new Map<number, number>()
     
     filteredAppointments.forEach(apt => {
-      const hour = parseInt(apt.time.split(':')[0])
-      hourMap.set(hour, (hourMap.get(hour) || 0) + 1)
+      if (apt.time && typeof apt.time === 'string') {
+        const hour = parseInt(apt.time.split(':')[0])
+        if (!isNaN(hour)) {
+          hourMap.set(hour, (hourMap.get(hour) || 0) + 1)
+        }
+      }
     })
 
     return Array.from(hourMap.entries())
