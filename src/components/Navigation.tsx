@@ -22,11 +22,7 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <img 
-              src="https://i.postimg.cc/cHY9xQmT/scruffy-butts-logo.png" 
-              alt="Scruffy Butts Dog Grooming" 
-              className="h-12 w-auto"
-            />
+            <h1 className="text-xl font-bold text-foreground">Scruffy Butts</h1>
           </div>
           
           <div className="flex items-center space-x-1">
