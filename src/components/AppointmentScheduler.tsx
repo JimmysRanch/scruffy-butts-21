@@ -15,7 +15,8 @@ import { toast } from 'sonner'
 interface Appointment {
   id: string
   petName: string
-  customerName: string
+  customerFirstName: string
+  customerLastName: string
   customerId: string
   service: string
   date: string
@@ -28,7 +29,8 @@ interface Appointment {
 
 interface Customer {
   id: string
-  name: string
+  firstName: string
+  lastName: string
   email: string
   phone: string
   pets: Pet[]
@@ -86,7 +88,8 @@ export function AppointmentScheduler() {
     const newAppointment: Appointment = {
       id: `apt-${Date.now()}`,
       petName: pet.name,
-      customerName: customer.name,
+      customerFirstName: customer.firstName,
+      customerLastName: customer.lastName,
       customerId: customer.id,
       service: service.name,
       date: selectedDate,
@@ -167,7 +170,7 @@ export function AppointmentScheduler() {
                   <SelectContent>
                     {(customers || []).map((customer) => (
                       <SelectItem key={customer.id} value={customer.id}>
-                        {customer.name}
+                        {customer.firstName} {customer.lastName}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -290,7 +293,7 @@ export function AppointmentScheduler() {
                         </Badge>
                       </CardTitle>
                       <CardDescription>
-                        {appointment.customerName} • {appointment.service}
+                        {appointment.customerFirstName} {appointment.customerLastName} • {appointment.service}
                       </CardDescription>
                     </div>
                     <div className="text-right">

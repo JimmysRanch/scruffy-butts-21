@@ -20,7 +20,8 @@ export interface StaffPosition {
 
 export interface StaffMember {
   id: string
-  name: string
+  firstName: string
+  lastName: string
   email: string
   phone: string
   position: string
@@ -57,7 +58,7 @@ function StaffProfile({ staff, onBack, onEdit }: StaffProfileProps) {
               <UserCircle size={48} className="text-muted-foreground" />
             </div>
             <div>
-              <CardTitle className="text-2xl">{staff.name}</CardTitle>
+              <CardTitle className="text-2xl">{staff.firstName} {staff.lastName}</CardTitle>
               <CardDescription className="text-lg">{staff.position}</CardDescription>
               <div className="flex items-center mt-2">
                 <Badge variant={staff.status === 'active' ? 'default' : 'secondary'}>
@@ -134,7 +135,8 @@ export function StaffManager() {
   const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null)
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null)
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     position: '',
@@ -148,7 +150,8 @@ export function StaffManager() {
 
   const resetForm = () => {
     setFormData({
-      name: '',
+      firstName: '',
+      lastName: '',
       email: '',
       phone: '',
       position: '',
@@ -165,7 +168,7 @@ export function StaffManager() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.name || !formData.email || !formData.position) {
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.position) {
       toast.error('Please fill in all required fields')
       return
     }
@@ -206,7 +209,8 @@ export function StaffManager() {
   const handleEdit = (staffMember: StaffMember) => {
     setEditingStaff(staffMember)
     setFormData({
-      name: staffMember.name,
+      firstName: staffMember.firstName,
+      lastName: staffMember.lastName,
       email: staffMember.email,
       phone: staffMember.phone,
       position: staffMember.position,
@@ -278,7 +282,7 @@ export function StaffManager() {
                     <UserCircle size={32} className="text-muted-foreground" />
                   </div>
                   <div className="flex-1">
-                    <CardTitle className="text-lg">{member.name}</CardTitle>
+                    <CardTitle className="text-lg">{member.firstName} {member.lastName}</CardTitle>
                     <CardDescription>{member.position}</CardDescription>
                   </div>
                   <Badge variant={member.status === 'active' ? 'default' : 'secondary'}>
@@ -352,11 +356,21 @@ export function StaffManager() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Name *</Label>
+                <Label htmlFor="first-name">First Name *</Label>
                 <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  id="first-name"
+                  value={formData.firstName}
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="last-name">Last Name *</Label>
+                <Input
+                  id="last-name"
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                   required
                 />
               </div>

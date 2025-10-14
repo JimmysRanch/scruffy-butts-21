@@ -36,7 +36,8 @@ interface Pet {
 
 interface Customer {
   id: string
-  name: string
+  firstName: string
+  lastName: string
   email: string
   phone: string
   pets: Pet[]
@@ -61,7 +62,8 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
   const customer = (customers || []).find(c => c.id === customerId)
   
   const [customerForm, setCustomerForm] = useState({
-    name: customer?.name || '',
+    firstName: customer?.firstName || '',
+    lastName: customer?.lastName || '',
     email: customer?.email || '',
     phone: customer?.phone || '',
     address: customer?.address || '',
@@ -94,7 +96,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
   }
 
   const handleUpdateCustomer = () => {
-    if (!customerForm.name || !customerForm.email || !customerForm.phone) {
+    if (!customerForm.firstName || !customerForm.lastName || !customerForm.email || !customerForm.phone) {
       toast.error('Please fill in all required fields')
       return
     }
@@ -104,7 +106,8 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
         c.id === customerId
           ? {
               ...c,
-              name: customerForm.name,
+              firstName: customerForm.firstName,
+              lastName: customerForm.lastName,
               email: customerForm.email,
               phone: customerForm.phone,
               address: customerForm.address,
@@ -225,7 +228,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           <ArrowLeft size={18} />
         </Button>
         <div className="flex-1">
-          <h1 className="text-3xl font-bold text-foreground">{customer.name}</h1>
+          <h1 className="text-3xl font-bold text-foreground">{customer.firstName} {customer.lastName}</h1>
           <p className="text-muted-foreground">
             Client since {new Date(customer.createdAt).toLocaleDateString()}
           </p>
@@ -246,14 +249,26 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             </DialogHeader>
             
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="edit-customer-name">Client Name</Label>
-                <Input
-                  id="edit-customer-name"
-                  value={customerForm.name}
-                  onChange={(e) => setCustomerForm({ ...customerForm, name: e.target.value })}
-                  placeholder="Enter client name"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="edit-customer-first-name">First Name</Label>
+                  <Input
+                    id="edit-customer-first-name"
+                    value={customerForm.firstName}
+                    onChange={(e) => setCustomerForm({ ...customerForm, firstName: e.target.value })}
+                    placeholder="Enter first name"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="edit-customer-last-name">Last Name</Label>
+                  <Input
+                    id="edit-customer-last-name"
+                    value={customerForm.lastName}
+                    onChange={(e) => setCustomerForm({ ...customerForm, lastName: e.target.value })}
+                    placeholder="Enter last name"
+                  />
+                </div>
               </div>
 
               <div>
@@ -389,7 +404,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                     <DialogHeader>
                       <DialogTitle>Add New Pet</DialogTitle>
                       <DialogDescription>
-                        Add a new pet to {customer.name}'s profile.
+                        Add a new pet to {customer.firstName} {customer.lastName}'s profile.
                       </DialogDescription>
                     </DialogHeader>
                     
@@ -452,7 +467,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                   <Heart size={48} className="mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-lg font-medium mb-2">No pets yet</h3>
                   <p className="text-muted-foreground mb-4">
-                    Add the first pet for {customer.name}
+                    Add the first pet for {customer.firstName} {customer.lastName}
                   </p>
                   <Button onClick={() => setIsNewPetOpen(true)}>
                     Add First Pet

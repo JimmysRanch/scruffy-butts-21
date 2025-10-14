@@ -22,7 +22,8 @@ interface Pet {
 
 interface Customer {
   id: string
-  name: string
+  firstName: string
+  lastName: string
   email: string
   phone: string
   pets: Pet[]
@@ -39,7 +40,8 @@ export function CustomerManager() {
   const [viewingCustomerId, setViewingCustomerId] = useState<string | null>(null)
   
   const [customerForm, setCustomerForm] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: ''
   })
@@ -52,14 +54,15 @@ export function CustomerManager() {
   })
 
   const handleCreateCustomer = () => {
-    if (!customerForm.name || !customerForm.email || !customerForm.phone) {
+    if (!customerForm.firstName || !customerForm.lastName || !customerForm.email || !customerForm.phone) {
       toast.error('Please fill in all required fields')
       return
     }
 
     const newCustomer: Customer = {
       id: `customer-${Date.now()}`,
-      name: customerForm.name,
+      firstName: customerForm.firstName,
+      lastName: customerForm.lastName,
       email: customerForm.email,
       phone: customerForm.phone,
       pets: [],
@@ -71,7 +74,7 @@ export function CustomerManager() {
     setCustomers((current) => [...(current || []), newCustomer])
     toast.success('Client added successfully!')
     
-    setCustomerForm({ name: '', email: '', phone: '' })
+    setCustomerForm({ firstName: '', lastName: '', email: '', phone: '' })
     setIsNewCustomerOpen(false)
   }
 
@@ -162,7 +165,7 @@ export function CustomerManager() {
                     <SelectContent>
                       {(customers || []).map((customer) => (
                         <SelectItem key={customer.id} value={customer.id}>
-                          {customer.name}
+                          {customer.firstName} {customer.lastName}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -236,14 +239,26 @@ export function CustomerManager() {
               </DialogHeader>
               
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="customer-name">Client Name</Label>
-                  <Input
-                    id="customer-name"
-                    value={customerForm.name}
-                    onChange={(e) => setCustomerForm({ ...customerForm, name: e.target.value })}
-                    placeholder="Enter client name"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="customer-first-name">First Name</Label>
+                    <Input
+                      id="customer-first-name"
+                      value={customerForm.firstName}
+                      onChange={(e) => setCustomerForm({ ...customerForm, firstName: e.target.value })}
+                      placeholder="Enter first name"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="customer-last-name">Last Name</Label>
+                    <Input
+                      id="customer-last-name"
+                      value={customerForm.lastName}
+                      onChange={(e) => setCustomerForm({ ...customerForm, lastName: e.target.value })}
+                      placeholder="Enter last name"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -307,7 +322,7 @@ export function CustomerManager() {
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-3 mb-1">
-                    <h3 className="font-medium text-foreground truncate">{customer.name}</h3>
+                    <h3 className="font-medium text-foreground truncate">{customer.firstName} {customer.lastName}</h3>
                     <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">
                       {customer.pets.length} pet{customer.pets.length !== 1 ? 's' : ''}
                     </span>
