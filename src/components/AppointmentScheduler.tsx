@@ -1421,7 +1421,7 @@ function AppointmentDetail({
 
       <div className="space-y-3">
         <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Quick Actions</div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-2">
           {appointment.status === 'scheduled' && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('confirmed')} className="w-full">
               <CheckCircle size={16} className="mr-2" weight="duotone" />
@@ -1455,7 +1455,7 @@ function AppointmentDetail({
           {appointment.status !== 'no-show' && appointment.status !== 'completed' && isPast && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('no-show')} className="w-full">
               <ClockCounterClockwise size={16} className="mr-2" weight="duotone" />
-              No Show
+              Mark No Show
             </Button>
           )}
         </div>
@@ -1490,11 +1490,11 @@ function AppointmentDetail({
         </Button>
         <Button variant="outline" size="lg" onClick={onRebook} className="w-full justify-start">
           <ArrowClockwise size={18} className="mr-3" weight="duotone" />
-          Rebook Customer
+          Rebook
         </Button>
         <Button variant="destructive" size="lg" onClick={onDelete} className="w-full justify-start">
           <Trash size={18} className="mr-3" weight="duotone" />
-          Delete Appointment
+          Delete
         </Button>
       </div>
     </div>
