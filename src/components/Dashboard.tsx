@@ -1,17 +1,9 @@
-import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Calendar, Users, ChartBar, Plus, Activity, TrendUp, Lightning, Sliders } from '@phosphor-icons/react'
-import GridLayout, { Layout } from 'react-grid-layout'
-import 'react-grid-layout/css/styles.css'
-import 'react-resizable/css/styles.css'
-import { TodayScheduleWidget } from '@/components/widgets/TodayScheduleWidget'
-import { UpcomingAppointmentsWidget } from '@/components/widgets/UpcomingAppointmentsWidget'
-import { StatsWidget } from '@/components/widgets/StatsWidget'
-import { ActivityFeedWidget } from '@/components/widgets/ActivityFeedWidget'
-import { RevenueWidget } from '@/components/widgets/RevenueWidget'
-import { QuickActionsWidget } from '@/components/widgets/QuickActionsWidget'
-import { WidgetConfiguration, WidgetConfig } from '@/components/WidgetConfiguration'
+import { Badge } from '@/components/ui/badge'
+import { Calendar, Users, ChartBar, Plus, Clock, Dog, CurrencyDollar } from '@phosphor-icons/react'
+import { format, isToday, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
 
@@ -19,158 +11,103 @@ interface DashboardProps {
   onNavigate: (view: View) => void
 }
 
-const DEFAULT_WIDGETS: WidgetConfig[] = [
-  {
-    id: 'stats-today',
-    name: "Today's Appointments",
-    description: 'Quick count of appointments scheduled for today',
-    icon: Calendar,
-    enabled: true,
-    defaultSize: { w: 4, h: 2 }
-  },
-  {
-    id: 'stats-customers',
-    name: 'Total Customers',
-    description: 'Total number of customers in your system',
-    icon: Users,
-    enabled: true,
-    defaultSize: { w: 4, h: 2 }
-  },
-  {
-    id: 'stats-week',
-    name: 'This Week',
-    description: 'Appointments scheduled for this week',
-    icon: ChartBar,
-    enabled: true,
-    defaultSize: { w: 4, h: 2 }
-  },
-  {
-    id: 'today-schedule',
-    name: "Today's Schedule",
-    description: 'Detailed list of today\'s appointments',
-    icon: Calendar,
-    enabled: true,
-    defaultSize: { w: 6, h: 4 }
-  },
-  {
-    id: 'upcoming',
-    name: 'Upcoming Appointments',
-    description: 'Next scheduled appointments',
-    icon: Calendar,
-    enabled: true,
-    defaultSize: { w: 6, h: 4 }
-  },
-  {
-    id: 'activity-feed',
-    name: 'Activity Feed',
-    description: 'Real-time activity from your team',
-    icon: Activity,
-    enabled: true,
-    defaultSize: { w: 6, h: 5 }
-  },
-  {
-    id: 'revenue-today',
-    name: "Today's Revenue",
-    description: 'Revenue generated today',
-    icon: TrendUp,
-    enabled: true,
-    defaultSize: { w: 4, h: 2 }
-  },
-  {
-    id: 'revenue-week',
-    name: "Week's Revenue",
-    description: 'Revenue for the current week',
-    icon: TrendUp,
-    enabled: false,
-    defaultSize: { w: 4, h: 2 }
-  },
-  {
-    id: 'revenue-month',
-    name: "Month's Revenue",
-    description: 'Revenue for the current month',
-    icon: TrendUp,
-    enabled: false,
-    defaultSize: { w: 4, h: 2 }
-  },
-  {
-    id: 'quick-actions',
-    name: 'Quick Actions',
-    description: 'Fast access to common tasks',
-    icon: Lightning,
-    enabled: true,
-    defaultSize: { w: 6, h: 3 }
-  }
-]
+interface Appointment {
+  id: string
+  customerId: string
+  petId: string
+  serviceIds: string[]
+  staffId: string
+  date: string
+  time: string
+  duration: number
+  status: 'scheduled' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'no-show'
+  notes?: string
+}
 
-const DEFAULT_LAYOUT: Layout[] = [
-  { i: 'stats-today', x: 0, y: 0, w: 4, h: 2 },
-  { i: 'stats-customers', x: 4, y: 0, w: 4, h: 2 },
-  { i: 'stats-week', x: 8, y: 0, w: 4, h: 2 },
-  { i: 'today-schedule', x: 0, y: 2, w: 6, h: 4 },
-  { i: 'upcoming', x: 6, y: 2, w: 6, h: 4 },
-  { i: 'activity-feed', x: 0, y: 6, w: 6, h: 5 },
-  { i: 'quick-actions', x: 6, y: 6, w: 6, h: 3 },
-  { i: 'revenue-today', x: 6, y: 9, w: 6, h: 2 },
-  { i: 'revenue-week', x: 0, y: 11, w: 4, h: 2 },
-  { i: 'revenue-month', x: 4, y: 11, w: 4, h: 2 }
-]
+interface Customer {
+  id: string
+  name: string
+}
+
+interface Pet {
+  id: string
+  name: string
+  customerId: string
+}
+
+interface Service {
+  id: string
+  name: string
+}
+
+interface StaffMember {
+  id: string
+  name: string
+  color: string
+}
 
 export function Dashboard({ onNavigate }: DashboardProps) {
+  const [appointments] = useKV<Appointment[]>('appointments', [])
+  const [customers] = useKV<Customer[]>('customers', [])
+  const [pets] = useKV<Pet[]>('pets', [])
+  const [services] = useKV<Service[]>('services', [])
+  const [staff] = useKV<StaffMember[]>('staff', [])
   const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
-  const [widgetConfigs, setWidgetConfigs] = useKV<WidgetConfig[]>('dashboard-widgets', DEFAULT_WIDGETS)
-  const [layout, setLayout] = useKV<Layout[]>('dashboard-layout', DEFAULT_LAYOUT)
-  const [showConfig, setShowConfig] = useState(false)
 
   const isCompact = appearance?.compactMode || false
 
-  const handleToggleWidget = (widgetId: string) => {
-    setWidgetConfigs((current) =>
-      (current || DEFAULT_WIDGETS).map(w =>
-        w.id === widgetId ? { ...w, enabled: !w.enabled } : w
-      )
-    )
+  const today = new Date()
+  const todayAppointments = (appointments || []).filter(apt => 
+    isToday(new Date(apt.date)) && apt.status !== 'cancelled'
+  )
+
+  const weekStart = startOfWeek(today, { weekStartsOn: 0 })
+  const weekEnd = endOfWeek(today, { weekStartsOn: 0 })
+  const weekAppointments = (appointments || []).filter(apt =>
+    isWithinInterval(new Date(apt.date), { start: weekStart, end: weekEnd }) && 
+    apt.status !== 'cancelled'
+  )
+
+  const upcomingAppointments = (appointments || [])
+    .filter(apt => {
+      const aptDate = new Date(apt.date)
+      return aptDate >= today && apt.status === 'scheduled'
+    })
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, 5)
+
+  const getCustomerName = (customerId: string) => {
+    return customers?.find(c => c.id === customerId)?.name || 'Unknown'
   }
 
-  const handleResetLayout = () => {
-    setLayout(DEFAULT_LAYOUT)
-    setWidgetConfigs(DEFAULT_WIDGETS)
+  const getPetName = (petId: string) => {
+    return pets?.find(p => p.id === petId)?.name || 'Unknown'
   }
 
-  const handleLayoutChange = (newLayout: Layout[]) => {
-    setLayout(newLayout)
+  const getServiceNames = (serviceIds: string[]) => {
+    return serviceIds.map(id => services?.find(s => s.id === id)?.name || 'Unknown').join(', ')
   }
 
-  const renderWidget = (widgetId: string) => {
-    switch (widgetId) {
-      case 'stats-today':
-        return <StatsWidget type="today" onClick={() => onNavigate('appointments')} />
-      case 'stats-customers':
-        return <StatsWidget type="customers" onClick={() => onNavigate('customers')} />
-      case 'stats-week':
-        return <StatsWidget type="week" onClick={() => onNavigate('appointments')} />
-      case 'today-schedule':
-        return <TodayScheduleWidget isCompact={isCompact} />
-      case 'upcoming':
-        return <UpcomingAppointmentsWidget isCompact={isCompact} />
-      case 'activity-feed':
-        return <ActivityFeedWidget isCompact={isCompact} />
-      case 'revenue-today':
-        return <RevenueWidget period="today" />
-      case 'revenue-week':
-        return <RevenueWidget period="week" />
-      case 'revenue-month':
-        return <RevenueWidget period="month" />
-      case 'quick-actions':
-        return <QuickActionsWidget onNavigate={onNavigate} />
+  const getStaffName = (staffId: string) => {
+    return staff?.find(s => s.id === staffId)?.name || 'Unassigned'
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return 'bg-green-100 text-green-800'
+      case 'in-progress':
+        return 'bg-blue-100 text-blue-800'
+      case 'completed':
+        return 'bg-gray-100 text-gray-800'
+      case 'cancelled':
+        return 'bg-red-100 text-red-800'
+      case 'no-show':
+        return 'bg-orange-100 text-orange-800'
       default:
-        return null
+        return 'bg-yellow-100 text-yellow-800'
     }
   }
-
-  const enabledWidgets = (widgetConfigs || DEFAULT_WIDGETS).filter(w => w.enabled)
-  const currentLayout = (layout || DEFAULT_LAYOUT).filter(l =>
-    enabledWidgets.some(w => w.id === l.i)
-  )
 
   return (
     <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
@@ -181,54 +118,193 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             Welcome back! Here's what's happening today.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setShowConfig(true)}
-            className="flex items-center space-x-2"
-          >
-            <Sliders size={18} />
-            <span className="hidden sm:inline">Customize</span>
-          </Button>
-          <Button onClick={() => onNavigate('appointments')} className="flex items-center space-x-2">
-            <Plus size={18} />
-            <span className="hidden sm:inline">New Appointment</span>
-            <span className="sm:hidden">New</span>
-          </Button>
-        </div>
+        <Button onClick={() => onNavigate('appointments')} className="flex items-center gap-2">
+          <Plus size={18} />
+          <span>New Appointment</span>
+        </Button>
       </div>
 
-      <div className="overflow-x-auto">
-        <GridLayout
-          className="layout"
-          layout={currentLayout}
-          cols={12}
-          rowHeight={60}
-          width={1200}
-          onLayoutChange={handleLayoutChange}
-          draggableHandle=".widget-drag-handle"
-          containerPadding={[0, 0]}
-          margin={[isCompact ? 12 : 24, isCompact ? 12 : 24]}
-          isResizable={true}
-          isDraggable={true}
-          compactType="vertical"
-        >
-          {enabledWidgets.map((widget) => (
-            <div key={widget.id} className="widget-container">
-              <div className="widget-drag-handle absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-muted-foreground/20 rounded-full cursor-move hover:bg-muted-foreground/40 transition-colors z-10" />
-              {renderWidget(widget.id)}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onNavigate('appointments')}>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium">Today's Appointments</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{todayAppointments.length}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {todayAppointments.filter(a => a.status === 'completed').length} completed
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onNavigate('customers')}>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{customers?.length || 0}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {pets?.length || 0} pets registered
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onNavigate('appointments')}>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium">This Week</CardTitle>
+            <ChartBar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{weekAppointments.length}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              appointments scheduled
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Today's Schedule
+            </CardTitle>
+            <CardDescription>Appointments scheduled for today</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {todayAppointments.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Dog className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p>No appointments scheduled for today</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {todayAppointments.slice(0, 5).map((apt) => (
+                  <div key={apt.id} className="flex items-center justify-between p-3 rounded-lg border">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1 text-sm font-medium min-w-[60px]">
+                        <Clock size={14} />
+                        {apt.time}
+                      </div>
+                      <div>
+                        <div className="font-medium">{getPetName(apt.petId)}</div>
+                        <div className="text-sm text-muted-foreground">{getCustomerName(apt.customerId)}</div>
+                      </div>
+                    </div>
+                    <Badge className={getStatusColor(apt.status)}>
+                      {apt.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5" />
+              Upcoming Appointments
+            </CardTitle>
+            <CardDescription>Next scheduled appointments</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {upcomingAppointments.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p>No upcoming appointments</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {upcomingAppointments.map((apt) => (
+                  <div key={apt.id} className="flex items-center justify-between p-3 rounded-lg border">
+                    <div>
+                      <div className="font-medium">{getPetName(apt.petId)}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {format(new Date(apt.date), 'MMM d')} at {apt.time}
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {getServiceNames(apt.serviceIds)}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-medium">{getStaffName(apt.staffId)}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              Quick Actions
+            </CardTitle>
+            <CardDescription>Common tasks and shortcuts</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" onClick={() => onNavigate('appointments')} className="h-auto py-4 flex-col gap-2">
+                <Calendar size={24} />
+                <span className="text-sm">New Appointment</span>
+              </Button>
+              <Button variant="outline" onClick={() => onNavigate('customers')} className="h-auto py-4 flex-col gap-2">
+                <Users size={24} />
+                <span className="text-sm">Add Customer</span>
+              </Button>
+              <Button variant="outline" onClick={() => onNavigate('pos')} className="h-auto py-4 flex-col gap-2">
+                <CurrencyDollar size={24} />
+                <span className="text-sm">Point of Sale</span>
+              </Button>
+              <Button variant="outline" onClick={() => onNavigate('inventory')} className="h-auto py-4 flex-col gap-2">
+                <ChartBar size={24} />
+                <span className="text-sm">Inventory</span>
+              </Button>
             </div>
-          ))}
-        </GridLayout>
-      </div>
+          </CardContent>
+        </Card>
 
-      <WidgetConfiguration
-        open={showConfig}
-        onOpenChange={setShowConfig}
-        widgets={widgetConfigs || DEFAULT_WIDGETS}
-        onToggleWidget={handleToggleWidget}
-        onResetLayout={handleResetLayout}
-      />
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Dog className="h-5 w-5" />
+              Quick Stats
+            </CardTitle>
+            <CardDescription>Overview of your business</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Total Services</span>
+                <span className="font-semibold">{services?.length || 0}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Staff Members</span>
+                <span className="font-semibold">{staff?.length || 0}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Total Appointments</span>
+                <span className="font-semibold">{appointments?.length || 0}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Completed This Week</span>
+                <span className="font-semibold">
+                  {weekAppointments.filter(a => a.status === 'completed').length}
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

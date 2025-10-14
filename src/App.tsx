@@ -9,8 +9,6 @@ import { PointOfSale } from '@/components/PointOfSale'
 import { InventoryManager } from '@/components/InventoryManager'
 import { Settings } from '@/components/Settings'
 import { Navigation } from '@/components/Navigation'
-import 'react-grid-layout/css/styles.css'
-import 'react-resizable/css/styles.css'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
 
