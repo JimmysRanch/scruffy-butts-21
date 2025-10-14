@@ -52,7 +52,7 @@ export function CustomerManager() {
       if (needsMigration) {
         setCustomers((current) =>
           (current || []).map(customer => {
-            if (customer.name && (!customer.firstName || !customer.lastName)) {
+            if (customer.name && typeof customer.name === 'string' && (!customer.firstName || !customer.lastName)) {
               const nameParts = customer.name.split(' ')
               const firstName = nameParts[0] || ''
               const lastName = nameParts.slice(1).join(' ') || ''

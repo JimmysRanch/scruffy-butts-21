@@ -256,13 +256,13 @@ export function Reports() {
     const hourMap = new Map<number, number>()
     
     filteredAppointments.forEach(apt => {
-      if (apt.time && typeof apt.time === 'string') {
-        const timeParts = apt.time.split(':')
-        if (timeParts.length > 0) {
-          const hour = parseInt(timeParts[0])
-          if (!isNaN(hour)) {
-            hourMap.set(hour, (hourMap.get(hour) || 0) + 1)
-          }
+      if (!apt.time || typeof apt.time !== 'string') return
+      
+      const timeParts = apt.time.split(':')
+      if (timeParts.length > 0) {
+        const hour = parseInt(timeParts[0])
+        if (!isNaN(hour)) {
+          hourMap.set(hour, (hourMap.get(hour) || 0) + 1)
         }
       }
     })
