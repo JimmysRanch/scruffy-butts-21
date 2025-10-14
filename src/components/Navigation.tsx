@@ -22,44 +22,42 @@ export function Navigation({ currentView, onNavigate, isCompact = false }: Navig
 
   return (
     <nav className="bg-card border-b border-border">
-      <div className="container mx-auto px-4">
-        <div className={`flex items-center justify-between ${isCompact ? 'h-12' : 'h-16'}`}>
-          <div className="flex items-center">
-            <h1 className={`font-bold text-foreground ${isCompact ? 'text-lg' : 'text-xl'}`}>Scruffy Butts</h1>
+      <div className={`flex items-center justify-between ${isCompact ? 'h-12' : 'h-16'} px-4`}>
+        <div className="flex items-center">
+          <h1 className={`font-bold text-foreground ${isCompact ? 'text-lg' : 'text-xl'}`}>Scruffy Butts</h1>
+        </div>
+        
+        <div className="flex items-center space-x-1">
+          <div className="flex space-x-1">
+            {navItems.map((item) => {
+              const Icon = item.icon
+              const isActive = currentView === item.id
+              
+              return (
+                <Button
+                  key={item.id}
+                  variant={isActive ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => onNavigate(item.id)}
+                  className="flex items-center space-x-2"
+                >
+                  <Icon size={18} />
+                  <span className="hidden sm:inline">{item.label}</span>
+                </Button>
+              )
+            })}
           </div>
           
-          <div className="flex items-center space-x-1">
-            <div className="flex space-x-1">
-              {navItems.map((item) => {
-                const Icon = item.icon
-                const isActive = currentView === item.id
-                
-                return (
-                  <Button
-                    key={item.id}
-                    variant={isActive ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => onNavigate(item.id)}
-                    className="flex items-center space-x-2"
-                  >
-                    <Icon size={18} />
-                    <span className="hidden sm:inline">{item.label}</span>
-                  </Button>
-                )
-              })}
-            </div>
-            
-            <div className="ml-2 pl-2 border-l border-border">
-              <Button
-                variant={currentView === 'settings' ? "default" : "ghost"}
-                size="sm"
-                onClick={() => onNavigate('settings')}
-                className="flex items-center space-x-2"
-              >
-                <Gear size={18} />
-                <span className="hidden sm:inline">Settings</span>
-              </Button>
-            </div>
+          <div className="ml-2 pl-2 border-l border-border">
+            <Button
+              variant={currentView === 'settings' ? "default" : "ghost"}
+              size="sm"
+              onClick={() => onNavigate('settings')}
+              className="flex items-center space-x-2"
+            >
+              <Gear size={18} />
+              <span className="hidden sm:inline">Settings</span>
+            </Button>
           </div>
         </div>
       </div>
