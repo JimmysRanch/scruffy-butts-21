@@ -29,6 +29,9 @@ interface Customer {
   pets: Pet[]
   createdAt: string
   address?: string
+  city?: string
+  state?: string
+  zip?: string
   notes?: string
   name?: string
 }
@@ -96,6 +99,9 @@ export function CustomerManager() {
       pets: [],
       createdAt: new Date().toISOString(),
       address: '',
+      city: '',
+      state: 'Texas',
+      zip: '',
       notes: ''
     }
 

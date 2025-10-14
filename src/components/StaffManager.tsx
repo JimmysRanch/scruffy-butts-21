@@ -27,6 +27,9 @@ export interface StaffMember {
   position: string
   hireDate: string
   address: string
+  city: string
+  state: string
+  zip: string
   specialties: string[]
   notes: string
   status: 'active' | 'inactive'
@@ -85,7 +88,10 @@ function StaffProfile({ staff, onBack, onEdit }: StaffProfileProps) {
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin size={18} className="text-muted-foreground" />
-                <span>{staff.address}</span>
+                <span>
+                  {staff.address && <>{staff.address}, </>}
+                  {staff.city}{staff.city && (staff.state || staff.zip) ? ', ' : ''}{staff.state} {staff.zip}
+                </span>
               </div>
               <div className="flex items-center space-x-2">
                 <Calendar size={18} className="text-muted-foreground" />
@@ -143,6 +149,9 @@ export function StaffManager() {
     position: '',
     hireDate: '',
     address: '',
+    city: '',
+    state: 'Texas',
+    zip: '',
     specialties: '',
     notes: '',
     status: 'active' as 'active' | 'inactive',
@@ -160,6 +169,9 @@ export function StaffManager() {
       position: '',
       hireDate: '',
       address: '',
+      city: '',
+      state: 'Texas',
+      zip: '',
       specialties: '',
       notes: '',
       status: 'active' as 'active' | 'inactive',
@@ -187,7 +199,19 @@ export function StaffManager() {
           s.id === editingStaff.id
             ? {
                 ...editingStaff,
-                ...formData,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: formData.email,
+                phone: formData.phone,
+                position: formData.position,
+                hireDate: formData.hireDate,
+                address: formData.address,
+                city: formData.city,
+                state: formData.state,
+                zip: formData.zip,
+                notes: formData.notes,
+                status: formData.status,
+                rating: formData.rating,
                 specialties: specialtiesArray
               }
             : s
@@ -197,7 +221,19 @@ export function StaffManager() {
     } else {
       const newStaff: StaffMember = {
         id: Date.now().toString(),
-        ...formData,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        position: formData.position,
+        hireDate: formData.hireDate,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        zip: formData.zip,
+        notes: formData.notes,
+        status: formData.status,
+        rating: formData.rating,
         specialties: specialtiesArray
       }
 
@@ -219,6 +255,9 @@ export function StaffManager() {
       position: staffMember.position,
       hireDate: staffMember.hireDate,
       address: staffMember.address,
+      city: staffMember.city,
+      state: staffMember.state,
+      zip: staffMember.zip,
       specialties: staffMember.specialties.join(', '),
       notes: staffMember.notes,
       status: staffMember.status,
@@ -450,12 +489,97 @@ export function StaffManager() {
                 </Select>
               </div>
 
-              <div className="md:col-span-2 space-y-2">
+              <div className="space-y-2">
                 <Label htmlFor="address">Address</Label>
                 <Input
                   id="address"
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  placeholder="Street address"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="city">City</Label>
+                <Input
+                  id="city"
+                  value={formData.city}
+                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                  placeholder="City"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="state">State</Label>
+                <Select
+                  value={formData.state}
+                  onValueChange={(value) => setFormData({ ...formData, state: value })}
+                >
+                  <SelectTrigger id="state">
+                    <SelectValue placeholder="Select state" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Alabama">Alabama</SelectItem>
+                    <SelectItem value="Alaska">Alaska</SelectItem>
+                    <SelectItem value="Arizona">Arizona</SelectItem>
+                    <SelectItem value="Arkansas">Arkansas</SelectItem>
+                    <SelectItem value="California">California</SelectItem>
+                    <SelectItem value="Colorado">Colorado</SelectItem>
+                    <SelectItem value="Connecticut">Connecticut</SelectItem>
+                    <SelectItem value="Delaware">Delaware</SelectItem>
+                    <SelectItem value="Florida">Florida</SelectItem>
+                    <SelectItem value="Georgia">Georgia</SelectItem>
+                    <SelectItem value="Hawaii">Hawaii</SelectItem>
+                    <SelectItem value="Idaho">Idaho</SelectItem>
+                    <SelectItem value="Illinois">Illinois</SelectItem>
+                    <SelectItem value="Indiana">Indiana</SelectItem>
+                    <SelectItem value="Iowa">Iowa</SelectItem>
+                    <SelectItem value="Kansas">Kansas</SelectItem>
+                    <SelectItem value="Kentucky">Kentucky</SelectItem>
+                    <SelectItem value="Louisiana">Louisiana</SelectItem>
+                    <SelectItem value="Maine">Maine</SelectItem>
+                    <SelectItem value="Maryland">Maryland</SelectItem>
+                    <SelectItem value="Massachusetts">Massachusetts</SelectItem>
+                    <SelectItem value="Michigan">Michigan</SelectItem>
+                    <SelectItem value="Minnesota">Minnesota</SelectItem>
+                    <SelectItem value="Mississippi">Mississippi</SelectItem>
+                    <SelectItem value="Missouri">Missouri</SelectItem>
+                    <SelectItem value="Montana">Montana</SelectItem>
+                    <SelectItem value="Nebraska">Nebraska</SelectItem>
+                    <SelectItem value="Nevada">Nevada</SelectItem>
+                    <SelectItem value="New Hampshire">New Hampshire</SelectItem>
+                    <SelectItem value="New Jersey">New Jersey</SelectItem>
+                    <SelectItem value="New Mexico">New Mexico</SelectItem>
+                    <SelectItem value="New York">New York</SelectItem>
+                    <SelectItem value="North Carolina">North Carolina</SelectItem>
+                    <SelectItem value="North Dakota">North Dakota</SelectItem>
+                    <SelectItem value="Ohio">Ohio</SelectItem>
+                    <SelectItem value="Oklahoma">Oklahoma</SelectItem>
+                    <SelectItem value="Oregon">Oregon</SelectItem>
+                    <SelectItem value="Pennsylvania">Pennsylvania</SelectItem>
+                    <SelectItem value="Rhode Island">Rhode Island</SelectItem>
+                    <SelectItem value="South Carolina">South Carolina</SelectItem>
+                    <SelectItem value="South Dakota">South Dakota</SelectItem>
+                    <SelectItem value="Tennessee">Tennessee</SelectItem>
+                    <SelectItem value="Texas">Texas</SelectItem>
+                    <SelectItem value="Utah">Utah</SelectItem>
+                    <SelectItem value="Vermont">Vermont</SelectItem>
+                    <SelectItem value="Virginia">Virginia</SelectItem>
+                    <SelectItem value="Washington">Washington</SelectItem>
+                    <SelectItem value="West Virginia">West Virginia</SelectItem>
+                    <SelectItem value="Wisconsin">Wisconsin</SelectItem>
+                    <SelectItem value="Wyoming">Wyoming</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="zip">Zip Code</Label>
+                <Input
+                  id="zip"
+                  value={formData.zip}
+                  onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
+                  placeholder="Zip code"
                 />
               </div>
 
