@@ -76,10 +76,16 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         if (!apt.date) return false
         try {
           const aptDate = new Date(apt.date)
+          aptDate.setHours(0, 0, 0, 0)
+          
           const weekStart = new Date()
+          weekStart.setHours(0, 0, 0, 0)
           weekStart.setDate(weekStart.getDate() - weekStart.getDay())
+          
           const weekEnd = new Date(weekStart)
           weekEnd.setDate(weekStart.getDate() + 6)
+          weekEnd.setHours(23, 59, 59, 999)
+          
           return aptDate >= weekStart && aptDate <= weekEnd
         } catch {
           return false

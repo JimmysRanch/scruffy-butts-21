@@ -100,8 +100,8 @@ export function Settings() {
 
   const [staffPositions, setStaffPositions] = useKV<StaffPosition[]>('staff-positions', [
     { id: 'owner', name: 'Owner', permissions: ['all'], description: 'Full access to all features' },
-    { id: 'admin', name: 'Admin', permissions: ['manage_staff', 'manage_customers', 'manage_services', 'view_reports', 'pos'], description: 'Administrative access' },
-    { id: 'manager', name: 'Manager', permissions: ['manage_staff', 'manage_customers', 'view_reports', 'pos'], description: 'Management level access' },
+    { id: 'admin', name: 'Admin', permissions: ['manage_staff', 'manage_customers', 'manage_services', 'pos'], description: 'Administrative access' },
+    { id: 'manager', name: 'Manager', permissions: ['manage_staff', 'manage_customers', 'pos'], description: 'Management level access' },
     { id: 'groomer', name: 'Groomer', permissions: ['view_appointments', 'manage_customers', 'pos'], description: 'Professional groomer' },
     { id: 'bather', name: 'Bather', permissions: ['view_appointments'], description: 'Bathing specialist' },
     { id: 'front_desk', name: 'Front Desk', permissions: ['manage_customers', 'view_appointments', 'pos'], description: 'Customer service representative' }
@@ -135,7 +135,6 @@ export function Settings() {
     { id: 'manage_services', label: 'Manage Services', description: 'Add, edit, and remove services' },
     { id: 'view_appointments', label: 'View Appointments', description: 'View appointment schedules' },
     { id: 'manage_appointments', label: 'Manage Appointments', description: 'Create, edit, and cancel appointments' },
-    { id: 'view_reports', label: 'View Reports', description: 'Access business reports and analytics' },
     { id: 'pos', label: 'Point of Sale', description: 'Process payments and sales' }
   ]
 
