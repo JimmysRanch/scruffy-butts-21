@@ -792,7 +792,7 @@ export function AppointmentScheduler() {
       </Card>
 
       <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+        <SheetContent className="w-full sm:max-w-lg overflow-y-auto px-6">
           {selectedAppointment && (
             <AppointmentDetail
               appointment={selectedAppointment}
