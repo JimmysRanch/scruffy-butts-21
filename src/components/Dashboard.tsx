@@ -7,6 +7,11 @@ import { format, isToday, startOfWeek, endOfWeek, isWithinInterval } from 'date-
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
 
+interface AppearanceSettings {
+  compactMode?: boolean
+  showWelcomeMessage?: boolean
+}
+
 interface DashboardProps {
   onNavigate: (view: View) => void
 }
@@ -52,9 +57,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [pets] = useKV<Pet[]>('pets', [])
   const [services] = useKV<Service[]>('services', [])
   const [staff] = useKV<StaffMember[]>('staff', [])
-  const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
+  const [appearance] = useKV<AppearanceSettings>('appearance-settings', {})
 
   const isCompact = appearance?.compactMode || false
+  const showWelcome = appearance?.showWelcomeMessage !== false
 
   const today = new Date()
   const todayAppointments = (appointments || []).filter(apt => 
@@ -114,9 +120,11 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Welcome back! Here's what's happening today.
-          </p>
+          {showWelcome && (
+            <p className="text-muted-foreground">
+              Welcome back! Here's what's happening today.
+            </p>
+          )}
         </div>
         <Button onClick={() => onNavigate('appointments')} className="flex items-center gap-2">
           <Plus size={18} />

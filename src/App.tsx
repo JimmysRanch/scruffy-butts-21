@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Toaster } from '@/components/ui/sonner'
 import { Dashboard } from '@/components/Dashboard'
@@ -25,6 +25,35 @@ function App() {
     compactMode: false,
     showWelcomeMessage: true
   })
+
+  useEffect(() => {
+    const root = document.documentElement
+    const theme = appearance?.theme || 'light'
+    
+    const applyTheme = (isDark: boolean) => {
+      if (isDark) {
+        root.classList.add('dark')
+      } else {
+        root.classList.remove('dark')
+      }
+    }
+    
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      applyTheme(mediaQuery.matches)
+      
+      const handleChange = (e: MediaQueryListEvent) => {
+        applyTheme(e.matches)
+      }
+      
+      mediaQuery.addEventListener('change', handleChange)
+      return () => mediaQuery.removeEventListener('change', handleChange)
+    } else if (theme === 'dark') {
+      root.classList.add('dark')
+    } else {
+      root.classList.remove('dark')
+    }
+  }, [appearance?.theme])
 
   const renderView = () => {
     switch (currentView) {
