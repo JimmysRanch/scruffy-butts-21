@@ -13,11 +13,11 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 ## Essential Features
 
 ### Appointment Scheduling
-- **Functionality**: Book, view, edit, and cancel grooming appointments with time slots, services, and customer details
-- **Purpose**: Core business function - without appointments, there's no revenue
-- **Trigger**: Click "New Appointment" or calendar time slot
-- **Progression**: Select date/time → Choose customer/pet → Select services → Add notes → Confirm booking → Calendar updated
-- **Success criteria**: Appointments persist, show in calendar view, prevent double-booking
+- **Functionality**: Comprehensive appointment management with multiple calendar views (day/week/month/list), staff assignments, status workflows (scheduled→confirmed→checked-in→in-progress→completed), search and filtering, conflict detection, reminder/confirmation toggles, duplicate appointments, and detailed appointment tracking with check-in/check-out times
+- **Purpose**: Core business function - without appointments, there's no revenue. Must compete with industry leaders like MoeGo and DaySmart
+- **Trigger**: Click "New Appointment" button, select date/time in calendar, or edit existing appointment
+- **Progression**: Select customer → Choose pet → Select service → Assign staff (optional) → Pick date/time → Add notes → Toggle reminders/confirmations → Schedule → Appointment appears in calendar → Status workflow (confirm → check in → start → complete) → Track throughout lifecycle
+- **Success criteria**: Multiple view modes work smoothly, appointments persist with full details, conflict warnings appear, status transitions work correctly, search/filter returns accurate results, staff color-coding displays, past appointments flagged, detailed view shows complete history
 
 ### Customer & Pet Management
 - **Functionality**: Store customer contact info, pet profiles with breed, size, grooming history, and special needs
@@ -69,15 +69,20 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 - **Success criteria**: Real-time stock tracking, automatic low-stock alerts, transaction history, supplier management, category organization, cost tracking
 
 ## Edge Case Handling
-- **Empty States**: Helpful guidance when no appointments, customers, services, staff, transactions, or inventory items exist yet
-- **Scheduling Conflicts**: Prevent double-booking with clear error messages and alternative suggestions
-- **Missing Information**: Handle incomplete customer/pet profiles gracefully with optional field validation
-- **Long Names/Text**: Truncate and tooltip for lengthy pet names, customer notes, service descriptions, or product names
-- **Mobile Usage**: Responsive design for groomers using tablets/phones in the salon
+- **Empty States**: Helpful guidance when no appointments, customers, services, staff, transactions, or inventory items exist yet, with prominent CTAs to create first items
+- **Scheduling Conflicts**: Detect time slot conflicts and show warnings when staff member already has appointment at selected time
+- **Past Appointments**: Flag appointments in the past that haven't been marked completed/cancelled/no-show with warning badges
+- **Missing Information**: Handle incomplete customer/pet profiles gracefully with optional field validation, allow unassigned staff on appointments
+- **Long Names/Text**: Truncate and tooltip for lengthy pet names, customer notes, service descriptions, or product names in compact views
+- **Mobile Usage**: Responsive design for groomers using tablets/phones in the salon, touch-friendly calendar navigation
+- **Multiple View Modes**: Gracefully transition between day/week/month/list views maintaining date context and filters
+- **Status Workflows**: Only show valid status transitions based on current state and appointment timing
+- **Search & Filter**: Handle empty search results with helpful messaging, clear all filters button
 - **Payment Processing**: Handle payment failures gracefully with retry options and clear error messages
 - **Cart Management**: Prevent accidental cart clearing with confirmation dialogs for significant actions
 - **Low Stock Alerts**: Prominent notifications when inventory items reach reorder levels
 - **Negative Stock**: Prevent stock levels from going negative with validation on usage transactions
+- **Date Navigation**: Smooth navigation between dates with today button for quick return to current date
 
 ## Design Direction
 The design should feel professional yet warm - like a high-end veterinary clinic that genuinely loves animals. Clean, spacious interface with subtle pet-themed touches that don't compromise the business-focused functionality.
@@ -111,9 +116,9 @@ Subtle, purposeful animations that guide user attention and provide feedback wit
 - **Hierarchy of Movement**: Priority on form feedback and navigation transitions, minimal decorative animation
 
 ## Component Selection
-- **Components**: Cards for appointments/customers/transactions/settings/staff/inventory items, Calendar for scheduling, Forms for data entry, Tables for service lists and inventory, Badges for appointment status and stock levels, Shopping cart UI for POS, Switch components for settings toggles, Tabs for inventory sections, Drag-and-drop grid layout for dashboard widgets, Dialog for widget configuration
-- **Customizations**: Custom calendar component optimized for daily/weekly appointment views, pet avatar placeholders, POS cart with quantity controls, tabbed settings interface, inventory transaction dialogs, low stock alerts, draggable/resizable dashboard widgets with configuration dialog, activity feed with real-time updates
-- **States**: Buttons show loading states during saves, form inputs highlight validation errors, appointments show status colors, payment processing states, settings save confirmation, inventory stock status badges (in stock/low stock/out of stock), widget drag states with visual placeholders, widget enable/disable states
-- **Icon Selection**: Phosphor icons - Calendar for scheduling, User for customers, Scissors for services, Phone for contact, CashRegister for POS, CreditCard/Money for payment methods, Gear for settings, Bell for notifications, Shield for security, UserCircle for staff management, Package for inventory, TrendUp/TrendDown for stock changes and revenue, Warning for low stock, ShoppingCart for reorders, ChartBar for analytics, Activity for activity feed, Lightning for quick actions, Sliders for customization
-- **Spacing**: Consistent 4/6/8 Tailwind spacing scale for tight/medium/loose layouts, dynamic spacing in grid layout based on compact mode
-- **Mobile**: Collapsible sidebar navigation, stacked cards on mobile, touch-friendly appointment time slots, responsive POS interface for tablet use, responsive settings tabs, scrollable inventory tables, responsive dashboard grid that adapts to smaller screens
+- **Components**: Cards for appointments/customers/transactions/settings/staff/inventory items, Multi-view calendar (day/week/month/list) with tabs for scheduling, Forms for data entry with inline validation, Tables for service lists and inventory, Badges for appointment status colors and stock levels, Shopping cart UI for POS, Switch components for settings toggles and appointment reminders, Tabs for inventory sections and calendar views, Drag-and-drop grid layout for dashboard widgets, Dialog for appointment creation/editing, Sheet for appointment details sidebar, Filters panel with search
+- **Customizations**: Advanced calendar component with day/week/month/list views, color-coded staff assignments, appointment status workflow with 7 states (scheduled/confirmed/checked-in/in-progress/completed/cancelled/no-show), conflict detection and warnings, search and filter system, pet avatar placeholders, POS cart with quantity controls, tabbed settings interface, inventory transaction dialogs, low stock alerts, draggable/resizable dashboard widgets with configuration dialog, activity feed with real-time updates, appointment detail drawer with full history
+- **States**: Buttons show loading states during saves, form inputs highlight validation errors, appointments show status colors with visual differentiation (blue/green/purple/orange/gray/red/amber), payment processing states, settings save confirmation, inventory stock status badges (in stock/low stock/out of stock), widget drag states with visual placeholders, widget enable/disable states, past appointment warnings, staff color indicators, reminder/confirmation toggles
+- **Icon Selection**: Phosphor icons - Calendar/CalendarBlank for scheduling views, User/UserCircle for customers and staff, Dog for pets, Scissors/Package for services, Phone/Envelope for contact, CashRegister for POS, CreditCard/Money for payment methods, Gear for settings, Bell/BellSlash for notifications and reminders, Shield for security, Clock/ClockCounterClockwise for time and no-shows, CheckCircle/XCircle for status, MagnifyingGlass for search, Funnel for filters, Plus for new items, PencilSimple for edit, Trash for delete, Copy for duplicate, CaretLeft/CaretRight for navigation, List for list view, WarningCircle for alerts, Check for confirmation
+- **Spacing**: Consistent 4/6/8 Tailwind spacing scale for tight/medium/loose layouts, dynamic spacing in grid layout based on compact mode, generous padding in appointment cards for touch targets
+- **Mobile**: Collapsible sidebar navigation, stacked cards on mobile, touch-friendly appointment time slots and calendar days, responsive calendar that adapts view modes, sheet drawer for appointment details, responsive filters panel, responsive POS interface for tablet use, responsive settings tabs, scrollable inventory tables, responsive dashboard grid that adapts to smaller screens
