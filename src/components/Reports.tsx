@@ -692,74 +692,78 @@ export function Reports() {
 
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ${isCompact ? 'gap-3' : 'gap-4'}`}>
           {kpis.slice(0, 4).map((kpi, idx) => (
-            <Tooltip key={idx}>
-              <TooltipTrigger asChild>
-                <Card className="cursor-help">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{kpi.label}</CardTitle>
-                    <Info className="text-muted-foreground" size={16} />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {kpi.format === 'currency' && '$'}
-                      {kpi.format === 'currency' 
-                        ? (kpi.value as number).toFixed(2)
-                        : kpi.format === 'percentage'
-                        ? (kpi.value as number).toFixed(1)
-                        : kpi.value
-                      }
-                      {kpi.format === 'percentage' && '%'}
-                    </div>
-                    {kpi.delta !== undefined && (
-                      <div className="flex items-center text-xs mt-1">
-                        {kpi.delta >= 0 ? (
-                          <ArrowUp size={14} className="text-green-500" />
-                        ) : (
-                          <ArrowDown size={14} className="text-red-500" />
-                        )}
-                        <span className={kpi.delta >= 0 ? 'text-green-500' : 'text-red-500'}>
-                          {Math.abs(kpi.delta).toFixed(1)}%
-                        </span>
-                        <span className="ml-1 text-muted-foreground">vs prior</span>
-                      </div>
+            <Card key={idx}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{kpi.label}</CardTitle>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="text-muted-foreground hover:text-foreground transition-colors">
+                      <Info size={16} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">{kpi.tooltip}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {kpi.format === 'currency' && '$'}
+                  {kpi.format === 'currency' 
+                    ? (kpi.value as number).toFixed(2)
+                    : kpi.format === 'percentage'
+                    ? (kpi.value as number).toFixed(1)
+                    : kpi.value
+                  }
+                  {kpi.format === 'percentage' && '%'}
+                </div>
+                {kpi.delta !== undefined && (
+                  <div className="flex items-center text-xs mt-1">
+                    {kpi.delta >= 0 ? (
+                      <ArrowUp size={14} className="text-green-500" />
+                    ) : (
+                      <ArrowDown size={14} className="text-red-500" />
                     )}
-                  </CardContent>
-                </Card>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="max-w-xs">{kpi.tooltip}</p>
-              </TooltipContent>
-            </Tooltip>
+                    <span className={kpi.delta >= 0 ? 'text-green-500' : 'text-red-500'}>
+                      {Math.abs(kpi.delta).toFixed(1)}%
+                    </span>
+                    <span className="ml-1 text-muted-foreground">vs prior</span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           ))}
         </div>
 
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ${isCompact ? 'gap-3' : 'gap-4'}`}>
           {kpis.slice(4).map((kpi, idx) => (
-            <Tooltip key={idx + 4}>
-              <TooltipTrigger asChild>
-                <Card className="cursor-help">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{kpi.label}</CardTitle>
-                    <Info className="text-muted-foreground" size={16} />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {kpi.format === 'currency' && '$'}
-                      {kpi.format === 'currency' 
-                        ? (kpi.value as number).toFixed(2)
-                        : kpi.format === 'percentage'
-                        ? (kpi.value as number).toFixed(1)
-                        : kpi.value
-                      }
-                      {kpi.format === 'percentage' && '%'}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="max-w-xs">{kpi.tooltip}</p>
-              </TooltipContent>
-            </Tooltip>
+            <Card key={idx + 4}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{kpi.label}</CardTitle>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="text-muted-foreground hover:text-foreground transition-colors">
+                      <Info size={16} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">{kpi.tooltip}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {kpi.format === 'currency' && '$'}
+                  {kpi.format === 'currency' 
+                    ? (kpi.value as number).toFixed(2)
+                    : kpi.format === 'percentage'
+                    ? (kpi.value as number).toFixed(1)
+                    : kpi.value
+                  }
+                  {kpi.format === 'percentage' && '%'}
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
 

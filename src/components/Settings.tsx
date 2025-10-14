@@ -109,12 +109,8 @@ export function Settings() {
   ])
 
   const [services, setServices] = useKV<Service[]>('services', [])
-  const [customers, setCustomers] = useKV<any[]>('customers', [])
-  const [appointments, setAppointments] = useKV<any[]>('appointments', [])
-  const [transactions, setTransactions] = useKV<any[]>('transactions', [])
-  const [staff, setStaff] = useKV<any[]>('staff', [])
 
-  const [activeTab, setActiveTab] = useState<'business' | 'services' | 'notifications' | 'appearance' | 'security' | 'staff-positions' | 'data'>('business')
+  const [activeTab, setActiveTab] = useState<'business' | 'services' | 'notifications' | 'appearance' | 'security' | 'staff-positions'>('business')
   const [showPositionDialog, setShowPositionDialog] = useState(false)
   const [editingPosition, setEditingPosition] = useState<StaffPosition | null>(null)
   const [positionFormData, setPositionFormData] = useState({
@@ -132,8 +128,6 @@ export function Settings() {
     price: 50,
     category: 'Basic Grooming'
   })
-
-  const [showSeedConfirm, setShowSeedConfirm] = useState(false)
 
   const availablePermissions = [
     { id: 'all', label: 'All Permissions', description: 'Full access to everything' },
@@ -298,24 +292,6 @@ export function Settings() {
     toast.success('Service deleted successfully')
   }
 
-  const handleSeedData = () => {
-    try {
-      const seedData = generateSeedData()
-      
-      setCustomers(seedData.customers as any)
-      setServices(seedData.services as any)
-      setStaff(seedData.staff as any)
-      setAppointments(seedData.appointments as any)
-      setTransactions(seedData.transactions as any)
-      
-      setShowSeedConfirm(false)
-      toast.success(`Seed data loaded successfully! Added ${seedData.customers.length} customers, ${seedData.services.length} services, ${seedData.staff.length} staff, ${seedData.appointments.length} appointments, and ${seedData.transactions.length} transactions.`)
-    } catch (error) {
-      toast.error('Failed to load seed data')
-      console.error(error)
-    }
-  }
-
   const handleSave = () => {
     toast.success('Settings saved successfully!')
   }
@@ -328,8 +304,7 @@ export function Settings() {
     { id: 'staff-positions' as const, label: 'Staff Positions', icon: Users },
     { id: 'notifications' as const, label: 'Notifications', icon: Bell },
     { id: 'appearance' as const, label: 'Appearance', icon: PaintBrush },
-    { id: 'security' as const, label: 'Security', icon: Shield },
-    { id: 'data' as const, label: 'Data Management', icon: Database }
+    { id: 'security' as const, label: 'Security', icon: Shield }
   ]
 
   return (
@@ -921,45 +896,6 @@ export function Settings() {
               </CardContent>
             </Card>
           )}
-
-          {activeTab === 'data' && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Database size={20} />
-                  Data Management
-                </CardTitle>
-                <CardDescription>
-                  Manage your application data and seed demo content
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="space-y-3">
-                    <Label>Load Demo Data</Label>
-                    <Alert>
-                      <Warning className="h-4 w-4" />
-                      <AlertDescription>
-                        Loading demo data will add sample customers, services, staff, appointments, and transactions to your system. 
-                        This is useful for testing and exploring the Reports tab functionality.
-                      </AlertDescription>
-                    </Alert>
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <p className="font-medium">Seed Demo Data</p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Current data: {customers?.length || 0} customers, {services?.length || 0} services, {staff?.length || 0} staff, {appointments?.length || 0} appointments, {transactions?.length || 0} transactions
-                        </p>
-                      </div>
-                      <Button onClick={() => setShowSeedConfirm(true)} variant="default">
-                        Load Demo Data
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
       </div>
 
@@ -1145,35 +1081,6 @@ export function Settings() {
               </Button>
             </DialogFooter>
           </form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showSeedConfirm} onOpenChange={setShowSeedConfirm}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Load Demo Data?</DialogTitle>
-            <DialogDescription>
-              This will add sample data to your system including:
-              <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>7 customers with pets</li>
-                <li>6 grooming services</li>
-                <li>3 staff members</li>
-                <li>~60 appointments (past 90 days)</li>
-                <li>~45 transactions</li>
-              </ul>
-              <p className="mt-3 text-amber-600 dark:text-amber-500">
-                This will merge with your existing data. You can delete individual items later if needed.
-              </p>
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowSeedConfirm(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSeedData}>
-              Load Demo Data
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
