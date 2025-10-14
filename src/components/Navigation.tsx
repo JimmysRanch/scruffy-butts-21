@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Calendar, Users, ChartBar, CashRegister, Gear, UserCircle, Package } from '@phosphor-icons/react'
+import logo from '@/assets/images/IMG_0330.png'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
 
@@ -22,8 +23,13 @@ export function Navigation({ currentView, onNavigate, isCompact = false }: Navig
   return (
     <nav className="bg-card border-b border-border">
       <div className={`flex items-center justify-between ${isCompact ? 'h-10 px-3' : 'h-14 px-4'}`}>
-        <div className="flex items-center">
-          <h1 className={`font-bold text-foreground ${isCompact ? 'text-base' : 'text-xl'}`}>Scruffy Butts</h1>
+        <div className="flex items-center gap-3">
+          <img 
+            src={logo} 
+            alt="Scruffy Butts Logo" 
+            className={`${isCompact ? 'h-7' : 'h-9'} w-auto object-contain`}
+          />
+          <h1 className={`font-bold text-foreground ${isCompact ? 'text-base' : 'text-xl'} hidden sm:block`}>Scruffy Butts</h1>
         </div>
         
         <div className="flex items-center space-x-1">
