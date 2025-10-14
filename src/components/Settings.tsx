@@ -59,7 +59,7 @@ interface NotificationSettings {
 }
 
 interface AppearanceSettings {
-  theme: 'light' | 'dark' | 'system'
+  theme: 'light' | 'dark' | 'system' | 'pet-friendly'
   compactMode: boolean
   showWelcomeMessage: boolean
 }
@@ -84,7 +84,7 @@ export function Settings() {
   })
 
   const [appearance, setAppearance] = useKV<AppearanceSettings>('appearance-settings', {
-    theme: 'light',
+    theme: 'pet-friendly',
     compactMode: false,
     showWelcomeMessage: true
   })
@@ -702,7 +702,7 @@ export function Settings() {
                     <Label>Theme</Label>
                     <Select
                       value={appearance?.theme || 'light'}
-                      onValueChange={(value: 'light' | 'dark' | 'system') => 
+                      onValueChange={(value: 'light' | 'dark' | 'system' | 'pet-friendly') => 
                         setAppearance(prev => ({ ...prev!, theme: value }))
                       }
                     >
@@ -712,6 +712,7 @@ export function Settings() {
                       <SelectContent>
                         <SelectItem value="light">Light</SelectItem>
                         <SelectItem value="dark">Dark</SelectItem>
+                        <SelectItem value="pet-friendly">Pet-Friendly 🐾</SelectItem>
                         <SelectItem value="system">System</SelectItem>
                       </SelectContent>
                     </Select>
