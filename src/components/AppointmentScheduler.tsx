@@ -286,7 +286,14 @@ export function AppointmentScheduler() {
           </Card>
         ) : (
           (appointments || [])
-            .sort((a, b) => new Date(a.date + ' ' + a.time).getTime() - new Date(b.date + ' ' + b.time).getTime())
+            .filter(a => a.date)
+            .sort((a, b) => {
+              try {
+                return new Date(a.date + ' ' + (a.time || '')).getTime() - new Date(b.date + ' ' + (b.time || '')).getTime()
+              } catch {
+                return 0
+              }
+            })
             .map((appointment) => (
               <Card key={appointment.id}>
                 <CardHeader>
@@ -303,7 +310,7 @@ export function AppointmentScheduler() {
                       </CardDescription>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">{format(new Date(appointment.date), 'MMM dd, yyyy')}</p>
+                      <p className="font-medium">{appointment.date ? format(new Date(appointment.date), 'MMM dd, yyyy') : 'No date'}</p>
                       <p className="text-sm text-muted-foreground">{appointment.time}</p>
                     </div>
                   </div>

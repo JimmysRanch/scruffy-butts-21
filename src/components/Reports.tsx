@@ -124,18 +124,28 @@ export function Reports() {
   const filteredAppointments = useMemo(() => {
     const { start, end } = getDateRangeFilter()
     return (appointments || []).filter(apt => {
-      const aptDate = parseISO(apt.date)
-      const inRange = isWithinInterval(aptDate, { start, end })
-      const matchesStaff = selectedStaff === 'all' || apt.staffId === selectedStaff
-      return inRange && matchesStaff
+      if (!apt.date || typeof apt.date !== 'string') return false
+      try {
+        const aptDate = parseISO(apt.date)
+        const inRange = isWithinInterval(aptDate, { start, end })
+        const matchesStaff = selectedStaff === 'all' || apt.staffId === selectedStaff
+        return inRange && matchesStaff
+      } catch {
+        return false
+      }
     })
   }, [appointments, dateRange, customStartDate, customEndDate, selectedStaff])
 
   const filteredTransactions = useMemo(() => {
     const { start, end } = getDateRangeFilter()
     return (transactions || []).filter(txn => {
-      const txnDate = parseISO(txn.date)
-      return isWithinInterval(txnDate, { start, end })
+      if (!txn.date || typeof txn.date !== 'string') return false
+      try {
+        const txnDate = parseISO(txn.date)
+        return isWithinInterval(txnDate, { start, end })
+      } catch {
+        return false
+      }
     })
   }, [transactions, dateRange, customStartDate, customEndDate])
 
@@ -152,8 +162,13 @@ export function Reports() {
     }
     
     const prevAppointments = (appointments || []).filter(apt => {
-      const aptDate = parseISO(apt.date)
-      return isWithinInterval(aptDate, previousPeriod) && apt.status === 'completed'
+      if (!apt.date || typeof apt.date !== 'string') return false
+      try {
+        const aptDate = parseISO(apt.date)
+        return isWithinInterval(aptDate, previousPeriod) && apt.status === 'completed'
+      } catch {
+        return false
+      }
     })
     
     const prevRevenue = prevAppointments.reduce((sum, apt) => sum + apt.price, 0)
@@ -696,7 +711,7 @@ export function Reports() {
                         <TableCell className="font-medium">{customer.name}</TableCell>
                         <TableCell className="text-right">{customer.visits}</TableCell>
                         <TableCell className="text-right">${customer.revenue.toFixed(2)}</TableCell>
-                        <TableCell className="text-right">{format(parseISO(customer.lastVisit), 'MMM dd, yyyy')}</TableCell>
+                        <TableCell className="text-right">{customer.lastVisit ? format(parseISO(customer.lastVisit), 'MMM dd, yyyy') : 'N/A'}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

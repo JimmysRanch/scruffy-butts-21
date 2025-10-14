@@ -52,9 +52,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const isCompact = appearance?.compactMode || false
 
   const today = format(new Date(), 'yyyy-MM-dd')
-  const todayAppointments = (appointments || []).filter(apt => apt.date === today)
+  const todayAppointments = (appointments || []).filter(apt => apt.date && apt.date === today)
   const upcomingAppointments = (appointments || []).filter(apt => 
-    apt.date > today && apt.status === 'scheduled'
+    apt.date && apt.date > today && apt.status === 'scheduled'
   ).slice(0, 3)
 
   const stats = [
@@ -73,12 +73,17 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     {
       title: "This Week",
       value: (appointments || []).filter(apt => {
-        const aptDate = new Date(apt.date)
-        const weekStart = new Date()
-        weekStart.setDate(weekStart.getDate() - weekStart.getDay())
-        const weekEnd = new Date(weekStart)
-        weekEnd.setDate(weekStart.getDate() + 6)
-        return aptDate >= weekStart && aptDate <= weekEnd
+        if (!apt.date) return false
+        try {
+          const aptDate = new Date(apt.date)
+          const weekStart = new Date()
+          weekStart.setDate(weekStart.getDate() - weekStart.getDay())
+          const weekEnd = new Date(weekStart)
+          weekEnd.setDate(weekStart.getDate() + 6)
+          return aptDate >= weekStart && aptDate <= weekEnd
+        } catch {
+          return false
+        }
       }).length,
       icon: ChartBar,
       action: () => onNavigate('appointments'),
@@ -174,7 +179,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                       <p className="text-sm text-muted-foreground">{appointment.service}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium">{format(new Date(appointment.date), 'MMM dd')}</p>
+                      <p className="text-sm font-medium">{appointment.date ? format(new Date(appointment.date), 'MMM dd') : 'No date'}</p>
                       <p className="text-sm text-muted-foreground">{appointment.time}</p>
                     </div>
                   </div>
