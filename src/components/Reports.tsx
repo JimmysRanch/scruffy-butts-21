@@ -257,9 +257,12 @@ export function Reports() {
     
     filteredAppointments.forEach(apt => {
       if (apt.time && typeof apt.time === 'string') {
-        const hour = parseInt(apt.time.split(':')[0])
-        if (!isNaN(hour)) {
-          hourMap.set(hour, (hourMap.get(hour) || 0) + 1)
+        const timeParts = apt.time.split(':')
+        if (timeParts.length > 0) {
+          const hour = parseInt(timeParts[0])
+          if (!isNaN(hour)) {
+            hourMap.set(hour, (hourMap.get(hour) || 0) + 1)
+          }
         }
       }
     })
