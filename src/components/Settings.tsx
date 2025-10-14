@@ -32,7 +32,6 @@ import {
   Warning
 } from '@phosphor-icons/react'
 import { StaffPosition } from './StaffManager'
-import { generateSeedData } from '@/lib/seed-data'
 
 interface Service {
   id: string
