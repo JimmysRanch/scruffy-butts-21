@@ -1112,17 +1112,25 @@ function AppointmentCard({
       onClick={onClick}
     >
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4 flex-1 min-w-0">
-          <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
             <Dog size={16} className="flex-shrink-0 text-foreground/70" />
-            <h3 className="font-semibold truncate">{appointment.petName}</h3>
+            <h3 className="font-semibold">
+              {appointment.petName}
+              {staffMember && (
+                <span className="font-normal text-muted-foreground">
+                  {' '}with {staffMember.firstName} {staffMember.lastName}
+                </span>
+              )}
+            </h3>
           </div>
           
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
+            <User size={14} />
+            <span>{appointment.customerFirstName} {appointment.customerLastName}</span>
+          </div>
+
           <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
-            <div className="flex items-center gap-1.5">
-              <User size={14} />
-              <span>{appointment.customerFirstName} {appointment.customerLastName}</span>
-            </div>
             <div className="flex items-center gap-1.5">
               <Package size={14} />
               <span>{appointment.service}</span>
@@ -1135,12 +1143,6 @@ function AppointmentCard({
               <Clock size={14} />
               <span>{appointment.time}</span>
             </div>
-            {staffMember && (
-              <div className="flex items-center gap-1.5">
-                <UserCircle size={14} />
-                <span>{staffMember.firstName} {staffMember.lastName}</span>
-              </div>
-            )}
           </div>
         </div>
 
