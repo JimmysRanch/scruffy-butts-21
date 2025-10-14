@@ -34,11 +34,11 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 - **Success criteria**: Services display correctly, pricing calculates automatically
 
 ### Dashboard Overview
-- **Functionality**: Today's schedule, upcoming appointments, recent customers, revenue summary
-- **Purpose**: Quick business health check and daily workflow organization
+- **Functionality**: Customizable widget-based dashboard with drag-and-drop layout, including today's schedule, upcoming appointments, recent customers, revenue summary, activity feed, quick actions, and various stat widgets
+- **Purpose**: Quick business health check and daily workflow organization with personalized layout
 - **Trigger**: App launch or dashboard navigation
-- **Progression**: Load dashboard → Review today's appointments → Check recent activity → Navigate to needed functions
-- **Success criteria**: Real-time data display, intuitive navigation to other features
+- **Progression**: Load dashboard → Review widgets → Customize layout (optional) → Drag/resize widgets → Toggle widgets on/off → Check activity feed → Navigate to needed functions
+- **Success criteria**: Real-time data display, persistent widget configuration, smooth drag-and-drop interaction, activity feed shows recent team actions (appointments completed, payments processed, customers added)
 
 ### Point of Sale (POS)
 - **Functionality**: Process payments for services, manage cart, track transactions, support cash/card payments
@@ -111,9 +111,9 @@ Subtle, purposeful animations that guide user attention and provide feedback wit
 - **Hierarchy of Movement**: Priority on form feedback and navigation transitions, minimal decorative animation
 
 ## Component Selection
-- **Components**: Cards for appointments/customers/transactions/settings/staff/inventory items, Calendar for scheduling, Forms for data entry, Tables for service lists and inventory, Badges for appointment status and stock levels, Shopping cart UI for POS, Switch components for settings toggles, Tabs for inventory sections
-- **Customizations**: Custom calendar component optimized for daily/weekly appointment views, pet avatar placeholders, POS cart with quantity controls, tabbed settings interface, inventory transaction dialogs, low stock alerts
-- **States**: Buttons show loading states during saves, form inputs highlight validation errors, appointments show status colors, payment processing states, settings save confirmation, inventory stock status badges (in stock/low stock/out of stock)
-- **Icon Selection**: Phosphor icons - Calendar for scheduling, User for customers, Scissors for services, Phone for contact, CashRegister for POS, CreditCard/Money for payment methods, Gear for settings, Bell for notifications, Shield for security, UserCircle for staff management, Package for inventory, TrendUp/TrendDown for stock changes, Warning for low stock, ShoppingCart for reorders, ChartBar for analytics
-- **Spacing**: Consistent 4/6/8 Tailwind spacing scale for tight/medium/loose layouts
-- **Mobile**: Collapsible sidebar navigation, stacked cards on mobile, touch-friendly appointment time slots, responsive POS interface for tablet use, responsive settings tabs, scrollable inventory tables
+- **Components**: Cards for appointments/customers/transactions/settings/staff/inventory items, Calendar for scheduling, Forms for data entry, Tables for service lists and inventory, Badges for appointment status and stock levels, Shopping cart UI for POS, Switch components for settings toggles, Tabs for inventory sections, Drag-and-drop grid layout for dashboard widgets, Dialog for widget configuration
+- **Customizations**: Custom calendar component optimized for daily/weekly appointment views, pet avatar placeholders, POS cart with quantity controls, tabbed settings interface, inventory transaction dialogs, low stock alerts, draggable/resizable dashboard widgets with configuration dialog, activity feed with real-time updates
+- **States**: Buttons show loading states during saves, form inputs highlight validation errors, appointments show status colors, payment processing states, settings save confirmation, inventory stock status badges (in stock/low stock/out of stock), widget drag states with visual placeholders, widget enable/disable states
+- **Icon Selection**: Phosphor icons - Calendar for scheduling, User for customers, Scissors for services, Phone for contact, CashRegister for POS, CreditCard/Money for payment methods, Gear for settings, Bell for notifications, Shield for security, UserCircle for staff management, Package for inventory, TrendUp/TrendDown for stock changes and revenue, Warning for low stock, ShoppingCart for reorders, ChartBar for analytics, Activity for activity feed, Lightning for quick actions, Sliders for customization
+- **Spacing**: Consistent 4/6/8 Tailwind spacing scale for tight/medium/loose layouts, dynamic spacing in grid layout based on compact mode
+- **Mobile**: Collapsible sidebar navigation, stacked cards on mobile, touch-friendly appointment time slots, responsive POS interface for tablet use, responsive settings tabs, scrollable inventory tables, responsive dashboard grid that adapts to smaller screens

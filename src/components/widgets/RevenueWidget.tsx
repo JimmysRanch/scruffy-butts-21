@@ -1,0 +1,99 @@
+import { useKV } from '@github/spark/hooks'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { TrendUp, TrendDown } from '@phosphor-icons/react'
+import { format, startOfWeek, startOfMonth, endOfWeek, endOfMonth } from 'date-fns'
+
+interface Transaction {
+  id: string
+  total: number
+  timestamp: Date | string
+}
+
+interface RevenueWidgetProps {
+  period: 'today' | 'week' | 'month'
+}
+
+export function RevenueWidget({ period }: RevenueWidgetProps) {
+  const [transactions] = useKV<Transaction[]>('transactions', [])
+
+  const getRevenue = () => {
+    if (!transactions) return { current: 0, previous: 0, label: '' }
+
+    const now = new Date()
+    let currentStart: Date
+    let currentEnd: Date
+    let previousStart: Date
+    let previousEnd: Date
+    let label: string
+
+    switch (period) {
+      case 'today':
+        currentStart = new Date(now.setHours(0, 0, 0, 0))
+        currentEnd = new Date(now.setHours(23, 59, 59, 999))
+        previousStart = new Date(currentStart)
+        previousStart.setDate(previousStart.getDate() - 1)
+        previousEnd = new Date(previousStart)
+        previousEnd.setHours(23, 59, 59, 999)
+        label = "Today's Revenue"
+        break
+      case 'week':
+        currentStart = startOfWeek(now)
+        currentEnd = endOfWeek(now)
+        previousStart = new Date(currentStart)
+        previousStart.setDate(previousStart.getDate() - 7)
+        previousEnd = new Date(currentEnd)
+        previousEnd.setDate(previousEnd.getDate() - 7)
+        label = "This Week's Revenue"
+        break
+      case 'month':
+        currentStart = startOfMonth(now)
+        currentEnd = endOfMonth(now)
+        previousStart = new Date(currentStart)
+        previousStart.setMonth(previousStart.getMonth() - 1)
+        previousEnd = endOfMonth(previousStart)
+        label = "This Month's Revenue"
+        break
+    }
+
+    const current = transactions
+      .filter(t => {
+        const date = new Date(t.timestamp)
+        return date >= currentStart && date <= currentEnd
+      })
+      .reduce((sum, t) => sum + t.total, 0)
+
+    const previous = transactions
+      .filter(t => {
+        const date = new Date(t.timestamp)
+        return date >= previousStart && date <= previousEnd
+      })
+      .reduce((sum, t) => sum + t.total, 0)
+
+    return { current, previous, label }
+  }
+
+  const { current, previous, label } = getRevenue()
+  const change = previous > 0 ? ((current - previous) / previous) * 100 : 0
+  const isPositive = change >= 0
+
+  return (
+    <Card className="h-full">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{label}</CardTitle>
+        {isPositive ? (
+          <TrendUp size={20} className="text-green-600" />
+        ) : (
+          <TrendDown size={20} className="text-red-600" />
+        )}
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">${current.toFixed(2)}</div>
+        {previous > 0 && (
+          <p className={`text-xs ${isPositive ? 'text-green-600' : 'text-red-600'} mt-1`}>
+            {isPositive ? '+' : ''}{change.toFixed(1)}% from last {period === 'today' ? 'day' : period}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
