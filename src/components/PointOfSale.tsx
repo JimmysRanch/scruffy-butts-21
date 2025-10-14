@@ -309,6 +309,7 @@ export function PointOfSale() {
             <div className="space-y-4">
               {transactionsList.slice(0, 5).map(transaction => {
                 const customer = customersList.find(c => c.id === transaction.customerId)
+                const total = transaction?.total ?? 0
                 return (
                   <div key={transaction.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div>
@@ -320,11 +321,11 @@ export function PointOfSale() {
                         {new Date(transaction.timestamp).toLocaleTimeString()}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {transaction.items.length} item(s) • {transaction.paymentMethod}
+                        {transaction.items?.length ?? 0} item(s) • {transaction.paymentMethod}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold">${transaction.total.toFixed(2)}</p>
+                      <p className="font-bold">${total.toFixed(2)}</p>
                       <Badge variant={transaction.paymentMethod === 'cash' ? 'secondary' : 'default'}>
                         {transaction.paymentMethod}
                       </Badge>
