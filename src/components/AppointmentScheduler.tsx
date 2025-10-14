@@ -170,13 +170,13 @@ export function AppointmentScheduler() {
 
     const conflicts = (appointments || []).filter(apt => 
       apt.date === appointmentDate &&
-      apt.staffId === formStaff &&
+      apt.staffId === (formStaff === 'unassigned' ? undefined : formStaff) &&
       apt.status !== 'cancelled' &&
       apt.status !== 'no-show' &&
       apt.id !== selectedAppointment?.id
     )
 
-    if (conflicts.length > 0 && formStaff) {
+    if (conflicts.length > 0 && formStaff !== 'unassigned') {
       toast.warning('Time slot may conflict with existing appointment')
     }
 
@@ -192,7 +192,7 @@ export function AppointmentScheduler() {
                 customerId: customer.id,
                 service: service.name,
                 serviceId: service.id,
-                staffId: formStaff || undefined,
+                staffId: formStaff === 'unassigned' ? undefined : formStaff || undefined,
                 date: formDate,
                 time: formTime,
                 endTime,
@@ -215,7 +215,7 @@ export function AppointmentScheduler() {
         customerId: customer.id,
         service: service.name,
         serviceId: service.id,
-        staffId: formStaff || undefined,
+        staffId: formStaff === 'unassigned' ? undefined : formStaff || undefined,
         date: formDate,
         time: formTime,
         endTime,
@@ -240,7 +240,7 @@ export function AppointmentScheduler() {
     setFormCustomer('')
     setFormPet('')
     setFormService('')
-    setFormStaff('')
+    setFormStaff('unassigned')
     setFormDate('')
     setFormTime('')
     setFormNotes('')
@@ -253,7 +253,7 @@ export function AppointmentScheduler() {
     setSelectedAppointment(appointment)
     setFormCustomer(appointment.customerId)
     setFormService(appointment.serviceId)
-    setFormStaff(appointment.staffId || '')
+    setFormStaff(appointment.staffId || 'unassigned')
     setFormDate(appointment.date)
     setFormTime(appointment.time)
     setFormNotes(appointment.notes || '')
@@ -529,7 +529,7 @@ export function AppointmentScheduler() {
                         <SelectValue placeholder="Unassigned" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Unassigned</SelectItem>
+                        <SelectItem value="unassigned">Unassigned</SelectItem>
                         {(staff || []).map((member) => (
                           <SelectItem key={member.id} value={member.id}>
                             {member.firstName} {member.lastName}
