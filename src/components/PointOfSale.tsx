@@ -23,9 +23,19 @@ interface CartItem {
 
 interface Customer {
   id: string
-  name: string
+  firstName: string
+  lastName: string
   email: string
   phone: string
+  pets: Pet[]
+}
+
+interface Pet {
+  id: string
+  name: string
+  breed: string
+  size: 'small' | 'medium' | 'large'
+  notes?: string
 }
 
 interface Transaction {
@@ -180,7 +190,7 @@ export function PointOfSale() {
                     <SelectItem value="walk-in">Walk-in Customer</SelectItem>
                     {customersList.map(customer => (
                       <SelectItem key={customer.id} value={customer.id}>
-                        {customer.name}
+                        {customer.firstName} {customer.lastName}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -298,7 +308,7 @@ export function PointOfSale() {
                   <div key={transaction.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div>
                       <p className="font-medium">
-                        {customer ? customer.name : 'Walk-in Customer'}
+                        {customer ? `${customer.firstName} ${customer.lastName}` : 'Walk-in Customer'}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {new Date(transaction.timestamp).toLocaleDateString()} at{' '}

@@ -14,18 +14,33 @@ interface DashboardProps {
 interface Appointment {
   id: string
   petName: string
-  customerName: string
+  customerFirstName: string
+  customerLastName: string
+  customerId: string
   service: string
   date: string
   time: string
+  duration: number
+  price: number
   status: 'scheduled' | 'completed' | 'cancelled'
+  notes?: string
 }
 
 interface Customer {
   id: string
-  name: string
+  firstName: string
+  lastName: string
   email: string
   phone: string
+  pets: Pet[]
+}
+
+interface Pet {
+  id: string
+  name: string
+  breed: string
+  size: 'small' | 'medium' | 'large'
+  notes?: string
 }
 
 export function Dashboard({ onNavigate }: DashboardProps) {
@@ -117,7 +132,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                   <div key={appointment.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
                     <div>
                       <p className="font-medium">{appointment.petName}</p>
-                      <p className="text-sm text-muted-foreground">{appointment.customerName}</p>
+                      <p className="text-sm text-muted-foreground">{appointment.customerFirstName} {appointment.customerLastName}</p>
                       <p className="text-sm text-muted-foreground">{appointment.service}</p>
                     </div>
                     <div className="text-right">
@@ -151,7 +166,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                   <div key={appointment.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
                     <div>
                       <p className="font-medium">{appointment.petName}</p>
-                      <p className="text-sm text-muted-foreground">{appointment.customerName}</p>
+                      <p className="text-sm text-muted-foreground">{appointment.customerFirstName} {appointment.customerLastName}</p>
                       <p className="text-sm text-muted-foreground">{appointment.service}</p>
                     </div>
                     <div className="text-right">
