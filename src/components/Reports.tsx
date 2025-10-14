@@ -14,6 +14,7 @@ import {
   CurrencyDollar, 
   CalendarBlank, 
   TrendUp, 
+  TrendDown,
   Users, 
   ChartBar,
   FilePdf,
@@ -218,8 +219,6 @@ export function Reports() {
     [filteredAppointments, customers]
   )
 
-  const activeCustomers = customers || []
-
   const serviceBreakdown = useMemo(() => 
     calculateServiceBreakdown(filteredAppointments, services || []),
     [filteredAppointments, services]
@@ -304,7 +303,6 @@ export function Reports() {
     
     return insights
   }, [revenueMetrics, priorPeriodMetrics, appointmentMetrics, retentionMetrics, marginMetrics, filteredAppointments.length])
-
   const kpis: KPIMetric[] = useMemo(() => {
     const revenueDelta = priorPeriodMetrics.netSales > 0 
       ? ((revenueMetrics.netSales - priorPeriodMetrics.netSales) / priorPeriodMetrics.netSales) * 100
@@ -369,35 +367,29 @@ export function Reports() {
       },
       {
         label: 'Active Customers',
-        value: activeCustomers.length,
+        value: customers?.length || 0,
         format: 'number',
         delta: undefined,
         tooltip: 'Total customers in the system',
         drillable: true
       }
     ]
-  }, [revenueMetrics, marginMetrics, appointmentMetrics, retentionMetrics, priorPeriodMetrics, activeCustomers.length])
+  }, [revenueMetrics, marginMetrics, appointmentMetrics, retentionMetrics, priorPeriodMetrics, customers])
 
   const handleExportPDF = () => {
     try {
       const doc = new jsPDF()
-      const { start, end } = getDateRangeFromFilter(filters.dateRange)
-      const dateRangeStr = `${format(start, 'MMM dd, yyyy')} - ${format(end, 'MMM dd, yyyy')}`
-      
       let yPos = 20
       
-      doc.setFontSize(20)
+      doc.setFontSize(18)
       doc.setFont('helvetica', 'bold')
-      doc.text('Scruffy Butts', 20, yPos)
-      
-      yPos += 8
-      doc.setFontSize(16)
-      doc.text('Business Report', 20, yPos)
+      doc.text('Scruffy Butts - Business Report', 20, yPos)
       
       yPos += 8
       doc.setFontSize(10)
       doc.setFont('helvetica', 'normal')
-      doc.text(`Report Period: ${dateRangeStr}`, 20, yPos)
+      const { start, end } = getDateRangeFromFilter(filters.dateRange)
+      doc.text(`Report Period: ${format(start, 'MMM dd, yyyy')} - ${format(end, 'MMM dd, yyyy')}`, 20, yPos)
       
       yPos += 5
       doc.text(`Generated: ${format(new Date(), 'MMM dd, yyyy HH:mm')}`, 20, yPos)
@@ -435,7 +427,7 @@ export function Reports() {
         doc.text('Key Insights', 20, yPos)
         
         yPos += 8
-        insights.forEach((insight, idx) => {
+        insights.forEach((insight) => {
           doc.setFontSize(10)
           doc.setFont('helvetica', 'normal')
           const icon = insight.type === 'warning' ? '⚠' : insight.type === 'success' ? '✓' : 'ℹ'
@@ -458,8 +450,8 @@ export function Reports() {
       doc.setFontSize(14)
       doc.setFont('helvetica', 'bold')
       doc.text('Service Performance', 20, yPos)
-      
       yPos += 8
+      
       if (serviceBreakdown.length > 0) {
         autoTable(doc, {
           startY: yPos,
@@ -486,8 +478,8 @@ export function Reports() {
       doc.setFontSize(14)
       doc.setFont('helvetica', 'bold')
       doc.text('Staff Performance', 20, yPos)
-      
       yPos += 8
+      
       if (staffPerformance.length > 0) {
         autoTable(doc, {
           startY: yPos,
@@ -655,7 +647,6 @@ export function Reports() {
                   <SelectItem value="custom">Custom Range</SelectItem>
                 </SelectContent>
               </Select>
-
               {filters.dateRange.preset === 'custom' && (
                 <div className="flex items-center gap-2">
                   <Popover>
@@ -845,7 +836,7 @@ export function Reports() {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <ArrowDown className="text-red-500" size={20} />
+                      <TrendDown className="text-red-500" size={20} />
                       <span className="font-medium">Refunds</span>
                     </div>
                     <span className="font-bold text-red-500">-${revenueMetrics.refunds.toFixed(2)}</span>
@@ -858,7 +849,7 @@ export function Reports() {
                   </div>
                 </CardContent>
               </Card>
-
+              
               <Card>
                 <CardHeader>
                   <CardTitle>Appointment Summary</CardTitle>
@@ -898,14 +889,14 @@ export function Reports() {
                   <div className="pt-4 border-t">
                     <div className="flex items-center justify-between">
                       <span className="font-semibold">Total</span>
-                      <span className="text-xl font-bold">{appointmentMetrics.total}</span>
+                      <span className="font-bold">{appointmentMetrics.total}</span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
-
+          
           <TabsContent value="revenue" className={isCompact ? 'space-y-3' : 'space-y-4'}>
             <div className={`grid grid-cols-1 lg:grid-cols-3 ${isCompact ? 'gap-3' : 'gap-4'}`}>
               <Card>
@@ -1066,7 +1057,7 @@ export function Reports() {
                 </CardContent>
               </Card>
             </div>
-
+            
             <Card>
               <CardHeader>
                 <CardTitle>At-Risk Customers</CardTitle>
