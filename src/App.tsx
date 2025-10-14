@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Toaster } from '@/components/ui/sonner'
 import { Dashboard } from '@/components/Dashboard'
@@ -13,7 +13,7 @@ import { Navigation } from '@/components/Navigation'
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'reports' | 'settings'
 
 interface AppearanceSettings {
-  theme: 'light' | 'dark' | 'system'
+  theme: 'light' | 'dark' | 'system' | 'pet-friendly'
   compactMode: boolean
   showWelcomeMessage: boolean
 }
@@ -21,7 +21,7 @@ interface AppearanceSettings {
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard')
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {
-    theme: 'light',
+    theme: 'pet-friendly',
     compactMode: false,
     showWelcomeMessage: true
   })
@@ -48,6 +48,20 @@ function App() {
   }
 
   const isCompact = appearance?.compactMode || false
+
+  // Apply theme class to document element
+  useEffect(() => {
+    const root = document.documentElement
+    // Remove all theme classes
+    root.classList.remove('dark', 'pet-friendly')
+    
+    // Apply the selected theme
+    if (appearance?.theme === 'dark') {
+      root.classList.add('dark')
+    } else if (appearance?.theme === 'pet-friendly') {
+      root.classList.add('pet-friendly')
+    }
+  }, [appearance?.theme])
 
   return (
     <div className="min-h-screen bg-background">
