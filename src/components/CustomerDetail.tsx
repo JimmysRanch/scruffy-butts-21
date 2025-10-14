@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -44,6 +44,7 @@ interface Customer {
   createdAt: string
   address?: string
   notes?: string
+  name?: string
 }
 
 interface CustomerDetailProps {
@@ -58,6 +59,30 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
   const [isEditPetOpen, setIsEditPetOpen] = useState(false)
   const [editingPet, setEditingPet] = useState<Pet | null>(null)
   const [expandedPets, setExpandedPets] = useState<Set<string>>(new Set())
+  
+  useEffect(() => {
+    if (customers && customers.length > 0) {
+      const needsMigration = customers.some(c => c.name && (!c.firstName || !c.lastName))
+      if (needsMigration) {
+        setCustomers((current) =>
+          (current || []).map(customer => {
+            if (customer.name && (!customer.firstName || !customer.lastName)) {
+              const nameParts = customer.name.split(' ')
+              const firstName = nameParts[0] || ''
+              const lastName = nameParts.slice(1).join(' ') || ''
+              const { name, ...rest } = customer
+              return {
+                ...rest,
+                firstName,
+                lastName
+              }
+            }
+            return customer
+          })
+        )
+      }
+    }
+  }, [customers, setCustomers])
   
   const customer = (customers || []).find(c => c.id === customerId)
   
@@ -228,7 +253,11 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           <ArrowLeft size={18} />
         </Button>
         <div className="flex-1">
-          <h1 className="text-3xl font-bold text-foreground">{customer.firstName} {customer.lastName}</h1>
+          <h1 className="text-3xl font-bold text-foreground">
+            {customer.firstName && customer.lastName 
+              ? `${customer.firstName} ${customer.lastName}` 
+              : customer.name || 'Unknown Customer'}
+          </h1>
           <p className="text-muted-foreground">
             Client since {new Date(customer.createdAt).toLocaleDateString()}
           </p>
@@ -404,7 +433,9 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                     <DialogHeader>
                       <DialogTitle>Add New Pet</DialogTitle>
                       <DialogDescription>
-                        Add a new pet to {customer.firstName} {customer.lastName}'s profile.
+                        Add a new pet to {customer.firstName && customer.lastName 
+                          ? `${customer.firstName} ${customer.lastName}` 
+                          : customer.name || 'this customer'}'s profile.
                       </DialogDescription>
                     </DialogHeader>
                     
@@ -467,7 +498,9 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                   <Heart size={48} className="mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-lg font-medium mb-2">No pets yet</h3>
                   <p className="text-muted-foreground mb-4">
-                    Add the first pet for {customer.firstName} {customer.lastName}
+                    Add the first pet for {customer.firstName && customer.lastName 
+                      ? `${customer.firstName} ${customer.lastName}` 
+                      : customer.name || 'this customer'}
                   </p>
                   <Button onClick={() => setIsNewPetOpen(true)}>
                     Add First Pet

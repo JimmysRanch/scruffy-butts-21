@@ -34,6 +34,7 @@ interface Customer {
   email: string
   phone: string
   pets: Pet[]
+  name?: string
 }
 
 interface Pet {
@@ -170,7 +171,9 @@ export function AppointmentScheduler() {
                   <SelectContent>
                     {(customers || []).map((customer) => (
                       <SelectItem key={customer.id} value={customer.id}>
-                        {customer.firstName} {customer.lastName}
+                        {customer.firstName && customer.lastName 
+                          ? `${customer.firstName} ${customer.lastName}` 
+                          : customer.name || 'Unknown Customer'}
                       </SelectItem>
                     ))}
                   </SelectContent>

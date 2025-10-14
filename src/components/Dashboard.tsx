@@ -33,6 +33,7 @@ interface Customer {
   email: string
   phone: string
   pets: Pet[]
+  name?: string
 }
 
 interface Pet {

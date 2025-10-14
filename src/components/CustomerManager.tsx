@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -30,6 +30,7 @@ interface Customer {
   createdAt: string
   address?: string
   notes?: string
+  name?: string
 }
 
 export function CustomerManager() {
@@ -38,6 +39,30 @@ export function CustomerManager() {
   const [isNewPetOpen, setIsNewPetOpen] = useState(false)
   const [selectedCustomerId, setSelectedCustomerId] = useState('')
   const [viewingCustomerId, setViewingCustomerId] = useState<string | null>(null)
+  
+  useEffect(() => {
+    if (customers && customers.length > 0) {
+      const needsMigration = customers.some(c => c.name && (!c.firstName || !c.lastName))
+      if (needsMigration) {
+        setCustomers((current) =>
+          (current || []).map(customer => {
+            if (customer.name && (!customer.firstName || !customer.lastName)) {
+              const nameParts = customer.name.split(' ')
+              const firstName = nameParts[0] || ''
+              const lastName = nameParts.slice(1).join(' ') || ''
+              const { name, ...rest } = customer
+              return {
+                ...rest,
+                firstName,
+                lastName
+              }
+            }
+            return customer
+          })
+        )
+      }
+    }
+  }, [customers, setCustomers])
   
   const [customerForm, setCustomerForm] = useState({
     firstName: '',
@@ -322,7 +347,11 @@ export function CustomerManager() {
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-3 mb-1">
-                    <h3 className="font-medium text-foreground truncate">{customer.firstName} {customer.lastName}</h3>
+                    <h3 className="font-medium text-foreground truncate">
+                      {customer.firstName && customer.lastName 
+                        ? `${customer.firstName} ${customer.lastName}` 
+                        : customer.name || 'Unknown Customer'}
+                    </h3>
                     <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">
                       {customer.pets.length} pet{customer.pets.length !== 1 ? 's' : ''}
                     </span>
