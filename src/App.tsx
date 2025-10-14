@@ -7,10 +7,11 @@ import { CustomerManager } from '@/components/CustomerManager'
 import { StaffManager } from '@/components/StaffManager'
 import { PointOfSale } from '@/components/PointOfSale'
 import { Reports } from '@/components/Reports'
+import { InventoryManager } from '@/components/InventoryManager'
 import { Settings } from '@/components/Settings'
 import { Navigation } from '@/components/Navigation'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'reports' | 'settings'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'reports' | 'inventory' | 'settings'
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'system'
@@ -40,6 +41,8 @@ function App() {
         return <PointOfSale />
       case 'reports':
         return <Reports />
+      case 'inventory':
+        return <InventoryManager />
       case 'settings':
         return <Settings />
       default:
