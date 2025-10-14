@@ -101,17 +101,17 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'bg-green-100 text-green-800'
+        return 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30'
       case 'in-progress':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/30'
       case 'completed':
-        return 'bg-gray-100 text-gray-800'
+        return 'bg-gray-500/20 text-gray-700 dark:text-gray-300 border border-gray-500/30'
       case 'cancelled':
-        return 'bg-red-100 text-red-800'
+        return 'bg-red-500/20 text-red-700 dark:text-red-300 border border-red-500/30'
       case 'no-show':
-        return 'bg-orange-100 text-orange-800'
+        return 'bg-orange-500/20 text-orange-700 dark:text-orange-300 border border-orange-500/30'
       default:
-        return 'bg-yellow-100 text-yellow-800'
+        return 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30'
     }
   }
 
@@ -119,53 +119,71 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     <div className={isCompact ? 'space-y-2' : 'space-y-4'}>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
         <div>
-          <h1 className={`font-bold text-foreground ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Dashboard</h1>
+          <h1 className={`font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent ${isCompact ? 'text-2xl' : 'text-3xl'}`}>
+            Dashboard
+          </h1>
           {showWelcome && (
             <p className={`text-muted-foreground ${isCompact ? 'text-sm' : ''}`}>
               Welcome back! Here's what's happening today.
             </p>
           )}
         </div>
-        <Button onClick={() => onNavigate('appointments')} className="flex items-center gap-2" size={isCompact ? "sm" : "default"}>
-          <Plus size={18} />
+        <Button 
+          onClick={() => onNavigate('appointments')} 
+          className="glass-button flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300" 
+          size={isCompact ? "sm" : "default"}
+        >
+          <Plus size={18} weight="bold" />
           <span>New Appointment</span>
         </Button>
       </div>
 
       <div className={`grid md:grid-cols-3 ${isCompact ? 'gap-2' : 'gap-4'}`}>
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onNavigate('appointments')}>
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20" onClick={() => onNavigate('appointments')}>
           <CardHeader className={`flex flex-row items-center justify-between space-y-0 ${isCompact ? 'pb-1' : 'pb-2'}`}>
             <CardTitle className="text-sm font-medium">Today's Appointments</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <div className="glass-dark p-2 rounded-lg">
+              <Calendar className="h-4 w-4 text-primary" weight="fill" />
+            </div>
           </CardHeader>
           <CardContent className={isCompact ? 'pt-1' : ''}>
-            <div className={`font-bold ${isCompact ? 'text-xl' : 'text-2xl'}`}>{todayAppointments.length}</div>
+            <div className={`font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent ${isCompact ? 'text-xl' : 'text-2xl'}`}>
+              {todayAppointments.length}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">
               {todayAppointments.filter(a => a.status === 'completed').length} completed
             </p>
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onNavigate('customers')}>
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20" onClick={() => onNavigate('customers')}>
           <CardHeader className={`flex flex-row items-center justify-between space-y-0 ${isCompact ? 'pb-1' : 'pb-2'}`}>
             <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <div className="glass-dark p-2 rounded-lg">
+              <Users className="h-4 w-4 text-accent" weight="fill" />
+            </div>
           </CardHeader>
           <CardContent className={isCompact ? 'pt-1' : ''}>
-            <div className={`font-bold ${isCompact ? 'text-xl' : 'text-2xl'}`}>{customers?.length || 0}</div>
+            <div className={`font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent ${isCompact ? 'text-xl' : 'text-2xl'}`}>
+              {customers?.length || 0}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">
               {pets?.length || 0} pets registered
             </p>
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => onNavigate('appointments')}>
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20" onClick={() => onNavigate('appointments')}>
           <CardHeader className={`flex flex-row items-center justify-between space-y-0 ${isCompact ? 'pb-1' : 'pb-2'}`}>
             <CardTitle className="text-sm font-medium">This Week</CardTitle>
-            <ChartBar className="h-4 w-4 text-muted-foreground" />
+            <div className="glass-dark p-2 rounded-lg">
+              <ChartBar className="h-4 w-4 text-primary" weight="fill" />
+            </div>
           </CardHeader>
           <CardContent className={isCompact ? 'pt-1' : ''}>
-            <div className={`font-bold ${isCompact ? 'text-xl' : 'text-2xl'}`}>{weekAppointments.length}</div>
+            <div className={`font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent ${isCompact ? 'text-xl' : 'text-2xl'}`}>
+              {weekAppointments.length}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">
               appointments scheduled
             </p>
@@ -174,10 +192,12 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       </div>
 
       <div className={`grid md:grid-cols-2 ${isCompact ? 'gap-2' : 'gap-4'}`}>
-        <Card>
+        <Card className="frosted border-white/20">
           <CardHeader className={isCompact ? 'pb-2' : ''}>
             <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-              <Calendar className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
+              <div className="glass-dark p-1.5 rounded-lg">
+                <Calendar className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} weight="fill" />
+              </div>
               Today's Schedule
             </CardTitle>
             <CardDescription className={isCompact ? 'text-xs' : ''}>Appointments scheduled for today</CardDescription>
@@ -185,26 +205,30 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           <CardContent className={isCompact ? 'pt-2' : ''}>
             {todayAppointments.length === 0 ? (
               <div className={`text-center text-muted-foreground ${isCompact ? 'py-4' : 'py-8'}`}>
-                <Dog className={`mx-auto mb-2 opacity-50 ${isCompact ? 'h-8 w-8' : 'h-12 w-12'}`} />
+                <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
+                  <Dog className={`opacity-50 ${isCompact ? 'h-8 w-8' : 'h-12 w-12'}`} weight="fill" />
+                </div>
                 <p className={isCompact ? 'text-sm' : ''}>No appointments scheduled for today</p>
               </div>
             ) : (
               <div className={isCompact ? 'space-y-2' : 'space-y-3'}>
                 {todayAppointments.slice(0, 5).map((apt) => (
-                  <div key={apt.id} className={`flex items-center justify-between rounded-lg border ${isCompact ? 'p-2' : 'p-3'}`}>
-                    <div className="flex items-center gap-3">
-                      <div className={`flex items-center gap-1 font-medium min-w-[60px] ${isCompact ? 'text-xs' : 'text-sm'}`}>
-                        <Clock size={isCompact ? 12 : 14} />
-                        {apt.time}
+                  <div key={apt.id} className={`glass-dark rounded-xl border border-white/20 hover:glass transition-all duration-200 ${isCompact ? 'p-2' : 'p-3'}`}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`flex items-center gap-1 font-medium min-w-[60px] glass-dark px-2 py-1 rounded-lg ${isCompact ? 'text-xs' : 'text-sm'}`}>
+                          <Clock size={isCompact ? 12 : 14} weight="fill" />
+                          {apt.time}
+                        </div>
+                        <div>
+                          <div className={`font-medium ${isCompact ? 'text-sm' : ''}`}>{getPetName(apt.petId)}</div>
+                          <div className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>{getCustomerName(apt.customerId)}</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className={`font-medium ${isCompact ? 'text-sm' : ''}`}>{getPetName(apt.petId)}</div>
-                        <div className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>{getCustomerName(apt.customerId)}</div>
-                      </div>
+                      <Badge className={`${getStatusColor(apt.status)} backdrop-blur-sm`}>
+                        {apt.status}
+                      </Badge>
                     </div>
-                    <Badge className={getStatusColor(apt.status)}>
-                      {apt.status}
-                    </Badge>
                   </div>
                 ))}
               </div>
@@ -212,10 +236,12 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="frosted border-white/20">
           <CardHeader className={isCompact ? 'pb-2' : ''}>
             <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-              <Clock className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
+              <div className="glass-dark p-1.5 rounded-lg">
+                <Clock className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} weight="fill" />
+              </div>
               Upcoming Appointments
             </CardTitle>
             <CardDescription className={isCompact ? 'text-xs' : ''}>Next scheduled appointments</CardDescription>
@@ -223,24 +249,30 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           <CardContent className={isCompact ? 'pt-2' : ''}>
             {upcomingAppointments.length === 0 ? (
               <div className={`text-center text-muted-foreground ${isCompact ? 'py-4' : 'py-8'}`}>
-                <Calendar className={`mx-auto mb-2 opacity-50 ${isCompact ? 'h-8 w-8' : 'h-12 w-12'}`} />
+                <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
+                  <Calendar className={`opacity-50 ${isCompact ? 'h-8 w-8' : 'h-12 w-12'}`} weight="fill" />
+                </div>
                 <p className={isCompact ? 'text-sm' : ''}>No upcoming appointments</p>
               </div>
             ) : (
               <div className={isCompact ? 'space-y-2' : 'space-y-3'}>
                 {upcomingAppointments.map((apt) => (
-                  <div key={apt.id} className={`flex items-center justify-between rounded-lg border ${isCompact ? 'p-2' : 'p-3'}`}>
-                    <div>
-                      <div className={`font-medium ${isCompact ? 'text-sm' : ''}`}>{getPetName(apt.petId)}</div>
-                      <div className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>
-                        {format(new Date(apt.date), 'MMM d')} at {apt.time}
+                  <div key={apt.id} className={`glass-dark rounded-xl border border-white/20 hover:glass transition-all duration-200 ${isCompact ? 'p-2' : 'p-3'}`}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className={`font-medium ${isCompact ? 'text-sm' : ''}`}>{getPetName(apt.petId)}</div>
+                        <div className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>
+                          {format(new Date(apt.date), 'MMM d')} at {apt.time}
+                        </div>
+                        <div className={`text-muted-foreground mt-1 ${isCompact ? 'text-[10px]' : 'text-xs'}`}>
+                          {getServiceNames(apt.serviceIds)}
+                        </div>
                       </div>
-                      <div className={`text-muted-foreground mt-1 ${isCompact ? 'text-[10px]' : 'text-xs'}`}>
-                        {getServiceNames(apt.serviceIds)}
+                      <div className="text-right">
+                        <div className={`font-medium glass-dark px-2 py-1 rounded-lg ${isCompact ? 'text-xs' : 'text-sm'}`}>
+                          {getStaffName(apt.staffId)}
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <div className={`font-medium ${isCompact ? 'text-xs' : 'text-sm'}`}>{getStaffName(apt.staffId)}</div>
                     </div>
                   </div>
                 ))}
@@ -251,59 +283,63 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       </div>
 
       <div className={`grid md:grid-cols-2 ${isCompact ? 'gap-2' : 'gap-4'}`}>
-        <Card>
+        <Card className="frosted border-white/20">
           <CardHeader className={isCompact ? 'pb-2' : ''}>
             <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-              <Plus className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
+              <div className="glass-dark p-1.5 rounded-lg">
+                <Plus className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} weight="bold" />
+              </div>
               Quick Actions
             </CardTitle>
             <CardDescription className={isCompact ? 'text-xs' : ''}>Common tasks and shortcuts</CardDescription>
           </CardHeader>
           <CardContent className={isCompact ? 'pt-2' : ''}>
             <div className={`grid grid-cols-2 ${isCompact ? 'gap-2' : 'gap-3'}`}>
-              <Button variant="outline" onClick={() => onNavigate('appointments')} className={`h-auto flex-col ${isCompact ? 'py-2 gap-1' : 'py-4 gap-2'}`}>
-                <Calendar size={isCompact ? 18 : 24} />
+              <Button variant="outline" onClick={() => onNavigate('appointments')} className={`glass-button h-auto flex-col border-white/20 ${isCompact ? 'py-2 gap-1' : 'py-4 gap-2'}`}>
+                <Calendar size={isCompact ? 18 : 24} weight="fill" />
                 <span className={isCompact ? 'text-xs' : 'text-sm'}>New Appointment</span>
               </Button>
-              <Button variant="outline" onClick={() => onNavigate('customers')} className={`h-auto flex-col ${isCompact ? 'py-2 gap-1' : 'py-4 gap-2'}`}>
-                <Users size={isCompact ? 18 : 24} />
+              <Button variant="outline" onClick={() => onNavigate('customers')} className={`glass-button h-auto flex-col border-white/20 ${isCompact ? 'py-2 gap-1' : 'py-4 gap-2'}`}>
+                <Users size={isCompact ? 18 : 24} weight="fill" />
                 <span className={isCompact ? 'text-xs' : 'text-sm'}>Add Customer</span>
               </Button>
-              <Button variant="outline" onClick={() => onNavigate('pos')} className={`h-auto flex-col ${isCompact ? 'py-2 gap-1' : 'py-4 gap-2'}`}>
-                <CurrencyDollar size={isCompact ? 18 : 24} />
+              <Button variant="outline" onClick={() => onNavigate('pos')} className={`glass-button h-auto flex-col border-white/20 ${isCompact ? 'py-2 gap-1' : 'py-4 gap-2'}`}>
+                <CurrencyDollar size={isCompact ? 18 : 24} weight="fill" />
                 <span className={isCompact ? 'text-xs' : 'text-sm'}>Point of Sale</span>
               </Button>
-              <Button variant="outline" onClick={() => onNavigate('inventory')} className={`h-auto flex-col ${isCompact ? 'py-2 gap-1' : 'py-4 gap-2'}`}>
-                <ChartBar size={isCompact ? 18 : 24} />
+              <Button variant="outline" onClick={() => onNavigate('inventory')} className={`glass-button h-auto flex-col border-white/20 ${isCompact ? 'py-2 gap-1' : 'py-4 gap-2'}`}>
+                <ChartBar size={isCompact ? 18 : 24} weight="fill" />
                 <span className={isCompact ? 'text-xs' : 'text-sm'}>Inventory</span>
               </Button>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="frosted border-white/20">
           <CardHeader className={isCompact ? 'pb-2' : ''}>
             <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-              <Dog className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
+              <div className="glass-dark p-1.5 rounded-lg">
+                <Dog className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} weight="fill" />
+              </div>
               Quick Stats
             </CardTitle>
             <CardDescription className={isCompact ? 'text-xs' : ''}>Overview of your business</CardDescription>
           </CardHeader>
           <CardContent className={isCompact ? 'pt-2' : ''}>
             <div className={isCompact ? 'space-y-2' : 'space-y-4'}>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center glass-dark px-3 py-2 rounded-lg">
                 <span className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>Total Services</span>
                 <span className={`font-semibold ${isCompact ? 'text-sm' : ''}`}>{services?.length || 0}</span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center glass-dark px-3 py-2 rounded-lg">
                 <span className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>Staff Members</span>
                 <span className={`font-semibold ${isCompact ? 'text-sm' : ''}`}>{staff?.length || 0}</span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center glass-dark px-3 py-2 rounded-lg">
                 <span className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>Total Appointments</span>
                 <span className={`font-semibold ${isCompact ? 'text-sm' : ''}`}>{appointments?.length || 0}</span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center glass-dark px-3 py-2 rounded-lg">
                 <span className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>Completed This Week</span>
                 <span className={`font-semibold ${isCompact ? 'text-sm' : ''}`}>
                   {weekAppointments.filter(a => a.status === 'completed').length}

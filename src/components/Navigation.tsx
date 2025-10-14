@@ -21,15 +21,19 @@ export function Navigation({ currentView, onNavigate, isCompact = false }: Navig
   ]
 
   return (
-    <nav className="bg-card border-b border-border">
-      <div className={`flex items-center justify-between ${isCompact ? 'h-10 px-3' : 'h-14 px-4'}`}>
+    <nav className="frosted sticky top-0 z-50 border-b border-white/20">
+      <div className={`flex items-center justify-between ${isCompact ? 'h-10 px-3' : 'h-14 px-4'} max-w-[2000px] mx-auto`}>
         <div className="flex items-center gap-3">
-          <img 
-            src={logo} 
-            alt="Scruffy Butts Logo" 
-            className={`${isCompact ? 'h-7' : 'h-9'} w-auto object-contain`}
-          />
-          <h1 className={`font-bold text-foreground ${isCompact ? 'text-base' : 'text-xl'} hidden sm:block`}>Scruffy Butts</h1>
+          <div className="glass-dark rounded-xl p-1.5 liquid-shine">
+            <img 
+              src={logo} 
+              alt="Scruffy Butts Logo" 
+              className={`${isCompact ? 'h-5' : 'h-7'} w-auto object-contain`}
+            />
+          </div>
+          <h1 className={`font-bold text-foreground ${isCompact ? 'text-base' : 'text-xl'} hidden sm:block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
+            Scruffy Butts
+          </h1>
         </div>
         
         <div className="flex items-center space-x-1">
@@ -44,23 +48,33 @@ export function Navigation({ currentView, onNavigate, isCompact = false }: Navig
                   variant={isActive ? "default" : "ghost"}
                   size={isCompact ? "sm" : "sm"}
                   onClick={() => onNavigate(item.id)}
-                  className={`flex items-center space-x-2 ${isCompact ? 'h-7 px-2 text-xs' : ''}`}
+                  className={`
+                    flex items-center space-x-2 
+                    ${isCompact ? 'h-7 px-2 text-xs' : ''} 
+                    ${isActive ? 'glass shadow-lg' : 'glass-button'}
+                    transition-all duration-300
+                  `}
                 >
-                  <Icon size={isCompact ? 16 : 18} />
+                  <Icon size={isCompact ? 16 : 18} weight={isActive ? "fill" : "regular"} />
                   <span className="hidden sm:inline">{item.label}</span>
                 </Button>
               )
             })}
           </div>
           
-          <div className="ml-2 pl-2 border-l border-border">
+          <div className="ml-2 pl-2 border-l border-white/20">
             <Button
               variant={currentView === 'settings' ? "default" : "ghost"}
               size={isCompact ? "sm" : "sm"}
               onClick={() => onNavigate('settings')}
-              className={`flex items-center space-x-2 ${isCompact ? 'h-7 px-2 text-xs' : ''}`}
+              className={`
+                flex items-center space-x-2 
+                ${isCompact ? 'h-7 px-2 text-xs' : ''} 
+                ${currentView === 'settings' ? 'glass shadow-lg' : 'glass-button'}
+                transition-all duration-300
+              `}
             >
-              <Gear size={isCompact ? 16 : 18} />
+              <Gear size={isCompact ? 16 : 18} weight={currentView === 'settings' ? "fill" : "regular"} />
               <span className="hidden sm:inline">Settings</span>
             </Button>
           </div>
