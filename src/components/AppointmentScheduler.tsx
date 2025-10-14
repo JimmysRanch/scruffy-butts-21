@@ -999,24 +999,78 @@ function ListView({
     return dateB.getTime() - dateA.getTime()
   })
 
+  const groupedByDate = sortedAppointments.reduce((groups, apt) => {
+    const date = apt.date
+    if (!groups[date]) {
+      groups[date] = []
+    }
+    groups[date].push(apt)
+    return groups
+  }, {} as Record<string, Appointment[]>)
+
+  const sortedDates = Object.keys(groupedByDate).sort((a, b) => {
+    return new Date(b).getTime() - new Date(a).getTime()
+  })
+
   return (
     <ScrollArea className="h-[600px]">
-      <div className="space-y-2">
-        {sortedAppointments.map((apt) => (
-          <AppointmentCard
-            key={apt.id}
-            appointment={apt}
-            onClick={() => onViewAppointment(apt)}
-            onEdit={() => onEditAppointment(apt)}
-            onDelete={() => onDeleteAppointment(apt.id)}
-            onDuplicate={() => onDuplicateAppointment(apt)}
-            onRebook={() => onRebookAppointment(apt)}
-            onStatusChange={(status) => onStatusChange(apt.id, status)}
-            getStaffColor={getStaffColor}
-            staff={staff}
-            showActions
-          />
-        ))}
+      <div className="space-y-6">
+        {sortedDates.map((date) => {
+          const dateObj = parseISO(date)
+          const appointmentsForDate = groupedByDate[date]
+          const isCurrentDay = isToday(dateObj)
+          const isPastDay = isBefore(dateObj, startOfDay(new Date())) && !isCurrentDay
+          
+          return (
+            <div key={date} className="space-y-3">
+              <div className={cn(
+                'sticky top-0 z-10 bg-background/95 backdrop-blur-sm py-2 border-b-2',
+                isCurrentDay && 'border-primary',
+                !isCurrentDay && 'border-border'
+              )}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className={cn(
+                      'font-bold text-lg',
+                      isCurrentDay && 'text-primary'
+                    )}>
+                      {isCurrentDay 
+                        ? 'Today' 
+                        : format(dateObj, 'EEEE, MMMM d, yyyy')
+                      }
+                    </h3>
+                    {!isCurrentDay && (
+                      <p className="text-sm text-muted-foreground">
+                        {format(dateObj, 'EEEE')}
+                      </p>
+                    )}
+                  </div>
+                  <Badge variant={isCurrentDay ? 'default' : 'secondary'} className="text-sm">
+                    {appointmentsForDate.length} appointment{appointmentsForDate.length !== 1 ? 's' : ''}
+                  </Badge>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                {appointmentsForDate.map((apt) => (
+                  <AppointmentCard
+                    key={apt.id}
+                    appointment={apt}
+                    onClick={() => onViewAppointment(apt)}
+                    onEdit={() => onEditAppointment(apt)}
+                    onDelete={() => onDeleteAppointment(apt.id)}
+                    onDuplicate={() => onDuplicateAppointment(apt)}
+                    onRebook={() => onRebookAppointment(apt)}
+                    onStatusChange={(status) => onStatusChange(apt.id, status)}
+                    getStaffColor={getStaffColor}
+                    staff={staff}
+                    showActions
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        })}
       </div>
     </ScrollArea>
   )
