@@ -1374,7 +1374,7 @@ function AppointmentDetail({
       </div>
 
       <div className="space-y-2 pt-4 border-t">
-        <Label className="text-muted-foreground">Update Status</Label>
+        <Label className="text-muted-foreground">Quick Status Actions</Label>
         <div className="grid grid-cols-2 gap-2">
           {appointment.status === 'scheduled' && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('confirmed')} className="w-full">
@@ -1413,6 +1413,27 @@ function AppointmentDetail({
             </Button>
           )}
         </div>
+      </div>
+
+      <div className="space-y-2 pt-4 border-t">
+        <Label className="text-muted-foreground">Change Status</Label>
+        <p className="text-xs text-muted-foreground">
+          Use this to correct accidental status changes
+        </p>
+        <Select value={appointment.status} onValueChange={(value) => onStatusChange(value as Appointment['status'])}>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="scheduled">Scheduled</SelectItem>
+            <SelectItem value="confirmed">Confirmed</SelectItem>
+            <SelectItem value="checked-in">Checked In</SelectItem>
+            <SelectItem value="in-progress">In Progress</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
+            <SelectItem value="cancelled">Cancelled</SelectItem>
+            <SelectItem value="no-show">No Show</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-2">
