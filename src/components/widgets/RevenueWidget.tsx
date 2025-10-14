@@ -57,15 +57,25 @@ export function RevenueWidget({ period }: RevenueWidgetProps) {
 
     const current = transactions
       .filter(t => {
-        const date = new Date(t.timestamp)
-        return date >= currentStart && date <= currentEnd
+        try {
+          const date = new Date(t.timestamp)
+          if (isNaN(date.getTime())) return false
+          return date >= currentStart && date <= currentEnd
+        } catch {
+          return false
+        }
       })
       .reduce((sum, t) => sum + t.total, 0)
 
     const previous = transactions
       .filter(t => {
-        const date = new Date(t.timestamp)
-        return date >= previousStart && date <= previousEnd
+        try {
+          const date = new Date(t.timestamp)
+          if (isNaN(date.getTime())) return false
+          return date >= previousStart && date <= previousEnd
+        } catch {
+          return false
+        }
       })
       .reduce((sum, t) => sum + t.total, 0)
 

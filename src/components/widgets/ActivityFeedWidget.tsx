@@ -54,22 +54,30 @@ export function ActivityFeedWidget({ isCompact = false }: ActivityFeedWidgetProp
 
     if (transactions) {
       transactions.slice(-10).reverse().forEach(transaction => {
-        const customer = customers?.find(c => c.id === transaction.customerId)
-        const customerName = customer 
-          ? `${customer.firstName} ${customer.lastName}`
-          : 'Walk-in customer'
-        
-        const serviceName = transaction.items[0]?.service?.name || 'service'
-        
-        activities.push({
-          id: `transaction-${transaction.id}`,
-          type: 'transaction',
-          message: `${customerName} checked out`,
-          detail: `${serviceName} - $${transaction.total.toFixed(2)} (${transaction.paymentMethod})`,
-          timestamp: new Date(transaction.timestamp),
-          icon: CreditCard,
-          color: 'text-green-600'
-        })
+        try {
+          const customer = customers?.find(c => c.id === transaction.customerId)
+          const customerName = customer 
+            ? `${customer.firstName} ${customer.lastName}`
+            : 'Walk-in customer'
+          
+          const serviceName = transaction.items[0]?.service?.name || 'service'
+          
+          const timestamp = new Date(transaction.timestamp)
+          if (isNaN(timestamp.getTime())) {
+            return
+          }
+          
+          activities.push({
+            id: `transaction-${transaction.id}`,
+            type: 'transaction',
+            message: `${customerName} checked out`,
+            detail: `${serviceName} - $${transaction.total.toFixed(2)} (${transaction.paymentMethod})`,
+            timestamp,
+            icon: CreditCard,
+            color: 'text-green-600'
+          })
+        } catch {
+        }
       })
     }
 
@@ -79,15 +87,25 @@ export function ActivityFeedWidget({ isCompact = false }: ActivityFeedWidgetProp
         .slice(-10)
         .reverse()
         .forEach(appointment => {
-          activities.push({
-            id: `appointment-${appointment.id}`,
-            type: 'appointment',
-            message: `${appointment.petName}'s grooming completed`,
-            detail: `${appointment.customerFirstName} ${appointment.customerLastName} - ${appointment.service}`,
-            timestamp: new Date(`${appointment.date}T${appointment.time}`),
-            icon: Scissors,
-            color: 'text-blue-600'
-          })
+          try {
+            if (!appointment.date || !appointment.time) return
+            
+            const timestamp = new Date(`${appointment.date}T${appointment.time}`)
+            if (isNaN(timestamp.getTime())) {
+              return
+            }
+            
+            activities.push({
+              id: `appointment-${appointment.id}`,
+              type: 'appointment',
+              message: `${appointment.petName}'s grooming completed`,
+              detail: `${appointment.customerFirstName} ${appointment.customerLastName} - ${appointment.service}`,
+              timestamp,
+              icon: Scissors,
+              color: 'text-blue-600'
+            })
+          } catch {
+          }
         })
     }
 

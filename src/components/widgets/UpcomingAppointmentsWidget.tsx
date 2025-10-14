@@ -52,7 +52,16 @@ export function UpcomingAppointmentsWidget({ isCompact = false }: UpcomingAppoin
                   <p className="text-sm text-muted-foreground">{appointment.service}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium">{appointment.date ? format(new Date(appointment.date), 'MMM dd') : 'No date'}</p>
+                  <p className="text-sm font-medium">
+                    {appointment.date ? (() => {
+                      try {
+                        const date = new Date(appointment.date)
+                        return isNaN(date.getTime()) ? 'No date' : format(date, 'MMM dd')
+                      } catch {
+                        return 'No date'
+                      }
+                    })() : 'No date'}
+                  </p>
                   <p className="text-sm text-muted-foreground">{appointment.time}</p>
                 </div>
               </div>
