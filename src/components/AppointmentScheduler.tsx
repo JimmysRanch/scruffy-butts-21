@@ -92,8 +92,8 @@ const STATUS_COLORS = {
   'checked-in': 'bg-purple-100 text-purple-800 border-purple-300',
   'in-progress': 'bg-orange-100 text-orange-800 border-orange-300',
   completed: 'bg-gray-100 text-gray-800 border-gray-300',
-  cancelled: 'bg-red-100 text-red-800 border-red-300',
-  'no-show': 'bg-amber-100 text-amber-800 border-amber-300'
+  cancelled: 'bg-orange-100 text-orange-800 border-orange-300',
+  'no-show': 'bg-red-100 text-red-800 border-red-300'
 }
 
 const TIME_SLOTS = [
