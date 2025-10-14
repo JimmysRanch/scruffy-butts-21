@@ -68,6 +68,13 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 - **Progression**: View inventory items → Check stock levels → Add new items/suppliers → Record usage/restocking → Monitor low stock alerts → Generate orders
 - **Success criteria**: Real-time stock tracking, automatic low-stock alerts, transaction history, supplier management, category organization, cost tracking
 
+### Reports & Analytics
+- **Functionality**: Generate comprehensive business reports with revenue metrics, appointment analytics, service performance, staff metrics, customer insights, and peak hours analysis with PDF and CSV export capabilities
+- **Purpose**: Provide data-driven insights to optimize business performance, identify trends, track growth, and make informed decisions
+- **Trigger**: Click "Reports" tab in navigation
+- **Progression**: View dashboard → Select date range/filters → Review metrics and charts → Export reports as PDF or CSV → Share with stakeholders
+- **Success criteria**: All metrics calculate correctly, filters work properly, data visualizations are accurate, export formats are professional and complete, handles empty states gracefully
+
 ## Edge Case Handling
 - **Empty States**: Helpful guidance when no appointments, customers, services, staff, transactions, or inventory items exist yet
 - **Scheduling Conflicts**: Prevent double-booking with clear error messages and alternative suggestions
@@ -78,6 +85,9 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 - **Cart Management**: Prevent accidental cart clearing with confirmation dialogs for significant actions
 - **Low Stock Alerts**: Prominent notifications when inventory items reach reorder levels
 - **Negative Stock**: Prevent stock levels from going negative with validation on usage transactions
+- **Empty Reports**: Display helpful messages when no data exists for selected filters or date ranges
+- **Division by Zero**: Handle zero-count metrics gracefully in percentage calculations and averages
+- **Export Errors**: Graceful error handling for PDF/CSV exports with user-friendly error messages
 
 ## Design Direction
 The design should feel professional yet warm - like a high-end veterinary clinic that genuinely loves animals. Clean, spacious interface with subtle pet-themed touches that don't compromise the business-focused functionality.
@@ -111,9 +121,9 @@ Subtle, purposeful animations that guide user attention and provide feedback wit
 - **Hierarchy of Movement**: Priority on form feedback and navigation transitions, minimal decorative animation
 
 ## Component Selection
-- **Components**: Cards for appointments/customers/transactions/settings/staff/inventory items, Calendar for scheduling, Forms for data entry, Tables for service lists and inventory, Badges for appointment status and stock levels, Shopping cart UI for POS, Switch components for settings toggles, Tabs for inventory sections
-- **Customizations**: Custom calendar component optimized for daily/weekly appointment views, pet avatar placeholders, POS cart with quantity controls, tabbed settings interface, inventory transaction dialogs, low stock alerts
-- **States**: Buttons show loading states during saves, form inputs highlight validation errors, appointments show status colors, payment processing states, settings save confirmation, inventory stock status badges (in stock/low stock/out of stock)
-- **Icon Selection**: Phosphor icons - Calendar for scheduling, User for customers, Scissors for services, Phone for contact, CashRegister for POS, CreditCard/Money for payment methods, Gear for settings, Bell for notifications, Shield for security, UserCircle for staff management, Package for inventory, TrendUp/TrendDown for stock changes, Warning for low stock, ShoppingCart for reorders
+- **Components**: Cards for appointments/customers/transactions/settings/staff/inventory items and reports metrics, Calendar for scheduling, Forms for data entry, Tables for service lists and inventory and reports, Badges for appointment status and stock levels and report tags, Shopping cart UI for POS, Switch components for settings toggles, Tabs for inventory sections and reports sections, Select dropdowns for report filters and date ranges, Popover calendars for custom date selection
+- **Customizations**: Custom calendar component optimized for daily/weekly appointment views, pet avatar placeholders, POS cart with quantity controls, tabbed settings interface, inventory transaction dialogs, low stock alerts, report visualization widgets with progress bars and trend indicators, PDF/CSV export functionality
+- **States**: Buttons show loading states during saves, form inputs highlight validation errors, appointments show status colors, payment processing states, settings save confirmation, inventory stock status badges (in stock/low stock/out of stock), report export processing states
+- **Icon Selection**: Phosphor icons - Calendar for scheduling, User for customers, Scissors for services, Phone for contact, CashRegister for POS, CreditCard/Money for payment methods, Gear for settings, Bell for notifications, Shield for security, UserCircle for staff management, Package for inventory, TrendUp/TrendDown for stock changes and growth metrics, Warning for low stock, ShoppingCart for reorders, ChartBar for analytics, Download for exports, FilePdf/FileCsv for export formats, CurrencyDollar for revenue, Clock for peak times, Dog for grooming services, Star for top customers
 - **Spacing**: Consistent 4/6/8 Tailwind spacing scale for tight/medium/loose layouts
 - **Mobile**: Collapsible sidebar navigation, stacked cards on mobile, touch-friendly appointment time slots, responsive POS interface for tablet use, responsive settings tabs, scrollable inventory tables, scrollable inventory tables

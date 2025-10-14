@@ -8,13 +8,15 @@ import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { 
   CurrencyDollar, 
   CalendarBlank, 
   TrendUp, 
   Users, 
   ChartBar,
-  FileText,
+  FilePdf,
+  FileCsv,
   Download,
   Star,
   Clock,
@@ -22,6 +24,9 @@ import {
 } from '@phosphor-icons/react'
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, subDays, subMonths, isWithinInterval, parseISO } from 'date-fns'
 import { cn } from '@/lib/utils'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+import { toast } from 'sonner'
 
 interface Appointment {
   id: string
@@ -311,25 +316,264 @@ export function Reports() {
       .slice(0, 5)
   }, [filteredAppointments])
 
-  const handleExport = () => {
-    const reportData = {
-      dateRange: getDateRangeFilter(),
-      revenue: revenueMetrics,
-      appointments: appointmentMetrics,
-      services: serviceBreakdown,
-      staff: staffPerformance,
-      customers: customerInsights,
-      peakTimes
+  const handleExportCSV = () => {
+    try {
+      const { start, end } = getDateRangeFilter()
+      const dateRangeStr = `${format(start, 'MMM dd, yyyy')} - ${format(end, 'MMM dd, yyyy')}`
+      
+      let csvContent = 'Scruffy Butts - Business Report\n'
+      csvContent += `Report Period:,${dateRangeStr}\n`
+      csvContent += `Generated:,${format(new Date(), 'MMM dd, yyyy HH:mm')}\n\n`
+      
+      csvContent += 'REVENUE SUMMARY\n'
+      csvContent += 'Metric,Value\n'
+      csvContent += `Total Revenue,$${revenueMetrics.total.toFixed(2)}\n`
+      csvContent += `Grooming Services,$${revenueMetrics.appointments.toFixed(2)}\n`
+      csvContent += `Retail Sales,$${revenueMetrics.retail.toFixed(2)}\n`
+      csvContent += `Average Transaction,$${revenueMetrics.average.toFixed(2)}\n`
+      csvContent += `Growth Rate,${revenueMetrics.growth >= 0 ? '+' : ''}${revenueMetrics.growth.toFixed(1)}%\n\n`
+      
+      csvContent += 'APPOINTMENT SUMMARY\n'
+      csvContent += 'Status,Count,Percentage\n'
+      csvContent += `Completed,${appointmentMetrics.completed},${appointmentMetrics.completionRate.toFixed(1)}%\n`
+      csvContent += `Scheduled,${appointmentMetrics.scheduled},${((appointmentMetrics.scheduled / (appointmentMetrics.total || 1)) * 100).toFixed(1)}%\n`
+      csvContent += `Cancelled,${appointmentMetrics.cancelled},${appointmentMetrics.cancellationRate.toFixed(1)}%\n`
+      csvContent += `Total,${appointmentMetrics.total},100%\n\n`
+      
+      csvContent += 'SERVICE PERFORMANCE\n'
+      csvContent += 'Service,Bookings,Revenue,Avg Price\n'
+      serviceBreakdown.forEach(service => {
+        csvContent += `${service.service},${service.count},$${service.revenue.toFixed(2)},$${(service.revenue / service.count).toFixed(2)}\n`
+      })
+      csvContent += '\n'
+      
+      csvContent += 'STAFF PERFORMANCE\n'
+      csvContent += 'Staff Member,Appointments,Revenue,Avg per Appointment\n'
+      staffPerformance.forEach(staff => {
+        csvContent += `${staff.name},${staff.appointments},$${staff.revenue.toFixed(2)},$${(staff.revenue / staff.appointments).toFixed(2)}\n`
+      })
+      csvContent += '\n'
+      
+      csvContent += 'TOP CUSTOMERS\n'
+      csvContent += 'Rank,Customer,Visits,Total Spent,Last Visit\n'
+      customerInsights.topCustomers.forEach((customer, idx) => {
+        const lastVisit = customer.lastVisit ? format(parseISO(customer.lastVisit), 'MMM dd, yyyy') : 'N/A'
+        csvContent += `${idx + 1},${customer.name},${customer.visits},$${customer.revenue.toFixed(2)},${lastVisit}\n`
+      })
+      csvContent += '\n'
+      
+      csvContent += 'PEAK HOURS\n'
+      csvContent += 'Time,Appointments\n'
+      peakTimes.forEach(time => {
+        csvContent += `${time.formatted},${time.count}\n`
+      })
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `scruffy-butts-report-${format(new Date(), 'yyyy-MM-dd')}.csv`
+      link.click()
+      URL.revokeObjectURL(url)
+      
+      toast.success('Report exported as CSV')
+    } catch (error) {
+      toast.error('Failed to export CSV')
+      console.error(error)
     }
-    
-    const dataStr = JSON.stringify(reportData, null, 2)
-    const blob = new Blob([dataStr], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `scruffy-butts-report-${format(new Date(), 'yyyy-MM-dd')}.json`
-    link.click()
-    URL.revokeObjectURL(url)
+  }
+
+  const handleExportPDF = () => {
+    try {
+      const doc = new jsPDF()
+      const { start, end } = getDateRangeFilter()
+      const dateRangeStr = `${format(start, 'MMM dd, yyyy')} - ${format(end, 'MMM dd, yyyy')}`
+      
+      let yPos = 20
+      
+      doc.setFontSize(20)
+      doc.setFont('helvetica', 'bold')
+      doc.text('Scruffy Butts', 20, yPos)
+      
+      yPos += 8
+      doc.setFontSize(16)
+      doc.text('Business Report', 20, yPos)
+      
+      yPos += 8
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'normal')
+      doc.text(`Report Period: ${dateRangeStr}`, 20, yPos)
+      
+      yPos += 5
+      doc.text(`Generated: ${format(new Date(), 'MMM dd, yyyy HH:mm')}`, 20, yPos)
+      
+      yPos += 15
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.text('Revenue Summary', 20, yPos)
+      
+      yPos += 8
+      autoTable(doc, {
+        startY: yPos,
+        head: [['Metric', 'Value']],
+        body: [
+          ['Total Revenue', `$${revenueMetrics.total.toFixed(2)}`],
+          ['Grooming Services', `$${revenueMetrics.appointments.toFixed(2)}`],
+          ['Retail Sales', `$${revenueMetrics.retail.toFixed(2)}`],
+          ['Average Transaction', `$${revenueMetrics.average.toFixed(2)}`],
+          ['Growth Rate', `${revenueMetrics.growth >= 0 ? '+' : ''}${revenueMetrics.growth.toFixed(1)}%`]
+        ],
+        theme: 'grid',
+        headStyles: { fillColor: [67, 75, 150] },
+        margin: { left: 20 }
+      })
+      
+      yPos = (doc as any).lastAutoTable.finalY + 15
+      
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.text('Appointment Summary', 20, yPos)
+      
+      yPos += 8
+      autoTable(doc, {
+        startY: yPos,
+        head: [['Status', 'Count', 'Percentage']],
+        body: [
+          ['Completed', appointmentMetrics.completed.toString(), `${appointmentMetrics.completionRate.toFixed(1)}%`],
+          ['Scheduled', appointmentMetrics.scheduled.toString(), `${((appointmentMetrics.scheduled / (appointmentMetrics.total || 1)) * 100).toFixed(1)}%`],
+          ['Cancelled', appointmentMetrics.cancelled.toString(), `${appointmentMetrics.cancellationRate.toFixed(1)}%`],
+          ['Total', appointmentMetrics.total.toString(), '100%']
+        ],
+        theme: 'grid',
+        headStyles: { fillColor: [67, 75, 150] },
+        margin: { left: 20 }
+      })
+      
+      doc.addPage()
+      yPos = 20
+      
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.text('Service Performance', 20, yPos)
+      
+      yPos += 8
+      if (serviceBreakdown.length > 0) {
+        autoTable(doc, {
+          startY: yPos,
+          head: [['Service', 'Bookings', 'Revenue', 'Avg Price']],
+          body: serviceBreakdown.map(service => [
+            service.service,
+            service.count.toString(),
+            `$${service.revenue.toFixed(2)}`,
+            `$${(service.revenue / service.count).toFixed(2)}`
+          ]),
+          theme: 'grid',
+          headStyles: { fillColor: [67, 75, 150] },
+          margin: { left: 20 }
+        })
+        yPos = (doc as any).lastAutoTable.finalY + 15
+      } else {
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(10)
+        doc.text('No service data available', 20, yPos)
+        yPos += 15
+      }
+      
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.text('Staff Performance', 20, yPos)
+      
+      yPos += 8
+      if (staffPerformance.length > 0) {
+        autoTable(doc, {
+          startY: yPos,
+          head: [['Staff Member', 'Appointments', 'Revenue', 'Avg per Appointment']],
+          body: staffPerformance.map(staff => [
+            staff.name,
+            staff.appointments.toString(),
+            `$${staff.revenue.toFixed(2)}`,
+            `$${(staff.revenue / staff.appointments).toFixed(2)}`
+          ]),
+          theme: 'grid',
+          headStyles: { fillColor: [67, 75, 150] },
+          margin: { left: 20 }
+        })
+        yPos = (doc as any).lastAutoTable.finalY + 15
+      } else {
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(10)
+        doc.text('No staff performance data available', 20, yPos)
+        yPos += 15
+      }
+      
+      if (yPos > 250) {
+        doc.addPage()
+        yPos = 20
+      }
+      
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.text('Top Customers', 20, yPos)
+      
+      yPos += 8
+      if (customerInsights.topCustomers.length > 0) {
+        autoTable(doc, {
+          startY: yPos,
+          head: [['Rank', 'Customer', 'Visits', 'Total Spent', 'Last Visit']],
+          body: customerInsights.topCustomers.map((customer, idx) => [
+            `#${idx + 1}`,
+            customer.name,
+            customer.visits.toString(),
+            `$${customer.revenue.toFixed(2)}`,
+            customer.lastVisit ? format(parseISO(customer.lastVisit), 'MMM dd, yyyy') : 'N/A'
+          ]),
+          theme: 'grid',
+          headStyles: { fillColor: [67, 75, 150] },
+          margin: { left: 20 }
+        })
+        yPos = (doc as any).lastAutoTable.finalY + 15
+      } else {
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(10)
+        doc.text('No customer data available', 20, yPos)
+        yPos += 15
+      }
+      
+      if (yPos > 250) {
+        doc.addPage()
+        yPos = 20
+      }
+      
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.text('Peak Hours', 20, yPos)
+      
+      yPos += 8
+      if (peakTimes.length > 0) {
+        autoTable(doc, {
+          startY: yPos,
+          head: [['Time', 'Appointments']],
+          body: peakTimes.map(time => [
+            time.formatted,
+            time.count.toString()
+          ]),
+          theme: 'grid',
+          headStyles: { fillColor: [67, 75, 150] },
+          margin: { left: 20 }
+        })
+      } else {
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(10)
+        doc.text('No peak hour data available', 20, yPos)
+      }
+      
+      doc.save(`scruffy-butts-report-${format(new Date(), 'yyyy-MM-dd')}.pdf`)
+      
+      toast.success('Report exported as PDF')
+    } catch (error) {
+      toast.error('Failed to export PDF')
+      console.error(error)
+    }
   }
 
   return (
@@ -341,10 +585,24 @@ export function Reports() {
             Track performance and business insights
           </p>
         </div>
-        <Button onClick={handleExport} variant="outline" className="flex items-center space-x-2">
-          <Download size={18} />
-          <span>Export Report</span>
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="flex items-center space-x-2">
+              <Download size={18} />
+              <span>Export Report</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleExportPDF} className="flex items-center space-x-2">
+              <FilePdf size={18} />
+              <span>Export as PDF</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportCSV} className="flex items-center space-x-2">
+              <FileCsv size={18} />
+              <span>Export as CSV</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className={`flex flex-wrap ${isCompact ? 'gap-2' : 'gap-4'}`}>
@@ -524,7 +782,7 @@ export function Reports() {
                     <div className="text-right">
                       <div className="font-bold">{appointmentMetrics.scheduled}</div>
                       <div className="text-xs text-muted-foreground">
-                        {((appointmentMetrics.scheduled / appointmentMetrics.total) * 100).toFixed(1)}%
+                        {appointmentMetrics.total > 0 ? ((appointmentMetrics.scheduled / appointmentMetrics.total) * 100).toFixed(1) : '0.0'}%
                       </div>
                     </div>
                   </div>
@@ -569,7 +827,7 @@ export function Reports() {
                         <div className="w-32 bg-secondary rounded-full h-2">
                           <div 
                             className="bg-primary h-2 rounded-full" 
-                            style={{ width: `${(time.count / peakTimes[0].count) * 100}%` }}
+                            style={{ width: `${peakTimes[0].count > 0 ? (time.count / peakTimes[0].count) * 100 : 0}%` }}
                           />
                         </div>
                         <span className="font-bold w-12 text-right">{time.count}</span>
