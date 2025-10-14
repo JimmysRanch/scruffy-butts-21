@@ -21,9 +21,9 @@ export function Navigation({ currentView, onNavigate, isCompact = false }: Navig
 
   return (
     <nav className="bg-card border-b border-border">
-      <div className={`flex items-center justify-between ${isCompact ? 'h-12' : 'h-16'} px-4`}>
+      <div className={`flex items-center justify-between ${isCompact ? 'h-10 px-3' : 'h-14 px-4'}`}>
         <div className="flex items-center">
-          <h1 className={`font-bold text-foreground ${isCompact ? 'text-lg' : 'text-xl'}`}>Scruffy Butts</h1>
+          <h1 className={`font-bold text-foreground ${isCompact ? 'text-base' : 'text-xl'}`}>Scruffy Butts</h1>
         </div>
         
         <div className="flex items-center space-x-1">
@@ -36,11 +36,11 @@ export function Navigation({ currentView, onNavigate, isCompact = false }: Navig
                 <Button
                   key={item.id}
                   variant={isActive ? "default" : "ghost"}
-                  size="sm"
+                  size={isCompact ? "sm" : "sm"}
                   onClick={() => onNavigate(item.id)}
-                  className="flex items-center space-x-2"
+                  className={`flex items-center space-x-2 ${isCompact ? 'h-7 px-2 text-xs' : ''}`}
                 >
-                  <Icon size={18} />
+                  <Icon size={isCompact ? 16 : 18} />
                   <span className="hidden sm:inline">{item.label}</span>
                 </Button>
               )
@@ -50,11 +50,11 @@ export function Navigation({ currentView, onNavigate, isCompact = false }: Navig
           <div className="ml-2 pl-2 border-l border-border">
             <Button
               variant={currentView === 'settings' ? "default" : "ghost"}
-              size="sm"
+              size={isCompact ? "sm" : "sm"}
               onClick={() => onNavigate('settings')}
-              className="flex items-center space-x-2"
+              className={`flex items-center space-x-2 ${isCompact ? 'h-7 px-2 text-xs' : ''}`}
             >
-              <Gear size={18} />
+              <Gear size={isCompact ? 16 : 18} />
               <span className="hidden sm:inline">Settings</span>
             </Button>
           </div>

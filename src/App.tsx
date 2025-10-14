@@ -81,7 +81,7 @@ function App() {
   return (
     <div className="min-h-screen bg-background">
       <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
-      <main className={`w-full px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 ${isCompact ? 'py-3' : 'py-4 sm:py-6'}`}>
+      <main className={`w-full px-3 sm:px-4 md:px-6 lg:px-8 max-w-[2000px] mx-auto ${isCompact ? 'py-2' : 'py-3 sm:py-4'}`}>
         {renderView()}
       </main>
       <Toaster />
