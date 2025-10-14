@@ -100,8 +100,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className={`font-bold text-foreground ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Dashboard</h1>
-          <p className={`text-muted-foreground ${isCompact ? 'text-sm' : ''}`}>
+          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground">
             Welcome back! Here's what's happening today.
           </p>
         </div>
