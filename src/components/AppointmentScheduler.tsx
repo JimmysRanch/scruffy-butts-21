@@ -18,7 +18,7 @@ import {
   Plus, Calendar, Clock, User, MagnifyingGlass, Funnel, Phone, Envelope, 
   CheckCircle, XCircle, ClockCounterClockwise, PencilSimple, Trash, 
   CaretLeft, CaretRight, List, CalendarBlank, UserCircle, Dog, Package,
-  Bell, BellSlash, Copy, Check, WarningCircle
+  Bell, BellSlash, Copy, Check, WarningCircle, ArrowClockwise
 } from '@phosphor-icons/react'
 import { format, addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, addWeeks, addMonths, isSameDay, parseISO, isToday, isBefore, startOfDay } from 'date-fns'
 import { toast } from 'sonner'
@@ -288,6 +288,28 @@ export function AppointmentScheduler() {
     }
     setAppointments((current) => [...(current || []), newAppointment])
     toast.success('Appointment duplicated')
+  }
+
+  const handleRebookAppointment = (appointment: Appointment) => {
+    setSelectedAppointment(appointment)
+    setFormCustomer(appointment.customerId)
+    setFormService(appointment.serviceId)
+    setFormStaff(appointment.staffId || 'unassigned')
+    setFormDate('')
+    setFormTime('')
+    setFormNotes(appointment.notes || '')
+    setFormSendReminder(true)
+    setFormSendConfirmation(true)
+    
+    const customer = (customers || []).find(c => c.id === appointment.customerId)
+    if (customer) {
+      const pet = customer.pets.find(p => p.name === appointment.petName)
+      if (pet) setFormPet(pet.id)
+    }
+    
+    setSelectedAppointment(null)
+    setIsNewAppointmentOpen(true)
+    toast.info('Select new date and time for rebooking')
   }
 
   const updateAppointmentStatus = (appointmentId: string, status: Appointment['status']) => {
@@ -760,6 +782,7 @@ export function AppointmentScheduler() {
               onEditAppointment={handleEditAppointment}
               onDeleteAppointment={handleDeleteAppointment}
               onDuplicateAppointment={handleDuplicateAppointment}
+              onRebookAppointment={handleRebookAppointment}
               onStatusChange={updateAppointmentStatus}
               getStaffColor={getStaffColor}
               staff={staff || []}
@@ -786,6 +809,10 @@ export function AppointmentScheduler() {
               onDelete={() => handleDeleteAppointment(selectedAppointment.id)}
               onDuplicate={() => {
                 handleDuplicateAppointment(selectedAppointment)
+                setIsDetailOpen(false)
+              }}
+              onRebook={() => {
+                handleRebookAppointment(selectedAppointment)
                 setIsDetailOpen(false)
               }}
               onClose={() => setIsDetailOpen(false)}
@@ -942,6 +969,7 @@ function ListView({
   onEditAppointment, 
   onDeleteAppointment,
   onDuplicateAppointment,
+  onRebookAppointment,
   onStatusChange,
   getStaffColor,
   staff
@@ -951,6 +979,7 @@ function ListView({
   onEditAppointment: (apt: Appointment) => void
   onDeleteAppointment: (id: string) => void
   onDuplicateAppointment: (apt: Appointment) => void
+  onRebookAppointment: (apt: Appointment) => void
   onStatusChange: (id: string, status: Appointment['status']) => void
   getStaffColor: (staffId?: string) => string
   staff: Staff[]
@@ -981,6 +1010,7 @@ function ListView({
             onEdit={() => onEditAppointment(apt)}
             onDelete={() => onDeleteAppointment(apt.id)}
             onDuplicate={() => onDuplicateAppointment(apt)}
+            onRebook={() => onRebookAppointment(apt)}
             onStatusChange={(status) => onStatusChange(apt.id, status)}
             getStaffColor={getStaffColor}
             staff={staff}
@@ -998,6 +1028,7 @@ function AppointmentCard({
   onEdit,
   onDelete,
   onDuplicate,
+  onRebook,
   onStatusChange,
   getStaffColor,
   staff,
@@ -1008,6 +1039,7 @@ function AppointmentCard({
   onEdit?: () => void
   onDelete?: () => void
   onDuplicate?: () => void
+  onRebook?: () => void
   onStatusChange?: (status: Appointment['status']) => void
   getStaffColor: (staffId?: string) => string
   staff?: Staff[]
@@ -1019,39 +1051,38 @@ function AppointmentCard({
   return (
     <div
       className={cn(
-        'border rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow',
+        'border rounded-lg p-3 cursor-pointer hover:shadow-md transition-shadow',
         STATUS_COLORS[appointment.status],
         isPast && 'opacity-60'
       )}
       onClick={onClick}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <Dog size={18} className="flex-shrink-0" />
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4 flex-1 min-w-0">
+          <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
+            <Dog size={16} className="flex-shrink-0 text-foreground/70" />
             <h3 className="font-semibold truncate">{appointment.petName}</h3>
-            <Badge variant="outline" className="flex-shrink-0">
-              {appointment.status}
-            </Badge>
           </div>
           
-          <div className="text-sm space-y-1 text-muted-foreground">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
+            <div className="flex items-center gap-1.5">
               <User size={14} />
               <span>{appointment.customerFirstName} {appointment.customerLastName}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <Package size={14} />
               <span>{appointment.service}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <Calendar size={14} />
-              <span>{format(parseISO(appointment.date), 'MMM d, yyyy')}</span>
-              <Clock size={14} className="ml-2" />
-              <span>{appointment.time} - {appointment.endTime}</span>
+              <span>{format(parseISO(appointment.date), 'MMM d')}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Clock size={14} />
+              <span>{appointment.time}</span>
             </div>
             {staffMember && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <UserCircle size={14} />
                 <span>{staffMember.firstName} {staffMember.lastName}</span>
               </div>
@@ -1059,16 +1090,19 @@ function AppointmentCard({
           </div>
         </div>
 
-        <div className="flex flex-col items-end gap-2">
-          <div className="text-lg font-bold">${appointment.price}</div>
+        <div className="flex items-center gap-4 flex-shrink-0">
+          <Badge variant="outline" className="flex-shrink-0">
+            {appointment.status}
+          </Badge>
+          <div className="text-base font-bold">${appointment.price}</div>
           {appointment.staffId && (
-            <div className={cn('w-3 h-3 rounded-full', getStaffColor(appointment.staffId))} />
+            <div className={cn('w-2.5 h-2.5 rounded-full', getStaffColor(appointment.staffId))} />
           )}
         </div>
       </div>
 
       {showActions && onEdit && onStatusChange && (
-        <div className="mt-4 pt-4 border-t flex items-center gap-2 flex-wrap" onClick={(e) => e.stopPropagation()}>
+        <div className="mt-3 pt-3 border-t flex items-center gap-2 flex-wrap" onClick={(e) => e.stopPropagation()}>
           {appointment.status === 'scheduled' && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('confirmed')}>
               <CheckCircle size={14} className="mr-1" />
@@ -1097,10 +1131,10 @@ function AppointmentCard({
             <PencilSimple size={14} className="mr-1" />
             Edit
           </Button>
-          {onDuplicate && (
-            <Button size="sm" variant="outline" onClick={onDuplicate}>
-              <Copy size={14} className="mr-1" />
-              Duplicate
+          {onRebook && (
+            <Button size="sm" variant="outline" onClick={onRebook}>
+              <ArrowClockwise size={14} className="mr-1" />
+              Rebook
             </Button>
           )}
         </div>
@@ -1117,6 +1151,7 @@ function AppointmentDetail({
   onEdit, 
   onDelete,
   onDuplicate,
+  onRebook,
   onClose 
 }: { 
   appointment: Appointment
@@ -1126,6 +1161,7 @@ function AppointmentDetail({
   onEdit: () => void
   onDelete: () => void
   onDuplicate: () => void
+  onRebook: () => void
   onClose: () => void
 }) {
   const isPast = isBefore(parseISO(appointment.date), startOfDay(new Date()))
@@ -1328,9 +1364,9 @@ function AppointmentDetail({
           <PencilSimple size={16} className="mr-2" />
           Edit Appointment
         </Button>
-        <Button variant="outline" onClick={onDuplicate} className="w-full">
-          <Copy size={16} className="mr-2" />
-          Duplicate Appointment
+        <Button variant="outline" onClick={onRebook} className="w-full">
+          <ArrowClockwise size={16} className="mr-2" />
+          Rebook Customer
         </Button>
         <Button variant="destructive" onClick={onDelete} className="w-full">
           <Trash size={16} className="mr-2" />
