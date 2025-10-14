@@ -47,6 +47,9 @@ interface Pet {
 export function Dashboard({ onNavigate }: DashboardProps) {
   const [appointments] = useKV<Appointment[]>('appointments', [])
   const [customers] = useKV<Customer[]>('customers', [])
+  const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
+
+  const isCompact = appearance?.compactMode || false
 
   const today = format(new Date(), 'yyyy-MM-dd')
   const todayAppointments = (appointments || []).filter(apt => apt.date === today)
@@ -83,11 +86,11 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground">
+          <h1 className={`font-bold text-foreground ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Dashboard</h1>
+          <p className={`text-muted-foreground ${isCompact ? 'text-sm' : ''}`}>
             Welcome back! Here's what's happening today.
           </p>
         </div>
@@ -97,7 +100,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className={`grid grid-cols-1 md:grid-cols-3 ${isCompact ? 'gap-3' : 'gap-6'}`}>
         {stats.map((stat, index) => {
           const Icon = stat.icon
           return (
@@ -114,7 +117,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className={`grid grid-cols-1 lg:grid-cols-2 ${isCompact ? 'gap-3' : 'gap-6'}`}>
         <Card>
           <CardHeader>
             <CardTitle>Today's Schedule</CardTitle>
@@ -124,13 +127,13 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardHeader>
           <CardContent>
             {todayAppointments.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">
+              <p className={`text-muted-foreground text-center ${isCompact ? 'py-4' : 'py-8'}`}>
                 No appointments scheduled for today
               </p>
             ) : (
-              <div className="space-y-3">
+              <div className={isCompact ? 'space-y-2' : 'space-y-3'}>
                 {todayAppointments.map((appointment) => (
-                  <div key={appointment.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
+                  <div key={appointment.id} className={`flex items-center justify-between bg-secondary rounded-lg ${isCompact ? 'p-2' : 'p-3'}`}>
                     <div>
                       <p className="font-medium">{appointment.petName}</p>
                       <p className="text-sm text-muted-foreground">{appointment.customerFirstName} {appointment.customerLastName}</p>
@@ -158,13 +161,13 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardHeader>
           <CardContent>
             {upcomingAppointments.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">
+              <p className={`text-muted-foreground text-center ${isCompact ? 'py-4' : 'py-8'}`}>
                 No upcoming appointments
               </p>
             ) : (
-              <div className="space-y-3">
+              <div className={isCompact ? 'space-y-2' : 'space-y-3'}>
                 {upcomingAppointments.map((appointment) => (
-                  <div key={appointment.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
+                  <div key={appointment.id} className={`flex items-center justify-between bg-secondary rounded-lg ${isCompact ? 'p-2' : 'p-3'}`}>
                     <div>
                       <p className="font-medium">{appointment.petName}</p>
                       <p className="text-sm text-muted-foreground">{appointment.customerFirstName} {appointment.customerLastName}</p>

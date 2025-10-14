@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useKV } from '@github/spark/hooks'
 import { Toaster } from '@/components/ui/sonner'
 import { Dashboard } from '@/components/Dashboard'
 import { AppointmentScheduler } from '@/components/AppointmentScheduler'
@@ -10,8 +11,19 @@ import { Navigation } from '@/components/Navigation'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'settings'
 
+interface AppearanceSettings {
+  theme: 'light' | 'dark' | 'system'
+  compactMode: boolean
+  showWelcomeMessage: boolean
+}
+
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard')
+  const [appearance] = useKV<AppearanceSettings>('appearance-settings', {
+    theme: 'light',
+    compactMode: false,
+    showWelcomeMessage: true
+  })
 
   const renderView = () => {
     switch (currentView) {
@@ -32,10 +44,12 @@ function App() {
     }
   }
 
+  const isCompact = appearance?.compactMode || false
+
   return (
     <div className="min-h-screen bg-background">
-      <Navigation currentView={currentView} onNavigate={setCurrentView} />
-      <main className="container mx-auto px-4 py-6">
+      <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
+      <main className={`container mx-auto px-4 ${isCompact ? 'py-3' : 'py-6'}`}>
         {renderView()}
       </main>
       <Toaster />

@@ -54,11 +54,13 @@ export function PointOfSale() {
   const [services] = useKV<Service[]>('services', [])
   const [customers] = useKV<Customer[]>('customers', [])
   const [transactions, setTransactions] = useKV<Transaction[]>('transactions', [])
+  const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
   const [cart, setCart] = useState<CartItem[]>([])
   const [selectedCustomer, setSelectedCustomer] = useState<string>('walk-in')
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card'>('card')
 
-  // Ensure we have arrays even if undefined
+  const isCompact = appearance?.compactMode || false
+
   const servicesList = services || []
   const customersList = customers || []
   const transactionsList = transactions || []
@@ -125,12 +127,12 @@ export function PointOfSale() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-foreground">Point of Sale</h1>
+        <h1 className={`font-bold text-foreground ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Point of Sale</h1>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className={`grid grid-cols-1 lg:grid-cols-3 ${isCompact ? 'gap-3' : 'gap-6'}`}>
         {/* Services */}
         <div className="lg:col-span-2">
           <Card>
@@ -141,10 +143,10 @@ export function PointOfSale() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className={`grid grid-cols-1 md:grid-cols-2 ${isCompact ? 'gap-2' : 'gap-4'}`}>
                 {servicesList.map(service => (
                   <Card key={service.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                    <CardContent className="p-4">
+                    <CardContent className={isCompact ? 'p-3' : 'p-4'}>
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-medium">{service.name}</h3>
                         <Badge variant="secondary">${service.price}</Badge>

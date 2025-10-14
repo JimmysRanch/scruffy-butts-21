@@ -35,10 +35,13 @@ interface Customer {
 
 export function CustomerManager() {
   const [customers, setCustomers] = useKV<Customer[]>('customers', [])
+  const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
   const [isNewCustomerOpen, setIsNewCustomerOpen] = useState(false)
   const [isNewPetOpen, setIsNewPetOpen] = useState(false)
   const [selectedCustomerId, setSelectedCustomerId] = useState('')
   const [viewingCustomerId, setViewingCustomerId] = useState<string | null>(null)
+  
+  const isCompact = appearance?.compactMode || false
   
   useEffect(() => {
     if (customers && customers.length > 0) {
@@ -155,11 +158,11 @@ export function CustomerManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Clients & Pets</h1>
-          <p className="text-muted-foreground">
+          <h1 className={`font-bold text-foreground ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Clients & Pets</h1>
+          <p className={`text-muted-foreground ${isCompact ? 'text-sm' : ''}`}>
             Manage client information and their pets
           </p>
         </div>
@@ -331,11 +334,11 @@ export function CustomerManager() {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-3">
+        <div className={isCompact ? 'space-y-2' : 'space-y-3'}>
           {(customers || []).map((customer) => (
             <div 
               key={customer.id} 
-              className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+              className={`flex items-center justify-between bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer ${isCompact ? 'p-3' : 'p-4'}`}
               onClick={() => setViewingCustomerId(customer.id)}
             >
               <div className="flex items-center space-x-4 flex-1 min-w-0">

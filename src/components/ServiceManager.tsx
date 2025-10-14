@@ -21,7 +21,10 @@ interface Service {
 
 export function ServiceManager() {
   const [services, setServices] = useKV<Service[]>('services', [])
+  const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
   const [isNewServiceOpen, setIsNewServiceOpen] = useState(false)
+  
+  const isCompact = appearance?.compactMode || false
   
   const [serviceForm, setServiceForm] = useState({
     name: '',
@@ -68,11 +71,11 @@ export function ServiceManager() {
   const categories = ['Basic Grooming', 'Full Service', 'Add-ons', 'Premium Services']
 
   return (
-    <div className="space-y-6">
+    <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Services</h1>
-          <p className="text-muted-foreground">
+          <h1 className={`font-bold text-foreground ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Services</h1>
+          <p className={`text-muted-foreground ${isCompact ? 'text-sm' : ''}`}>
             Manage your grooming services, pricing, and duration
           </p>
         </div>
@@ -159,10 +162,10 @@ export function ServiceManager() {
         </Dialog>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${isCompact ? 'gap-3' : 'gap-6'}`}>
         {(services || []).length === 0 ? (
           <Card className="col-span-full">
-            <CardContent className="text-center py-12">
+            <CardContent className={`text-center ${isCompact ? 'py-8' : 'py-12'}`}>
               <Scissors size={48} className="mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium mb-2">No services yet</h3>
               <p className="text-muted-foreground mb-4">

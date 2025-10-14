@@ -123,6 +123,7 @@ function StaffProfile({ staff, onBack, onEdit }: StaffProfileProps) {
 
 export function StaffManager() {
   const [staff, setStaff] = useKV<StaffMember[]>('staff-members', [])
+  const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
   const [staffPositions] = useKV<StaffPosition[]>('staff-positions', [
     { id: 'owner', name: 'Owner', permissions: ['all'], description: 'Full access to all features' },
     { id: 'admin', name: 'Admin', permissions: ['manage_staff', 'manage_customers', 'manage_services', 'view_reports', 'pos'], description: 'Administrative access' },
@@ -147,6 +148,8 @@ export function StaffManager() {
     status: 'active' as 'active' | 'inactive',
     rating: 5
   })
+
+  const isCompact = appearance?.compactMode || false
 
   const resetForm = () => {
     setFormData({
@@ -249,11 +252,11 @@ export function StaffManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Staff Management</h1>
-          <p className="text-muted-foreground">Manage your team members and their profiles</p>
+          <h1 className={`font-bold ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Staff Management</h1>
+          <p className={`text-muted-foreground ${isCompact ? 'text-sm' : ''}`}>Manage your team members and their profiles</p>
         </div>
         <Button onClick={() => setShowDialog(true)} className="flex items-center space-x-2">
           <Plus size={18} />
@@ -263,7 +266,7 @@ export function StaffManager() {
 
       {!staff || staff.length === 0 ? (
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16">
+          <CardContent className={`flex flex-col items-center justify-center ${isCompact ? 'py-12' : 'py-16'}`}>
             <UserCircle size={64} className="text-muted-foreground mb-4" />
             <h3 className="text-xl font-semibold mb-2">No Staff Members Yet</h3>
             <p className="text-muted-foreground text-center mb-4">
@@ -273,7 +276,7 @@ export function StaffManager() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${isCompact ? 'gap-3' : 'gap-6'}`}>
           {(staff || []).map((member) => (
             <Card key={member.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleStaffClick(member)}>
               <CardHeader>

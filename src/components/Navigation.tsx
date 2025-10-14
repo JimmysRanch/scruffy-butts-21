@@ -6,9 +6,10 @@ type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'sett
 interface NavigationProps {
   currentView: View
   onNavigate: (view: View) => void
+  isCompact?: boolean
 }
 
-export function Navigation({ currentView, onNavigate }: NavigationProps) {
+export function Navigation({ currentView, onNavigate, isCompact = false }: NavigationProps) {
   const navItems = [
     { id: 'dashboard' as View, label: 'Dashboard', icon: ChartBar },
     { id: 'appointments' as View, label: 'Appointments', icon: Calendar },
@@ -20,9 +21,9 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
   return (
     <nav className="bg-card border-b border-border">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className={`flex items-center justify-between ${isCompact ? 'h-12' : 'h-16'}`}>
           <div className="flex items-center">
-            <h1 className="text-xl font-bold text-foreground">Scruffy Butts</h1>
+            <h1 className={`font-bold text-foreground ${isCompact ? 'text-lg' : 'text-xl'}`}>Scruffy Butts</h1>
           </div>
           
           <div className="flex items-center space-x-1">

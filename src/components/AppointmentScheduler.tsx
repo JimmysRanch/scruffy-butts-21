@@ -57,6 +57,7 @@ export function AppointmentScheduler() {
   const [appointments, setAppointments] = useKV<Appointment[]>('appointments', [])
   const [customers] = useKV<Customer[]>('customers', [])
   const [services] = useKV<Service[]>('services', [])
+  const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
   const [isNewAppointmentOpen, setIsNewAppointmentOpen] = useState(false)
   const [selectedCustomer, setSelectedCustomer] = useState('')
   const [selectedPet, setSelectedPet] = useState('')
@@ -64,6 +65,8 @@ export function AppointmentScheduler() {
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedTime, setSelectedTime] = useState('')
   const [notes, setNotes] = useState('')
+
+  const isCompact = appearance?.compactMode || false
 
   const timeSlots = [
     '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
@@ -137,11 +140,11 @@ export function AppointmentScheduler() {
   const selectedServiceData = (services || []).find(s => s.id === selectedService)
 
   return (
-    <div className="space-y-6">
+    <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Appointments</h1>
-          <p className="text-muted-foreground">
+          <h1 className={`font-bold text-foreground ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Appointments</h1>
+          <p className={`text-muted-foreground ${isCompact ? 'text-sm' : ''}`}>
             Manage your grooming appointments and schedule
           </p>
         </div>
@@ -267,10 +270,10 @@ export function AppointmentScheduler() {
         </Dialog>
       </div>
 
-      <div className="space-y-4">
+      <div className={isCompact ? 'space-y-2' : 'space-y-4'}>
         {(appointments || []).length === 0 ? (
           <Card>
-            <CardContent className="text-center py-12">
+            <CardContent className={`text-center ${isCompact ? 'py-8' : 'py-12'}`}>
               <Calendar size={48} className="mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium mb-2">No appointments scheduled</h3>
               <p className="text-muted-foreground mb-4">

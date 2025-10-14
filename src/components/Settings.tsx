@@ -286,6 +286,8 @@ export function Settings() {
     toast.success('Settings saved successfully!')
   }
 
+  const isCompact = appearance?.compactMode || false
+
   const tabs = [
     { id: 'business' as const, label: 'Business', icon: MapPin },
     { id: 'services' as const, label: 'Services', icon: Scissors },
@@ -296,11 +298,11 @@ export function Settings() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Settings</h1>
-          <p className="text-muted-foreground">Manage your grooming business preferences and configurations</p>
+          <h1 className={`font-bold text-foreground ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Settings</h1>
+          <p className={`text-muted-foreground ${isCompact ? 'text-sm' : ''}`}>Manage your grooming business preferences and configurations</p>
         </div>
         <Button onClick={handleSave} className="flex items-center gap-2">
           <FloppyDisk size={18} />
@@ -308,7 +310,7 @@ export function Settings() {
         </Button>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className={`flex flex-col lg:flex-row ${isCompact ? 'gap-3' : 'gap-6'}`}>
         {/* Sidebar Navigation */}
         <div className="lg:w-64">
           <Card>
