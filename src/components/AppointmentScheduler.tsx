@@ -1114,7 +1114,7 @@ function AppointmentCard({
   return (
     <div
       className={cn(
-        'border rounded-lg p-3 cursor-pointer hover:shadow-md transition-all',
+        'border rounded-lg p-3 cursor-pointer hover:shadow-md transition-all liquid-ripple liquid-glow',
         STATUS_COLORS[appointment.status],
         isPast && 'opacity-60',
         tapCount === 1 && 'shadow-md ring-2 ring-primary/20'

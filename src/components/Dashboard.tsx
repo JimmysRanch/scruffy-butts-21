@@ -139,10 +139,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       </div>
 
       <div className={`grid md:grid-cols-3 ${isCompact ? 'gap-2' : 'gap-4'}`}>
-        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20" onClick={() => onNavigate('appointments')}>
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
           <CardHeader className={`flex flex-row items-center justify-between space-y-0 ${isCompact ? 'pb-1' : 'pb-2'}`}>
             <CardTitle className="text-sm font-medium">Today's Appointments</CardTitle>
-            <div className="glass-dark p-2 rounded-lg">
+            <div className="glass-dark p-2 rounded-lg liquid-glow">
               <Calendar className="h-4 w-4 text-primary" weight="fill" />
             </div>
           </CardHeader>
@@ -156,10 +156,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardContent>
         </Card>
 
-        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20" onClick={() => onNavigate('customers')}>
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('customers')}>
           <CardHeader className={`flex flex-row items-center justify-between space-y-0 ${isCompact ? 'pb-1' : 'pb-2'}`}>
             <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-            <div className="glass-dark p-2 rounded-lg">
+            <div className="glass-dark p-2 rounded-lg liquid-glow">
               <Users className="h-4 w-4 text-accent" weight="fill" />
             </div>
           </CardHeader>
@@ -173,10 +173,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardContent>
         </Card>
 
-        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20" onClick={() => onNavigate('appointments')}>
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
           <CardHeader className={`flex flex-row items-center justify-between space-y-0 ${isCompact ? 'pb-1' : 'pb-2'}`}>
             <CardTitle className="text-sm font-medium">This Week</CardTitle>
-            <div className="glass-dark p-2 rounded-lg">
+            <div className="glass-dark p-2 rounded-lg liquid-glow">
               <ChartBar className="h-4 w-4 text-primary" weight="fill" />
             </div>
           </CardHeader>
@@ -192,10 +192,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       </div>
 
       <div className={`grid md:grid-cols-2 ${isCompact ? 'gap-2' : 'gap-4'}`}>
-        <Card className="frosted border-white/20">
+        <Card className="frosted border-white/20 liquid-shine">
           <CardHeader className={isCompact ? 'pb-2' : ''}>
             <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-              <div className="glass-dark p-1.5 rounded-lg">
+              <div className="glass-dark p-1.5 rounded-lg liquid-pulse">
                 <Calendar className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} weight="fill" />
               </div>
               Today's Schedule
@@ -236,10 +236,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardContent>
         </Card>
 
-        <Card className="frosted border-white/20">
+        <Card className="frosted border-white/20 liquid-shine">
           <CardHeader className={isCompact ? 'pb-2' : ''}>
             <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-              <div className="glass-dark p-1.5 rounded-lg">
+              <div className="glass-dark p-1.5 rounded-lg liquid-pulse">
                 <Clock className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} weight="fill" />
               </div>
               Upcoming Appointments
