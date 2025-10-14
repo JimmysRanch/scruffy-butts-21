@@ -1099,17 +1099,27 @@ function AppointmentCard({
   staff?: Staff[]
   showActions?: boolean
 }) {
+  const [tapCount, setTapCount] = useState(0)
   const staffMember = staff?.find(s => s.id === appointment.staffId)
   const isPast = isBefore(parseISO(appointment.date), startOfDay(new Date()))
+
+  const handleCardClick = () => {
+    if (tapCount === 0) {
+      setTapCount(1)
+    } else if (tapCount === 1) {
+      onClick()
+    }
+  }
 
   return (
     <div
       className={cn(
-        'border rounded-lg p-3 cursor-pointer hover:shadow-md transition-shadow',
+        'border rounded-lg p-3 cursor-pointer hover:shadow-md transition-all',
         STATUS_COLORS[appointment.status],
-        isPast && 'opacity-60'
+        isPast && 'opacity-60',
+        tapCount === 1 && 'shadow-md ring-2 ring-primary/20'
       )}
-      onClick={onClick}
+      onClick={handleCardClick}
     >
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1 min-w-0">
@@ -1157,8 +1167,8 @@ function AppointmentCard({
         </div>
       </div>
 
-      {showActions && onEdit && onStatusChange && (
-        <div className="mt-3 pt-3 border-t flex items-center gap-2 flex-wrap" onClick={(e) => e.stopPropagation()}>
+      {showActions && tapCount === 1 && onEdit && onStatusChange && (
+        <div className="mt-3 pt-3 border-t flex items-center gap-2 flex-wrap animate-in fade-in slide-in-from-top-2 duration-200" onClick={(e) => e.stopPropagation()}>
           {appointment.status === 'scheduled' && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('confirmed')}>
               <CheckCircle size={14} className="mr-1" />
@@ -1223,230 +1233,267 @@ function AppointmentDetail({
   const isPast = isBefore(parseISO(appointment.date), startOfDay(new Date()))
 
   return (
-    <div className="space-y-6">
-      <SheetHeader>
-        <SheetTitle className="flex items-center gap-2">
-          <Dog size={24} />
-          {appointment.petName}
-        </SheetTitle>
-        <SheetDescription>
-          Appointment Details
-        </SheetDescription>
-      </SheetHeader>
-
-      <div className="space-y-4">
-        <div>
-          <Label className="text-muted-foreground">Status</Label>
-          <div className="mt-1">
-            <Badge className={cn('text-sm', STATUS_COLORS[appointment.status])}>
-              {appointment.status}
-            </Badge>
+    <div className="space-y-6 py-2">
+      <div className="space-y-3">
+        <div className="flex items-start gap-3">
+          <div className="p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
+            <Dog size={28} className="text-primary" weight="duotone" />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold">{appointment.petName}</h2>
+            <p className="text-muted-foreground">{appointment.customerFirstName} {appointment.customerLastName}</p>
           </div>
         </div>
+        <Badge className={cn('text-sm px-3 py-1', STATUS_COLORS[appointment.status])}>
+          {appointment.status.replace('-', ' ')}
+        </Badge>
+      </div>
 
-        <Separator />
-
-        <div>
-          <Label className="text-muted-foreground">Date & Time</Label>
-          <div className="mt-1 space-y-1">
-            <div className="flex items-center gap-2">
-              <Calendar size={16} />
-              <span className="font-medium">{format(parseISO(appointment.date), 'EEEE, MMMM d, yyyy')}</span>
+      <div className="grid grid-cols-2 gap-3">
+        <Card className="border-2">
+          <CardContent className="p-4 space-y-1">
+            <div className="flex items-center gap-2 text-muted-foreground mb-2">
+              <Calendar size={16} weight="duotone" />
+              <span className="text-xs font-medium uppercase tracking-wide">Date</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Clock size={16} />
-              <span className="font-medium">{appointment.time} - {appointment.endTime}</span>
-              <span className="text-sm text-muted-foreground">({appointment.duration} min)</span>
+            <div className="font-semibold">{format(parseISO(appointment.date), 'MMM d, yyyy')}</div>
+            <div className="text-xs text-muted-foreground">{format(parseISO(appointment.date), 'EEEE')}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-2">
+          <CardContent className="p-4 space-y-1">
+            <div className="flex items-center gap-2 text-muted-foreground mb-2">
+              <Clock size={16} weight="duotone" />
+              <span className="text-xs font-medium uppercase tracking-wide">Time</span>
             </div>
-          </div>
-        </div>
+            <div className="font-semibold">{appointment.time}</div>
+            <div className="text-xs text-muted-foreground">{appointment.duration} minutes</div>
+          </CardContent>
+        </Card>
+      </div>
 
-        <Separator />
-
-        <div>
-          <Label className="text-muted-foreground">Customer</Label>
-          {customer && (
-            <div className="mt-1 space-y-1">
-              <div className="font-medium">{customer.firstName} {customer.lastName}</div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Phone size={14} />
-                <span>{customer.phone}</span>
+      <Card className="border-2 bg-gradient-to-br from-primary/5 to-transparent">
+        <CardContent className="p-4">
+          <div className="flex items-start justify-between">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                <Package size={16} weight="duotone" />
+                <span className="text-xs font-medium uppercase tracking-wide">Service</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Envelope size={14} />
-                <span>{customer.email}</span>
+              <div className="font-semibold text-lg">{appointment.service}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-3xl font-bold text-primary">${appointment.price}</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {customer && (
+        <Card className="border-2">
+          <CardContent className="p-4 space-y-3">
+            <div className="flex items-center gap-2 text-muted-foreground mb-2">
+              <User size={16} weight="duotone" />
+              <span className="text-xs font-medium uppercase tracking-wide">Customer Info</span>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors">
+                <Phone size={18} className="text-muted-foreground" />
+                <span className="text-sm">{customer.phone}</span>
+              </div>
+              <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors">
+                <Envelope size={18} className="text-muted-foreground" />
+                <span className="text-sm">{customer.email}</span>
               </div>
             </div>
-          )}
-        </div>
+          </CardContent>
+        </Card>
+      )}
 
-        <Separator />
-
-        <div>
-          <Label className="text-muted-foreground">Service</Label>
-          <div className="mt-1">
-            <div className="font-medium">{appointment.service}</div>
-            <div className="text-2xl font-bold text-primary mt-1">${appointment.price}</div>
-          </div>
-        </div>
-
-        {staff && (
-          <>
-            <Separator />
-            <div>
-              <Label className="text-muted-foreground">Assigned Staff</Label>
-              <div className="mt-1">
-                <div className="flex items-center gap-2">
-                  <UserCircle size={16} />
-                  <span className="font-medium">{staff.firstName} {staff.lastName}</span>
-                </div>
+      {staff && (
+        <Card className="border-2">
+          <CardContent className="p-4 space-y-2">
+            <div className="flex items-center gap-2 text-muted-foreground mb-2">
+              <UserCircle size={16} weight="duotone" />
+              <span className="text-xs font-medium uppercase tracking-wide">Assigned Groomer</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white font-semibold">
+                {staff.firstName[0]}{staff.lastName[0]}
+              </div>
+              <div>
+                <div className="font-semibold">{staff.firstName} {staff.lastName}</div>
                 <div className="text-sm text-muted-foreground">{staff.position}</div>
               </div>
             </div>
-          </>
-        )}
+          </CardContent>
+        </Card>
+      )}
 
-        {appointment.notes && (
-          <>
-            <Separator />
-            <div>
-              <Label className="text-muted-foreground">Notes</Label>
-              <div className="mt-1 p-3 bg-muted rounded-lg text-sm">
-                {appointment.notes}
+      {appointment.notes && (
+        <Card className="border-2 border-dashed">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 text-muted-foreground mb-2">
+              <span className="text-xs font-medium uppercase tracking-wide">Notes</span>
+            </div>
+            <p className="text-sm leading-relaxed">{appointment.notes}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card className="border-2">
+        <CardContent className="p-4 space-y-3">
+          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+            <Bell size={16} weight="duotone" />
+            <span className="text-xs font-medium uppercase tracking-wide">Notifications</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className={cn(
+              'p-3 rounded-lg border-2 transition-colors',
+              appointment.reminderSent ? 'bg-green-50 border-green-200' : 'bg-muted border-border'
+            )}>
+              <div className="flex items-center gap-2 mb-1">
+                {appointment.reminderSent ? (
+                  <Check size={16} className="text-green-600" weight="bold" />
+                ) : (
+                  <BellSlash size={16} className="text-muted-foreground" />
+                )}
+                <span className="text-xs font-medium">Reminder</span>
+              </div>
+              <div className={cn('text-xs', appointment.reminderSent ? 'text-green-700' : 'text-muted-foreground')}>
+                {appointment.reminderSent ? 'Sent' : 'Not sent'}
               </div>
             </div>
-          </>
-        )}
-
-        <Separator />
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Reminder sent</span>
-            {appointment.reminderSent ? (
-              <div className="flex items-center gap-1 text-green-600">
-                <Check size={16} />
-                <span>Yes</span>
+            <div className={cn(
+              'p-3 rounded-lg border-2 transition-colors',
+              appointment.confirmationSent ? 'bg-green-50 border-green-200' : 'bg-muted border-border'
+            )}>
+              <div className="flex items-center gap-2 mb-1">
+                {appointment.confirmationSent ? (
+                  <Check size={16} className="text-green-600" weight="bold" />
+                ) : (
+                  <XCircle size={16} className="text-muted-foreground" />
+                )}
+                <span className="text-xs font-medium">Confirmation</span>
               </div>
-            ) : (
-              <div className="flex items-center gap-1 text-gray-400">
-                <BellSlash size={16} />
-                <span>No</span>
+              <div className={cn('text-xs', appointment.confirmationSent ? 'text-green-700' : 'text-muted-foreground')}>
+                {appointment.confirmationSent ? 'Sent' : 'Not sent'}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {(appointment.checkInTime || appointment.checkOutTime) && (
+        <Card className="border-2">
+          <CardContent className="p-4 space-y-2">
+            <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-2">Timeline</div>
+            {appointment.checkInTime && (
+              <div className="flex items-center justify-between text-sm p-2 rounded bg-muted/50">
+                <span className="text-muted-foreground">Checked In</span>
+                <span className="font-semibold">{format(parseISO(appointment.checkInTime), 'h:mm a')}</span>
               </div>
             )}
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Confirmation sent</span>
-            {appointment.confirmationSent ? (
-              <div className="flex items-center gap-1 text-green-600">
-                <Check size={16} />
-                <span>Yes</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1 text-gray-400">
-                <XCircle size={16} />
-                <span>No</span>
+            {appointment.checkOutTime && (
+              <div className="flex items-center justify-between text-sm p-2 rounded bg-muted/50">
+                <span className="text-muted-foreground">Checked Out</span>
+                <span className="font-semibold">{format(parseISO(appointment.checkOutTime), 'h:mm a')}</span>
               </div>
             )}
-          </div>
-          {appointment.checkInTime && (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Checked in</span>
-              <span>{format(parseISO(appointment.checkInTime), 'h:mm a')}</span>
-            </div>
-          )}
-          {appointment.checkOutTime && (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Checked out</span>
-              <span>{format(parseISO(appointment.checkOutTime), 'h:mm a')}</span>
-            </div>
-          )}
-        </div>
+          </CardContent>
+        </Card>
+      )}
 
-        {isPast && appointment.status !== 'completed' && appointment.status !== 'cancelled' && appointment.status !== 'no-show' && (
-          <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
-            <WarningCircle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-amber-800">
-              This appointment is in the past. Update the status to completed, cancelled, or no-show.
+      {isPast && appointment.status !== 'completed' && appointment.status !== 'cancelled' && appointment.status !== 'no-show' && (
+        <Card className="border-2 border-amber-200 bg-amber-50">
+          <CardContent className="p-4 flex items-start gap-3">
+            <WarningCircle size={22} className="text-amber-600 flex-shrink-0 mt-0.5" weight="duotone" />
+            <div className="text-sm text-amber-900">
+              <div className="font-semibold mb-1">Past Appointment</div>
+              <div>Update the status to completed, cancelled, or no-show.</div>
             </div>
-          </div>
-        )}
-      </div>
+          </CardContent>
+        </Card>
+      )}
 
-      <div className="space-y-2 pt-4 border-t">
-        <Label className="text-muted-foreground">Quick Status Actions</Label>
+      <Separator className="my-6" />
+
+      <div className="space-y-3">
+        <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Quick Actions</div>
         <div className="grid grid-cols-2 gap-2">
           {appointment.status === 'scheduled' && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('confirmed')} className="w-full">
-              <CheckCircle size={16} className="mr-1" />
+              <CheckCircle size={16} className="mr-2" weight="duotone" />
               Confirm
             </Button>
           )}
           {(appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('checked-in')} className="w-full">
-              <CheckCircle size={16} className="mr-1" />
+              <CheckCircle size={16} className="mr-2" weight="duotone" />
               Check In
             </Button>
           )}
           {appointment.status === 'checked-in' && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('in-progress')} className="w-full">
-              <Clock size={16} className="mr-1" />
-              Start Service
+              <Clock size={16} className="mr-2" weight="duotone" />
+              Start
             </Button>
           )}
           {(appointment.status === 'in-progress' || appointment.status === 'checked-in' || appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('completed')} className="w-full">
-              <Check size={16} className="mr-1" />
+              <Check size={16} className="mr-2" weight="bold" />
               Complete
             </Button>
           )}
           {appointment.status !== 'cancelled' && appointment.status !== 'completed' && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('cancelled')} className="w-full">
-              <XCircle size={16} className="mr-1" />
+              <XCircle size={16} className="mr-2" weight="duotone" />
               Cancel
             </Button>
           )}
           {appointment.status !== 'no-show' && appointment.status !== 'completed' && isPast && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('no-show')} className="w-full">
-              <ClockCounterClockwise size={16} className="mr-1" />
+              <ClockCounterClockwise size={16} className="mr-2" weight="duotone" />
               No Show
             </Button>
           )}
         </div>
       </div>
 
-      <div className="space-y-2 pt-4 border-t">
-        <Label className="text-muted-foreground">Change Status</Label>
-        <p className="text-xs text-muted-foreground">
-          Use this to correct accidental status changes
-        </p>
-        <Select value={appointment.status} onValueChange={(value) => onStatusChange(value as Appointment['status'])}>
-          <SelectTrigger className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="scheduled">Scheduled</SelectItem>
-            <SelectItem value="confirmed">Confirmed</SelectItem>
-            <SelectItem value="checked-in">Checked In</SelectItem>
-            <SelectItem value="in-progress">In Progress</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="cancelled">Cancelled</SelectItem>
-            <SelectItem value="no-show">No Show</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <Card className="border-2">
+        <CardContent className="p-4 space-y-3">
+          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Change Status</div>
+          <Select value={appointment.status} onValueChange={(value) => onStatusChange(value as Appointment['status'])}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="scheduled">Scheduled</SelectItem>
+              <SelectItem value="confirmed">Confirmed</SelectItem>
+              <SelectItem value="checked-in">Checked In</SelectItem>
+              <SelectItem value="in-progress">In Progress</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+              <SelectItem value="no-show">No Show</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+
+      <Separator className="my-6" />
 
       <div className="space-y-2">
-        <Button variant="outline" onClick={onEdit} className="w-full">
-          <PencilSimple size={16} className="mr-2" />
+        <Button variant="outline" size="lg" onClick={onEdit} className="w-full justify-start">
+          <PencilSimple size={18} className="mr-3" weight="duotone" />
           Edit Appointment
         </Button>
-        <Button variant="outline" onClick={onRebook} className="w-full">
-          <ArrowClockwise size={16} className="mr-2" />
+        <Button variant="outline" size="lg" onClick={onRebook} className="w-full justify-start">
+          <ArrowClockwise size={18} className="mr-3" weight="duotone" />
           Rebook Customer
         </Button>
-        <Button variant="destructive" onClick={onDelete} className="w-full">
-          <Trash size={16} className="mr-2" />
+        <Button variant="destructive" size="lg" onClick={onDelete} className="w-full justify-start">
+          <Trash size={18} className="mr-3" weight="duotone" />
           Delete Appointment
         </Button>
       </div>
