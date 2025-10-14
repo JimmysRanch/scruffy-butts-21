@@ -258,23 +258,31 @@ export function Reports() {
     filteredAppointments.forEach(apt => {
       if (!apt.time || typeof apt.time !== 'string') return
       
-      const timeStr = apt.time.trim()
-      const isPM = timeStr.toLowerCase().includes('pm')
-      const isAM = timeStr.toLowerCase().includes('am')
-      
-      const timeWithoutPeriod = timeStr.replace(/\s*(am|pm)/gi, '').trim()
-      const timeParts = timeWithoutPeriod.split(':')
-      
-      if (timeParts.length > 0) {
-        let hour = parseInt(timeParts[0])
-        if (!isNaN(hour)) {
-          if (isPM && hour !== 12) {
-            hour += 12
-          } else if (isAM && hour === 12) {
-            hour = 0
+      try {
+        const timeStr = apt.time.trim()
+        if (!timeStr) return
+        
+        const isPM = timeStr.toLowerCase().includes('pm')
+        const isAM = timeStr.toLowerCase().includes('am')
+        
+        const timeWithoutPeriod = timeStr.replace(/\s*(am|pm)/gi, '').trim()
+        if (!timeWithoutPeriod) return
+        
+        const timeParts = timeWithoutPeriod.split(':')
+        
+        if (timeParts.length > 0 && timeParts[0]) {
+          let hour = parseInt(timeParts[0])
+          if (!isNaN(hour)) {
+            if (isPM && hour !== 12) {
+              hour += 12
+            } else if (isAM && hour === 12) {
+              hour = 0
+            }
+            hourMap.set(hour, (hourMap.get(hour) || 0) + 1)
           }
-          hourMap.set(hour, (hourMap.get(hour) || 0) + 1)
         }
+      } catch (error) {
+        return
       }
     })
 
