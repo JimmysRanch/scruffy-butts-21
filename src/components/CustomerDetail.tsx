@@ -534,10 +534,9 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                   <DialogHeader>
                     <DialogTitle>Add New Pet</DialogTitle>
                     <DialogDescription>
-                      Add a new pet to {customer.firstName} {customer.lastName}'s profile.
+                      Add a new furry friend to this client's profile.
                     </DialogDescription>
                   </DialogHeader>
-                  
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="pet-name">Pet Name</Label>
@@ -594,7 +593,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             {customer.pets.length === 0 ? (
               <div className="text-center py-16">
                 <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.3 }}
                 >
@@ -662,29 +661,34 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                             className="overflow-hidden"
                           >
                             <Separator className="mb-4" />
-                            <div className="space-y-3">
-                              {pet.notes && (
-                                <div className="bg-background/50 rounded-lg p-3">
-                                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                                    Special Care Notes
-                                  </p>
-                                  <p className="text-sm text-foreground">
-                                    {pet.notes}
-                                  </p>
-                                </div>
-                              )}
-                              
-                              <div className="grid grid-cols-2 gap-3">
-                                <div className="bg-background/50 rounded-lg p-3 text-center">
-                                  <p className="text-2xl font-bold text-foreground">12</p>
-                                  <p className="text-xs text-muted-foreground">Visits</p>
-                                </div>
-                                <div className="bg-background/50 rounded-lg p-3 text-center">
-                                  <p className="text-2xl font-bold text-accent">4.9</p>
-                                  <p className="text-xs text-muted-foreground">Rating</p>
+                            {pet.notes && (
+                              <div className="bg-background/50 rounded-lg p-3 mb-3">
+                                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                                  Special Care Notes
+                                </p>
+                                <p className="text-sm text-foreground">{pet.notes}</p>
+                              </div>
+                            )}
+                            
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="bg-background/50 rounded-lg p-3">
+                                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                                  Total Visits
+                                </p>
+                                <p className="text-2xl font-bold text-foreground">12</p>
+                              </div>
+                              <div className="bg-background/50 rounded-lg p-3">
+                                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                                  Rating
+                                </p>
+                                <div className="flex items-center space-x-1">
+                                  <Star size={18} weight="fill" className="text-accent" />
+                                  <span className="text-2xl font-bold text-foreground">5.0</span>
                                 </div>
                               </div>
-                              
+                            </div>
+
+                            <div className="mt-3">
                               <Button 
                                 variant="outline" 
                                 size="sm"
@@ -715,7 +719,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           <DialogHeader>
             <DialogTitle>Edit Pet Information</DialogTitle>
             <DialogDescription>
-              Update {editingPet?.name}'s information.
+              Update your pet's information.
             </DialogDescription>
           </DialogHeader>
           
