@@ -1368,7 +1368,7 @@ export function StaffSchedule() {
               <div className="flex-1">
                 <div className="font-medium">Regular Schedule</div>
                 <div className="text-sm text-muted-foreground mt-0.5">
-                  Set up/edit recurring weekly shifts
+                  Set up recurring weekly shifts
                 </div>
               </div>
             </button>

@@ -130,17 +130,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
   return (
     <div className={isCompact ? 'space-y-2' : 'space-y-4'}>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-        <div>
-          <h1 className={`font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent ${isCompact ? 'text-2xl' : 'text-3xl'}`}>
-            Dashboard
-          </h1>
-          {showWelcome && (
-            <p className={`text-muted-foreground ${isCompact ? 'text-sm' : ''}`}>
-              Welcome back! Here's what's happening today.
-            </p>
-          )}
-        </div>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-2">
         <Button 
           onClick={() => onNavigate('appointments')} 
           className="glass-button flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300" 
