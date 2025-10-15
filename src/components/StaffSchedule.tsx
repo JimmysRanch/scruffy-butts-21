@@ -624,60 +624,6 @@ export function StaffSchedule() {
         </Card>
       )}
 
-      {(regularSchedules || []).length > 0 && (
-        <Card className="frosted">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">Regular Schedules</CardTitle>
-            <CardDescription>Recurring weekly schedules for staff members</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {(regularSchedules || []).map(schedule => {
-              const staff = staffMembers?.find(s => s.id === schedule.staffId)
-              const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-              const scheduleDays = schedule.daysOfWeek.map(d => dayNames[d]).join(', ')
-              
-              return (
-                <div key={schedule.id} className="flex items-center justify-between p-3 rounded-lg glass-dark">
-                  <div className="flex-1">
-                    <div className="font-medium">
-                      {staff?.firstName} {staff?.lastName}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {scheduleDays} • {schedule.startTime} - {schedule.endTime}
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      Effective from {format(parseISO(schedule.effectiveDate), 'MMM d, yyyy')}
-                    </div>
-                    {schedule.notes && (
-                      <div className="text-xs text-muted-foreground mt-1">{schedule.notes}</div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => openEditRegularScheduleDialog(schedule)}
-                      className="glass-button"
-                    >
-                      <PencilSimple size={14} className="mr-1" />
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDeleteRegularSchedule(schedule.id)}
-                      className="glass-button text-destructive"
-                    >
-                      <Trash size={14} />
-                    </Button>
-                  </div>
-                </div>
-              )
-            })}
-          </CardContent>
-        </Card>
-      )}
-
       <div className="frosted rounded-xl overflow-hidden">
         {viewMode === 'week' ? (
           <div className="overflow-x-auto">
