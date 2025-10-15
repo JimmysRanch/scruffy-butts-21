@@ -474,7 +474,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Notes</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{customer.notes}</p>
+                        <p className="text-sm text-foreground">{customer.notes}</p>
                       </div>
                     </div>
                   </>
@@ -497,15 +497,15 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
               <div className="space-y-3">
                 <Button className="w-full justify-start liquid-button" variant="outline">
                   <Calendar size={18} className="mr-3" />
-                  Schedule Appointment
+                  Book Appointment
                 </Button>
                 <Button className="w-full justify-start liquid-button" variant="outline">
                   <ChatCircleDots size={18} className="mr-3" />
                   Send Message
                 </Button>
                 <Button className="w-full justify-start liquid-button" variant="outline">
-                  <Sparkle size={18} className="mr-3" />
-                  View History
+                  <CreditCard size={18} className="mr-3" />
+                  View Invoices
                 </Button>
               </div>
             </div>
@@ -611,14 +611,13 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                 </motion.div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <AnimatePresence>
                   {customer.pets.map((pet, index) => (
                     <motion.div
                       key={pet.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ delay: index * 0.1 }}
                       className={`glass-dark rounded-xl p-5 hover:shadow-xl transition-all duration-300 cursor-pointer ${
                         selectedPetId === pet.id ? 'ring-2 ring-primary shadow-lg' : ''
@@ -636,7 +635,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                           </div>
                         </div>
                         <Button 
-                          variant="ghost" 
+                          variant="ghost"
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation()
@@ -683,7 +682,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                               <div className="grid grid-cols-2 gap-3">
                                 <div className="bg-background/50 rounded-lg p-3 text-center">
                                   <p className="text-2xl font-bold text-foreground">12</p>
-                                  <p className="text-xs text-muted-foreground">Grooms</p>
+                                  <p className="text-xs text-muted-foreground">Visits</p>
                                 </div>
                                 <div className="bg-background/50 rounded-lg p-3 text-center">
                                   <p className="text-2xl font-bold text-accent">4.9</p>
@@ -724,7 +723,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
               Update {editingPet?.name}'s information.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div>
               <Label htmlFor="edit-pet-name">Pet Name</Label>
