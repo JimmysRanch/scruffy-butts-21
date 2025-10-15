@@ -9,9 +9,21 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Plus, UserCircle, Phone, EnvelopeSimple, MapPin, Calendar, Star } from '@phosphor-icons/react'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Switch } from '@/components/ui/switch'
+import { Plus, UserCircle, Phone, EnvelopeSimple, MapPin, Calendar, Star, Scissors } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { StaffSchedule } from './StaffSchedule'
+
+interface Service {
+  id: string
+  name: string
+  description: string
+  duration: number
+  price: number
+  category: string
+  createdAt: string
+}
 
 export interface StaffPosition {
   id: string
@@ -36,6 +48,8 @@ export interface StaffMember {
   notes: string
   status: 'active' | 'inactive'
   rating: number
+  canBeBooked: boolean
+  bookableServices: string[]
 }
 
 interface StaffProfileProps {
@@ -45,6 +59,12 @@ interface StaffProfileProps {
 }
 
 function StaffProfile({ staff, onBack, onEdit }: StaffProfileProps) {
+  const [services] = useKV<Service[]>('services', [])
+  
+  const bookableServiceNames = (services || [])
+    .filter(s => staff.bookableServices?.includes(s.id))
+    .map(s => s.name)
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -65,11 +85,16 @@ function StaffProfile({ staff, onBack, onEdit }: StaffProfileProps) {
             <div>
               <CardTitle className="text-2xl">{staff.firstName} {staff.lastName}</CardTitle>
               <CardDescription className="text-lg">{staff.position}</CardDescription>
-              <div className="flex items-center mt-2">
+              <div className="flex items-center mt-2 gap-3">
                 <Badge variant={staff.status === 'active' ? 'default' : 'secondary'}>
                   {staff.status}
                 </Badge>
-                <div className="flex items-center ml-4">
+                {staff.canBeBooked !== false && (
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+                    Bookable
+                  </Badge>
+                )}
+                <div className="flex items-center">
                   <Star size={16} className="text-yellow-500 mr-1" weight="fill" />
                   <span className="text-sm font-medium">{staff.rating}/5</span>
                 </div>
@@ -113,6 +138,37 @@ function StaffProfile({ staff, onBack, onEdit }: StaffProfileProps) {
                 </div>
               </div>
               
+              {staff.canBeBooked !== false && bookableServiceNames.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Scissors size={16} />
+                    Bookable Services
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {bookableServiceNames.map((serviceName, index) => (
+                      <Badge key={index} variant="secondary" className="bg-green-50 text-green-700">
+                        {serviceName}
+                      </Badge>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    This staff member can be booked for {bookableServiceNames.length} service{bookableServiceNames.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+              )}
+              
+              {staff.canBeBooked === false && (
+                <div>
+                  <h4 className="font-semibold mb-2">Booking Status</h4>
+                  <Badge variant="outline" className="bg-gray-50">
+                    Not available for booking
+                  </Badge>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    This staff member is only scheduled for office work
+                  </p>
+                </div>
+              )}
+              
               {staff.notes && (
                 <div>
                   <h4 className="font-semibold mb-2">Notes</h4>
@@ -131,6 +187,7 @@ function StaffProfile({ staff, onBack, onEdit }: StaffProfileProps) {
 
 export function StaffManager() {
   const [staff, setStaff] = useKV<StaffMember[]>('staff-members', [])
+  const [services] = useKV<Service[]>('services', [])
   const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
   const [staffPositions] = useKV<StaffPosition[]>('staff-positions', [
     { id: 'owner', name: 'Owner', permissions: ['all'], description: 'Full access to all features' },
@@ -158,10 +215,35 @@ export function StaffManager() {
     specialties: '',
     notes: '',
     status: 'active' as 'active' | 'inactive',
-    rating: 5
+    rating: 5,
+    canBeBooked: true,
+    bookableServices: [] as string[]
   })
 
   const isCompact = appearance?.compactMode || false
+
+  const getDefaultBookableServices = (position: string): string[] => {
+    const allServiceIds = (services || []).map(s => s.id)
+    
+    switch(position.toLowerCase()) {
+      case 'groomer':
+        return allServiceIds
+      case 'bather':
+        const bathServices = (services || [])
+          .filter(s => 
+            s.name.toLowerCase().includes('bath') || 
+            s.name.toLowerCase().includes('nail') ||
+            s.name.toLowerCase().includes('teeth')
+          )
+          .map(s => s.id)
+        return bathServices
+      case 'owner':
+      case 'admin':
+        return allServiceIds
+      default:
+        return []
+    }
+  }
 
   const resetForm = () => {
     setFormData({
@@ -178,7 +260,9 @@ export function StaffManager() {
       specialties: '',
       notes: '',
       status: 'active' as 'active' | 'inactive',
-      rating: 5
+      rating: 5,
+      canBeBooked: true,
+      bookableServices: []
     })
     setEditingStaff(null)
   }
@@ -215,7 +299,9 @@ export function StaffManager() {
                 notes: formData.notes,
                 status: formData.status,
                 rating: formData.rating,
-                specialties: specialtiesArray
+                specialties: specialtiesArray,
+                canBeBooked: formData.canBeBooked,
+                bookableServices: formData.bookableServices
               }
             : s
         )
@@ -237,7 +323,9 @@ export function StaffManager() {
         notes: formData.notes,
         status: formData.status,
         rating: formData.rating,
-        specialties: specialtiesArray
+        specialties: specialtiesArray,
+        canBeBooked: formData.canBeBooked,
+        bookableServices: formData.bookableServices
       }
 
       setStaff(currentStaff => [...(currentStaff || []), newStaff])
@@ -264,7 +352,9 @@ export function StaffManager() {
       specialties: staffMember.specialties.join(', '),
       notes: staffMember.notes,
       status: staffMember.status,
-      rating: staffMember.rating
+      rating: staffMember.rating,
+      canBeBooked: staffMember.canBeBooked ?? true,
+      bookableServices: staffMember.bookableServices ?? []
     })
     setSelectedStaff(null)
     setShowDialog(true)
@@ -636,6 +726,95 @@ export function StaffManager() {
                   placeholder="e.g., Large Dogs, Show Cuts, Nail Trimming (comma separated)"
                   className="glass-dark"
                 />
+              </div>
+
+              <div className="md:col-span-2 space-y-3 p-4 rounded-lg border border-border glass-dark">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <Label htmlFor="can-be-booked" className="text-base font-semibold">
+                      Booking Availability
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      Allow this staff member to be booked for appointments
+                    </p>
+                  </div>
+                  <Switch
+                    id="can-be-booked"
+                    checked={formData.canBeBooked}
+                    onCheckedChange={(checked) => {
+                      setFormData({ ...formData, canBeBooked: checked })
+                      if (!checked) {
+                        setFormData({ ...formData, canBeBooked: checked, bookableServices: [] })
+                      } else if (formData.position) {
+                        const defaultServices = getDefaultBookableServices(formData.position)
+                        setFormData({ ...formData, canBeBooked: checked, bookableServices: defaultServices })
+                      }
+                    }}
+                  />
+                </div>
+
+                {formData.canBeBooked && (
+                  <div className="space-y-3 pt-3 border-t border-border">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Bookable Services</Label>
+                      {formData.position && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const defaultServices = getDefaultBookableServices(formData.position)
+                            setFormData({ ...formData, bookableServices: defaultServices })
+                          }}
+                          className="text-xs"
+                        >
+                          Use {formData.position} defaults
+                        </Button>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Select which services this staff member can perform
+                    </p>
+                    
+                    {!services || services.length === 0 ? (
+                      <div className="text-sm text-muted-foreground p-3 border border-dashed rounded">
+                        <Scissors size={16} className="inline mr-2" />
+                        No services available. Add services first in the Settings.
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto">
+                        {services.map((service) => (
+                          <div key={service.id} className="flex items-start space-x-2">
+                            <Checkbox
+                              id={`service-${service.id}`}
+                              checked={formData.bookableServices.includes(service.id)}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  setFormData({
+                                    ...formData,
+                                    bookableServices: [...formData.bookableServices, service.id]
+                                  })
+                                } else {
+                                  setFormData({
+                                    ...formData,
+                                    bookableServices: formData.bookableServices.filter(id => id !== service.id)
+                                  })
+                                }
+                              }}
+                            />
+                            <Label
+                              htmlFor={`service-${service.id}`}
+                              className="text-sm font-normal cursor-pointer leading-tight"
+                            >
+                              <div>{service.name}</div>
+                              <div className="text-xs text-muted-foreground">{service.category}</div>
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="md:col-span-2 space-y-2">

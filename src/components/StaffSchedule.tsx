@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Switch } from '@/components/ui/switch'
+import { Checkbox } from '@/components/ui/checkbox'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { 
@@ -34,6 +35,8 @@ interface StaffMember {
   position: string
   status: 'active' | 'inactive'
   rating: number
+  canBeBooked?: boolean
+  bookableServices?: string[]
 }
 
 interface Shift {
@@ -47,6 +50,8 @@ interface Shift {
   status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled'
   notes?: string
   createdAt: string
+  canBeBooked?: boolean
+  bookableServices?: string[]
 }
 
 interface RegularSchedule {
@@ -58,6 +63,8 @@ interface RegularSchedule {
   effectiveDate: string
   notes?: string
   createdAt: string
+  canBeBooked?: boolean
+  bookableServices?: string[]
 }
 
 interface TimeOffRequest {
@@ -96,6 +103,7 @@ const TIME_SLOTS = [
 
 export function StaffSchedule() {
   const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
+  const [services] = useKV<{ id: string; name: string; category: string }[]>('services', [])
   const [shifts, setShifts] = useKV<Shift[]>('staff-shifts', [])
   const [regularSchedules, setRegularSchedules] = useKV<RegularSchedule[]>('regular-schedules', [])
   const [timeOffRequests, setTimeOffRequests] = useKV<TimeOffRequest[]>('time-off-requests', [])
@@ -122,6 +130,8 @@ export function StaffSchedule() {
   const [formEndTime, setFormEndTime] = useState('')
   const [formShiftType, setFormShiftType] = useState<Shift['type']>('regular')
   const [formNotes, setFormNotes] = useState('')
+  const [formCanBeBooked, setFormCanBeBooked] = useState(true)
+  const [formBookableServices, setFormBookableServices] = useState<string[]>([])
   
   const [formTimeOffStaffId, setFormTimeOffStaffId] = useState('')
   const [formTimeOffStartDate, setFormTimeOffStartDate] = useState('')
@@ -135,6 +145,8 @@ export function StaffSchedule() {
   const [formRegularEndTime, setFormRegularEndTime] = useState('')
   const [formRegularEffectiveDate, setFormRegularEffectiveDate] = useState('')
   const [formRegularNotes, setFormRegularNotes] = useState('')
+  const [formRegularCanBeBooked, setFormRegularCanBeBooked] = useState(true)
+  const [formRegularBookableServices, setFormRegularBookableServices] = useState<string[]>([])
 
   const isCompact = appearance?.compactMode || false
 
@@ -462,16 +474,20 @@ export function StaffSchedule() {
 
   const openRegularScheduleDialog = (staffId?: string) => {
     setEditingRegularSchedule(null)
+    const staff = staffMembers?.find(s => s.id === (staffId || ''))
     setFormRegularStaffId(staffId || '')
     setFormRegularDays([])
     setFormRegularStartTime('9:00 AM')
     setFormRegularEndTime('5:00 PM')
     setFormRegularEffectiveDate(format(new Date(), 'yyyy-MM-dd'))
     setFormRegularNotes('')
+    setFormRegularCanBeBooked(staff?.canBeBooked ?? true)
+    setFormRegularBookableServices(staff?.bookableServices || [])
     setIsRegularScheduleDialogOpen(true)
   }
 
   const openEditRegularScheduleDialog = (schedule: RegularSchedule) => {
+    const staff = staffMembers?.find(s => s.id === schedule.staffId)
     setEditingRegularSchedule(schedule)
     setFormRegularStaffId(schedule.staffId)
     setFormRegularDays(schedule.daysOfWeek)
@@ -479,6 +495,8 @@ export function StaffSchedule() {
     setFormRegularEndTime(schedule.endTime)
     setFormRegularEffectiveDate(schedule.effectiveDate)
     setFormRegularNotes(schedule.notes || '')
+    setFormRegularCanBeBooked(schedule.canBeBooked ?? staff?.canBeBooked ?? true)
+    setFormRegularBookableServices(schedule.bookableServices || staff?.bookableServices || [])
     setIsRegularScheduleDialogOpen(true)
   }
 
@@ -496,6 +514,8 @@ export function StaffSchedule() {
       endTime: formRegularEndTime,
       effectiveDate: formRegularEffectiveDate,
       notes: formRegularNotes,
+      canBeBooked: formRegularCanBeBooked,
+      bookableServices: formRegularBookableServices,
       createdAt: editingRegularSchedule?.createdAt || new Date().toISOString()
     }
 
@@ -1085,6 +1105,66 @@ export function StaffSchedule() {
                 onChange={(e) => setFormRegularEffectiveDate(e.target.value)}
                 className="glass-dark"
               />
+            </div>
+
+            <div className="space-y-3 p-4 rounded-lg border border-border glass-dark">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label htmlFor="regular-bookable" className="text-sm font-semibold">
+                    Can Be Booked
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Allow bookings during these shifts
+                  </p>
+                </div>
+                <Switch
+                  id="regular-bookable"
+                  checked={formRegularCanBeBooked}
+                  onCheckedChange={(checked) => {
+                    setFormRegularCanBeBooked(checked)
+                    if (!checked) {
+                      setFormRegularBookableServices([])
+                    }
+                  }}
+                />
+              </div>
+
+              {formRegularCanBeBooked && (
+                <div className="space-y-2 pt-2 border-t border-border">
+                  <Label className="text-xs font-medium">Services</Label>
+                  {!services || services.length === 0 ? (
+                    <p className="text-xs text-muted-foreground">
+                      No services available
+                    </p>
+                  ) : (
+                    <ScrollArea className="h-32">
+                      <div className="space-y-2 pr-4">
+                        {services.map((service) => (
+                          <div key={service.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`svc-${service.id}`}
+                              checked={formRegularBookableServices.includes(service.id)}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  setFormRegularBookableServices(prev => [...prev, service.id])
+                                } else {
+                                  setFormRegularBookableServices(prev => prev.filter(id => id !== service.id))
+                                }
+                              }}
+                            />
+                            <Label
+                              htmlFor={`svc-${service.id}`}
+                              className="text-xs font-normal cursor-pointer"
+                            >
+                              {service.name}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
