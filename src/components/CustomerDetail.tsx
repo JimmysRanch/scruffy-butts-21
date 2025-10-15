@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -26,8 +26,7 @@ import {
   Star,
   Clock,
   CreditCard,
-  ChatCircleDots,
-  Sparkle
+  ChatCircleDots
 } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
@@ -526,7 +525,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
               </h3>
               <Dialog open={isNewPetOpen} onOpenChange={setIsNewPetOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" className="liquid-button">
+                  <Button variant="outline" size="sm" className="liquid-button">
                     <Plus size={16} className="mr-2" />
                     Add Pet
                   </Button>
@@ -575,7 +574,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                     </div>
 
                     <div>
-                      <Label htmlFor="pet-notes">Special Notes</Label>
+                      <Label htmlFor="pet-notes">Notes</Label>
                       <Textarea
                         id="pet-notes"
                         value={petForm.notes}
@@ -618,14 +617,15 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                       key={pet.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
                       transition={{ delay: index * 0.1 }}
-                      className={`glass-dark rounded-xl p-5 hover:shadow-xl transition-all duration-300 cursor-pointer ${
+                      className={`glass-dark rounded-xl p-4 transition-all duration-300 cursor-pointer ${
                         selectedPetId === pet.id ? 'ring-2 ring-primary shadow-lg' : ''
                       }`}
                       onClick={() => setSelectedPetId(selectedPetId === pet.id ? null : pet.id)}
                     >
                       <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-4">
                           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center shadow-lg">
                             <Dog size={24} className="text-white" weight="fill" />
                           </div>
@@ -634,26 +634,22 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                             <p className="text-sm text-muted-foreground">{pet.breed}</p>
                           </div>
                         </div>
-                        <Button 
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleEditPet(pet)
-                          }}
-                          className="liquid-ripple"
-                        >
-                          <Pencil size={16} />
-                        </Button>
-                      </div>
-
-                      <div className="flex items-center space-x-2 mb-4">
-                        <Badge 
-                          variant={getSizeColor(pet.size)}
-                          className="text-xs"
-                        >
-                          {getSizeLabel(pet.size)}
-                        </Badge>
+                        <div className="flex items-center space-x-2">
+                          <Badge variant={getSizeColor(pet.size)}>
+                            {getSizeLabel(pet.size)}
+                          </Badge>
+                          <Button 
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleEditPet(pet)
+                            }}
+                            className="liquid-ripple"
+                          >
+                            <Pencil size={16} />
+                          </Button>
+                        </div>
                       </div>
 
                       <AnimatePresence>
@@ -666,14 +662,13 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                             className="overflow-hidden"
                           >
                             <Separator className="mb-4" />
-                            
                             <div className="space-y-3">
                               {pet.notes && (
                                 <div className="bg-background/50 rounded-lg p-3">
                                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
                                     Special Care Notes
                                   </p>
-                                  <p className="text-sm text-foreground leading-relaxed">
+                                  <p className="text-sm text-foreground">
                                     {pet.notes}
                                   </p>
                                 </div>
@@ -697,7 +692,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                                   e.stopPropagation()
                                   handleEditPet(pet)
                                 }}
-                                className="w-full liquid-button"
+                                className="w-full"
                               >
                                 <Pencil size={14} className="mr-2" />
                                 Edit Pet Info
@@ -723,7 +718,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
               Update {editingPet?.name}'s information.
             </DialogDescription>
           </DialogHeader>
-
+          
           <div className="space-y-4">
             <div>
               <Label htmlFor="edit-pet-name">Pet Name</Label>
@@ -760,7 +755,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             </div>
 
             <div>
-              <Label htmlFor="edit-pet-notes">Special Notes</Label>
+              <Label htmlFor="edit-pet-notes">Notes</Label>
               <Textarea
                 id="edit-pet-notes"
                 value={petForm.notes}
