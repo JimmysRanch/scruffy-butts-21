@@ -1,10 +1,8 @@
 import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, Users, ChartBar, Plus, Clock, Dog, CurrencyDollar } from '@phosphor-icons/react'
-import { format, isToday, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns'
-import { StaffPerformanceCard } from '@/components/StaffPerformanceCard'
+import { Calendar, Users, ChartBar, Clock, Dog } from '@phosphor-icons/react'
+import { isToday, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
 
@@ -41,39 +39,13 @@ interface Pet {
   customerId: string
 }
 
-interface Service {
-  id: string
-  name: string
-}
-
-interface StaffMember {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  position: string
-  hireDate: string
-  address: string
-  city: string
-  state: string
-  zip: string
-  specialties: string[]
-  notes: string
-  status: 'active' | 'inactive'
-  rating: number
-}
-
 export function Dashboard({ onNavigate }: DashboardProps) {
   const [appointments] = useKV<Appointment[]>('appointments', [])
   const [customers] = useKV<Customer[]>('customers', [])
   const [pets] = useKV<Pet[]>('pets', [])
-  const [services] = useKV<Service[]>('services', [])
-  const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {})
 
   const isCompact = appearance?.compactMode || false
-  const showWelcome = appearance?.showWelcomeMessage !== false
 
   const today = new Date()
   const todayAppointments = (appointments || []).filter(apt => 
@@ -87,29 +59,12 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     apt.status !== 'cancelled'
   )
 
-  const upcomingAppointments = (appointments || [])
-    .filter(apt => {
-      const aptDate = new Date(apt.date)
-      return aptDate >= today && apt.status === 'scheduled'
-    })
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .slice(0, 5)
-
   const getCustomerName = (customerId: string) => {
     return customers?.find(c => c.id === customerId)?.name || 'Unknown'
   }
 
   const getPetName = (petId: string) => {
     return pets?.find(p => p.id === petId)?.name || 'Unknown'
-  }
-
-  const getServiceNames = (serviceIds: string[]) => {
-    return serviceIds.map(id => services?.find(s => s.id === id)?.name || 'Unknown').join(', ')
-  }
-
-  const getStaffName = (staffId: string) => {
-    const member = staffMembers?.find(s => s.id === staffId)
-    return member ? `${member.firstName} ${member.lastName}` : 'Unassigned'
   }
 
   const getStatusColor = (status: string) => {
@@ -184,166 +139,49 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </Card>
       </div>
 
-      <div className={`grid md:grid-cols-2 ${isCompact ? 'gap-2' : 'gap-4'}`}>
-        <Card className="frosted border-white/20 liquid-shine">
-          <CardHeader className={isCompact ? 'pb-2' : ''}>
-            <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-              <div className="glass-dark p-1.5 rounded-lg liquid-pulse">
-                <Calendar className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} weight="fill" />
+      <Card className="frosted border-white/20 liquid-shine">
+        <CardHeader className={isCompact ? 'pb-2' : ''}>
+          <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
+            <div className="glass-dark p-1.5 rounded-lg liquid-pulse">
+              <Calendar className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} weight="fill" />
+            </div>
+            Today's Schedule
+          </CardTitle>
+          <CardDescription className={isCompact ? 'text-xs' : ''}>Appointments scheduled for today</CardDescription>
+        </CardHeader>
+        <CardContent className={isCompact ? 'pt-2' : ''}>
+          {todayAppointments.length === 0 ? (
+            <div className={`text-center text-muted-foreground ${isCompact ? 'py-4' : 'py-8'}`}>
+              <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
+                <Dog className={`opacity-50 ${isCompact ? 'h-8 w-8' : 'h-12 w-12'}`} weight="fill" />
               </div>
-              Today's Schedule
-            </CardTitle>
-            <CardDescription className={isCompact ? 'text-xs' : ''}>Appointments scheduled for today</CardDescription>
-          </CardHeader>
-          <CardContent className={isCompact ? 'pt-2' : ''}>
-            {todayAppointments.length === 0 ? (
-              <div className={`text-center text-muted-foreground ${isCompact ? 'py-4' : 'py-8'}`}>
-                <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
-                  <Dog className={`opacity-50 ${isCompact ? 'h-8 w-8' : 'h-12 w-12'}`} weight="fill" />
-                </div>
-                <p className={isCompact ? 'text-sm' : ''}>No appointments scheduled for today</p>
-              </div>
-            ) : (
-              <div className={isCompact ? 'space-y-2' : 'space-y-3'}>
-                {todayAppointments.slice(0, 5).map((apt) => (
-                  <div key={apt.id} className={`glass-dark rounded-xl border border-white/20 hover:glass transition-all duration-200 ${isCompact ? 'p-2' : 'p-3'}`}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`flex items-center gap-1 font-medium min-w-[60px] glass-dark px-2 py-1 rounded-lg ${isCompact ? 'text-xs' : 'text-sm'}`}>
-                          <Clock size={isCompact ? 12 : 14} weight="fill" />
-                          {apt.time}
-                        </div>
-                        <div>
-                          <div className={`font-medium ${isCompact ? 'text-sm' : ''}`}>{getPetName(apt.petId)}</div>
-                          <div className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>{getCustomerName(apt.customerId)}</div>
-                        </div>
+              <p className={isCompact ? 'text-sm' : ''}>No appointments scheduled for today</p>
+            </div>
+          ) : (
+            <div className={isCompact ? 'space-y-2' : 'space-y-3'}>
+              {todayAppointments.slice(0, 5).map((apt) => (
+                <div key={apt.id} className={`glass-dark rounded-xl border border-white/20 hover:glass transition-all duration-200 ${isCompact ? 'p-2' : 'p-3'}`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`flex items-center gap-1 font-medium min-w-[60px] glass-dark px-2 py-1 rounded-lg ${isCompact ? 'text-xs' : 'text-sm'}`}>
+                        <Clock size={isCompact ? 12 : 14} weight="fill" />
+                        {apt.time}
                       </div>
-                      <Badge className={`${getStatusColor(apt.status)} backdrop-blur-sm`}>
-                        {apt.status}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="frosted border-white/20 liquid-shine">
-          <CardHeader className={isCompact ? 'pb-2' : ''}>
-            <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-              <div className="glass-dark p-1.5 rounded-lg liquid-pulse">
-                <Clock className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} weight="fill" />
-              </div>
-              Upcoming Appointments
-            </CardTitle>
-            <CardDescription className={isCompact ? 'text-xs' : ''}>Next scheduled appointments</CardDescription>
-          </CardHeader>
-          <CardContent className={isCompact ? 'pt-2' : ''}>
-            {upcomingAppointments.length === 0 ? (
-              <div className={`text-center text-muted-foreground ${isCompact ? 'py-4' : 'py-8'}`}>
-                <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
-                  <Calendar className={`opacity-50 ${isCompact ? 'h-8 w-8' : 'h-12 w-12'}`} weight="fill" />
-                </div>
-                <p className={isCompact ? 'text-sm' : ''}>No upcoming appointments</p>
-              </div>
-            ) : (
-              <div className={isCompact ? 'space-y-2' : 'space-y-3'}>
-                {upcomingAppointments.map((apt) => (
-                  <div key={apt.id} className={`glass-dark rounded-xl border border-white/20 hover:glass transition-all duration-200 ${isCompact ? 'p-2' : 'p-3'}`}>
-                    <div className="flex items-center justify-between">
                       <div>
                         <div className={`font-medium ${isCompact ? 'text-sm' : ''}`}>{getPetName(apt.petId)}</div>
-                        <div className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>
-                          {format(new Date(apt.date), 'MMM d')} at {apt.time}
-                        </div>
-                        <div className={`text-muted-foreground mt-1 ${isCompact ? 'text-[10px]' : 'text-xs'}`}>
-                          {getServiceNames(apt.serviceIds)}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className={`font-medium glass-dark px-2 py-1 rounded-lg ${isCompact ? 'text-xs' : 'text-sm'}`}>
-                          {getStaffName(apt.staffId)}
-                        </div>
+                        <div className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>{getCustomerName(apt.customerId)}</div>
                       </div>
                     </div>
+                    <Badge className={`${getStatusColor(apt.status)} backdrop-blur-sm`}>
+                      {apt.status}
+                    </Badge>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      <StaffPerformanceCard />
-
-      <div className={`grid md:grid-cols-2 ${isCompact ? 'gap-2' : 'gap-4'}`}>
-        <Card className="frosted border-white/20">
-          <CardHeader className={isCompact ? 'pb-2' : ''}>
-            <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-              <div className="glass-dark p-1.5 rounded-lg">
-                <Plus className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} weight="bold" />
-              </div>
-              Quick Actions
-            </CardTitle>
-            <CardDescription className={isCompact ? 'text-xs' : ''}>Common tasks and shortcuts</CardDescription>
-          </CardHeader>
-          <CardContent className={isCompact ? 'pt-2' : ''}>
-            <div className={`grid grid-cols-2 ${isCompact ? 'gap-2' : 'gap-3'}`}>
-              <Button variant="outline" onClick={() => onNavigate('appointments')} className={`glass-button h-auto flex-col border-white/20 ${isCompact ? 'py-2 gap-1' : 'py-4 gap-2'}`}>
-                <Calendar size={isCompact ? 18 : 24} weight="fill" />
-                <span className={isCompact ? 'text-xs' : 'text-sm'}>New Appointment</span>
-              </Button>
-              <Button variant="outline" onClick={() => onNavigate('customers')} className={`glass-button h-auto flex-col border-white/20 ${isCompact ? 'py-2 gap-1' : 'py-4 gap-2'}`}>
-                <Users size={isCompact ? 18 : 24} weight="fill" />
-                <span className={isCompact ? 'text-xs' : 'text-sm'}>Add Customer</span>
-              </Button>
-              <Button variant="outline" onClick={() => onNavigate('pos')} className={`glass-button h-auto flex-col border-white/20 ${isCompact ? 'py-2 gap-1' : 'py-4 gap-2'}`}>
-                <CurrencyDollar size={isCompact ? 18 : 24} weight="fill" />
-                <span className={isCompact ? 'text-xs' : 'text-sm'}>Point of Sale</span>
-              </Button>
-              <Button variant="outline" onClick={() => onNavigate('inventory')} className={`glass-button h-auto flex-col border-white/20 ${isCompact ? 'py-2 gap-1' : 'py-4 gap-2'}`}>
-                <ChartBar size={isCompact ? 18 : 24} weight="fill" />
-                <span className={isCompact ? 'text-xs' : 'text-sm'}>Inventory</span>
-              </Button>
+                </div>
+              ))}
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="frosted border-white/20">
-          <CardHeader className={isCompact ? 'pb-2' : ''}>
-            <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-              <div className="glass-dark p-1.5 rounded-lg">
-                <Dog className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} weight="fill" />
-              </div>
-              Quick Stats
-            </CardTitle>
-            <CardDescription className={isCompact ? 'text-xs' : ''}>Overview of your business</CardDescription>
-          </CardHeader>
-          <CardContent className={isCompact ? 'pt-2' : ''}>
-            <div className={isCompact ? 'space-y-2' : 'space-y-4'}>
-              <div className="flex justify-between items-center glass-dark px-3 py-2 rounded-lg">
-                <span className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>Total Services</span>
-                <span className={`font-semibold ${isCompact ? 'text-sm' : ''}`}>{services?.length || 0}</span>
-              </div>
-              <div className="flex justify-between items-center glass-dark px-3 py-2 rounded-lg">
-                <span className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>Staff Members</span>
-                <span className={`font-semibold ${isCompact ? 'text-sm' : ''}`}>{staffMembers?.length || 0}</span>
-              </div>
-              <div className="flex justify-between items-center glass-dark px-3 py-2 rounded-lg">
-                <span className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>Total Appointments</span>
-                <span className={`font-semibold ${isCompact ? 'text-sm' : ''}`}>{appointments?.length || 0}</span>
-              </div>
-              <div className="flex justify-between items-center glass-dark px-3 py-2 rounded-lg">
-                <span className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>Completed This Week</span>
-                <span className={`font-semibold ${isCompact ? 'text-sm' : ''}`}>
-                  {weekAppointments.filter(a => a.status === 'completed').length}
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
