@@ -56,6 +56,20 @@ interface Customer {
   name?: string
 }
 
+interface Appointment {
+  id: string
+  customerId: string
+  status: 'scheduled' | 'confirmed' | 'checked-in' | 'in-progress' | 'completed' | 'cancelled' | 'no-show'
+  price: number
+}
+
+interface Transaction {
+  id: string
+  customerId: string
+  total: number
+  status: 'completed' | 'pending' | 'refunded'
+}
+
 interface CustomerDetailProps {
   customerId: string
   onBack: () => void
@@ -63,6 +77,8 @@ interface CustomerDetailProps {
 
 export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
   const [customers, setCustomers] = useKV<Customer[]>('customers', [])
+  const [appointments] = useKV<Appointment[]>('appointments', [])
+  const [transactions] = useKV<Transaction[]>('transactions', [])
   const [isNewPetOpen, setIsNewPetOpen] = useState(false)
   const [isEditCustomerOpen, setIsEditCustomerOpen] = useState(false)
   const [isEditPetOpen, setIsEditPetOpen] = useState(false)
@@ -251,6 +267,18 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
   }
 
+  const customerAppointments = (appointments || []).filter(
+    apt => apt.customerId === customerId && apt.status !== 'cancelled' && apt.status !== 'no-show'
+  )
+  
+  const appointmentCount = customerAppointments.length
+  
+  const customerTransactions = (transactions || []).filter(
+    txn => txn.customerId === customerId && txn.status === 'completed'
+  )
+  
+  const lifetimeValue = customerTransactions.reduce((sum, txn) => sum + txn.total, 0)
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -310,7 +338,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                       <Scissors size={20} className="text-accent" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-foreground">24</p>
+                      <p className="text-2xl font-bold text-foreground">{appointmentCount}</p>
                       <p className="text-xs text-muted-foreground">Appointments</p>
                     </div>
                   </div>
@@ -322,7 +350,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                       <CreditCard size={20} className="text-green-500" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-foreground">$2,450</p>
+                      <p className="text-2xl font-bold text-foreground">${lifetimeValue.toFixed(2)}</p>
                       <p className="text-xs text-muted-foreground">Lifetime Value</p>
                     </div>
                   </div>
