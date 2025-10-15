@@ -30,6 +30,7 @@ import {
 } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
+import { QuickCheckout } from './QuickCheckout'
 
 interface Pet {
   id: string
@@ -67,6 +68,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
   const [isEditPetOpen, setIsEditPetOpen] = useState(false)
   const [editingPet, setEditingPet] = useState<Pet | null>(null)
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null)
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   
   useEffect(() => {
     if (customers && customers.length > 0) {
@@ -498,13 +500,16 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                   <Calendar size={18} className="mr-3" />
                   Book Appointment
                 </Button>
+                <Button 
+                  className="w-full justify-start liquid-button bg-primary text-primary-foreground hover:bg-primary/90" 
+                  onClick={() => setIsCheckoutOpen(true)}
+                >
+                  <CreditCard size={18} className="mr-3" />
+                  Quick Checkout
+                </Button>
                 <Button className="w-full justify-start liquid-button" variant="outline">
                   <ChatCircleDots size={18} className="mr-3" />
                   Send Message
-                </Button>
-                <Button className="w-full justify-start liquid-button" variant="outline">
-                  <CreditCard size={18} className="mr-3" />
-                  View Invoices
                 </Button>
               </div>
             </div>
@@ -773,6 +778,13 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           </div>
         </DialogContent>
       </Dialog>
+
+      <QuickCheckout
+        open={isCheckoutOpen}
+        onOpenChange={setIsCheckoutOpen}
+        customerId={customer.id}
+        customerName={`${customer.firstName} ${customer.lastName}`}
+      />
     </motion.div>
   )
 }
