@@ -442,7 +442,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                     <p className="text-sm font-medium text-foreground break-all">{customer.email}</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-3">
                   <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Phone size={18} className="text-accent" />
@@ -606,7 +606,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                   </p>
                   <Button onClick={() => setIsNewPetOpen(true)} className="liquid-button">
                     <Plus size={16} className="mr-2" />
-                    Add First Pet
+                    Add Pet
                   </Button>
                 </motion.div>
               </div>
