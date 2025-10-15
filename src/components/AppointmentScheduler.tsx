@@ -27,6 +27,7 @@ import { cn } from '@/lib/utils'
 interface Appointment {
   id: string
   petName: string
+  petId?: string
   customerFirstName: string
   customerLastName: string
   customerId: string
@@ -45,6 +46,7 @@ interface Appointment {
   checkInTime?: string
   checkOutTime?: string
   createdAt: string
+  rating?: number
 }
 
 interface Customer {
@@ -199,6 +201,7 @@ export function AppointmentScheduler() {
             ? {
                 ...apt,
                 petName: pet.name,
+                petId: pet.id,
                 customerFirstName: customer.firstName,
                 customerLastName: customer.lastName,
                 customerId: customer.id,
@@ -222,6 +225,7 @@ export function AppointmentScheduler() {
       const newAppointment: Appointment = {
         id: `apt-${Date.now()}`,
         petName: pet.name,
+        petId: pet.id,
         customerFirstName: customer.firstName,
         customerLastName: customer.lastName,
         customerId: customer.id,

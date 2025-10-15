@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -34,6 +35,18 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { QuickCheckout } from './QuickCheckout'
 
+interface GroomingVisit {
+  id: string
+  appointmentId: string
+  date: string
+  service: string
+  groomer: string
+  price: number
+  duration: number
+  notes?: string
+  rating?: number
+}
+
 interface Pet {
   id: string
   name: string
@@ -43,6 +56,8 @@ interface Pet {
   avatar?: string
   visitCount?: number
   rating?: number
+  groomingHistory?: GroomingVisit[]
+  petId?: string
 }
 
 interface Customer {
@@ -64,8 +79,17 @@ interface Customer {
 interface Appointment {
   id: string
   customerId: string
+  petName: string
+  service: string
+  staffId?: string
+  date: string
+  time: string
+  duration: number
   status: 'scheduled' | 'confirmed' | 'checked-in' | 'in-progress' | 'completed' | 'cancelled' | 'no-show'
   price: number
+  notes?: string
+  rating?: number
+  petId?: string
 }
 
 interface Transaction {
@@ -73,6 +97,13 @@ interface Transaction {
   customerId: string
   total: number
   status: 'completed' | 'pending' | 'refunded'
+}
+
+interface Staff {
+  id: string
+  firstName: string
+  lastName: string
+  position: string
 }
 
 interface CustomerDetailProps {
@@ -84,12 +115,15 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
   const [customers, setCustomers] = useKV<Customer[]>('customers', [])
   const [appointments] = useKV<Appointment[]>('appointments', [])
   const [transactions] = useKV<Transaction[]>('transactions', [])
+  const [staff] = useKV<Staff[]>('staff', [])
   const [isNewPetOpen, setIsNewPetOpen] = useState(false)
   const [isEditCustomerOpen, setIsEditCustomerOpen] = useState(false)
   const [isEditPetOpen, setIsEditPetOpen] = useState(false)
   const [editingPet, setEditingPet] = useState<Pet | null>(null)
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+  const [showGroomingHistory, setShowGroomingHistory] = useState(false)
+  const [selectedPetForHistory, setSelectedPetForHistory] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   useEffect(() => {
@@ -117,6 +151,48 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
   }, [customers, setCustomers])
   
   const customer = (customers || []).find(c => c.id === customerId)
+  
+  const getGroomingHistoryForPet = (petId: string): GroomingVisit[] => {
+    const petAppointments = (appointments || []).filter(
+      apt => apt.customerId === customerId && 
+             (apt.petId === petId || apt.petName === customer?.pets.find(p => p.id === petId)?.name) &&
+             apt.status === 'completed'
+    )
+    
+    return petAppointments
+      .sort((a, b) => new Date(b.date + ' ' + b.time).getTime() - new Date(a.date + ' ' + a.time).getTime())
+      .map(apt => {
+        const groomer = (staff || []).find(s => s.id === apt.staffId)
+        return {
+          id: apt.id,
+          appointmentId: apt.id,
+          date: apt.date,
+          service: apt.service,
+          groomer: groomer ? `${groomer.firstName} ${groomer.lastName}` : 'Unknown',
+          price: apt.price,
+          duration: apt.duration,
+          notes: apt.notes,
+          rating: apt.rating
+        }
+      })
+  }
+  
+  const getPetVisitCount = (petId: string): number => {
+    return getGroomingHistoryForPet(petId).length
+  }
+  
+  const getPetAverageRating = (petId: string): number | undefined => {
+    const history = getGroomingHistoryForPet(petId)
+    const ratingsOnly = history.filter(v => v.rating !== undefined).map(v => v.rating!)
+    if (ratingsOnly.length === 0) return undefined
+    return ratingsOnly.reduce((sum, r) => sum + r, 0) / ratingsOnly.length
+  }
+  
+  const getLastVisitDate = (petId: string): string | null => {
+    const history = getGroomingHistoryForPet(petId)
+    if (history.length === 0) return null
+    return history[0].date
+  }
   
   const [customerForm, setCustomerForm] = useState({
     firstName: customer?.firstName || '',
@@ -819,37 +895,59 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                               </div>
                             )}
                             
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-3 gap-3 mb-3">
                               <div className="bg-background/50 rounded-lg p-3">
                                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
                                   Total Visits
                                 </p>
-                                <p className="text-2xl font-bold text-foreground">{pet.visitCount || 0}</p>
+                                <p className="text-2xl font-bold text-foreground">{getPetVisitCount(pet.id)}</p>
                               </div>
-                              {pet.rating !== undefined && (
+                              {getPetAverageRating(pet.id) !== undefined && (
                                 <div className="bg-background/50 rounded-lg p-3">
                                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-                                    Rating
+                                    Avg Rating
                                   </p>
                                   <div className="flex items-center space-x-1">
                                     <Star size={18} weight="fill" className="text-accent" />
-                                    <span className="text-2xl font-bold text-foreground">{pet.rating.toFixed(1)}</span>
+                                    <span className="text-2xl font-bold text-foreground">{getPetAverageRating(pet.id)!.toFixed(1)}</span>
                                   </div>
+                                </div>
+                              )}
+                              {getLastVisitDate(pet.id) && (
+                                <div className="bg-background/50 rounded-lg p-3">
+                                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                                    Last Visit
+                                  </p>
+                                  <p className="text-xs font-bold text-foreground">
+                                    {new Date(getLastVisitDate(pet.id)!).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                  </p>
                                 </div>
                               )}
                             </div>
 
-                            <div className="mt-3">
+                            <div className="grid grid-cols-2 gap-2">
                               <Button 
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   handleEditPet(pet)
                                 }}
-                                className="w-full"
                                 variant="outline"
+                                size="sm"
                               >
                                 <Pencil size={14} className="mr-2" />
-                                Edit Pet Info
+                                Edit Info
+                              </Button>
+                              <Button 
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setSelectedPetForHistory(pet.id)
+                                  setShowGroomingHistory(true)
+                                }}
+                                variant="outline"
+                                size="sm"
+                              >
+                                <Clock size={14} className="mr-2" />
+                                History ({getPetVisitCount(pet.id)})
                               </Button>
                             </div>
                           </motion.div>
@@ -987,6 +1085,120 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
         customerId={customer.id}
         customerName={`${customer.firstName} ${customer.lastName}`}
       />
+
+      <Sheet open={showGroomingHistory} onOpenChange={setShowGroomingHistory}>
+        <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto frosted">
+          <SheetHeader>
+            <SheetTitle className="flex items-center space-x-2">
+              <Clock size={24} className="text-primary" />
+              <span>Grooming History</span>
+            </SheetTitle>
+            <SheetDescription>
+              {selectedPetForHistory && customer.pets.find(p => p.id === selectedPetForHistory)?.name}'s complete grooming history
+            </SheetDescription>
+          </SheetHeader>
+
+          {selectedPetForHistory && (
+            <div className="mt-6 space-y-4">
+              {getGroomingHistoryForPet(selectedPetForHistory).length === 0 ? (
+                <div className="text-center py-12">
+                  <Clock size={64} className="mx-auto text-muted-foreground mb-4" weight="thin" />
+                  <h3 className="text-xl font-medium mb-2">No grooming history yet</h3>
+                  <p className="text-muted-foreground">
+                    Completed appointments will appear here
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {getGroomingHistoryForPet(selectedPetForHistory).map((visit, index) => (
+                    <motion.div
+                      key={visit.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="glass-dark rounded-xl p-4"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <Scissors size={18} className="text-primary" />
+                            <h4 className="font-bold text-foreground">{visit.service}</h4>
+                          </div>
+                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                            <span className="flex items-center space-x-1">
+                              <Calendar size={14} />
+                              <span>{new Date(visit.date).toLocaleDateString('en-US', { 
+                                month: 'short', 
+                                day: 'numeric', 
+                                year: 'numeric' 
+                              })}</span>
+                            </span>
+                            <span className="flex items-center space-x-1">
+                              <User size={14} />
+                              <span>{visit.groomer}</span>
+                            </span>
+                            <span className="flex items-center space-x-1">
+                              <Clock size={14} />
+                              <span>{visit.duration} min</span>
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-foreground">${visit.price.toFixed(2)}</p>
+                          {visit.rating !== undefined && (
+                            <div className="flex items-center space-x-1 mt-1">
+                              <Star size={14} weight="fill" className="text-accent" />
+                              <span className="text-sm font-medium text-accent">{visit.rating.toFixed(1)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {visit.notes && (
+                        <div className="bg-background/50 rounded-lg p-3 mt-3">
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                            Visit Notes
+                          </p>
+                          <p className="text-sm text-foreground">{visit.notes}</p>
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+              
+              {getGroomingHistoryForPet(selectedPetForHistory).length > 0 && (
+                <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-xl">
+                  <h4 className="font-bold text-foreground mb-3">Summary</h4>
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <p className="text-2xl font-bold text-primary">{getGroomingHistoryForPet(selectedPetForHistory).length}</p>
+                      <p className="text-xs text-muted-foreground">Total Visits</p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-primary">
+                        ${getGroomingHistoryForPet(selectedPetForHistory).reduce((sum, v) => sum + v.price, 0).toFixed(2)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">Total Spent</p>
+                    </div>
+                    {getPetAverageRating(selectedPetForHistory) !== undefined && (
+                      <div>
+                        <div className="flex items-center justify-center space-x-1">
+                          <Star size={18} weight="fill" className="text-accent" />
+                          <p className="text-2xl font-bold text-accent">
+                            {getPetAverageRating(selectedPetForHistory)!.toFixed(1)}
+                          </p>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Avg Rating</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </motion.div>
   )
 }
