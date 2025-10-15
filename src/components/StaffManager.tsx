@@ -384,67 +384,67 @@ export function StaffManager() {
   }
 
   return (
-    <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
-      <div className="frosted rounded-xl p-3 sm:p-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div className="space-y-3">
+      <div className="frosted rounded-xl p-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <h1 className={`font-bold ${isCompact ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-3xl'} text-foreground`}>
+            <h1 className="font-bold text-xl text-foreground">
               Staff Management
             </h1>
-            <p className={`text-muted-foreground ${isCompact ? 'text-xs sm:text-sm' : 'text-sm'} mt-1`}>
+            <p className="text-muted-foreground text-sm mt-0.5">
               Manage your team members and schedules
             </p>
           </div>
           {currentTab === 'staff' && (
-            <Button onClick={() => setShowDialog(true)} className="glass-button">
-              <Plus size={18} className="mr-2" />
+            <Button onClick={() => setShowDialog(true)} className="glass-button h-8 text-xs">
+              <Plus size={16} className="mr-1.5" />
               <span>Add Staff Member</span>
             </Button>
           )}
         </div>
 
-        <Tabs value={currentTab} onValueChange={setCurrentTab} className="mt-4">
-          <TabsList className="glass-dark">
-            <TabsTrigger value="staff">Team Members</TabsTrigger>
-            <TabsTrigger value="schedule">Schedule</TabsTrigger>
+        <Tabs value={currentTab} onValueChange={setCurrentTab} className="mt-3">
+          <TabsList className="glass-dark h-8">
+            <TabsTrigger value="staff" className="text-xs">Team Members</TabsTrigger>
+            <TabsTrigger value="schedule" className="text-xs">Schedule</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="staff" className="mt-4">
+          <TabsContent value="staff" className="mt-3">
             {!staff || staff.length === 0 ? (
               <Card className="frosted">
-                <CardContent className={`flex flex-col items-center justify-center ${isCompact ? 'py-12' : 'py-16'}`}>
-                  <UserCircle size={64} className="text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No Staff Members Yet</h3>
-                  <p className="text-muted-foreground text-center mb-4">
+                <CardContent className="flex flex-col items-center justify-center py-10">
+                  <UserCircle size={56} className="text-muted-foreground mb-3" />
+                  <h3 className="text-lg font-semibold mb-1.5">No Staff Members Yet</h3>
+                  <p className="text-muted-foreground text-center mb-3 text-sm">
                     Start building your team by adding your first staff member
                   </p>
-                  <Button onClick={() => setShowDialog(true)} className="glass-button">
+                  <Button onClick={() => setShowDialog(true)} className="glass-button h-8 text-xs">
                     Add First Staff Member
                   </Button>
                 </CardContent>
               </Card>
             ) : (
-              <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${isCompact ? 'gap-3' : 'gap-4'}`}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {(staff || []).map((member) => (
                   <Card 
                     key={member.id} 
                     className="frosted cursor-pointer hover:shadow-lg transition-all liquid-button" 
                     onClick={() => handleStaffClick(member)}
                   >
-                    <CardHeader className={isCompact ? 'pb-3' : ''}>
-                      <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                          <UserCircle size={32} className="text-primary" />
+                    <CardHeader className="pb-3 pt-3 px-3">
+                      <div className="flex items-center space-x-2.5">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                          <UserCircle size={28} className="text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <CardTitle className="text-lg truncate">
+                          <CardTitle className="text-base truncate">
                             {member.firstName} {member.lastName}
                           </CardTitle>
-                          <CardDescription className="truncate">{member.position}</CardDescription>
+                          <CardDescription className="truncate text-xs">{member.position}</CardDescription>
                         </div>
                         <Badge 
                           variant={member.status === 'active' ? 'default' : 'secondary'}
-                          className="shrink-0"
+                          className="shrink-0 text-xs"
                         >
                           {member.status}
                         </Badge>

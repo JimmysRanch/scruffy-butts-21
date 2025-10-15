@@ -351,37 +351,37 @@ export function Settings() {
   ]
 
   return (
-    <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className={`font-bold text-foreground ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Settings</h1>
-          <p className={`text-muted-foreground ${isCompact ? 'text-sm' : ''}`}>Manage your grooming business preferences and configurations</p>
+          <h1 className="font-bold text-foreground text-xl">Settings</h1>
+          <p className="text-muted-foreground text-sm">Manage your grooming business preferences and configurations</p>
         </div>
-        <Button onClick={handleSave} className="flex items-center gap-2">
-          <FloppyDisk size={18} />
+        <Button onClick={handleSave} className="flex items-center gap-2 h-8 text-xs">
+          <FloppyDisk size={16} />
           Save Changes
         </Button>
       </div>
 
-      <div className={`flex flex-col lg:flex-row ${isCompact ? 'gap-3' : 'gap-6'}`}>
+      <div className="flex flex-col lg:flex-row gap-3">
         {/* Sidebar Navigation */}
-        <div className="lg:w-64">
+        <div className="lg:w-56">
           <Card>
-            <CardContent className="p-4">
-              <nav className="space-y-2">
+            <CardContent className="p-3">
+              <nav className="space-y-1">
                 {tabs.map((tab) => {
                   const Icon = tab.icon
                   return (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg transition-colors ${
+                      className={`w-full flex items-center gap-2 px-2.5 py-1.5 text-sm text-left rounded-lg transition-colors ${
                         activeTab === tab.id
                           ? 'bg-primary text-primary-foreground'
                           : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                       }`}
                     >
-                      <Icon size={18} />
+                      <Icon size={16} />
                       {tab.label}
                     </button>
                   )
@@ -395,27 +395,28 @@ export function Settings() {
         <div className="flex-1">
           {activeTab === 'business' && (
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapPin size={20} />
+              <CardHeader className="pb-3 pt-4 px-4">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <MapPin size={18} />
                   Business Information
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-xs">
                   Update your business details and operational settings
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="business-name">Business Name</Label>
+              <CardContent className="space-y-4 px-4 pb-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="business-name" className="text-xs">Business Name</Label>
                     <Input
                       id="business-name"
                       value={businessSettings?.name || ''}
                       onChange={(e) => setBusinessSettings(prev => ({ ...prev!, name: e.target.value }))}
+                      className="h-8"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="business-email">Email Address</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="business-email" className="text-xs">Email Address</Label>
                     <Input
                       id="business-email"
                       type="email"

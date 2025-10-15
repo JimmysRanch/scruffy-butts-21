@@ -463,13 +463,13 @@ export function AppointmentScheduler() {
   ).length
 
   return (
-    <div className={cn('space-y-4', isCompact && 'space-y-3')}>
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <div className="space-y-3">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         <div>
-          <h1 className={cn('font-bold text-foreground', isCompact ? 'text-2xl' : 'text-3xl')}>
+          <h1 className="font-bold text-foreground text-xl">
             Appointments
           </h1>
-          <p className={cn('text-muted-foreground', isCompact ? 'text-sm' : '')}>
+          <p className="text-muted-foreground text-sm">
             {upcomingCount} upcoming • {todayCount} today
           </p>
         </div>
@@ -682,12 +682,12 @@ export function AppointmentScheduler() {
 
       {showFilters && (
         <Card>
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <CardContent className="pt-4 pb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <Label>Status</Label>
+                <Label className="text-xs">Status</Label>
                 <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as FilterStatus)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-8">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -704,9 +704,9 @@ export function AppointmentScheduler() {
               </div>
 
               <div>
-                <Label>Staff Member</Label>
+                <Label className="text-xs">Staff Member</Label>
                 <Select value={filterStaff} onValueChange={setFilterStaff}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-8">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -728,7 +728,7 @@ export function AppointmentScheduler() {
                     setFilterStaff('all')
                     setSearchQuery('')
                   }}
-                  className="w-full"
+                  className="w-full h-8 text-xs"
                 >
                   Clear Filters
                 </Button>
@@ -764,11 +764,10 @@ export function AppointmentScheduler() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>{getDateRangeLabel()}</CardTitle>
+        <CardHeader className="pb-3 pt-4 px-4">
+          <CardTitle className="text-base">{getDateRangeLabel()}</CardTitle>
         </CardHeader>
-        <CardContent>
-          {viewMode === 'day' && (
+        <CardContent className="px-4 pb-4">{viewMode === 'day' && (
             <DayView
               date={currentDate}
               appointments={getAppointmentsForDate(currentDate)}
@@ -864,9 +863,9 @@ function DayView({
   return (
     <div className="space-y-2">
       {appointments.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <Calendar size={48} className="mx-auto mb-2 opacity-50" />
-          <p>No appointments scheduled for this day</p>
+        <div className="text-center py-8 text-muted-foreground">
+          <Calendar size={40} className="mx-auto mb-2 opacity-50" />
+          <p className="text-sm">No appointments scheduled for this day</p>
         </div>
       ) : (
         appointments.map((apt) => (
@@ -894,19 +893,19 @@ function WeekView({
   getStaffColor: (staffId?: string) => string
 }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-7 gap-2">
+    <div className="grid grid-cols-1 md:grid-cols-7 gap-1.5">
       {dates.map((date) => {
         const dayAppointments = getAppointmentsForDate(date)
         const isCurrentDay = isToday(date)
         
         return (
           <div key={date.toISOString()} className={cn(
-            'border rounded-lg p-2 min-h-[120px]',
+            'border rounded-lg p-1.5 min-h-[100px]',
             isCurrentDay && 'border-primary bg-primary/5'
           )}>
-            <div className="font-medium text-sm mb-2">
+            <div className="font-medium text-xs mb-1.5">
               <div className={cn(isCurrentDay && 'text-primary')}>{format(date, 'EEE')}</div>
-              <div className={cn('text-2xl', isCurrentDay && 'text-primary')}>{format(date, 'd')}</div>
+              <div className={cn('text-xl', isCurrentDay && 'text-primary')}>{format(date, 'd')}</div>
             </div>
             <div className="space-y-1">
               {dayAppointments.slice(0, 3).map((apt) => (
@@ -914,16 +913,16 @@ function WeekView({
                   key={apt.id}
                   onClick={() => onViewAppointment(apt)}
                   className={cn(
-                    'text-xs p-2 rounded cursor-pointer hover:opacity-80 transition-opacity border',
+                    'text-xs p-1.5 rounded cursor-pointer hover:opacity-80 transition-opacity border',
                     STATUS_COLORS[apt.status]
                   )}
                 >
                   <div className="font-medium truncate">{apt.petName}</div>
-                  <div className="text-xs opacity-75">{apt.time}</div>
+                  <div className="text-[10px] opacity-75">{apt.time}</div>
                 </div>
               ))}
               {dayAppointments.length > 3 && (
-                <div className="text-xs text-muted-foreground text-center py-1">
+                <div className="text-[10px] text-muted-foreground text-center py-0.5">
                   +{dayAppointments.length - 3} more
                 </div>
               )}
@@ -949,7 +948,7 @@ function MonthView({
   return (
     <div className="grid grid-cols-7 gap-1">
       {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-        <div key={day} className="text-center text-sm font-medium text-muted-foreground p-2">
+        <div key={day} className="text-center text-xs font-medium text-muted-foreground p-1.5">
           {day}
         </div>
       ))}
@@ -963,21 +962,21 @@ function MonthView({
             key={date.toISOString()}
             onClick={() => onDateClick(date)}
             className={cn(
-              'border rounded p-2 min-h-[80px] cursor-pointer hover:bg-accent transition-colors',
+              'border rounded p-1.5 min-h-[65px] cursor-pointer hover:bg-accent transition-colors',
               !isCurrentMonth && 'opacity-40',
               isCurrentDay && 'border-primary bg-primary/5'
             )}
           >
             <div className={cn(
-              'text-sm font-medium mb-1',
+              'text-xs font-medium mb-1',
               isCurrentDay && 'text-primary'
             )}>
               {format(date, 'd')}
             </div>
             {dayAppointments.length > 0 && (
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <div className="w-full h-1 rounded bg-blue-500" />
-                <div className="text-xs text-muted-foreground">
+                <div className="text-[10px] text-muted-foreground">
                   {dayAppointments.length} apt{dayAppointments.length !== 1 ? 's' : ''}
                 </div>
               </div>
@@ -1016,9 +1015,9 @@ function ListView({
 }) {
   if (appointments.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        <List size={48} className="mx-auto mb-2 opacity-50" />
-        <p>No appointments found</p>
+      <div className="text-center py-8 text-muted-foreground">
+        <List size={40} className="mx-auto mb-2 opacity-50" />
+        <p className="text-sm">No appointments found</p>
       </div>
     )
   }
@@ -1043,8 +1042,8 @@ function ListView({
   })
 
   return (
-    <ScrollArea className="h-[600px]">
-      <div className="space-y-6">
+    <ScrollArea className="h-[520px]">
+      <div className="space-y-4">
         {sortedDates.map((date) => {
           const dateObj = parseISO(date)
           const appointmentsForDate = groupedByDate[date]
@@ -1052,16 +1051,16 @@ function ListView({
           const isPastDay = isBefore(dateObj, startOfDay(new Date())) && !isCurrentDay
           
           return (
-            <div key={date} className="space-y-3">
+            <div key={date} className="space-y-2">
               <div className={cn(
-                'sticky top-0 z-10 bg-background/95 backdrop-blur-sm py-2 border-b-2',
+                'sticky top-0 z-10 bg-background/95 backdrop-blur-sm py-1.5 border-b-2',
                 isCurrentDay && 'border-primary',
                 !isCurrentDay && 'border-border'
               )}>
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className={cn(
-                      'font-bold text-lg',
+                      'font-bold text-base',
                       isCurrentDay && 'text-primary'
                     )}>
                       {isCurrentDay 

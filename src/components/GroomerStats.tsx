@@ -275,11 +275,11 @@ export function GroomerStats() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+    <div className="space-y-3">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
-            <SelectTrigger className="w-[140px] frosted h-9">
+            <SelectTrigger className="w-[130px] frosted h-8">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -291,7 +291,7 @@ export function GroomerStats() {
           </Select>
 
           <Select value={selectedStaff} onValueChange={setSelectedStaff}>
-            <SelectTrigger className="w-[160px] frosted h-9">
+            <SelectTrigger className="w-[150px] frosted h-8">
               <SelectValue placeholder="All Staff" />
             </SelectTrigger>
             <SelectContent>
@@ -307,7 +307,7 @@ export function GroomerStats() {
           <Button
             variant="outline"
             size="sm"
-            className="frosted h-9"
+            className="frosted h-8"
             onClick={() => handleExport('csv')}
           >
             <Download className="w-4 h-4" />
@@ -315,102 +315,102 @@ export function GroomerStats() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-        <Card className="frosted p-3">
-          <div className="flex items-center gap-2 mb-1">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+        <Card className="frosted p-2.5">
+          <div className="flex items-center gap-1.5 mb-0.5">
             <CurrencyDollar className="w-4 h-4 text-primary" weight="duotone" />
-            <p className="text-xs font-medium text-muted-foreground">Revenue</p>
+            <p className="text-[10px] font-medium text-muted-foreground">Revenue</p>
           </div>
-          <p className="text-lg font-bold">{formatCurrency(totalMetrics.netSales)}</p>
+          <p className="text-base font-bold">{formatCurrency(totalMetrics.netSales)}</p>
         </Card>
 
-        <Card className="frosted p-3">
-          <div className="flex items-center gap-2 mb-1">
+        <Card className="frosted p-2.5">
+          <div className="flex items-center gap-1.5 mb-0.5">
             <Scissors className="w-4 h-4 text-accent" weight="duotone" />
-            <p className="text-xs font-medium text-muted-foreground">Avg Ticket</p>
+            <p className="text-[10px] font-medium text-muted-foreground">Avg Ticket</p>
           </div>
-          <p className="text-lg font-bold">{formatCurrency(totalMetrics.avgTicket)}</p>
+          <p className="text-base font-bold">{formatCurrency(totalMetrics.avgTicket)}</p>
         </Card>
 
-        <Card className="frosted p-3">
-          <div className="flex items-center gap-2 mb-1">
+        <Card className="frosted p-2.5">
+          <div className="flex items-center gap-1.5 mb-0.5">
             <TrendUp className="w-4 h-4 text-primary" weight="duotone" />
-            <p className="text-xs font-medium text-muted-foreground">Completed</p>
+            <p className="text-[10px] font-medium text-muted-foreground">Completed</p>
           </div>
-          <p className="text-lg font-bold">{totalMetrics.completedCount}</p>
+          <p className="text-base font-bold">{totalMetrics.completedCount}</p>
         </Card>
 
-        <Card className="frosted p-3">
-          <div className="flex items-center gap-2 mb-1">
+        <Card className="frosted p-2.5">
+          <div className="flex items-center gap-1.5 mb-0.5">
             <Star className="w-4 h-4 text-accent" weight="duotone" />
-            <p className="text-xs font-medium text-muted-foreground">Tips</p>
+            <p className="text-[10px] font-medium text-muted-foreground">Tips</p>
           </div>
-          <p className="text-lg font-bold">{formatCurrency(totalMetrics.totalTips)}</p>
+          <p className="text-base font-bold">{formatCurrency(totalMetrics.totalTips)}</p>
         </Card>
 
-        <Card className="frosted p-3">
-          <div className="flex items-center gap-2 mb-1">
+        <Card className="frosted p-2.5">
+          <div className="flex items-center gap-1.5 mb-0.5">
             <Star className="w-4 h-4 text-accent" weight="fill" />
-            <p className="text-xs font-medium text-muted-foreground">Tip Rate</p>
+            <p className="text-[10px] font-medium text-muted-foreground">Tip Rate</p>
           </div>
-          <p className="text-lg font-bold">{formatPercent(totalMetrics.avgTipRate)}</p>
+          <p className="text-base font-bold">{formatPercent(totalMetrics.avgTipRate)}</p>
         </Card>
 
-        <Card className="frosted p-3">
-          <div className="flex items-center gap-2 mb-1">
+        <Card className="frosted p-2.5">
+          <div className="flex items-center gap-1.5 mb-0.5">
             <TrendDown className="w-4 h-4 text-destructive" weight="duotone" />
-            <p className="text-xs font-medium text-muted-foreground">No-Shows</p>
+            <p className="text-[10px] font-medium text-muted-foreground">No-Shows</p>
           </div>
-          <p className="text-lg font-bold">{totalMetrics.noShows}</p>
+          <p className="text-base font-bold">{totalMetrics.noShows}</p>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card className="frosted p-4">
-          <h3 className="text-base font-semibold mb-3">Staff Rankings</h3>
-          <div className="space-y-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <Card className="frosted p-3">
+          <h3 className="text-sm font-semibold mb-2">Staff Rankings</h3>
+          <div className="space-y-1.5">
             {staffRankings.slice(0, 5).map((ranking, index) => (
               <div 
                 key={ranking.staff.id} 
-                className="flex items-center gap-3 p-2 rounded-lg hover:bg-secondary/20 transition-colors"
+                className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-secondary/20 transition-colors"
               >
-                <div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary/10 text-primary font-bold text-sm shrink-0">
+                <div className="flex items-center justify-center w-6 h-6 rounded-md bg-primary/10 text-primary font-bold text-xs shrink-0">
                   {index + 1}
                 </div>
                 
                 <div 
-                  className="w-1 h-10 rounded-full shrink-0" 
+                  className="w-1 h-8 rounded-full shrink-0" 
                   style={{ backgroundColor: ranking.staff.color }}
                 />
                 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="font-semibold text-sm truncate">{ranking.staff.name}</p>
-                    <Badge variant="secondary" className="text-xs px-1.5 py-0">{ranking.completed}</Badge>
+                  <div className="flex items-center gap-1.5 mb-0">
+                    <p className="font-semibold text-xs truncate">{ranking.staff.name}</p>
+                    <Badge variant="secondary" className="text-[10px] px-1 py-0">{ranking.completed}</Badge>
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                     <span>{formatCurrency(ranking.avgTicket)} avg</span>
                     <span>{formatCurrency(ranking.tips)} tips</span>
                   </div>
                 </div>
                 
                 <div className="text-right shrink-0">
-                  <p className="text-base font-bold">{formatCurrency(ranking.netSales)}</p>
+                  <p className="text-sm font-bold">{formatCurrency(ranking.netSales)}</p>
                 </div>
               </div>
             ))}
             {staffRankings.length === 0 && (
-              <div className="py-8 text-center text-sm text-muted-foreground">
+              <div className="py-6 text-center text-xs text-muted-foreground">
                 No data available for the selected period
               </div>
             )}
           </div>
         </Card>
 
-        <Card className="frosted p-4">
-          <h3 className="text-base font-semibold mb-3">Revenue Breakdown</h3>
+        <Card className="frosted p-3">
+          <h3 className="text-sm font-semibold mb-2">Revenue Breakdown</h3>
           {revenueByCategory.length > 0 ? (
-            <ResponsiveContainer width="100%" height={240}>
+            <ResponsiveContainer width="100%" height={200}>
               <PieChart>
                 <Pie
                   data={revenueByCategory}
@@ -418,7 +418,7 @@ export function GroomerStats() {
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  outerRadius={80}
+                  outerRadius={70}
                   label={(entry) => `${entry.name}: ${formatCurrency(entry.value)}`}
                   labelLine={{ stroke: 'currentColor', strokeWidth: 1 }}
                 >

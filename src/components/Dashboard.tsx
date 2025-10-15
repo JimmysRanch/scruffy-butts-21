@@ -85,54 +85,54 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   }
 
   return (
-    <div className={isCompact ? 'space-y-2' : 'space-y-4'}>
-      <div className={`grid md:grid-cols-3 ${isCompact ? 'gap-2' : 'gap-4'}`}>
+    <div className={isCompact ? 'space-y-2' : 'space-y-3'}>
+      <div className={`grid md:grid-cols-3 ${isCompact ? 'gap-2' : 'gap-3'}`}>
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
-          <CardHeader className={`flex flex-row items-center justify-between space-y-0 ${isCompact ? 'pb-1' : 'pb-2'}`}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-4 pt-3">
             <CardTitle className="text-sm font-medium">Today's Appointments</CardTitle>
-            <div className="glass-dark p-2 rounded-lg liquid-glow">
+            <div className="glass-dark p-1.5 rounded-lg liquid-glow">
               <Calendar className="h-4 w-4 text-primary" weight="fill" />
             </div>
           </CardHeader>
-          <CardContent className={isCompact ? 'pt-1' : ''}>
-            <div className={`font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent ${isCompact ? 'text-xl' : 'text-2xl'}`}>
+          <CardContent className="px-4 pb-3">
+            <div className="text-xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
               {todayAppointments.length}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {todayAppointments.filter(a => a.status === 'completed').length} completed
             </p>
           </CardContent>
         </Card>
 
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('customers')}>
-          <CardHeader className={`flex flex-row items-center justify-between space-y-0 ${isCompact ? 'pb-1' : 'pb-2'}`}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-4 pt-3">
             <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-            <div className="glass-dark p-2 rounded-lg liquid-glow">
+            <div className="glass-dark p-1.5 rounded-lg liquid-glow">
               <Users className="h-4 w-4 text-accent" weight="fill" />
             </div>
           </CardHeader>
-          <CardContent className={isCompact ? 'pt-1' : ''}>
-            <div className={`font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent ${isCompact ? 'text-xl' : 'text-2xl'}`}>
+          <CardContent className="px-4 pb-3">
+            <div className="text-xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
               {customers?.length || 0}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {pets?.length || 0} pets registered
             </p>
           </CardContent>
         </Card>
 
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
-          <CardHeader className={`flex flex-row items-center justify-between space-y-0 ${isCompact ? 'pb-1' : 'pb-2'}`}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-4 pt-3">
             <CardTitle className="text-sm font-medium">This Week</CardTitle>
-            <div className="glass-dark p-2 rounded-lg liquid-glow">
+            <div className="glass-dark p-1.5 rounded-lg liquid-glow">
               <ChartBar className="h-4 w-4 text-primary" weight="fill" />
             </div>
           </CardHeader>
-          <CardContent className={isCompact ? 'pt-1' : ''}>
-            <div className={`font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent ${isCompact ? 'text-xl' : 'text-2xl'}`}>
+          <CardContent className="px-4 pb-3">
+            <div className="text-xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
               {weekAppointments.length}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-0.5">
               appointments scheduled
             </p>
           </CardContent>
@@ -140,39 +140,39 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       </div>
 
       <Card className="frosted border-white/20 liquid-shine">
-        <CardHeader className={isCompact ? 'pb-2' : ''}>
-          <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-            <div className="glass-dark p-1.5 rounded-lg liquid-pulse">
-              <Calendar className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} weight="fill" />
+        <CardHeader className="pb-2 px-4 pt-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <div className="glass-dark p-1 rounded-lg liquid-pulse">
+              <Calendar className="h-4 w-4" weight="fill" />
             </div>
             Today's Schedule
           </CardTitle>
-          <CardDescription className={isCompact ? 'text-xs' : ''}>Appointments scheduled for today</CardDescription>
+          <CardDescription className="text-xs">Appointments scheduled for today</CardDescription>
         </CardHeader>
-        <CardContent className={isCompact ? 'pt-2' : ''}>
+        <CardContent className="px-4 pb-3">
           {todayAppointments.length === 0 ? (
-            <div className={`text-center text-muted-foreground ${isCompact ? 'py-4' : 'py-8'}`}>
-              <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
-                <Dog className={`opacity-50 ${isCompact ? 'h-8 w-8' : 'h-12 w-12'}`} weight="fill" />
+            <div className="text-center text-muted-foreground py-6">
+              <div className="glass-dark w-fit mx-auto p-3 rounded-2xl mb-2">
+                <Dog className="h-8 w-8 opacity-50" weight="fill" />
               </div>
-              <p className={isCompact ? 'text-sm' : ''}>No appointments scheduled for today</p>
+              <p className="text-sm">No appointments scheduled for today</p>
             </div>
           ) : (
-            <div className={isCompact ? 'space-y-2' : 'space-y-3'}>
-              {todayAppointments.slice(0, 5).map((apt) => (
-                <div key={apt.id} className={`glass-dark rounded-xl border border-white/20 hover:glass transition-all duration-200 ${isCompact ? 'p-2' : 'p-3'}`}>
+            <div className="space-y-2">
+              {todayAppointments.slice(0, 6).map((apt) => (
+                <div key={apt.id} className="glass-dark rounded-lg border border-white/20 hover:glass transition-all duration-200 p-2">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`flex items-center gap-1 font-medium min-w-[60px] glass-dark px-2 py-1 rounded-lg ${isCompact ? 'text-xs' : 'text-sm'}`}>
-                        <Clock size={isCompact ? 12 : 14} weight="fill" />
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-1 font-medium min-w-[55px] glass-dark px-1.5 py-0.5 rounded text-xs">
+                        <Clock size={12} weight="fill" />
                         {apt.time}
                       </div>
                       <div>
-                        <div className={`font-medium ${isCompact ? 'text-sm' : ''}`}>{getPetName(apt.petId)}</div>
-                        <div className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>{getCustomerName(apt.customerId)}</div>
+                        <div className="font-medium text-sm">{getPetName(apt.petId)}</div>
+                        <div className="text-muted-foreground text-xs">{getCustomerName(apt.customerId)}</div>
                       </div>
                     </div>
-                    <Badge className={`${getStatusColor(apt.status)} backdrop-blur-sm`}>
+                    <Badge className={`${getStatusColor(apt.status)} backdrop-blur-sm text-xs py-0`}>
                       {apt.status}
                     </Badge>
                   </div>

@@ -127,46 +127,46 @@ export function PointOfSale() {
   }
 
   return (
-    <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h1 className={`font-bold text-foreground ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Point of Sale</h1>
+        <h1 className="font-bold text-foreground text-xl">Point of Sale</h1>
       </div>
 
-      <div className={`grid grid-cols-1 lg:grid-cols-3 ${isCompact ? 'gap-3' : 'gap-6'}`}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         {/* Services */}
         <div className="lg:col-span-2">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ShoppingCart size={20} />
+            <CardHeader className="pb-3 pt-4 px-4">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <ShoppingCart size={18} />
                 Services
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className={`grid grid-cols-1 md:grid-cols-2 ${isCompact ? 'gap-2' : 'gap-4'}`}>
+            <CardContent className="px-4 pb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {servicesList.map(service => (
                   <Card key={service.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                    <CardContent className={isCompact ? 'p-3' : 'p-4'}>
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-medium">{service.name}</h3>
-                        <Badge variant="secondary">${service.price}</Badge>
+                    <CardContent className="p-3">
+                      <div className="flex justify-between items-start mb-1.5">
+                        <h3 className="font-medium text-sm">{service.name}</h3>
+                        <Badge variant="secondary" className="text-xs">${service.price}</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-3">
+                      <p className="text-xs text-muted-foreground mb-2">
                         {service.duration} minutes
                       </p>
                       <Button 
                         onClick={() => addToCart(service)}
                         size="sm" 
-                        className="w-full"
+                        className="w-full h-7 text-xs"
                       >
-                        <Plus size={16} className="mr-1" />
+                        <Plus size={14} className="mr-1" />
                         Add to Cart
                       </Button>
                     </CardContent>
                   </Card>
                 ))}
                 {servicesList.length === 0 && (
-                  <div className="col-span-full text-center py-8 text-muted-foreground">
+                  <div className="col-span-full text-center py-6 text-muted-foreground text-sm">
                     No services available. Add services in the Services tab.
                   </div>
                 )}
@@ -178,15 +178,15 @@ export function PointOfSale() {
         {/* Cart & Checkout */}
         <div>
           <Card className="sticky top-4">
-            <CardHeader>
-              <CardTitle>Cart</CardTitle>
+            <CardHeader className="pb-3 pt-4 px-4">
+              <CardTitle className="text-base">Cart</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3 px-4 pb-4">
               {/* Customer Selection */}
               <div>
-                <label className="text-sm font-medium mb-2 block">Customer (Optional)</label>
+                <label className="text-xs font-medium mb-1.5 block">Customer (Optional)</label>
                 <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-8">
                     <SelectValue placeholder="Select customer" />
                   </SelectTrigger>
                   <SelectContent>
@@ -203,36 +203,38 @@ export function PointOfSale() {
               </div>
 
               {/* Cart Items */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {cart.map(item => (
                   <div key={item.service.id} className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{item.service.name}</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-medium truncate text-sm">{item.service.name}</p>
+                      <p className="text-xs text-muted-foreground">
                         ${item.service.price} × {item.quantity}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 ml-2">
+                    <div className="flex items-center gap-1.5 ml-2">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => removeFromCart(item.service.id)}
+                        className="h-6 w-6 p-0"
                       >
-                        <Minus size={14} />
+                        <Minus size={12} />
                       </Button>
-                      <span className="w-8 text-center">{item.quantity}</span>
+                      <span className="w-6 text-center text-xs">{item.quantity}</span>
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => addToCart(item.service)}
+                        className="h-6 w-6 p-0"
                       >
-                        <Plus size={14} />
+                        <Plus size={12} />
                       </Button>
                     </div>
                   </div>
                 ))}
                 {cart.length === 0 && (
-                  <p className="text-center text-muted-foreground py-4">
+                  <p className="text-center text-muted-foreground py-3 text-sm">
                     Cart is empty
                   </p>
                 )}
@@ -243,17 +245,17 @@ export function PointOfSale() {
                   <Separator />
                   
                   {/* Totals */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-sm">
                       <span>Subtotal:</span>
                       <span>${subtotal.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between text-sm">
                       <span>Tax (8%):</span>
                       <span>${tax.toFixed(2)}</span>
                     </div>
                     <Separator />
-                    <div className="flex justify-between font-bold text-lg">
+                    <div className="flex justify-between font-bold text-base">
                       <span>Total:</span>
                       <span>${total.toFixed(2)}</span>
                     </div>

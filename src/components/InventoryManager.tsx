@@ -266,17 +266,17 @@ export function InventoryManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Inventory Management</h1>
-          <p className="text-muted-foreground mt-1">Track supplies, manage stock levels, and monitor usage</p>
+          <h1 className="text-xl font-bold text-foreground">Inventory Management</h1>
+          <p className="text-muted-foreground text-sm mt-0.5">Track supplies, manage stock levels, and monitor usage</p>
         </div>
         <div className="flex gap-2">
           <Dialog open={isSupplierDialogOpen} onOpenChange={setIsSupplierDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline">
-                <Plus className="mr-2" size={18} />
+              <Button variant="outline" className="h-8 text-xs">
+                <Plus className="mr-1.5" size={16} />
                 Add Supplier
               </Button>
             </DialogTrigger>
@@ -338,8 +338,8 @@ export function InventoryManager() {
           </Dialog>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2" size={18} />
+              <Button className="h-8 text-xs">
+                <Plus className="mr-1.5" size={16} />
                 Add Item
               </Button>
             </DialogTrigger>
@@ -490,62 +490,62 @@ export function InventoryManager() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Value</CardTitle>
+          <CardHeader className="pb-2 pt-3 px-4">
+            <CardTitle className="text-xs font-medium text-muted-foreground">Total Value</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${totalValue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground mt-1">At cost price</p>
+          <CardContent className="px-4 pb-3">
+            <div className="text-xl font-bold">${totalValue.toFixed(2)}</div>
+            <p className="text-[10px] text-muted-foreground mt-0.5">At cost price</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Low Stock Items</CardTitle>
+          <CardHeader className="pb-2 pt-3 px-4">
+            <CardTitle className="text-xs font-medium text-muted-foreground">Low Stock Items</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-warning">{lowStockItems.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">Need reordering</p>
+          <CardContent className="px-4 pb-3">
+            <div className="text-xl font-bold text-warning">{lowStockItems.length}</div>
+            <p className="text-[10px] text-muted-foreground mt-0.5">Need reordering</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Suppliers</CardTitle>
+          <CardHeader className="pb-2 pt-3 px-4">
+            <CardTitle className="text-xs font-medium text-muted-foreground">Suppliers</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{(suppliers || []).length}</div>
-            <p className="text-xs text-muted-foreground mt-1">Active suppliers</p>
+          <CardContent className="px-4 pb-3">
+            <div className="text-xl font-bold">{(suppliers || []).length}</div>
+            <p className="text-[10px] text-muted-foreground mt-0.5">Active suppliers</p>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="items" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="items">Inventory Items</TabsTrigger>
-          <TabsTrigger value="lowstock">Low Stock Alerts</TabsTrigger>
-          <TabsTrigger value="transactions">Transaction History</TabsTrigger>
-          <TabsTrigger value="suppliers">Suppliers</TabsTrigger>
+      <Tabs defaultValue="items" className="space-y-3">
+        <TabsList className="h-8">
+          <TabsTrigger value="items" className="text-xs">Inventory Items</TabsTrigger>
+          <TabsTrigger value="lowstock" className="text-xs">Low Stock Alerts</TabsTrigger>
+          <TabsTrigger value="transactions" className="text-xs">Transaction History</TabsTrigger>
+          <TabsTrigger value="suppliers" className="text-xs">Suppliers</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="items" className="space-y-4">
+        <TabsContent value="items" className="space-y-3">
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-3 pt-4 px-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Inventory Items</CardTitle>
-                  <CardDescription>Manage your stock and track usage</CardDescription>
+                  <CardTitle className="text-base">Inventory Items</CardTitle>
+                  <CardDescription className="text-xs">Manage your stock and track usage</CardDescription>
                 </div>
                 <div className="flex gap-2">
                   <div className="relative">
-                    <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                    <MagnifyingGlass className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                     <Input
                       placeholder="Search items..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 w-64"
+                      className="pl-9 w-56 h-8 text-xs"
                     />
                   </div>
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="w-40">
+                    <SelectTrigger className="w-36 h-8 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -558,12 +558,12 @@ export function InventoryManager() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-4 pb-4">
               {filteredItems.length === 0 ? (
-                <div className="text-center py-12">
-                  <Package size={48} className="mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No items found</h3>
-                  <p className="text-muted-foreground mb-4">
+                <div className="text-center py-8">
+                  <Package size={40} className="mx-auto text-muted-foreground mb-3" />
+                  <h3 className="text-base font-semibold mb-1.5">No items found</h3>
+                  <p className="text-muted-foreground mb-3 text-sm">
                     {searchQuery || categoryFilter !== 'all' ? 'Try adjusting your filters' : 'Add your first inventory item to get started'}
                   </p>
                 </div>

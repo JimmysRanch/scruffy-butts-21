@@ -164,11 +164,11 @@ export function CustomerManager() {
   }
 
   return (
-    <div className={isCompact ? 'space-y-2' : 'space-y-4'}>
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className={`font-bold text-foreground ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Clients & Pets</h1>
-          <p className={`text-muted-foreground ${isCompact ? 'text-sm' : ''}`}>
+          <h1 className="font-bold text-foreground text-xl">Clients & Pets</h1>
+          <p className="text-muted-foreground text-sm">
             Manage client information and their pets
           </p>
         </div>
@@ -176,8 +176,8 @@ export function CustomerManager() {
         <div className="flex space-x-2">
           <Dialog open={isNewPetOpen} onOpenChange={setIsNewPetOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="flex items-center space-x-2" size={isCompact ? "sm" : "default"}>
-                <Heart size={18} />
+              <Button variant="outline" className="flex items-center space-x-2 h-8 text-xs">
+                <Heart size={16} />
                 <span>Add Pet</span>
               </Button>
             </DialogTrigger>
@@ -259,8 +259,8 @@ export function CustomerManager() {
 
           <Dialog open={isNewCustomerOpen} onOpenChange={setIsNewCustomerOpen}>
             <DialogTrigger asChild>
-              <Button className="flex items-center space-x-2" size={isCompact ? "sm" : "default"}>
-                <Plus size={18} />
+              <Button className="flex items-center space-x-2 h-8 text-xs">
+                <Plus size={16} />
                 <span>New Client</span>
               </Button>
             </DialogTrigger>
@@ -328,57 +328,57 @@ export function CustomerManager() {
 
       {(customers || []).length === 0 ? (
         <Card>
-          <CardContent className={`text-center ${isCompact ? 'py-8' : 'py-12'}`}>
-            <User size={isCompact ? 40 : 48} className="mx-auto text-muted-foreground mb-4" />
-            <h3 className={`font-medium mb-2 ${isCompact ? 'text-base' : 'text-lg'}`}>No clients yet</h3>
-            <p className={`text-muted-foreground mb-4 ${isCompact ? 'text-sm' : ''}`}>
+          <CardContent className="text-center py-8">
+            <User size={40} className="mx-auto text-muted-foreground mb-3" />
+            <h3 className="font-medium mb-2 text-base">No clients yet</h3>
+            <p className="text-muted-foreground mb-4 text-sm">
               Add your first client to get started with managing your grooming business
             </p>
-            <Button onClick={() => setIsNewCustomerOpen(true)} size={isCompact ? "sm" : "default"}>
+            <Button onClick={() => setIsNewCustomerOpen(true)} size="sm">
               Add First Client
             </Button>
           </CardContent>
         </Card>
       ) : (
-        <div className={isCompact ? 'space-y-2' : 'space-y-3'}>
+        <div className="space-y-2">
           {(customers || []).map((customer) => (
             <div 
               key={customer.id} 
-              className={`flex items-center justify-between bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer ${isCompact ? 'p-2' : 'p-4'}`}
+              className="flex items-center justify-between bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer p-3"
               onClick={() => setViewingCustomerId(customer.id)}
             >
-              <div className={`flex items-center flex-1 min-w-0 ${isCompact ? 'space-x-2' : 'space-x-4'}`}>
+              <div className="flex items-center flex-1 min-w-0 space-x-3">
                 <div className="flex-shrink-0">
-                  <div className={`bg-primary/10 rounded-full flex items-center justify-center ${isCompact ? 'w-8 h-8' : 'w-10 h-10'}`}>
-                    <User size={isCompact ? 16 : 20} className="text-primary" />
+                  <div className="bg-primary/10 rounded-full flex items-center justify-center w-9 h-9">
+                    <User size={18} className="text-primary" />
                   </div>
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <div className={`flex items-center space-x-3 ${isCompact ? 'mb-0.5' : 'mb-1'}`}>
-                    <h3 className={`font-medium text-foreground truncate ${isCompact ? 'text-sm' : ''}`}>
+                  <div className="flex items-center space-x-2 mb-0.5">
+                    <h3 className="font-medium text-foreground truncate text-sm">
                       {customer.firstName && customer.lastName 
                         ? `${customer.firstName} ${customer.lastName}` 
                         : customer.name || 'Unknown Customer'}
                     </h3>
-                    <span className={`text-muted-foreground bg-secondary rounded-full ${isCompact ? 'text-[10px] px-1.5 py-0' : 'text-xs px-2 py-0.5'}`}>
+                    <span className="text-muted-foreground bg-secondary rounded-full text-[10px] px-1.5 py-0">
                       {customer.pets.length} pet{customer.pets.length !== 1 ? 's' : ''}
                     </span>
                   </div>
                   
-                  <div className={`flex items-center text-muted-foreground ${isCompact ? 'space-x-2 text-xs' : 'space-x-4 text-sm'}`}>
+                  <div className="flex items-center text-muted-foreground space-x-3 text-xs">
                     <div className="flex items-center space-x-1">
-                      <Phone size={isCompact ? 12 : 14} />
+                      <Phone size={12} />
                       <span>{customer.phone}</span>
                     </div>
                   </div>
                   
                   {customer.pets.length > 0 && (
-                    <div className={`flex items-center space-x-2 ${isCompact ? 'mt-1' : 'mt-2'}`}>
-                      <span className={`text-muted-foreground ${isCompact ? 'text-[10px]' : 'text-xs'}`}>Pets:</span>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <span className="text-muted-foreground text-[10px]">Pets:</span>
                       <div className="flex flex-wrap gap-1">
                         {customer.pets.map((pet) => (
-                          <span key={pet.id} className={`bg-accent/20 text-accent-foreground rounded ${isCompact ? 'text-[10px] px-1.5 py-0' : 'text-xs px-2 py-0.5'}`}>
+                          <span key={pet.id} className="bg-accent/20 text-accent-foreground rounded text-[10px] px-1.5 py-0">
                             {pet.name} ({pet.breed})
                           </span>
                         ))}
@@ -397,7 +397,7 @@ export function CustomerManager() {
                     setSelectedCustomerId(customer.id)
                     setIsNewPetOpen(true)
                   }}
-                  className={isCompact ? 'h-7 text-xs px-2' : ''}
+                  className="h-7 text-xs px-2"
                 >
                   <Heart size={isCompact ? 14 : 16} className={isCompact ? 'mr-1' : 'mr-2'} />
                   Add Pet
