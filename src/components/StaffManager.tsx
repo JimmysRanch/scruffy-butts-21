@@ -8,8 +8,10 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Plus, UserCircle, Phone, EnvelopeSimple, MapPin, Calendar, Star } from '@phosphor-icons/react'
 import { toast } from 'sonner'
+import { StaffSchedule } from './StaffSchedule'
 
 export interface StaffPosition {
   id: string
@@ -141,6 +143,7 @@ export function StaffManager() {
   const [showDialog, setShowDialog] = useState(false)
   const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null)
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null)
+  const [currentTab, setCurrentTab] = useState('staff')
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -292,97 +295,130 @@ export function StaffManager() {
 
   return (
     <div className={isCompact ? 'space-y-3' : 'space-y-6'}>
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className={`font-bold ${isCompact ? 'text-2xl' : 'text-3xl'}`}>Staff Management</h1>
-          <p className={`text-muted-foreground ${isCompact ? 'text-sm' : ''}`}>Manage your team members and their profiles</p>
+      <div className="frosted rounded-xl p-3 sm:p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className={`font-bold ${isCompact ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-3xl'} text-foreground`}>
+              Staff Management
+            </h1>
+            <p className={`text-muted-foreground ${isCompact ? 'text-xs sm:text-sm' : 'text-sm'} mt-1`}>
+              Manage your team members and schedules
+            </p>
+          </div>
+          {currentTab === 'staff' && (
+            <Button onClick={() => setShowDialog(true)} className="glass-button">
+              <Plus size={18} className="mr-2" />
+              <span>Add Staff Member</span>
+            </Button>
+          )}
         </div>
-        <Button onClick={() => setShowDialog(true)} className="flex items-center space-x-2">
-          <Plus size={18} />
-          <span>Add Staff Member</span>
-        </Button>
+
+        <Tabs value={currentTab} onValueChange={setCurrentTab} className="mt-4">
+          <TabsList className="glass-dark">
+            <TabsTrigger value="staff">Team Members</TabsTrigger>
+            <TabsTrigger value="schedule">Schedule</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="staff" className="mt-4">
+            {!staff || staff.length === 0 ? (
+              <Card className="frosted">
+                <CardContent className={`flex flex-col items-center justify-center ${isCompact ? 'py-12' : 'py-16'}`}>
+                  <UserCircle size={64} className="text-muted-foreground mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No Staff Members Yet</h3>
+                  <p className="text-muted-foreground text-center mb-4">
+                    Start building your team by adding your first staff member
+                  </p>
+                  <Button onClick={() => setShowDialog(true)} className="glass-button">
+                    Add First Staff Member
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${isCompact ? 'gap-3' : 'gap-4'}`}>
+                {(staff || []).map((member) => (
+                  <Card 
+                    key={member.id} 
+                    className="frosted cursor-pointer hover:shadow-lg transition-all liquid-button" 
+                    onClick={() => handleStaffClick(member)}
+                  >
+                    <CardHeader className={isCompact ? 'pb-3' : ''}>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                          <UserCircle size={32} className="text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-lg truncate">
+                            {member.firstName} {member.lastName}
+                          </CardTitle>
+                          <CardDescription className="truncate">{member.position}</CardDescription>
+                        </div>
+                        <Badge 
+                          variant={member.status === 'active' ? 'default' : 'secondary'}
+                          className="shrink-0"
+                        >
+                          {member.status}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className={isCompact ? 'pt-0 pb-3' : 'pt-0'}>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center space-x-2">
+                          <EnvelopeSimple size={14} className="text-muted-foreground shrink-0" />
+                          <span className="truncate">{member.email}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Phone size={14} className="text-muted-foreground shrink-0" />
+                          <span>{member.phone}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-1">
+                            <Star size={14} className="text-yellow-500" weight="fill" />
+                            <span>{member.rating}/5</span>
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            {member.specialties.length} specialties
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mt-4 flex space-x-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleEdit(member)
+                          }}
+                          className="flex-1 glass-button"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDelete(member.id)
+                          }}
+                          className="glass-button"
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="schedule" className="mt-0">
+            <StaffSchedule />
+          </TabsContent>
+        </Tabs>
       </div>
 
-      {!staff || staff.length === 0 ? (
-        <Card>
-          <CardContent className={`flex flex-col items-center justify-center ${isCompact ? 'py-12' : 'py-16'}`}>
-            <UserCircle size={64} className="text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No Staff Members Yet</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              Start building your team by adding your first staff member
-            </p>
-            <Button onClick={() => setShowDialog(true)}>Add First Staff Member</Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${isCompact ? 'gap-3' : 'gap-6'}`}>
-          {(staff || []).map((member) => (
-            <Card key={member.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleStaffClick(member)}>
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
-                    <UserCircle size={32} className="text-muted-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <CardTitle className="text-lg">{member.firstName} {member.lastName}</CardTitle>
-                    <CardDescription>{member.position}</CardDescription>
-                  </div>
-                  <Badge variant={member.status === 'active' ? 'default' : 'secondary'}>
-                    {member.status}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center space-x-2">
-                    <EnvelopeSimple size={14} className="text-muted-foreground" />
-                    <span className="truncate">{member.email}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Phone size={14} className="text-muted-foreground" />
-                    <span>{member.phone}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-1">
-                      <Star size={14} className="text-yellow-500" weight="fill" />
-                      <span>{member.rating}/5</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      {member.specialties.length} specialties
-                    </span>
-                  </div>
-                </div>
-                <div className="mt-4 flex space-x-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleEdit(member)
-                    }}
-                    className="flex-1"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleDelete(member.id)
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="frosted max-w-2xl">
           <form onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle>
@@ -403,6 +439,7 @@ export function StaffManager() {
                   id="first-name"
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  className="glass-dark"
                   required
                 />
               </div>
@@ -413,6 +450,7 @@ export function StaffManager() {
                   id="last-name"
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  className="glass-dark"
                   required
                 />
               </div>
@@ -423,7 +461,7 @@ export function StaffManager() {
                   value={formData.position}
                   onValueChange={(value) => setFormData({ ...formData, position: value })}
                 >
-                  <SelectTrigger id="position">
+                  <SelectTrigger id="position" className="glass-dark">
                     <SelectValue placeholder="Select a position" />
                   </SelectTrigger>
                   <SelectContent>
@@ -450,6 +488,7 @@ export function StaffManager() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="glass-dark"
                   required
                 />
               </div>
@@ -460,6 +499,7 @@ export function StaffManager() {
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="glass-dark"
                 />
               </div>
 
@@ -470,6 +510,7 @@ export function StaffManager() {
                   type="date"
                   value={formData.hireDate}
                   onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
+                  className="glass-dark"
                 />
               </div>
 
@@ -479,7 +520,7 @@ export function StaffManager() {
                   value={formData.status}
                   onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}
                 >
-                  <SelectTrigger id="status">
+                  <SelectTrigger id="status" className="glass-dark">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -496,6 +537,7 @@ export function StaffManager() {
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   placeholder="Street address"
+                  className="glass-dark"
                 />
               </div>
 
@@ -506,6 +548,7 @@ export function StaffManager() {
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   placeholder="City"
+                  className="glass-dark"
                 />
               </div>
 
@@ -515,7 +558,7 @@ export function StaffManager() {
                   value={formData.state}
                   onValueChange={(value) => setFormData({ ...formData, state: value })}
                 >
-                  <SelectTrigger id="state">
+                  <SelectTrigger id="state" className="glass-dark">
                     <SelectValue placeholder="Select state" />
                   </SelectTrigger>
                   <SelectContent>
@@ -580,6 +623,7 @@ export function StaffManager() {
                   value={formData.zip}
                   onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
                   placeholder="Zip code"
+                  className="glass-dark"
                 />
               </div>
 
@@ -590,6 +634,7 @@ export function StaffManager() {
                   value={formData.specialties}
                   onChange={(e) => setFormData({ ...formData, specialties: e.target.value })}
                   placeholder="e.g., Large Dogs, Show Cuts, Nail Trimming (comma separated)"
+                  className="glass-dark"
                 />
               </div>
 
@@ -601,15 +646,16 @@ export function StaffManager() {
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   placeholder="Additional notes about the staff member"
                   rows={3}
+                  className="glass-dark"
                 />
               </div>
             </div>
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
+              <Button type="button" variant="outline" onClick={() => setShowDialog(false)} className="glass-button">
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button type="submit" className="glass-button">
                 {editingStaff ? 'Update Staff Member' : 'Add Staff Member'}
               </Button>
             </DialogFooter>

@@ -29,9 +29,11 @@ import {
   Trash,
   Scissors,
   Database,
-  Warning
+  Warning,
+  CalendarBlank
 } from '@phosphor-icons/react'
 import { StaffPosition } from './StaffManager'
+import { seedShifts, seedTimeOffRequests } from '@/lib/seed-schedule-data'
 
 interface Service {
   id: string
@@ -97,6 +99,10 @@ export function Settings() {
     compactMode: false,
     showWelcomeMessage: true
   })
+  
+  const [staffMembers] = useKV<any[]>('staff-members', [])
+  const [shifts, setShifts] = useKV<any[]>('staff-shifts', [])
+  const [timeOffRequests, setTimeOffRequests] = useKV<any[]>('time-off-requests', [])
 
   const [staffPositions, setStaffPositions] = useKV<StaffPosition[]>('staff-positions', [
     { id: 'owner', name: 'Owner', permissions: ['all'], description: 'Full access to all features' },
@@ -288,6 +294,22 @@ export function Settings() {
   const handleDeleteService = (id: string) => {
     setServices(currentServices => (currentServices || []).filter(s => s.id !== id))
     toast.success('Service deleted successfully')
+  }
+  
+  const handleSeedScheduleData = () => {
+    if (!staffMembers || staffMembers.length === 0) {
+      toast.error('Please add staff members first before seeding schedule data')
+      return
+    }
+    
+    const staffIds = staffMembers.map(s => s.id)
+    const newShifts = seedShifts(staffIds)
+    const newTimeOffRequests = seedTimeOffRequests(staffIds)
+    
+    setShifts(newShifts)
+    setTimeOffRequests(newTimeOffRequests)
+    
+    toast.success(`Seeded ${newShifts.length} shifts and ${newTimeOffRequests.length} time off requests`)
   }
 
   const handleSave = () => {
@@ -888,6 +910,23 @@ export function Settings() {
                     </Button>
                     <p className="text-sm text-muted-foreground">
                       Export all your data in a portable format
+                    </p>
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="space-y-3">
+                    <Label>Schedule Data</Label>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={handleSeedScheduleData}
+                    >
+                      <CalendarBlank size={16} className="mr-2" />
+                      Seed Schedule Data
+                    </Button>
+                    <p className="text-sm text-muted-foreground">
+                      Generate sample shifts and time off requests for testing
                     </p>
                   </div>
                 </div>
