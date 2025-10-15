@@ -47,8 +47,20 @@ interface Service {
 
 interface StaffMember {
   id: string
-  name: string
-  color: string
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  position: string
+  hireDate: string
+  address: string
+  city: string
+  state: string
+  zip: string
+  specialties: string[]
+  notes: string
+  status: 'active' | 'inactive'
+  rating: number
 }
 
 export function Dashboard({ onNavigate }: DashboardProps) {
@@ -56,7 +68,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [customers] = useKV<Customer[]>('customers', [])
   const [pets] = useKV<Pet[]>('pets', [])
   const [services] = useKV<Service[]>('services', [])
-  const [staff] = useKV<StaffMember[]>('staff', [])
+  const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {})
 
   const isCompact = appearance?.compactMode || false
@@ -95,7 +107,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   }
 
   const getStaffName = (staffId: string) => {
-    return staff?.find(s => s.id === staffId)?.name || 'Unassigned'
+    const member = staffMembers?.find(s => s.id === staffId)
+    return member ? `${member.firstName} ${member.lastName}` : 'Unassigned'
   }
 
   const getStatusColor = (status: string) => {
@@ -333,7 +346,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               </div>
               <div className="flex justify-between items-center glass-dark px-3 py-2 rounded-lg">
                 <span className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>Staff Members</span>
-                <span className={`font-semibold ${isCompact ? 'text-sm' : ''}`}>{staff?.length || 0}</span>
+                <span className={`font-semibold ${isCompact ? 'text-sm' : ''}`}>{staffMembers?.length || 0}</span>
               </div>
               <div className="flex justify-between items-center glass-dark px-3 py-2 rounded-lg">
                 <span className={`text-muted-foreground ${isCompact ? 'text-xs' : 'text-sm'}`}>Total Appointments</span>

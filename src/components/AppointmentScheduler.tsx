@@ -75,14 +75,22 @@ interface Service {
   description: string
 }
 
-interface Staff {
+interface StaffMember {
   id: string
   firstName: string
   lastName: string
-  position: string
   email: string
   phone: string
-  color?: string
+  position: string
+  hireDate: string
+  address: string
+  city: string
+  state: string
+  zip: string
+  specialties: string[]
+  notes: string
+  status: 'active' | 'inactive'
+  rating: number
 }
 
 type ViewMode = 'day' | 'week' | 'month' | 'list'
@@ -108,7 +116,7 @@ export function AppointmentScheduler() {
   const [appointments, setAppointments] = useKV<Appointment[]>('appointments', [])
   const [customers] = useKV<Customer[]>('customers', [])
   const [services] = useKV<Service[]>('services', [])
-  const [staff] = useKV<Staff[]>('staff', [])
+  const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
   const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
   
   const [viewMode, setViewMode] = useState<ViewMode>('list')
@@ -434,12 +442,12 @@ export function AppointmentScheduler() {
 
   const selectedCustomerData = (customers || []).find(c => c.id === formCustomer)
   const selectedServiceData = (services || []).find(s => s.id === formService)
-  const selectedStaffData = (staff || []).find(s => s.id === formStaff)
+  const selectedStaffData = (staffMembers || []).find(s => s.id === formStaff)
 
   const getStaffColor = (staffId?: string) => {
     if (!staffId) return 'bg-gray-200'
-    const staffMember = (staff || []).find(s => s.id === staffId)
-    return staffMember?.color || 'bg-gray-200'
+    const staffMember = (staffMembers || []).find(s => s.id === staffId)
+    return 'bg-primary/20'
   }
 
   const upcomingCount = (appointments || []).filter(apt => {
@@ -568,7 +576,7 @@ export function AppointmentScheduler() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="unassigned">Unassigned</SelectItem>
-                        {(staff || []).map((member) => (
+                        {(staffMembers || []).map((member) => (
                           <SelectItem key={member.id} value={member.id}>
                             {member.firstName} {member.lastName}
                           </SelectItem>
@@ -703,7 +711,7 @@ export function AppointmentScheduler() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Staff</SelectItem>
-                    {(staff || []).map((member) => (
+                    {(staffMembers || []).map((member) => (
                       <SelectItem key={member.id} value={member.id}>
                         {member.firstName} {member.lastName}
                       </SelectItem>
@@ -801,7 +809,7 @@ export function AppointmentScheduler() {
               onRebookAppointment={handleRebookAppointment}
               onStatusChange={updateAppointmentStatus}
               getStaffColor={getStaffColor}
-              staff={staff || []}
+              staffMembers={staffMembers || []}
               activeAppointmentId={activeAppointmentId}
               setActiveAppointmentId={setActiveAppointmentId}
             />
@@ -815,7 +823,7 @@ export function AppointmentScheduler() {
             <AppointmentDetail
               appointment={selectedAppointment}
               customer={(customers || []).find(c => c.id === selectedAppointment.customerId)}
-              staff={(staff || []).find(s => s.id === selectedAppointment.staffId)}
+              staffMember={(staffMembers || []).find(s => s.id === selectedAppointment.staffId)}
               onStatusChange={(status) => {
                 updateAppointmentStatus(selectedAppointment.id, status)
                 setSelectedAppointment({ ...selectedAppointment, status })
@@ -990,7 +998,7 @@ function ListView({
   onRebookAppointment,
   onStatusChange,
   getStaffColor,
-  staff,
+  staffMembers,
   activeAppointmentId,
   setActiveAppointmentId
 }: { 
@@ -1002,7 +1010,7 @@ function ListView({
   onRebookAppointment: (apt: Appointment) => void
   onStatusChange: (id: string, status: Appointment['status']) => void
   getStaffColor: (staffId?: string) => string
-  staff: Staff[]
+  staffMembers: StaffMember[]
   activeAppointmentId: string | null
   setActiveAppointmentId: (id: string | null) => void
 }) {
@@ -1085,7 +1093,7 @@ function ListView({
                     onRebook={() => onRebookAppointment(apt)}
                     onStatusChange={(status) => onStatusChange(apt.id, status)}
                     getStaffColor={getStaffColor}
-                    staff={staff}
+                    staffMembers={staffMembers}
                     showActions
                     isActive={activeAppointmentId === apt.id}
                     setActive={() => setActiveAppointmentId(apt.id)}
@@ -1109,7 +1117,7 @@ function AppointmentCard({
   onRebook,
   onStatusChange,
   getStaffColor,
-  staff,
+  staffMembers,
   showActions = false,
   isActive = false,
   setActive
@@ -1122,13 +1130,13 @@ function AppointmentCard({
   onRebook?: () => void
   onStatusChange?: (status: Appointment['status']) => void
   getStaffColor: (staffId?: string) => string
-  staff?: Staff[]
+  staffMembers?: StaffMember[]
   showActions?: boolean
   isActive?: boolean
   setActive?: () => void
 }) {
   const [tapCount, setTapCount] = useState(0)
-  const staffMember = staff?.find(s => s.id === appointment.staffId)
+  const staffMemberData = staffMembers?.find(s => s.id === appointment.staffId)
   const isPast = isBefore(parseISO(appointment.date), startOfDay(new Date()))
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -1156,9 +1164,9 @@ function AppointmentCard({
             <Dog size={16} className="flex-shrink-0 text-foreground/70" />
             <h3 className="font-semibold">
               {appointment.petName}
-              {staffMember && (
+              {staffMemberData && (
                 <span className="font-normal text-muted-foreground">
-                  {' '}with {staffMember.firstName} {staffMember.lastName}
+                  {' '}with {staffMemberData.firstName} {staffMemberData.lastName}
                 </span>
               )}
             </h3>
@@ -1241,7 +1249,7 @@ function AppointmentCard({
 function AppointmentDetail({ 
   appointment, 
   customer, 
-  staff,
+  staffMember,
   onStatusChange, 
   onEdit, 
   onDelete,
@@ -1251,7 +1259,7 @@ function AppointmentDetail({
 }: { 
   appointment: Appointment
   customer?: Customer
-  staff?: Staff
+  staffMember?: StaffMember
   onStatusChange: (status: Appointment['status']) => void
   onEdit: () => void
   onDelete: () => void
@@ -1340,7 +1348,7 @@ function AppointmentDetail({
         </Card>
       )}
 
-      {staff && (
+      {staffMember && (
         <Card className="border-2">
           <CardContent className="p-4 space-y-2">
             <div className="flex items-center gap-2 text-muted-foreground mb-2">
@@ -1349,11 +1357,11 @@ function AppointmentDetail({
             </div>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white font-semibold">
-                {staff.firstName[0]}{staff.lastName[0]}
+                {staffMember.firstName[0]}{staffMember.lastName[0]}
               </div>
               <div>
-                <div className="font-semibold">{staff.firstName} {staff.lastName}</div>
-                <div className="text-sm text-muted-foreground">{staff.position}</div>
+                <div className="font-semibold">{staffMember.firstName} {staffMember.lastName}</div>
+                <div className="text-sm text-muted-foreground">{staffMember.position}</div>
               </div>
             </div>
           </CardContent>
