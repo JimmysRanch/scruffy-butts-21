@@ -34,6 +34,7 @@ import {
 } from '@phosphor-icons/react'
 import { StaffPosition } from './StaffManager'
 import { seedShifts, seedTimeOffRequests } from '@/lib/seed-schedule-data'
+import { seedReportsData } from '@/lib/seed-reports-data'
 
 interface Service {
   id: string
@@ -103,6 +104,11 @@ export function Settings() {
   const [staffMembers] = useKV<any[]>('staff-members', [])
   const [shifts, setShifts] = useKV<any[]>('staff-shifts', [])
   const [timeOffRequests, setTimeOffRequests] = useKV<any[]>('time-off-requests', [])
+  
+  const [staff, setStaff] = useKV<any[]>('staff', [])
+  const [customers, setCustomers] = useKV<any[]>('customers', [])
+  const [appointments, setAppointments] = useKV<any[]>('appointments', [])
+  const [transactions, setTransactions] = useKV<any[]>('transactions', [])
 
   const [staffPositions, setStaffPositions] = useKV<StaffPosition[]>('staff-positions', [
     { id: 'owner', name: 'Owner', permissions: ['all'], description: 'Full access to all features' },
@@ -310,6 +316,23 @@ export function Settings() {
     setTimeOffRequests(newTimeOffRequests)
     
     toast.success(`Seeded ${newShifts.length} shifts and ${newTimeOffRequests.length} time off requests`)
+  }
+  
+  const handleSeedReportsData = async () => {
+    try {
+      const data = await seedReportsData()
+      
+      setStaff(data.staff)
+      setServices(data.services)
+      setCustomers(data.customers)
+      setAppointments(data.appointments)
+      setTransactions(data.transactions)
+      
+      toast.success(`Successfully seeded ${data.appointments.length} appointments and ${data.transactions.length} transactions for reports!`)
+    } catch (error) {
+      toast.error('Failed to seed reports data')
+      console.error(error)
+    }
   }
 
   const handleSave = () => {
@@ -927,6 +950,21 @@ export function Settings() {
                     </Button>
                     <p className="text-sm text-muted-foreground">
                       Generate sample shifts and time off requests for testing
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <Label>Reports Data</Label>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={handleSeedReportsData}
+                    >
+                      <Database size={16} className="mr-2" />
+                      Seed Reports Data
+                    </Button>
+                    <p className="text-sm text-muted-foreground">
+                      Generate sample appointments and transactions for performance reports
                     </p>
                   </div>
                 </div>

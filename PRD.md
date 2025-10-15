@@ -55,11 +55,11 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 - **Success criteria**: Settings persist between sessions, business information displays throughout app, notifications work as configured
 
 ### Staff Management
-- **Functionality**: Manage team member profiles, contact information, specialties, and employment details
-- **Purpose**: Organize staff information and track team member capabilities for optimal assignment and management
-- **Trigger**: Click "Staff" tab or staff member name
-- **Progression**: View staff list → Click member name → View profile details → Edit if needed → Save changes
-- **Success criteria**: Staff profiles persist, searchable/filterable list, detailed individual profiles with complete information
+- **Functionality**: Manage team member profiles, contact information, specialties, employment details, and comprehensive performance reporting with detailed metrics and charts
+- **Purpose**: Organize staff information, track team member capabilities for optimal assignment, and analyze performance to improve business operations
+- **Trigger**: Click "Staff" tab or staff member name, or navigate to Reports for performance analysis
+- **Progression**: View staff list → Click member name → View profile details → Edit if needed → Save changes → Access Reports for detailed performance metrics → Filter by date range and staff member → View KPIs, charts, and breakdowns
+- **Success criteria**: Staff profiles persist, searchable/filterable list, detailed individual profiles with complete information, comprehensive performance reports with revenue, appointments, efficiency metrics, and actionable insights
 
 ### Inventory Management
 - **Functionality**: Track grooming supplies, shampoos, conditioners, tools, and products with stock levels, reorder alerts, suppliers, and transaction history
