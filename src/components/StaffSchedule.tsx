@@ -170,8 +170,44 @@ export function StaffSchedule() {
       map.get(key)!.push(shift)
     })
     
+    regularSchedules?.forEach(schedule => {
+      const effectiveDate = parseISO(schedule.effectiveDate)
+      
+      dateRange.forEach(date => {
+        if (date < effectiveDate) return
+        
+        const dayOfWeek = getDay(date)
+        if (!schedule.daysOfWeek.includes(dayOfWeek)) return
+        
+        const dateStr = format(date, 'yyyy-MM-dd')
+        const key = `${schedule.staffId}-${dateStr}`
+        
+        const existingShifts = map.get(key) || []
+        const hasManualShift = existingShifts.some(s => s.type === 'regular')
+        
+        if (!hasManualShift) {
+          const generatedShift: Shift = {
+            id: `generated-${schedule.id}-${dateStr}`,
+            staffId: schedule.staffId,
+            date: dateStr,
+            startTime: schedule.startTime,
+            endTime: schedule.endTime,
+            type: 'regular',
+            status: 'scheduled',
+            notes: schedule.notes,
+            createdAt: schedule.createdAt
+          }
+          
+          if (!map.has(key)) {
+            map.set(key, [])
+          }
+          map.get(key)!.push(generatedShift)
+        }
+      })
+    })
+    
     return map
-  }, [shifts])
+  }, [shifts, regularSchedules, dateRange])
 
   const timeOffMap = useMemo(() => {
     const map = new Map<string, TimeOffRequest[]>()
