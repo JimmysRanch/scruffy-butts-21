@@ -104,6 +104,9 @@ export function StaffSchedule() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedStaff, setSelectedStaff] = useState<string>('all')
   
+  const [isStaffSelectionDialogOpen, setIsStaffSelectionDialogOpen] = useState(false)
+  const [isActionSelectionDialogOpen, setIsActionSelectionDialogOpen] = useState(false)
+  const [selectedStaffForAction, setSelectedStaffForAction] = useState<string>('')
   const [isShiftDialogOpen, setIsShiftDialogOpen] = useState(false)
   const [isRegularScheduleDialogOpen, setIsRegularScheduleDialogOpen] = useState(false)
   const [isTimeOffDialogOpen, setIsTimeOffDialogOpen] = useState(false)
@@ -214,6 +217,28 @@ export function StaffSchedule() {
     setCurrentDate(new Date())
   }
 
+  const openStaffSelectionDialog = () => {
+    setIsStaffSelectionDialogOpen(true)
+  }
+
+  const handleStaffSelected = (staffId: string) => {
+    setSelectedStaffForAction(staffId)
+    setIsStaffSelectionDialogOpen(false)
+    setIsActionSelectionDialogOpen(true)
+  }
+
+  const handleActionSelected = (action: 'single-day' | 'regular-schedule' | 'time-off') => {
+    setIsActionSelectionDialogOpen(false)
+    
+    if (action === 'single-day') {
+      openNewShiftDialog(selectedStaffForAction)
+    } else if (action === 'regular-schedule') {
+      openRegularScheduleDialog(selectedStaffForAction)
+    } else if (action === 'time-off') {
+      openNewTimeOffDialog(selectedStaffForAction)
+    }
+  }
+
   const openNewShiftDialog = (staffId?: string, date?: string) => {
     setEditingShift(null)
     setFormStaffId(staffId || '')
@@ -264,6 +289,7 @@ export function StaffSchedule() {
 
     toast.success(editingShift ? 'Shift updated' : 'Shift created')
     setIsShiftDialogOpen(false)
+    setSelectedStaffForAction('')
   }
 
   const handleDeleteShift = (shiftId: string) => {
@@ -307,6 +333,7 @@ export function StaffSchedule() {
 
     toast.success('Time off request submitted')
     setIsTimeOffDialogOpen(false)
+    setSelectedStaffForAction('')
   }
 
   const handleApproveTimeOff = (requestId: string) => {
@@ -441,6 +468,7 @@ export function StaffSchedule() {
 
     toast.success(editingRegularSchedule ? 'Regular schedule updated' : 'Regular schedule created')
     setIsRegularScheduleDialogOpen(false)
+    setSelectedStaffForAction('')
   }
 
   const handleDeleteRegularSchedule = (scheduleId: string) => {
@@ -486,30 +514,12 @@ export function StaffSchedule() {
           
           <div className="flex items-center gap-2">
             <Button
-              variant="outline"
               size={isCompact ? "sm" : "default"}
-              onClick={() => openRegularScheduleDialog()}
-              className="glass-button"
-            >
-              <CalendarBlank size={16} className="mr-2" />
-              Regular Schedule
-            </Button>
-            <Button
-              variant="outline"
-              size={isCompact ? "sm" : "default"}
-              onClick={() => openNewTimeOffDialog()}
-              className="glass-button"
-            >
-              <Airplane size={16} className="mr-2" />
-              Time Off
-            </Button>
-            <Button
-              size={isCompact ? "sm" : "default"}
-              onClick={() => openNewShiftDialog()}
+              onClick={openStaffSelectionDialog}
               className="glass-button"
             >
               <Plus size={16} className="mr-2" />
-              Add Single Day
+              Modify Staff Schedule
             </Button>
           </div>
         </div>
@@ -804,6 +814,113 @@ export function StaffSchedule() {
         )}
       </div>
 
+      <Dialog open={isStaffSelectionDialogOpen} onOpenChange={setIsStaffSelectionDialogOpen}>
+        <DialogContent className="frosted max-w-md">
+          <DialogHeader>
+            <DialogTitle>Select Staff Member</DialogTitle>
+            <DialogDescription>
+              Choose which staff member you'd like to modify the schedule for
+            </DialogDescription>
+          </DialogHeader>
+
+          <ScrollArea className="max-h-[400px] py-4">
+            <div className="space-y-2">
+              {activeStaffMembers.map(staff => (
+                <button
+                  key={staff.id}
+                  onClick={() => handleStaffSelected(staff.id)}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg glass-dark hover:bg-primary/10 transition-colors text-left"
+                >
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary flex-shrink-0">
+                    {staff.firstName[0]}{staff.lastName[0]}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium">{staff.firstName} {staff.lastName}</div>
+                    <div className="text-sm text-muted-foreground">{staff.position}</div>
+                  </div>
+                  <CaretRight size={20} className="text-muted-foreground flex-shrink-0" />
+                </button>
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isActionSelectionDialogOpen} onOpenChange={setIsActionSelectionDialogOpen}>
+        <DialogContent className="frosted max-w-md">
+          <DialogHeader>
+            <DialogTitle>Choose Action</DialogTitle>
+            <DialogDescription>
+              How would you like to modify {activeStaffMembers.find(s => s.id === selectedStaffForAction)?.firstName}'s schedule?
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3 py-4">
+            <button
+              onClick={() => handleActionSelected('single-day')}
+              className="w-full flex items-start gap-4 p-4 rounded-lg glass-dark hover:bg-primary/10 transition-colors text-left"
+            >
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Calendar size={24} className="text-primary" />
+              </div>
+              <div className="flex-1">
+                <div className="font-medium text-base mb-1">Add Single Day</div>
+                <div className="text-sm text-muted-foreground">
+                  Schedule a one-time shift for a specific date
+                </div>
+              </div>
+              <CaretRight size={20} className="text-muted-foreground flex-shrink-0 mt-3" />
+            </button>
+
+            <button
+              onClick={() => handleActionSelected('regular-schedule')}
+              className="w-full flex items-start gap-4 p-4 rounded-lg glass-dark hover:bg-primary/10 transition-colors text-left"
+            >
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <CalendarBlank size={24} className="text-primary" />
+              </div>
+              <div className="flex-1">
+                <div className="font-medium text-base mb-1">Set Regular Schedule</div>
+                <div className="text-sm text-muted-foreground">
+                  Define recurring weekly shifts (e.g., Mon-Fri 9-5)
+                </div>
+              </div>
+              <CaretRight size={20} className="text-muted-foreground flex-shrink-0 mt-3" />
+            </button>
+
+            <button
+              onClick={() => handleActionSelected('time-off')}
+              className="w-full flex items-start gap-4 p-4 rounded-lg glass-dark hover:bg-primary/10 transition-colors text-left"
+            >
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Airplane size={24} className="text-primary" />
+              </div>
+              <div className="flex-1">
+                <div className="font-medium text-base mb-1">Request Time Off</div>
+                <div className="text-sm text-muted-foreground">
+                  Submit vacation, sick leave, or other time off
+                </div>
+              </div>
+              <CaretRight size={20} className="text-muted-foreground flex-shrink-0 mt-3" />
+            </button>
+          </div>
+
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setIsActionSelectionDialogOpen(false)
+                setIsStaffSelectionDialogOpen(true)
+              }} 
+              className="glass-button"
+            >
+              <CaretLeft size={16} className="mr-2" />
+              Back
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={isShiftDialogOpen} onOpenChange={setIsShiftDialogOpen}>
         <DialogContent className="frosted max-w-md">
           <DialogHeader>
@@ -816,7 +933,7 @@ export function StaffSchedule() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="shift-staff">Staff Member</Label>
-              <Select value={formStaffId} onValueChange={setFormStaffId}>
+              <Select value={formStaffId} onValueChange={setFormStaffId} disabled={selectedStaffForAction !== ''}>
                 <SelectTrigger id="shift-staff" className="glass-dark">
                   <SelectValue placeholder="Select staff" />
                 </SelectTrigger>
@@ -905,6 +1022,7 @@ export function StaffSchedule() {
                 onClick={() => {
                   handleDeleteShift(editingShift.id)
                   setIsShiftDialogOpen(false)
+                  setSelectedStaffForAction('')
                 }}
                 className="glass-button mr-auto text-destructive"
               >
@@ -912,7 +1030,14 @@ export function StaffSchedule() {
                 Delete
               </Button>
             )}
-            <Button variant="outline" onClick={() => setIsShiftDialogOpen(false)} className="glass-button">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setIsShiftDialogOpen(false)
+                setSelectedStaffForAction('')
+              }} 
+              className="glass-button"
+            >
               Cancel
             </Button>
             <Button onClick={handleSaveShift} className="glass-button">
@@ -934,7 +1059,7 @@ export function StaffSchedule() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="regular-staff">Staff Member</Label>
-              <Select value={formRegularStaffId} onValueChange={setFormRegularStaffId}>
+              <Select value={formRegularStaffId} onValueChange={setFormRegularStaffId} disabled={selectedStaffForAction !== ''}>
                 <SelectTrigger id="regular-staff" className="glass-dark">
                   <SelectValue placeholder="Select staff" />
                 </SelectTrigger>
@@ -1030,6 +1155,7 @@ export function StaffSchedule() {
                 onClick={() => {
                   handleDeleteRegularSchedule(editingRegularSchedule.id)
                   setIsRegularScheduleDialogOpen(false)
+                  setSelectedStaffForAction('')
                 }}
                 className="glass-button mr-auto text-destructive"
               >
@@ -1037,7 +1163,14 @@ export function StaffSchedule() {
                 Delete
               </Button>
             )}
-            <Button variant="outline" onClick={() => setIsRegularScheduleDialogOpen(false)} className="glass-button">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setIsRegularScheduleDialogOpen(false)
+                setSelectedStaffForAction('')
+              }} 
+              className="glass-button"
+            >
               Cancel
             </Button>
             <Button onClick={handleSaveRegularSchedule} className="glass-button">
@@ -1059,7 +1192,7 @@ export function StaffSchedule() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="timeoff-staff">Staff Member</Label>
-              <Select value={formTimeOffStaffId} onValueChange={setFormTimeOffStaffId}>
+              <Select value={formTimeOffStaffId} onValueChange={setFormTimeOffStaffId} disabled={selectedStaffForAction !== ''}>
                 <SelectTrigger id="timeoff-staff" className="glass-dark">
                   <SelectValue placeholder="Select staff" />
                 </SelectTrigger>
@@ -1126,7 +1259,14 @@ export function StaffSchedule() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsTimeOffDialogOpen(false)} className="glass-button">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setIsTimeOffDialogOpen(false)
+                setSelectedStaffForAction('')
+              }} 
+              className="glass-button"
+            >
               Cancel
             </Button>
             <Button onClick={handleSaveTimeOff} className="glass-button">
