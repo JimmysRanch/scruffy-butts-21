@@ -331,7 +331,22 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             </div>
           </div>
 
-          <Dialog open={isEditCustomerOpen} onOpenChange={setIsEditCustomerOpen}>
+          <Dialog open={isEditCustomerOpen} onOpenChange={(open) => {
+            if (open) {
+              setCustomerForm({
+                firstName: customer.firstName || '',
+                lastName: customer.lastName || '',
+                email: customer.email || '',
+                phone: customer.phone || '',
+                address: customer.address || '',
+                city: customer.city || '',
+                state: customer.state || 'Texas',
+                zip: customer.zip || '',
+                notes: customer.notes || ''
+              })
+            }
+            setIsEditCustomerOpen(open)
+          }}>
             <DialogTrigger asChild>
               <Button variant="outline" className="liquid-button">
                 <Pencil size={16} className="mr-2" />
