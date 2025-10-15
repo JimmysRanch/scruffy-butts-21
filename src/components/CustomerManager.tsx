@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
-import { Plus, User, Phone, Envelope, Heart } from '@phosphor-icons/react'
+import { Plus, User, Phone, Heart } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { CustomerDetail } from './CustomerDetail'
 
@@ -367,10 +367,6 @@ export function CustomerManager() {
                   </div>
                   
                   <div className={`flex items-center text-muted-foreground ${isCompact ? 'space-x-2 text-xs' : 'space-x-4 text-sm'}`}>
-                    <div className="flex items-center space-x-1">
-                      <Envelope size={isCompact ? 12 : 14} />
-                      <span className="truncate max-w-[200px]">{customer.email}</span>
-                    </div>
                     <div className="flex items-center space-x-1">
                       <Phone size={isCompact ? 12 : 14} />
                       <span>{customer.phone}</span>
