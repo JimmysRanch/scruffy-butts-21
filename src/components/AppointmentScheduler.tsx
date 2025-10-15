@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -109,7 +109,7 @@ export function AppointmentScheduler() {
   const [staff] = useKV<Staff[]>('staff', [])
   const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
   
-  const [viewMode, setViewMode] = useState<ViewMode>('week')
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [searchQuery, setSearchQuery] = useState('')
@@ -130,8 +130,20 @@ export function AppointmentScheduler() {
   const [formNotes, setFormNotes] = useState('')
   const [formSendReminder, setFormSendReminder] = useState(true)
   const [formSendConfirmation, setFormSendConfirmation] = useState(true)
+  const [activeAppointmentId, setActiveAppointmentId] = useState<string | null>(null)
 
   const isCompact = appearance?.compactMode || false
+
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setActiveAppointmentId(null)
+    }
+
+    if (activeAppointmentId) {
+      document.addEventListener('click', handleClickOutside)
+      return () => document.removeEventListener('click', handleClickOutside)
+    }
+  }, [activeAppointmentId])
 
   const calculateEndTime = (startTime: string, durationMinutes: number): string => {
     const [time, period] = startTime.split(' ')
@@ -717,10 +729,10 @@ export function AppointmentScheduler() {
       <div className="flex items-center justify-between">
         <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
           <TabsList>
+            <TabsTrigger value="list">List</TabsTrigger>
             <TabsTrigger value="day">Day</TabsTrigger>
             <TabsTrigger value="week">Week</TabsTrigger>
             <TabsTrigger value="month">Month</TabsTrigger>
-            <TabsTrigger value="list">List</TabsTrigger>
           </TabsList>
         </Tabs>
 
@@ -786,6 +798,8 @@ export function AppointmentScheduler() {
               onStatusChange={updateAppointmentStatus}
               getStaffColor={getStaffColor}
               staff={staff || []}
+              activeAppointmentId={activeAppointmentId}
+              setActiveAppointmentId={setActiveAppointmentId}
             />
           )}
         </CardContent>
@@ -972,7 +986,9 @@ function ListView({
   onRebookAppointment,
   onStatusChange,
   getStaffColor,
-  staff
+  staff,
+  activeAppointmentId,
+  setActiveAppointmentId
 }: { 
   appointments: Appointment[]
   onViewAppointment: (apt: Appointment) => void
@@ -983,6 +999,8 @@ function ListView({
   onStatusChange: (id: string, status: Appointment['status']) => void
   getStaffColor: (staffId?: string) => string
   staff: Staff[]
+  activeAppointmentId: string | null
+  setActiveAppointmentId: (id: string | null) => void
 }) {
   if (appointments.length === 0) {
     return (
@@ -1065,6 +1083,8 @@ function ListView({
                     getStaffColor={getStaffColor}
                     staff={staff}
                     showActions
+                    isActive={activeAppointmentId === apt.id}
+                    setActive={() => setActiveAppointmentId(apt.id)}
                   />
                 ))}
               </div>
@@ -1086,7 +1106,9 @@ function AppointmentCard({
   onStatusChange,
   getStaffColor,
   staff,
-  showActions = false
+  showActions = false,
+  isActive = false,
+  setActive
 }: { 
   appointment: Appointment
   onClick: () => void
@@ -1098,15 +1120,18 @@ function AppointmentCard({
   getStaffColor: (staffId?: string) => string
   staff?: Staff[]
   showActions?: boolean
+  isActive?: boolean
+  setActive?: () => void
 }) {
   const [tapCount, setTapCount] = useState(0)
   const staffMember = staff?.find(s => s.id === appointment.staffId)
   const isPast = isBefore(parseISO(appointment.date), startOfDay(new Date()))
 
-  const handleCardClick = () => {
-    if (tapCount === 0) {
-      setTapCount(1)
-    } else if (tapCount === 1) {
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!isActive && setActive) {
+      setActive()
+    } else if (isActive) {
       onClick()
     }
   }
@@ -1117,7 +1142,7 @@ function AppointmentCard({
         'border rounded-lg p-3 cursor-pointer hover:shadow-md transition-all liquid-ripple liquid-glow',
         STATUS_COLORS[appointment.status],
         isPast && 'opacity-60',
-        tapCount === 1 && 'shadow-md ring-2 ring-primary/20'
+        isActive && 'shadow-md ring-2 ring-primary/20'
       )}
       onClick={handleCardClick}
     >
@@ -1167,7 +1192,7 @@ function AppointmentCard({
         </div>
       </div>
 
-      {showActions && tapCount === 1 && onEdit && onStatusChange && (
+      {showActions && isActive && onEdit && onStatusChange && (
         <div className="mt-3 pt-3 border-t flex items-center gap-2 flex-wrap animate-in fade-in slide-in-from-top-2 duration-200" onClick={(e) => e.stopPropagation()}>
           {appointment.status === 'scheduled' && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('confirmed')}>
