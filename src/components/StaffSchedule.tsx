@@ -74,6 +74,7 @@ interface TimeOffRequest {
 }
 
 type ViewMode = 'week' | 'month'
+type CalendarViewMode = 'all' | 'regular' | 'time-off'
 
 const SHIFT_TYPE_COLORS = {
   regular: 'bg-primary/10 text-primary border-primary/30',
@@ -101,6 +102,7 @@ export function StaffSchedule() {
   const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
   
   const [viewMode, setViewMode] = useState<ViewMode>('week')
+  const [calendarViewMode, setCalendarViewMode] = useState<CalendarViewMode>('all')
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedStaff, setSelectedStaff] = useState<string>('all')
   
@@ -237,6 +239,8 @@ export function StaffSchedule() {
     } else if (action === 'time-off') {
       openNewTimeOffDialog(selectedStaffForAction)
     }
+    
+    setSelectedStaffForAction('')
   }
 
   const openNewShiftDialog = (staffId?: string, date?: string) => {
@@ -289,7 +293,6 @@ export function StaffSchedule() {
 
     toast.success(editingShift ? 'Shift updated' : 'Shift created')
     setIsShiftDialogOpen(false)
-    setSelectedStaffForAction('')
   }
 
   const handleDeleteShift = (shiftId: string) => {
@@ -333,7 +336,6 @@ export function StaffSchedule() {
 
     toast.success('Time off request submitted')
     setIsTimeOffDialogOpen(false)
-    setSelectedStaffForAction('')
   }
 
   const handleApproveTimeOff = (requestId: string) => {
@@ -468,7 +470,6 @@ export function StaffSchedule() {
 
     toast.success(editingRegularSchedule ? 'Regular schedule updated' : 'Regular schedule created')
     setIsRegularScheduleDialogOpen(false)
-    setSelectedStaffForAction('')
   }
 
   const handleDeleteRegularSchedule = (scheduleId: string) => {
@@ -513,13 +514,26 @@ export function StaffSchedule() {
           </div>
           
           <div className="flex items-center gap-2">
+            <Tabs value={calendarViewMode} onValueChange={(v) => setCalendarViewMode(v as CalendarViewMode)}>
+              <TabsList className="glass-dark">
+                <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
+                <TabsTrigger value="regular" className="text-xs">
+                  <CalendarBlank size={14} className="mr-1" />
+                  Regular
+                </TabsTrigger>
+                <TabsTrigger value="time-off" className="text-xs">
+                  <Airplane size={14} className="mr-1" />
+                  Time Off
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
             <Button
               size={isCompact ? "sm" : "default"}
               onClick={openStaffSelectionDialog}
               className="glass-button"
             >
               <Plus size={16} className="mr-2" />
-              Modify Staff Schedule
+              Add Schedule
             </Button>
           </div>
         </div>
@@ -665,7 +679,10 @@ export function StaffSchedule() {
                 {filteredStaffMembers.map(staff => (
                   <tr key={staff.id} className="border-b border-border/50 hover:bg-primary/5 transition-colors">
                     <td className="sticky left-0 bg-card z-10 px-3 py-3 text-sm font-medium">
-                      <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleStaffSelected(staff.id)}
+                        className="flex items-center gap-2 w-full text-left hover:opacity-80 transition-opacity"
+                      >
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
                           {staff.firstName[0]}{staff.lastName[0]}
                         </div>
@@ -673,7 +690,7 @@ export function StaffSchedule() {
                           <div>{staff.firstName} {staff.lastName}</div>
                           <div className="text-xs text-muted-foreground">{staff.position}</div>
                         </div>
-                      </div>
+                      </button>
                     </td>
                     {dateRange.map(date => {
                       const dateStr = format(date, 'yyyy-MM-dd')
@@ -691,13 +708,17 @@ export function StaffSchedule() {
                           )}
                         >
                           {timeOff ? (
-                            <div className={cn(
-                              "px-2 py-1.5 rounded text-xs border text-center",
-                              TIME_OFF_COLORS[timeOff.type]
-                            )}>
-                              <Airplane size={12} className="mx-auto mb-0.5" />
-                              <div className="font-medium capitalize">{timeOff.type}</div>
-                            </div>
+                            <>
+                              {(calendarViewMode === 'all' || calendarViewMode === 'time-off') && (
+                                <div className={cn(
+                                  "px-2 py-1.5 rounded text-xs border text-center",
+                                  TIME_OFF_COLORS[timeOff.type]
+                                )}>
+                                  <Airplane size={12} className="mx-auto mb-0.5" />
+                                  <div className="font-medium capitalize">{timeOff.type}</div>
+                                </div>
+                              )}
+                            </>
                           ) : (
                             <div className="space-y-1">
                               {dayShifts.length === 0 ? (
@@ -705,35 +726,45 @@ export function StaffSchedule() {
                                   variant="ghost"
                                   size="sm"
                                   className="w-full h-12 border border-dashed border-border/50 hover:border-primary/50 text-xs text-muted-foreground"
-                                  onClick={() => openNewShiftDialog(staff.id, dateStr)}
+                                  onClick={() => {
+                                    setSelectedStaffForAction(staff.id)
+                                    setIsActionSelectionDialogOpen(true)
+                                  }}
                                 >
                                   <Plus size={12} />
                                 </Button>
                               ) : (
                                 <>
-                                  {dayShifts.map(shift => (
-                                    <div
-                                      key={shift.id}
-                                      className={cn(
-                                        "group px-2 py-1.5 rounded text-xs border cursor-pointer hover:shadow-sm transition-all",
-                                        SHIFT_TYPE_COLORS[shift.type]
-                                      )}
-                                      onClick={() => openEditShiftDialog(shift)}
-                                    >
-                                      <div className="flex items-center justify-between">
-                                        <Clock size={10} className="flex-shrink-0" />
-                                        <span className="text-[10px] font-medium ml-1">
-                                          {shift.startTime.replace(' ', '')} - {shift.endTime.replace(' ', '')}
-                                        </span>
-                                      </div>
-                                      {shift.type === 'break' && (
-                                        <div className="flex items-center justify-center mt-0.5">
-                                          <Coffee size={10} />
+                                  {dayShifts
+                                    .filter(shift => {
+                                      if (calendarViewMode === 'all') return true
+                                      if (calendarViewMode === 'regular') return shift.type === 'regular' || shift.type === 'break'
+                                      if (calendarViewMode === 'time-off') return shift.type === 'time-off'
+                                      return true
+                                    })
+                                    .map(shift => (
+                                      <div
+                                        key={shift.id}
+                                        className={cn(
+                                          "group px-2 py-1.5 rounded text-xs border cursor-pointer hover:shadow-sm transition-all",
+                                          SHIFT_TYPE_COLORS[shift.type]
+                                        )}
+                                        onClick={() => openEditShiftDialog(shift)}
+                                      >
+                                        <div className="flex items-center justify-between">
+                                          <Clock size={10} className="flex-shrink-0" />
+                                          <span className="text-[10px] font-medium ml-1">
+                                            {shift.startTime.replace(' ', '')} - {shift.endTime.replace(' ', '')}
+                                          </span>
                                         </div>
-                                      )}
-                                    </div>
-                                  ))}
-                                  {dayShifts.some(s => s.type === 'regular') && (
+                                        {shift.type === 'break' && (
+                                          <div className="flex items-center justify-center mt-0.5">
+                                            <Coffee size={10} />
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                  {dayShifts.some(s => s.type === 'regular') && (calendarViewMode === 'all' || calendarViewMode === 'regular') && (
                                     <div className="text-[10px] text-center text-muted-foreground font-medium mt-1">
                                       {totalHours}
                                     </div>
@@ -814,113 +845,6 @@ export function StaffSchedule() {
         )}
       </div>
 
-      <Dialog open={isStaffSelectionDialogOpen} onOpenChange={setIsStaffSelectionDialogOpen}>
-        <DialogContent className="frosted max-w-md">
-          <DialogHeader>
-            <DialogTitle>Select Staff Member</DialogTitle>
-            <DialogDescription>
-              Choose which staff member you'd like to modify the schedule for
-            </DialogDescription>
-          </DialogHeader>
-
-          <ScrollArea className="max-h-[400px] py-4">
-            <div className="space-y-2">
-              {activeStaffMembers.map(staff => (
-                <button
-                  key={staff.id}
-                  onClick={() => handleStaffSelected(staff.id)}
-                  className="w-full flex items-center gap-3 p-3 rounded-lg glass-dark hover:bg-primary/10 transition-colors text-left"
-                >
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary flex-shrink-0">
-                    {staff.firstName[0]}{staff.lastName[0]}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium">{staff.firstName} {staff.lastName}</div>
-                    <div className="text-sm text-muted-foreground">{staff.position}</div>
-                  </div>
-                  <CaretRight size={20} className="text-muted-foreground flex-shrink-0" />
-                </button>
-              ))}
-            </div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isActionSelectionDialogOpen} onOpenChange={setIsActionSelectionDialogOpen}>
-        <DialogContent className="frosted max-w-md">
-          <DialogHeader>
-            <DialogTitle>Choose Action</DialogTitle>
-            <DialogDescription>
-              How would you like to modify {activeStaffMembers.find(s => s.id === selectedStaffForAction)?.firstName}'s schedule?
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-3 py-4">
-            <button
-              onClick={() => handleActionSelected('single-day')}
-              className="w-full flex items-start gap-4 p-4 rounded-lg glass-dark hover:bg-primary/10 transition-colors text-left"
-            >
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Calendar size={24} className="text-primary" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-base mb-1">Add Single Day</div>
-                <div className="text-sm text-muted-foreground">
-                  Schedule a one-time shift for a specific date
-                </div>
-              </div>
-              <CaretRight size={20} className="text-muted-foreground flex-shrink-0 mt-3" />
-            </button>
-
-            <button
-              onClick={() => handleActionSelected('regular-schedule')}
-              className="w-full flex items-start gap-4 p-4 rounded-lg glass-dark hover:bg-primary/10 transition-colors text-left"
-            >
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <CalendarBlank size={24} className="text-primary" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-base mb-1">Set Regular Schedule</div>
-                <div className="text-sm text-muted-foreground">
-                  Define recurring weekly shifts (e.g., Mon-Fri 9-5)
-                </div>
-              </div>
-              <CaretRight size={20} className="text-muted-foreground flex-shrink-0 mt-3" />
-            </button>
-
-            <button
-              onClick={() => handleActionSelected('time-off')}
-              className="w-full flex items-start gap-4 p-4 rounded-lg glass-dark hover:bg-primary/10 transition-colors text-left"
-            >
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Airplane size={24} className="text-primary" />
-              </div>
-              <div className="flex-1">
-                <div className="font-medium text-base mb-1">Request Time Off</div>
-                <div className="text-sm text-muted-foreground">
-                  Submit vacation, sick leave, or other time off
-                </div>
-              </div>
-              <CaretRight size={20} className="text-muted-foreground flex-shrink-0 mt-3" />
-            </button>
-          </div>
-
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setIsActionSelectionDialogOpen(false)
-                setIsStaffSelectionDialogOpen(true)
-              }} 
-              className="glass-button"
-            >
-              <CaretLeft size={16} className="mr-2" />
-              Back
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       <Dialog open={isShiftDialogOpen} onOpenChange={setIsShiftDialogOpen}>
         <DialogContent className="frosted max-w-md">
           <DialogHeader>
@@ -933,7 +857,7 @@ export function StaffSchedule() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="shift-staff">Staff Member</Label>
-              <Select value={formStaffId} onValueChange={setFormStaffId} disabled={selectedStaffForAction !== ''}>
+              <Select value={formStaffId} onValueChange={setFormStaffId}>
                 <SelectTrigger id="shift-staff" className="glass-dark">
                   <SelectValue placeholder="Select staff" />
                 </SelectTrigger>
@@ -1022,7 +946,6 @@ export function StaffSchedule() {
                 onClick={() => {
                   handleDeleteShift(editingShift.id)
                   setIsShiftDialogOpen(false)
-                  setSelectedStaffForAction('')
                 }}
                 className="glass-button mr-auto text-destructive"
               >
@@ -1030,14 +953,7 @@ export function StaffSchedule() {
                 Delete
               </Button>
             )}
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setIsShiftDialogOpen(false)
-                setSelectedStaffForAction('')
-              }} 
-              className="glass-button"
-            >
+            <Button variant="outline" onClick={() => setIsShiftDialogOpen(false)} className="glass-button">
               Cancel
             </Button>
             <Button onClick={handleSaveShift} className="glass-button">
@@ -1059,7 +975,7 @@ export function StaffSchedule() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="regular-staff">Staff Member</Label>
-              <Select value={formRegularStaffId} onValueChange={setFormRegularStaffId} disabled={selectedStaffForAction !== ''}>
+              <Select value={formRegularStaffId} onValueChange={setFormRegularStaffId}>
                 <SelectTrigger id="regular-staff" className="glass-dark">
                   <SelectValue placeholder="Select staff" />
                 </SelectTrigger>
@@ -1155,7 +1071,6 @@ export function StaffSchedule() {
                 onClick={() => {
                   handleDeleteRegularSchedule(editingRegularSchedule.id)
                   setIsRegularScheduleDialogOpen(false)
-                  setSelectedStaffForAction('')
                 }}
                 className="glass-button mr-auto text-destructive"
               >
@@ -1163,14 +1078,7 @@ export function StaffSchedule() {
                 Delete
               </Button>
             )}
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setIsRegularScheduleDialogOpen(false)
-                setSelectedStaffForAction('')
-              }} 
-              className="glass-button"
-            >
+            <Button variant="outline" onClick={() => setIsRegularScheduleDialogOpen(false)} className="glass-button">
               Cancel
             </Button>
             <Button onClick={handleSaveRegularSchedule} className="glass-button">
@@ -1192,7 +1100,7 @@ export function StaffSchedule() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="timeoff-staff">Staff Member</Label>
-              <Select value={formTimeOffStaffId} onValueChange={setFormTimeOffStaffId} disabled={selectedStaffForAction !== ''}>
+              <Select value={formTimeOffStaffId} onValueChange={setFormTimeOffStaffId}>
                 <SelectTrigger id="timeoff-staff" className="glass-dark">
                   <SelectValue placeholder="Select staff" />
                 </SelectTrigger>
@@ -1259,18 +1167,117 @@ export function StaffSchedule() {
           </div>
 
           <DialogFooter>
+            <Button variant="outline" onClick={() => setIsTimeOffDialogOpen(false)} className="glass-button">
+              Cancel
+            </Button>
+            <Button onClick={handleSaveTimeOff} className="glass-button">
+              Submit Request
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isStaffSelectionDialogOpen} onOpenChange={setIsStaffSelectionDialogOpen}>
+        <DialogContent className="frosted max-w-md">
+          <DialogHeader>
+            <DialogTitle>Select Staff Member</DialogTitle>
+            <DialogDescription>
+              Choose a staff member to manage their schedule
+            </DialogDescription>
+          </DialogHeader>
+
+          <ScrollArea className="max-h-[400px] py-4">
+            <div className="space-y-2">
+              {activeStaffMembers.map(staff => (
+                <button
+                  key={staff.id}
+                  onClick={() => handleStaffSelected(staff.id)}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg glass-dark hover:bg-primary/10 transition-colors text-left"
+                >
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
+                    {staff.firstName[0]}{staff.lastName[0]}
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium">{staff.firstName} {staff.lastName}</div>
+                    <div className="text-sm text-muted-foreground">{staff.position}</div>
+                  </div>
+                  <CaretRight size={20} className="text-muted-foreground" />
+                </button>
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isActionSelectionDialogOpen} onOpenChange={setIsActionSelectionDialogOpen}>
+        <DialogContent className="frosted max-w-md">
+          <DialogHeader>
+            <DialogTitle>Choose Action</DialogTitle>
+            <DialogDescription>
+              {selectedStaffForAction && (() => {
+                const staff = staffMembers?.find(s => s.id === selectedStaffForAction)
+                return staff ? `What would you like to schedule for ${staff.firstName} ${staff.lastName}?` : 'Select the type of schedule to create'
+              })()}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3 py-4">
+            <button
+              onClick={() => handleActionSelected('single-day')}
+              className="w-full flex items-start gap-3 p-4 rounded-lg glass-dark hover:bg-primary/10 transition-colors text-left"
+            >
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Calendar size={20} className="text-primary" />
+              </div>
+              <div className="flex-1">
+                <div className="font-medium">Single Day Shift</div>
+                <div className="text-sm text-muted-foreground mt-0.5">
+                  Schedule a one-time shift for a specific date
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => handleActionSelected('regular-schedule')}
+              className="w-full flex items-start gap-3 p-4 rounded-lg glass-dark hover:bg-primary/10 transition-colors text-left"
+            >
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <CalendarBlank size={20} className="text-primary" />
+              </div>
+              <div className="flex-1">
+                <div className="font-medium">Regular Schedule</div>
+                <div className="text-sm text-muted-foreground mt-0.5">
+                  Set up recurring weekly shifts
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => handleActionSelected('time-off')}
+              className="w-full flex items-start gap-3 p-4 rounded-lg glass-dark hover:bg-primary/10 transition-colors text-left"
+            >
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Airplane size={20} className="text-primary" />
+              </div>
+              <div className="flex-1">
+                <div className="font-medium">Time Off Request</div>
+                <div className="text-sm text-muted-foreground mt-0.5">
+                  Request vacation, sick leave, or personal time
+                </div>
+              </div>
+            </button>
+          </div>
+
+          <DialogFooter>
             <Button 
               variant="outline" 
               onClick={() => {
-                setIsTimeOffDialogOpen(false)
+                setIsActionSelectionDialogOpen(false)
                 setSelectedStaffForAction('')
               }} 
               className="glass-button"
             >
               Cancel
-            </Button>
-            <Button onClick={handleSaveTimeOff} className="glass-button">
-              Submit Request
             </Button>
           </DialogFooter>
         </DialogContent>
