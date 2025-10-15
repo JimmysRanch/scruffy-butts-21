@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { 
   ArrowLeft, 
   User, 
@@ -26,7 +26,9 @@ import {
   Star,
   Clock,
   CreditCard,
-  ChatCircleDots
+  ChatCircleDots,
+  UploadSimple,
+  X
 } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
@@ -38,6 +40,9 @@ interface Pet {
   breed: string
   size: 'small' | 'medium' | 'large'
   notes?: string
+  avatar?: string
+  visitCount?: number
+  rating?: number
 }
 
 interface Customer {
@@ -85,6 +90,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
   const [editingPet, setEditingPet] = useState<Pet | null>(null)
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   
   useEffect(() => {
     if (customers && customers.length > 0) {
@@ -128,7 +134,8 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
     name: '',
     breed: '',
     size: 'medium' as 'small' | 'medium' | 'large',
-    notes: ''
+    notes: '',
+    avatar: ''
   })
 
   if (!customer) {
@@ -186,7 +193,9 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
       name: petForm.name,
       breed: petForm.breed,
       size: petForm.size,
-      notes: petForm.notes
+      notes: petForm.notes,
+      avatar: petForm.avatar,
+      visitCount: 0
     }
 
     setCustomers((current) =>
@@ -198,7 +207,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
     )
 
     toast.success('Pet added successfully!')
-    setPetForm({ name: '', breed: '', size: 'medium', notes: '' })
+    setPetForm({ name: '', breed: '', size: 'medium', notes: '', avatar: '' })
     setIsNewPetOpen(false)
   }
 
@@ -220,7 +229,8 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                       name: petForm.name,
                       breed: petForm.breed,
                       size: petForm.size,
-                      notes: petForm.notes
+                      notes: petForm.notes,
+                      avatar: petForm.avatar
                     }
                   : pet
               )
@@ -230,7 +240,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
     )
 
     toast.success('Pet updated successfully!')
-    setPetForm({ name: '', breed: '', size: 'medium', notes: '' })
+    setPetForm({ name: '', breed: '', size: 'medium', notes: '', avatar: '' })
     setEditingPet(null)
     setIsEditPetOpen(false)
   }
@@ -241,9 +251,39 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
       name: pet.name,
       breed: pet.breed,
       size: pet.size,
-      notes: pet.notes || ''
+      notes: pet.notes || '',
+      avatar: pet.avatar || ''
     })
     setIsEditPetOpen(true)
+  }
+
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const result = event.target?.result as string
+      setPetForm({ ...petForm, avatar: result })
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleRemoveAvatar = () => {
+    setPetForm({ ...petForm, avatar: '' })
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
   }
 
   const getSizeColor = (size: string) => {
@@ -571,7 +611,12 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                 <Dog size={20} className="text-accent" weight="fill" />
                 <span>Furry Friends ({customer.pets.length})</span>
               </h3>
-              <Dialog open={isNewPetOpen} onOpenChange={setIsNewPetOpen}>
+              <Dialog open={isNewPetOpen} onOpenChange={(open) => {
+                if (!open && fileInputRef.current) {
+                  fileInputRef.current.value = ''
+                }
+                setIsNewPetOpen(open)
+              }}>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="sm" className="liquid-button">
                     <Plus size={16} className="mr-2" />
@@ -586,6 +631,57 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="pet-avatar">Pet Photo</Label>
+                      <div className="mt-2 flex items-center gap-4">
+                        {petForm.avatar ? (
+                          <div className="relative">
+                            <Avatar className="w-24 h-24 border-2 border-border">
+                              <AvatarImage src={petForm.avatar} alt="Pet avatar" />
+                              <AvatarFallback>
+                                <Dog size={32} weight="fill" />
+                              </AvatarFallback>
+                            </Avatar>
+                            <Button
+                              size="icon"
+                              variant="destructive"
+                              className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                              onClick={handleRemoveAvatar}
+                            >
+                              <X size={14} />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="w-24 h-24 border-2 border-dashed border-border rounded-lg flex items-center justify-center bg-muted/50">
+                            <Dog size={32} className="text-muted-foreground" />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            id="pet-avatar"
+                            accept="image/*"
+                            onChange={handleAvatarUpload}
+                            className="hidden"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="w-full"
+                          >
+                            <UploadSimple size={16} className="mr-2" />
+                            {petForm.avatar ? 'Change Photo' : 'Upload Photo'}
+                          </Button>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Max 5MB, JPG or PNG
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
                     <div>
                       <Label htmlFor="pet-name">Pet Name</Label>
                       <Input
@@ -673,9 +769,14 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-4">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center shadow-lg">
-                            <Dog size={24} className="text-white" weight="fill" />
-                          </div>
+                          <Avatar className="w-12 h-12 border-2 border-white shadow-lg">
+                            {pet.avatar ? (
+                              <AvatarImage src={pet.avatar} alt={pet.name} />
+                            ) : null}
+                            <AvatarFallback className="bg-gradient-to-br from-accent to-primary">
+                              <Dog size={24} className="text-white" weight="fill" />
+                            </AvatarFallback>
+                          </Avatar>
                           <div>
                             <h4 className="font-bold text-foreground text-lg">{pet.name}</h4>
                             <p className="text-sm text-muted-foreground">{pet.breed}</p>
@@ -723,17 +824,19 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
                                   Total Visits
                                 </p>
-                                <p className="text-2xl font-bold text-foreground">12</p>
+                                <p className="text-2xl font-bold text-foreground">{pet.visitCount || 0}</p>
                               </div>
-                              <div className="bg-background/50 rounded-lg p-3">
-                                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-                                  Rating
-                                </p>
-                                <div className="flex items-center space-x-1">
-                                  <Star size={18} weight="fill" className="text-accent" />
-                                  <span className="text-2xl font-bold text-foreground">5.0</span>
+                              {pet.rating !== undefined && (
+                                <div className="bg-background/50 rounded-lg p-3">
+                                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                                    Rating
+                                  </p>
+                                  <div className="flex items-center space-x-1">
+                                    <Star size={18} weight="fill" className="text-accent" />
+                                    <span className="text-2xl font-bold text-foreground">{pet.rating.toFixed(1)}</span>
+                                  </div>
                                 </div>
-                              </div>
+                              )}
                             </div>
 
                             <div className="mt-3">
@@ -761,7 +864,12 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
         </motion.div>
       </div>
 
-      <Dialog open={isEditPetOpen} onOpenChange={setIsEditPetOpen}>
+      <Dialog open={isEditPetOpen} onOpenChange={(open) => {
+        if (!open && fileInputRef.current) {
+          fileInputRef.current.value = ''
+        }
+        setIsEditPetOpen(open)
+      }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Edit Pet Information</DialogTitle>
@@ -771,6 +879,57 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           </DialogHeader>
           
           <div className="space-y-4">
+            <div>
+              <Label htmlFor="edit-pet-avatar">Pet Photo</Label>
+              <div className="mt-2 flex items-center gap-4">
+                {petForm.avatar ? (
+                  <div className="relative">
+                    <Avatar className="w-24 h-24 border-2 border-border">
+                      <AvatarImage src={petForm.avatar} alt="Pet avatar" />
+                      <AvatarFallback>
+                        <Dog size={32} weight="fill" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                      onClick={handleRemoveAvatar}
+                    >
+                      <X size={14} />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="w-24 h-24 border-2 border-dashed border-border rounded-lg flex items-center justify-center bg-muted/50">
+                    <Dog size={32} className="text-muted-foreground" />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    id="edit-pet-avatar"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full"
+                  >
+                    <UploadSimple size={16} className="mr-2" />
+                    {petForm.avatar ? 'Change Photo' : 'Upload Photo'}
+                  </Button>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Max 5MB, JPG or PNG
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div>
               <Label htmlFor="edit-pet-name">Pet Name</Label>
               <Input
