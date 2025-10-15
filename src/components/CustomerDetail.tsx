@@ -1122,7 +1122,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-1">
                             <Scissors size={18} className="text-primary" />
-                            <h4 className="font-bold text-foreground">{visit.service} with {visit.groomer}</h4>
+                            <h4 className="text-foreground"><span className="font-bold">{visit.service}</span> with {visit.groomer}</h4>
                           </div>
                           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                             <span className="flex items-center space-x-1">
