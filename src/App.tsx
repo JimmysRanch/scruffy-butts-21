@@ -9,8 +9,9 @@ import { PointOfSale } from '@/components/PointOfSale'
 import { InventoryManager } from '@/components/InventoryManager'
 import { Settings } from '@/components/Settings'
 import { Navigation } from '@/components/Navigation'
+import { GroomerStats } from '@/components/GroomerStats'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings'
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'system'
@@ -69,6 +70,8 @@ function App() {
         return <PointOfSale />
       case 'inventory':
         return <InventoryManager />
+      case 'reports':
+        return <GroomerStats />
       case 'settings':
         return <Settings />
       default:

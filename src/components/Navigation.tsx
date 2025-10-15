@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
-import { Calendar, Users, ChartBar, CashRegister, Gear, UserCircle, Package } from '@phosphor-icons/react'
+import { Calendar, Users, ChartBar, CashRegister, Gear, UserCircle, Package, ChartLineUp } from '@phosphor-icons/react'
 import logo from '@/assets/images/IMG_0330.png'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings'
 
 interface NavigationProps {
   currentView: View
@@ -18,6 +18,7 @@ export function Navigation({ currentView, onNavigate, isCompact = false }: Navig
     { id: 'staff' as View, label: 'Staff', icon: UserCircle },
     { id: 'pos' as View, label: 'POS', icon: CashRegister },
     { id: 'inventory' as View, label: 'Inventory', icon: Package },
+    { id: 'reports' as View, label: 'Reports', icon: ChartLineUp },
   ]
 
   return (

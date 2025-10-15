@@ -154,7 +154,9 @@ export async function seedReportsData() {
     tax: number
     tip: number
     total: number
-    paymentMethod: 'cash' | 'card'
+    paymentMethod: 'cash' | 'card' | 'cashapp' | 'chime'
+    discount?: number
+    refund?: number
   }> = []
   
   let appointmentId = 1
@@ -243,6 +245,14 @@ export async function seedReportsData() {
       if (status === 'completed') {
         const tipAmount = Math.random() > 0.3 ? Math.round((totalPrice * (0.1 + Math.random() * 0.15)) * 100) / 100 : 0
         const tax = Math.round(totalPrice * 0.08 * 100) / 100
+        const discount = Math.random() > 0.9 ? Math.round(totalPrice * 0.1 * 100) / 100 : 0
+        
+        const paymentMethodRoll = Math.random()
+        let paymentMethod: 'cash' | 'card' | 'cashapp' | 'chime'
+        if (paymentMethodRoll < 0.5) paymentMethod = 'card'
+        else if (paymentMethodRoll < 0.7) paymentMethod = 'cash'
+        else if (paymentMethodRoll < 0.85) paymentMethod = 'cashapp'
+        else paymentMethod = 'chime'
         
         const transaction = {
           id: `transaction-${transactionId++}`,
@@ -261,8 +271,10 @@ export async function seedReportsData() {
           subtotal: totalPrice,
           tax,
           tip: tipAmount,
-          total: totalPrice + tax + tipAmount,
-          paymentMethod: Math.random() > 0.3 ? 'card' as const : 'cash' as const
+          total: totalPrice + tax + tipAmount - discount,
+          paymentMethod,
+          discount: discount > 0 ? discount : undefined,
+          refund: undefined
         }
         
         transactions.push(transaction)
