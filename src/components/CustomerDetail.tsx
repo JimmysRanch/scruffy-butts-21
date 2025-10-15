@@ -594,7 +594,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
               <div className="text-center py-16">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ scale: 1, opacity: 1 }}
+                  animate={{ opacity: 1, scale: 0.9 }}
                   transition={{ delay: 0.3 }}
                 >
                   <Dog size={64} className="mx-auto text-muted-foreground mb-4" weight="thin" />
@@ -619,7 +619,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ delay: index * 0.1 }}
                       className={`glass-dark rounded-xl p-4 transition-all duration-300 cursor-pointer ${
-                        selectedPetId === pet.id ? 'ring-2 ring-primary shadow-lg' : ''
+                        selectedPetId === pet.id ? 'ring-2 ring-primary' : ''
                       }`}
                       onClick={() => setSelectedPetId(selectedPetId === pet.id ? null : pet.id)}
                     >
@@ -638,8 +638,8 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                             {getSizeLabel(pet.size)}
                           </Badge>
                           <Button 
-                            variant="ghost"
                             size="sm"
+                            variant="ghost"
                             onClick={(e) => {
                               e.stopPropagation()
                               handleEditPet(pet)
@@ -657,10 +657,10 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3 }}
                             className="overflow-hidden"
                           >
                             <Separator className="mb-4" />
+                            
                             {pet.notes && (
                               <div className="bg-background/50 rounded-lg p-3 mb-3">
                                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
@@ -690,13 +690,12 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
 
                             <div className="mt-3">
                               <Button 
-                                variant="outline" 
-                                size="sm"
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   handleEditPet(pet)
                                 }}
                                 className="w-full"
+                                variant="outline"
                               >
                                 <Pencil size={14} className="mr-2" />
                                 Edit Pet Info
