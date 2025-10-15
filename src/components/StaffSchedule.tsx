@@ -15,7 +15,7 @@ import { Separator } from '@/components/ui/separator'
 import { 
   Plus, Calendar, Clock, User, CaretLeft, CaretRight, 
   X, Check, Coffee, Airplane, FirstAid, PencilSimple, Trash,
-  Copy, Download, Upload, CalendarBlank, ClockCounterClockwise
+  Download, Upload, CalendarBlank, ClockCounterClockwise
 } from '@phosphor-icons/react'
 import { 
   format, addDays, startOfWeek, endOfWeek, addWeeks, 
@@ -45,6 +45,17 @@ interface Shift {
   type: 'regular' | 'break' | 'time-off'
   reason?: string
   status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled'
+  notes?: string
+  createdAt: string
+}
+
+interface RegularSchedule {
+  id: string
+  staffId: string
+  daysOfWeek: number[]
+  startTime: string
+  endTime: string
+  effectiveDate: string
   notes?: string
   createdAt: string
 }
@@ -85,6 +96,7 @@ const TIME_SLOTS = [
 export function StaffSchedule() {
   const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
   const [shifts, setShifts] = useKV<Shift[]>('staff-shifts', [])
+  const [regularSchedules, setRegularSchedules] = useKV<RegularSchedule[]>('regular-schedules', [])
   const [timeOffRequests, setTimeOffRequests] = useKV<TimeOffRequest[]>('time-off-requests', [])
   const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
   
@@ -93,8 +105,10 @@ export function StaffSchedule() {
   const [selectedStaff, setSelectedStaff] = useState<string>('all')
   
   const [isShiftDialogOpen, setIsShiftDialogOpen] = useState(false)
+  const [isRegularScheduleDialogOpen, setIsRegularScheduleDialogOpen] = useState(false)
   const [isTimeOffDialogOpen, setIsTimeOffDialogOpen] = useState(false)
   const [editingShift, setEditingShift] = useState<Shift | null>(null)
+  const [editingRegularSchedule, setEditingRegularSchedule] = useState<RegularSchedule | null>(null)
   const [editingTimeOff, setEditingTimeOff] = useState<TimeOffRequest | null>(null)
   
   const [formStaffId, setFormStaffId] = useState('')
@@ -109,6 +123,13 @@ export function StaffSchedule() {
   const [formTimeOffEndDate, setFormTimeOffEndDate] = useState('')
   const [formTimeOffType, setFormTimeOffType] = useState<TimeOffRequest['type']>('vacation')
   const [formTimeOffReason, setFormTimeOffReason] = useState('')
+
+  const [formRegularStaffId, setFormRegularStaffId] = useState('')
+  const [formRegularDays, setFormRegularDays] = useState<number[]>([])
+  const [formRegularStartTime, setFormRegularStartTime] = useState('')
+  const [formRegularEndTime, setFormRegularEndTime] = useState('')
+  const [formRegularEffectiveDate, setFormRegularEffectiveDate] = useState('')
+  const [formRegularNotes, setFormRegularNotes] = useState('')
 
   const isCompact = appearance?.compactMode || false
 
@@ -374,6 +395,67 @@ export function StaffSchedule() {
     toast.success(`Copied ${copiedShifts.length} shifts to next week`)
   }
 
+  const openRegularScheduleDialog = (staffId?: string) => {
+    setEditingRegularSchedule(null)
+    setFormRegularStaffId(staffId || '')
+    setFormRegularDays([])
+    setFormRegularStartTime('9:00 AM')
+    setFormRegularEndTime('5:00 PM')
+    setFormRegularEffectiveDate(format(new Date(), 'yyyy-MM-dd'))
+    setFormRegularNotes('')
+    setIsRegularScheduleDialogOpen(true)
+  }
+
+  const openEditRegularScheduleDialog = (schedule: RegularSchedule) => {
+    setEditingRegularSchedule(schedule)
+    setFormRegularStaffId(schedule.staffId)
+    setFormRegularDays(schedule.daysOfWeek)
+    setFormRegularStartTime(schedule.startTime)
+    setFormRegularEndTime(schedule.endTime)
+    setFormRegularEffectiveDate(schedule.effectiveDate)
+    setFormRegularNotes(schedule.notes || '')
+    setIsRegularScheduleDialogOpen(true)
+  }
+
+  const handleSaveRegularSchedule = () => {
+    if (!formRegularStaffId || formRegularDays.length === 0 || !formRegularStartTime || !formRegularEndTime || !formRegularEffectiveDate) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
+    const scheduleData: RegularSchedule = {
+      id: editingRegularSchedule?.id || `reg-schedule-${Date.now()}`,
+      staffId: formRegularStaffId,
+      daysOfWeek: formRegularDays.sort((a, b) => a - b),
+      startTime: formRegularStartTime,
+      endTime: formRegularEndTime,
+      effectiveDate: formRegularEffectiveDate,
+      notes: formRegularNotes,
+      createdAt: editingRegularSchedule?.createdAt || new Date().toISOString()
+    }
+
+    setRegularSchedules(current => {
+      const filtered = (current || []).filter(s => s.id !== scheduleData.id)
+      return [...filtered, scheduleData]
+    })
+
+    toast.success(editingRegularSchedule ? 'Regular schedule updated' : 'Regular schedule created')
+    setIsRegularScheduleDialogOpen(false)
+  }
+
+  const handleDeleteRegularSchedule = (scheduleId: string) => {
+    setRegularSchedules(current => (current || []).filter(s => s.id !== scheduleId))
+    toast.success('Regular schedule deleted')
+  }
+
+  const toggleRegularDay = (day: number) => {
+    setFormRegularDays(current => 
+      current.includes(day) 
+        ? current.filter(d => d !== day)
+        : [...current, day]
+    )
+  }
+
   const getTotalHours = (staffId: string, date: string) => {
     const key = `${staffId}-${date}`
     const staffShifts = shiftsMap.get(key) || []
@@ -406,6 +488,15 @@ export function StaffSchedule() {
             <Button
               variant="outline"
               size={isCompact ? "sm" : "default"}
+              onClick={() => openRegularScheduleDialog()}
+              className="glass-button"
+            >
+              <CalendarBlank size={16} className="mr-2" />
+              Regular Schedule
+            </Button>
+            <Button
+              variant="outline"
+              size={isCompact ? "sm" : "default"}
               onClick={() => openNewTimeOffDialog()}
               className="glass-button"
             >
@@ -418,7 +509,7 @@ export function StaffSchedule() {
               className="glass-button"
             >
               <Plus size={16} className="mr-2" />
-              Add Shift
+              Add Single Day
             </Button>
           </div>
         </div>
@@ -478,18 +569,6 @@ export function StaffSchedule() {
                 ))}
               </SelectContent>
             </Select>
-
-            {viewMode === 'week' && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={copyWeekSchedule}
-                className="glass-button"
-              >
-                <Copy size={16} className="mr-2" />
-                Copy Week
-              </Button>
-            )}
           </div>
         </div>
       </div>
@@ -536,6 +615,60 @@ export function StaffSchedule() {
                     >
                       <X size={14} className="mr-1" />
                       Deny
+                    </Button>
+                  </div>
+                </div>
+              )
+            })}
+          </CardContent>
+        </Card>
+      )}
+
+      {(regularSchedules || []).length > 0 && (
+        <Card className="frosted">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Regular Schedules</CardTitle>
+            <CardDescription>Recurring weekly schedules for staff members</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {(regularSchedules || []).map(schedule => {
+              const staff = staffMembers?.find(s => s.id === schedule.staffId)
+              const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+              const scheduleDays = schedule.daysOfWeek.map(d => dayNames[d]).join(', ')
+              
+              return (
+                <div key={schedule.id} className="flex items-center justify-between p-3 rounded-lg glass-dark">
+                  <div className="flex-1">
+                    <div className="font-medium">
+                      {staff?.firstName} {staff?.lastName}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {scheduleDays} • {schedule.startTime} - {schedule.endTime}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Effective from {format(parseISO(schedule.effectiveDate), 'MMM d, yyyy')}
+                    </div>
+                    {schedule.notes && (
+                      <div className="text-xs text-muted-foreground mt-1">{schedule.notes}</div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => openEditRegularScheduleDialog(schedule)}
+                      className="glass-button"
+                    >
+                      <PencilSimple size={14} className="mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDeleteRegularSchedule(schedule.id)}
+                      className="glass-button text-destructive"
+                    >
+                      <Trash size={14} />
                     </Button>
                   </div>
                 </div>
@@ -728,9 +861,9 @@ export function StaffSchedule() {
       <Dialog open={isShiftDialogOpen} onOpenChange={setIsShiftDialogOpen}>
         <DialogContent className="frosted max-w-md">
           <DialogHeader>
-            <DialogTitle>{editingShift ? 'Edit Shift' : 'New Shift'}</DialogTitle>
+            <DialogTitle>{editingShift ? 'Edit Single Day' : 'Add Single Day'}</DialogTitle>
             <DialogDescription>
-              {editingShift ? 'Update shift details' : 'Schedule a new shift for a staff member'}
+              {editingShift ? 'Update shift details for this specific day' : 'Add a one-time shift for a specific day'}
             </DialogDescription>
           </DialogHeader>
 
@@ -838,6 +971,131 @@ export function StaffSchedule() {
             </Button>
             <Button onClick={handleSaveShift} className="glass-button">
               {editingShift ? 'Update' : 'Create'} Shift
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isRegularScheduleDialogOpen} onOpenChange={setIsRegularScheduleDialogOpen}>
+        <DialogContent className="frosted max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingRegularSchedule ? 'Edit Regular Schedule' : 'Set Regular Schedule'}</DialogTitle>
+            <DialogDescription>
+              Define recurring weekly shifts for a staff member
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="regular-staff">Staff Member</Label>
+              <Select value={formRegularStaffId} onValueChange={setFormRegularStaffId}>
+                <SelectTrigger id="regular-staff" className="glass-dark">
+                  <SelectValue placeholder="Select staff" />
+                </SelectTrigger>
+                <SelectContent>
+                  {activeStaffMembers.map(staff => (
+                    <SelectItem key={staff.id} value={staff.id}>
+                      {staff.firstName} {staff.lastName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Days of Week</Label>
+              <div className="grid grid-cols-7 gap-2">
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
+                  <Button
+                    key={day}
+                    type="button"
+                    variant={formRegularDays.includes(index) ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => toggleRegularDay(index)}
+                    className={cn(
+                      "p-2 h-auto",
+                      formRegularDays.includes(index) ? "glass-button" : "glass-button"
+                    )}
+                  >
+                    {day}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="regular-start">Start Time</Label>
+                <Select value={formRegularStartTime} onValueChange={setFormRegularStartTime}>
+                  <SelectTrigger id="regular-start" className="glass-dark">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_SLOTS.map(time => (
+                      <SelectItem key={time} value={time}>{time}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="regular-end">End Time</Label>
+                <Select value={formRegularEndTime} onValueChange={setFormRegularEndTime}>
+                  <SelectTrigger id="regular-end" className="glass-dark">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_SLOTS.map(time => (
+                      <SelectItem key={time} value={time}>{time}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="regular-effective">Effective From</Label>
+              <Input
+                id="regular-effective"
+                type="date"
+                value={formRegularEffectiveDate}
+                onChange={(e) => setFormRegularEffectiveDate(e.target.value)}
+                className="glass-dark"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="regular-notes">Notes (Optional)</Label>
+              <Textarea
+                id="regular-notes"
+                placeholder="Add any notes..."
+                value={formRegularNotes}
+                onChange={(e) => setFormRegularNotes(e.target.value)}
+                className="glass-dark"
+                rows={2}
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            {editingRegularSchedule && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  handleDeleteRegularSchedule(editingRegularSchedule.id)
+                  setIsRegularScheduleDialogOpen(false)
+                }}
+                className="glass-button mr-auto text-destructive"
+              >
+                <Trash size={14} className="mr-2" />
+                Delete
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => setIsRegularScheduleDialogOpen(false)} className="glass-button">
+              Cancel
+            </Button>
+            <Button onClick={handleSaveRegularSchedule} className="glass-button">
+              {editingRegularSchedule ? 'Update' : 'Create'} Schedule
             </Button>
           </DialogFooter>
         </DialogContent>
