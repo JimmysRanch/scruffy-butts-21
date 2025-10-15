@@ -130,17 +130,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
   return (
     <div className={isCompact ? 'space-y-2' : 'space-y-4'}>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-2">
-        <Button 
-          onClick={() => onNavigate('appointments')} 
-          className="glass-button flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300" 
-          size={isCompact ? "sm" : "default"}
-        >
-          <Plus size={18} weight="bold" />
-          <span>New Appointment</span>
-        </Button>
-      </div>
-
       <div className={`grid md:grid-cols-3 ${isCompact ? 'gap-2' : 'gap-4'}`}>
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
           <CardHeader className={`flex flex-row items-center justify-between space-y-0 ${isCompact ? 'pb-1' : 'pb-2'}`}>
