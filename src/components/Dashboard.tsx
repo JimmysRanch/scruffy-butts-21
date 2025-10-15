@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Users, ChartBar, Plus, Clock, Dog, CurrencyDollar } from '@phosphor-icons/react'
 import { format, isToday, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns'
+import { StaffPerformanceCard } from '@/components/StaffPerformanceCard'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
 
@@ -273,6 +274,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardContent>
         </Card>
       </div>
+
+      <StaffPerformanceCard />
 
       <div className={`grid md:grid-cols-2 ${isCompact ? 'gap-2' : 'gap-4'}`}>
         <Card className="frosted border-white/20">
