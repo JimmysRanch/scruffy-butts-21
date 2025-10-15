@@ -94,65 +94,6 @@
     overflow: hidden;
   }
 
-  .liquid-flow::before,
-  .liquid-flow::after {
-    content: '';
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(40px);
-    opacity: 0.6;
-    mix-blend-mode: screen;
-    pointer-events: none;
-  }
-
-  .liquid-flow::before {
-    width: 120px;
-    height: 120px;
-    background: radial-gradient(circle, oklch(0.68 0.16 250) 0%, transparent 70%);
-    top: -60px;
-    left: -60px;
-    animation: liquid-flow-1 8s ease-in-out infinite;
-  }
-
-  .liquid-flow::after {
-    width: 100px;
-    height: 100px;
-    background: radial-gradient(circle, oklch(0.72 0.14 45) 0%, transparent 70%);
-    bottom: -50px;
-    right: -50px;
-    animation: liquid-flow-2 10s ease-in-out infinite;
-  }
-
-  @keyframes liquid-flow-1 {
-    0%, 100% {
-      transform: translate(0, 0) scale(1);
-    }
-    25% {
-      transform: translate(80px, 40px) scale(1.1);
-    }
-    50% {
-      transform: translate(40px, 80px) scale(0.9);
-    }
-    75% {
-      transform: translate(-20px, 40px) scale(1.05);
-    }
-  }
-
-  @keyframes liquid-flow-2 {
-    0%, 100% {
-      transform: translate(0, 0) scale(1);
-    }
-    25% {
-      transform: translate(-60px, -30px) scale(0.9);
-    }
-    50% {
-      transform: translate(-30px, -60px) scale(1.1);
-    }
-    75% {
-      transform: translate(20px, -30px) scale(0.95);
-    }
-  }
-
   .liquid-button {
     position: relative;
     overflow: hidden;
