@@ -906,6 +906,9 @@ export function AppointmentScheduler() {
         onOpenChange={setIsCheckoutOpen}
         appointment={selectedAppointment}
         customer={(customers || []).find(c => c.id === selectedAppointment?.customerId) || null}
+        staffMember={selectedAppointment?.staffId 
+          ? (staffMembers || []).find(s => s.id === selectedAppointment.staffId) || null 
+          : null}
         onComplete={handleCheckoutComplete}
       />
     </div>

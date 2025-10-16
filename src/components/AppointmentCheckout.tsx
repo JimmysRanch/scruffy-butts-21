@@ -68,7 +68,11 @@ interface Transaction {
   appointmentId: string
   customerId: string
   customerName: string
+  petName: string
+  staffName?: string
+  service: string
   date: string
+  time: string
   subtotal: number
   tax: number
   tip: number
@@ -76,8 +80,13 @@ interface Transaction {
   total: number
   paymentMethod: 'cash' | 'card' | 'cashapp' | 'chime'
   status: 'completed' | 'pending' | 'refunded'
-  service: string
-  petName: string
+  timestamp: string
+}
+
+interface StaffMember {
+  id: string
+  firstName: string
+  lastName: string
 }
 
 interface AppointmentCheckoutProps {
@@ -85,6 +94,7 @@ interface AppointmentCheckoutProps {
   onOpenChange: (open: boolean) => void
   appointment: Appointment | null
   customer: Customer | null
+  staffMember?: StaffMember | null
   onComplete: (appointmentId: string, paymentData: {
     paymentMethod: 'cash' | 'card' | 'cashapp' | 'chime'
     amountPaid: number
@@ -98,6 +108,7 @@ export function AppointmentCheckout({
   onOpenChange, 
   appointment, 
   customer,
+  staffMember,
   onComplete 
 }: AppointmentCheckoutProps) {
   const [transactions, setTransactions] = useKV<Transaction[]>('transactions', [])
@@ -139,12 +150,26 @@ export function AppointmentCheckout({
     setIsProcessing(true)
 
     setTimeout(() => {
+      const now = new Date()
       const transaction: Transaction = {
         id: `txn-${Date.now()}`,
         appointmentId: appointment.id,
         customerId: customer.id,
         customerName: `${customer.firstName} ${customer.lastName}`,
-        date: new Date().toISOString(),
+        petName: appointment.petName,
+        staffName: staffMember ? `${staffMember.firstName} ${staffMember.lastName}` : undefined,
+        service: appointment.service,
+        date: now.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        }),
+        time: now.toLocaleTimeString('en-US', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: true 
+        }),
+        timestamp: now.toISOString(),
         subtotal: calculateSubtotal(),
         tax: calculateTax(),
         tip: tipAmount,
@@ -152,8 +177,6 @@ export function AppointmentCheckout({
         total: calculateTotal(),
         paymentMethod,
         status: 'completed',
-        service: appointment.service,
-        petName: appointment.petName
       }
 
       setTransactions((current) => [transaction, ...(current || [])])
