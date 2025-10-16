@@ -16,7 +16,7 @@ interface Pet {
   id: string
   name: string
   breed: string
-  size: 'small' | 'medium' | 'large'
+  size?: 'small' | 'medium' | 'large'
   notes?: string
 }
 
@@ -48,22 +48,34 @@ export function CustomerManager() {
   
   useEffect(() => {
     if (customers && customers.length > 0) {
-      const needsMigration = customers.some(c => c.name && (!c.firstName || !c.lastName))
-      if (needsMigration) {
+      const needsNameMigration = customers.some(c => c.name && (!c.firstName || !c.lastName))
+      const needsPetSizeMigration = customers.some(c => c.pets && c.pets.some(p => !p.size))
+      
+      if (needsNameMigration || needsPetSizeMigration) {
         setCustomers((current) =>
           (current || []).map(customer => {
+            let updatedCustomer = { ...customer }
+            
             if (customer.name && typeof customer.name === 'string' && (!customer.firstName || !customer.lastName)) {
               const nameParts = customer.name.split(' ')
               const firstName = nameParts[0] || ''
               const lastName = nameParts.slice(1).join(' ') || ''
               const { name, ...rest } = customer
-              return {
+              updatedCustomer = {
                 ...rest,
                 firstName,
                 lastName
               }
             }
-            return customer
+            
+            if (customer.pets && customer.pets.some(p => !p.size)) {
+              updatedCustomer.pets = customer.pets.map(pet => ({
+                ...pet,
+                size: pet.size || 'medium'
+              }))
+            }
+            
+            return updatedCustomer
           })
         )
       }
@@ -140,7 +152,8 @@ export function CustomerManager() {
     setIsNewPetOpen(false)
   }
 
-  const getSizeColor = (size: string) => {
+  const getSizeColor = (size: string | undefined) => {
+    if (!size) return 'secondary'
     switch (size) {
       case 'small':
         return 'default'
