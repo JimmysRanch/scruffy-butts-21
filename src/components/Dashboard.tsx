@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Users, ChartBar, Clock, Dog } from '@phosphor-icons/react'
 import { isToday, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns'
+import { RevenueWidget } from '@/components/widgets/RevenueWidget'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
 
@@ -86,7 +87,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
   return (
     <div className={isCompact ? 'space-y-3' : 'space-y-4'}>
-      <div className={`grid md:grid-cols-3 ${isCompact ? 'gap-3' : 'gap-4'}`}>
+      <div className={`grid lg:grid-cols-4 md:grid-cols-2 ${isCompact ? 'gap-3' : 'gap-4'}`}>
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-5 pt-4">
             <CardTitle className="text-sm font-medium">Today's Appointments</CardTitle>
@@ -137,6 +138,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </p>
           </CardContent>
         </Card>
+
+        <div className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('pos')}>
+          <RevenueWidget period="today" />
+        </div>
       </div>
 
       <Card className="frosted border-white/20 liquid-shine">

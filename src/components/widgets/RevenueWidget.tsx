@@ -1,6 +1,6 @@
 import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { TrendUp, TrendDown } from '@phosphor-icons/react'
+import { TrendUp, TrendDown, CurrencyDollar } from '@phosphor-icons/react'
 import { format, startOfWeek, startOfMonth, endOfWeek, endOfMonth } from 'date-fns'
 
 interface Transaction {
@@ -87,20 +87,26 @@ export function RevenueWidget({ period }: RevenueWidgetProps) {
   const isPositive = change >= 0
 
   return (
-    <Card className="h-full">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <Card className="h-full border-0 bg-transparent shadow-none">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-5 pt-4">
         <CardTitle className="text-sm font-medium">{label}</CardTitle>
-        {isPositive ? (
-          <TrendUp size={20} className="text-green-600" />
-        ) : (
-          <TrendDown size={20} className="text-red-600" />
-        )}
+        <div className="glass-dark p-2 rounded-lg liquid-glow">
+          <CurrencyDollar className="h-4 w-4 text-accent" weight="fill" />
+        </div>
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">${current.toFixed(2)}</div>
+      <CardContent className="px-5 pb-4">
+        <div className="text-2xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          ${current.toFixed(2)}
+        </div>
         {previous > 0 && (
-          <p className={`text-xs ${isPositive ? 'text-green-600' : 'text-red-600'} mt-1`}>
-            {isPositive ? '+' : ''}{change.toFixed(1)}% from last {period === 'today' ? 'day' : period}
+          <p className={`text-xs mt-1 flex items-center gap-1 ${isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+            {isPositive ? <TrendUp size={14} weight="bold" /> : <TrendDown size={14} weight="bold" />}
+            {isPositive ? '+' : ''}{change.toFixed(1)}% from yesterday
+          </p>
+        )}
+        {previous === 0 && current === 0 && (
+          <p className="text-xs text-muted-foreground mt-1">
+            No transactions yet
           </p>
         )}
       </CardContent>
