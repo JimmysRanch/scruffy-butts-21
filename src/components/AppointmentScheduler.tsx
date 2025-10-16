@@ -18,8 +18,9 @@ import {
   Plus, Calendar, Clock, User, MagnifyingGlass, Funnel, Phone, Envelope, 
   CheckCircle, XCircle, ClockCounterClockwise, PencilSimple, Trash, 
   CaretLeft, CaretRight, List, CalendarBlank, UserCircle, Dog, Package,
-  Bell, BellSlash, Copy, Check, WarningCircle, ArrowClockwise
+  Bell, BellSlash, Copy, Check, WarningCircle, ArrowClockwise, CreditCard
 } from '@phosphor-icons/react'
+import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 import { format, addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, addWeeks, addMonths, isSameDay, parseISO, isToday, isBefore, startOfDay } from 'date-fns'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -39,12 +40,18 @@ interface Appointment {
   endTime?: string
   duration: number
   price: number
-  status: 'scheduled' | 'confirmed' | 'checked-in' | 'in-progress' | 'completed' | 'cancelled' | 'no-show'
+  status: 'scheduled' | 'confirmed' | 'checked-in' | 'in-progress' | 'ready-for-pickup' | 'completed' | 'cancelled' | 'no-show'
   notes?: string
   reminderSent?: boolean
   confirmationSent?: boolean
+  pickupNotificationSent?: boolean
+  pickupNotificationAcknowledged?: boolean
   checkInTime?: string
   checkOutTime?: string
+  paymentCompleted?: boolean
+  paymentMethod?: 'cash' | 'card' | 'cashapp' | 'chime'
+  amountPaid?: number
+  pickedUpTime?: string
   createdAt: string
   rating?: number
 }
@@ -94,15 +101,16 @@ interface StaffMember {
 }
 
 type ViewMode = 'day' | 'week' | 'month' | 'list'
-type FilterStatus = 'all' | 'scheduled' | 'confirmed' | 'checked-in' | 'in-progress' | 'completed' | 'cancelled' | 'no-show'
+type FilterStatus = 'all' | 'scheduled' | 'confirmed' | 'checked-in' | 'in-progress' | 'ready-for-pickup' | 'completed' | 'cancelled' | 'no-show'
 
 const STATUS_COLORS = {
   scheduled: 'bg-blue-100 text-blue-800 border-blue-300',
   confirmed: 'bg-green-100 text-green-800 border-green-300',
   'checked-in': 'bg-purple-100 text-purple-800 border-purple-300',
   'in-progress': 'bg-orange-100 text-orange-800 border-orange-300',
+  'ready-for-pickup': 'bg-yellow-100 text-yellow-800 border-yellow-300',
   completed: 'bg-gray-100 text-gray-800 border-gray-300',
-  cancelled: 'bg-orange-100 text-orange-800 border-orange-300',
+  cancelled: 'bg-red-100 text-red-800 border-red-300',
   'no-show': 'bg-red-100 text-red-800 border-red-300'
 }
 
@@ -130,6 +138,7 @@ export function AppointmentScheduler() {
   const [isNewAppointmentOpen, setIsNewAppointmentOpen] = useState(false)
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   
   const [formCustomer, setFormCustomer] = useState('')
   const [formPet, setFormPet] = useState('')
@@ -344,6 +353,10 @@ export function AppointmentScheduler() {
           if (status === 'checked-in' && !apt.checkInTime) {
             updates.checkInTime = new Date().toISOString()
           }
+          if (status === 'ready-for-pickup') {
+            updates.pickupNotificationSent = true
+            toast.success('Pickup notification sent to customer!')
+          }
           if (status === 'completed' && !apt.checkOutTime) {
             updates.checkOutTime = new Date().toISOString()
           }
@@ -352,12 +365,45 @@ export function AppointmentScheduler() {
         return apt
       })
     )
-    toast.success(`Appointment ${status}`)
+    toast.success(`Appointment ${status.replace('-', ' ')}`)
   }
 
   const handleViewAppointment = (appointment: Appointment) => {
     setSelectedAppointment(appointment)
-    setIsDetailOpen(true)
+    if (appointment.status === 'ready-for-pickup') {
+      setIsCheckoutOpen(true)
+    } else {
+      setIsDetailOpen(true)
+    }
+  }
+
+  const handleCheckoutComplete = (
+    appointmentId: string, 
+    paymentData: {
+      paymentMethod: 'cash' | 'card' | 'cashapp' | 'chime'
+      amountPaid: number
+      tip: number
+      discount: number
+    }
+  ) => {
+    setAppointments((current) =>
+      (current || []).map(apt => {
+        if (apt.id === appointmentId) {
+          return {
+            ...apt,
+            status: 'completed' as const,
+            paymentCompleted: true,
+            paymentMethod: paymentData.paymentMethod,
+            amountPaid: paymentData.amountPaid,
+            pickedUpTime: new Date().toISOString(),
+            checkOutTime: new Date().toISOString()
+          }
+        }
+        return apt
+      })
+    )
+    setIsCheckoutOpen(false)
+    setSelectedAppointment(null)
   }
 
   const filteredAppointments = useMemo(() => {
@@ -696,6 +742,7 @@ export function AppointmentScheduler() {
                     <SelectItem value="confirmed">Confirmed</SelectItem>
                     <SelectItem value="checked-in">Checked In</SelectItem>
                     <SelectItem value="in-progress">In Progress</SelectItem>
+                    <SelectItem value="ready-for-pickup">Ready for Pickup</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
                     <SelectItem value="cancelled">Cancelled</SelectItem>
                     <SelectItem value="no-show">No Show</SelectItem>
@@ -826,6 +873,10 @@ export function AppointmentScheduler() {
               onStatusChange={(status) => {
                 updateAppointmentStatus(selectedAppointment.id, status)
                 setSelectedAppointment({ ...selectedAppointment, status })
+                if (status === 'ready-for-pickup') {
+                  setIsDetailOpen(false)
+                  setIsCheckoutOpen(true)
+                }
               }}
               onEdit={() => {
                 setIsDetailOpen(false)
@@ -841,10 +892,22 @@ export function AppointmentScheduler() {
                 setIsDetailOpen(false)
               }}
               onClose={() => setIsDetailOpen(false)}
+              onCheckout={() => {
+                setIsDetailOpen(false)
+                setIsCheckoutOpen(true)
+              }}
             />
           )}
         </SheetContent>
       </Sheet>
+
+      <AppointmentCheckout
+        open={isCheckoutOpen}
+        onOpenChange={setIsCheckoutOpen}
+        appointment={selectedAppointment}
+        customer={(customers || []).find(c => c.id === selectedAppointment?.customerId) || null}
+        onComplete={handleCheckoutComplete}
+      />
     </div>
   )
 }
@@ -1223,10 +1286,16 @@ function AppointmentCard({
               Start
             </Button>
           )}
-          {(appointment.status === 'in-progress' || appointment.status === 'checked-in') && (
-            <Button size="sm" variant="outline" onClick={() => onStatusChange('completed')}>
-              <Check size={14} className="mr-1" />
-              Complete
+          {appointment.status === 'in-progress' && (
+            <Button size="sm" variant="outline" onClick={() => onStatusChange('ready-for-pickup')}>
+              <Bell size={14} className="mr-1" />
+              Ready for Pickup
+            </Button>
+          )}
+          {appointment.status === 'ready-for-pickup' && (
+            <Button size="sm" variant="default" onClick={onClick}>
+              <CreditCard size={14} className="mr-1" />
+              Checkout
             </Button>
           )}
           <Button size="sm" variant="outline" onClick={onEdit}>
@@ -1254,7 +1323,8 @@ function AppointmentDetail({
   onDelete,
   onDuplicate,
   onRebook,
-  onClose 
+  onClose,
+  onCheckout
 }: { 
   appointment: Appointment
   customer?: Customer
@@ -1265,6 +1335,7 @@ function AppointmentDetail({
   onDuplicate: () => void
   onRebook: () => void
   onClose: () => void
+  onCheckout?: () => void
 }) {
   const isPast = isBefore(parseISO(appointment.date), startOfDay(new Date()))
 
@@ -1418,6 +1489,20 @@ function AppointmentDetail({
               </div>
             </div>
           </div>
+          {appointment.pickupNotificationSent && (
+            <div className={cn(
+              'p-3 rounded-lg border-2 transition-colors',
+              'bg-yellow-50 border-yellow-200'
+            )}>
+              <div className="flex items-center gap-2 mb-1">
+                <Bell size={16} className="text-yellow-600" weight="fill" />
+                <span className="text-xs font-medium">Pickup Notification</span>
+              </div>
+              <div className="text-xs text-yellow-700">
+                Sent • {appointment.pickupNotificationAcknowledged ? 'Customer arrived' : 'Awaiting customer'}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -1476,13 +1561,19 @@ function AppointmentDetail({
               Start
             </Button>
           )}
-          {(appointment.status === 'in-progress' || appointment.status === 'checked-in' || appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
-            <Button size="sm" variant="outline" onClick={() => onStatusChange('completed')} className="w-full">
-              <Check size={16} className="mr-2" weight="bold" />
-              Complete
+          {appointment.status === 'in-progress' && (
+            <Button size="sm" variant="outline" onClick={() => onStatusChange('ready-for-pickup')} className="w-full">
+              <Bell size={16} className="mr-2" weight="duotone" />
+              Mark Ready for Pickup
             </Button>
           )}
-          {appointment.status !== 'cancelled' && appointment.status !== 'completed' && (
+          {appointment.status === 'ready-for-pickup' && onCheckout && (
+            <Button size="sm" variant="default" onClick={onCheckout} className="w-full">
+              <CreditCard size={16} className="mr-2" weight="duotone" />
+              Proceed to Checkout
+            </Button>
+          )}
+          {appointment.status !== 'cancelled' && appointment.status !== 'completed' && appointment.status !== 'ready-for-pickup' && (
             <Button size="sm" variant="outline" onClick={() => onStatusChange('cancelled')} className="w-full">
               <XCircle size={16} className="mr-2" weight="duotone" />
               Cancel
