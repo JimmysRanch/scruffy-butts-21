@@ -447,7 +447,7 @@ export function PointOfSale() {
               {/* Items */}
               <div className="space-y-3">
                 <h3 className="font-semibold">Items</h3>
-                {selectedTransaction.items.map((item, idx) => (
+                {(selectedTransaction.items || []).map((item, idx) => (
                   <div key={idx} className="flex justify-between items-start text-sm">
                     <div className="flex-1">
                       <p className="font-medium">{item.service.name}</p>
