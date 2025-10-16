@@ -16,7 +16,7 @@ interface Pet {
   id: string
   name: string
   breed: string
-  size: 'small' | 'medium' | 'large'
+  size?: 'small' | 'medium' | 'large'
   notes?: string
 }
 
@@ -140,7 +140,8 @@ export function CustomerManager() {
     setIsNewPetOpen(false)
   }
 
-  const getSizeColor = (size: string) => {
+  const getSizeColor = (size: string | undefined) => {
+    if (!size) return 'secondary'
     switch (size) {
       case 'small':
         return 'default'
@@ -329,12 +330,12 @@ export function CustomerManager() {
       {(customers || []).length === 0 ? (
         <Card>
           <CardContent className="text-center py-8">
-            <User size={40} className="mx-auto text-muted-foreground mb-3" />
-            <h3 className="font-medium mb-2 text-base">No clients yet</h3>
-            <p className="text-muted-foreground mb-4 text-sm">
+            <User size={48} className="mx-auto text-muted-foreground mb-3" />
+            <h3 className="font-medium mb-2 text-lg">No clients yet</h3>
+            <p className="text-muted-foreground mb-4 text-base">
               Add your first client to get started with managing your grooming business
             </p>
-            <Button onClick={() => setIsNewCustomerOpen(true)} size="sm">
+            <Button onClick={() => setIsNewCustomerOpen(true)}>
               Add First Client
             </Button>
           </CardContent>
@@ -344,41 +345,41 @@ export function CustomerManager() {
           {(customers || []).map((customer) => (
             <div 
               key={customer.id} 
-              className="flex items-center justify-between bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer p-3"
+              className="flex items-center justify-between bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer p-4"
               onClick={() => setViewingCustomerId(customer.id)}
             >
               <div className="flex items-center flex-1 min-w-0 space-x-3">
                 <div className="flex-shrink-0">
-                  <div className="bg-primary/10 rounded-full flex items-center justify-center w-9 h-9">
-                    <User size={18} className="text-primary" />
+                  <div className="bg-primary/10 rounded-full flex items-center justify-center w-11 h-11">
+                    <User size={22} className="text-primary" />
                   </div>
                 </div>
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2 mb-0.5">
-                    <h3 className="font-medium text-foreground truncate text-sm">
+                    <h3 className="font-medium text-foreground truncate text-base">
                       {customer.firstName && customer.lastName 
                         ? `${customer.firstName} ${customer.lastName}` 
                         : customer.name || 'Unknown Customer'}
                     </h3>
-                    <span className="text-muted-foreground bg-secondary rounded-full text-[10px] px-1.5 py-0">
+                    <span className="text-muted-foreground bg-secondary rounded-full text-xs px-2 py-0.5">
                       {customer.pets.length} pet{customer.pets.length !== 1 ? 's' : ''}
                     </span>
                   </div>
                   
-                  <div className="flex items-center text-muted-foreground space-x-3 text-xs">
-                    <div className="flex items-center space-x-1">
-                      <Phone size={12} />
+                  <div className="flex items-center text-muted-foreground space-x-3 text-sm">
+                    <div className="flex items-center space-x-1.5">
+                      <Phone size={14} />
                       <span>{customer.phone}</span>
                     </div>
                   </div>
                   
                   {customer.pets.length > 0 && (
-                    <div className="flex items-center space-x-2 mt-1">
-                      <span className="text-muted-foreground text-[10px]">Pets:</span>
+                    <div className="flex items-center space-x-2 mt-1.5">
+                      <span className="text-muted-foreground text-xs">Pets:</span>
                       <div className="flex flex-wrap gap-1">
                         {customer.pets.map((pet) => (
-                          <span key={pet.id} className="bg-accent/20 text-accent-foreground rounded text-[10px] px-1.5 py-0">
+                          <span key={pet.id} className="bg-accent/20 text-accent-foreground rounded text-xs px-2 py-0.5">
                             {pet.name} ({pet.breed})
                           </span>
                         ))}
@@ -397,9 +398,9 @@ export function CustomerManager() {
                     setSelectedCustomerId(customer.id)
                     setIsNewPetOpen(true)
                   }}
-                  className="h-7 text-xs px-2"
+                  className="h-8 text-sm px-3"
                 >
-                  <Heart size={isCompact ? 14 : 16} className={isCompact ? 'mr-1' : 'mr-2'} />
+                  <Heart size={16} className="mr-1.5" />
                   Add Pet
                 </Button>
               </div>

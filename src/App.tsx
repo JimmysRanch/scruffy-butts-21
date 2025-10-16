@@ -20,12 +20,29 @@ interface AppearanceSettings {
 }
 
 function App() {
-  const [currentView, setCurrentView] = useState<View>('dashboard')
+  const [currentView, setCurrentView] = useState<View>(() => {
+    const params = new URLSearchParams(window.location.search)
+    const view = params.get('view') as View | null
+    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings'].includes(view)
+      ? view
+      : 'dashboard'
+  })
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {
     theme: 'light',
     compactMode: false,
     showWelcomeMessage: true
   })
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (currentView !== 'dashboard') {
+      params.set('view', currentView)
+      const newUrl = `${window.location.pathname}?${params.toString()}`
+      window.history.replaceState({}, '', newUrl)
+    } else {
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+  }, [currentView])
 
   useEffect(() => {
     const root = document.documentElement

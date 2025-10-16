@@ -152,7 +152,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </div>
             Today's Schedule
           </CardTitle>
-          <CardDescription className="text-xs">Appointments scheduled for today</CardDescription>
+          <CardDescription className="text-sm">Appointments scheduled for today</CardDescription>
         </CardHeader>
         <CardContent className="px-5 pb-4">
           {todayAppointments.length === 0 ? (
@@ -160,7 +160,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
                 <Dog className="h-10 w-10 opacity-50" weight="fill" />
               </div>
-              <p className="text-sm">No appointments scheduled for today</p>
+              <p className="text-base">No appointments scheduled for today</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -173,8 +173,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                         {apt.time}
                       </div>
                       <div>
-                        <div className="font-medium text-sm">{getPetName(apt.petId)}</div>
-                        <div className="text-muted-foreground text-xs">{getCustomerName(apt.customerId)}</div>
+                        <div className="font-medium text-base">{getPetName(apt.petId)}</div>
+                        <div className="text-muted-foreground text-sm">{getCustomerName(apt.customerId)}</div>
                       </div>
                     </div>
                     <Badge className={`${getStatusColor(apt.status)} backdrop-blur-sm text-xs py-0.5 px-2`}>

@@ -512,10 +512,10 @@ export function AppointmentScheduler() {
     <div className="space-y-3">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         <div>
-          <h1 className="font-bold text-foreground text-xl">
+          <h1 className="font-bold text-foreground text-2xl">
             Appointments
           </h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-base">
             {upcomingCount} upcoming • {todayCount} today
           </p>
         </div>
@@ -812,7 +812,7 @@ export function AppointmentScheduler() {
 
       <Card>
         <CardHeader className="pb-3 pt-4 px-4">
-          <CardTitle className="text-base">{getDateRangeLabel()}</CardTitle>
+          <CardTitle className="text-lg">{getDateRangeLabel()}</CardTitle>
         </CardHeader>
         <CardContent className="px-4 pb-4">{viewMode === 'day' && (
             <DayView
@@ -930,8 +930,8 @@ function DayView({
     <div className="space-y-2">
       {appointments.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
-          <Calendar size={40} className="mx-auto mb-2 opacity-50" />
-          <p className="text-sm">No appointments scheduled for this day</p>
+          <Calendar size={48} className="mx-auto mb-2 opacity-50" />
+          <p className="text-base">No appointments scheduled for this day</p>
         </div>
       ) : (
         appointments.map((apt) => (
@@ -1082,8 +1082,8 @@ function ListView({
   if (appointments.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
-        <List size={40} className="mx-auto mb-2 opacity-50" />
-        <p className="text-sm">No appointments found</p>
+        <List size={48} className="mx-auto mb-2 opacity-50" />
+        <p className="text-base">No appointments found</p>
       </div>
     )
   }
@@ -1126,7 +1126,7 @@ function ListView({
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className={cn(
-                      'font-bold text-base',
+                      'font-bold text-lg',
                       isCurrentDay && 'text-primary'
                     )}>
                       {isCurrentDay 
@@ -1135,7 +1135,7 @@ function ListView({
                       }
                     </h3>
                     {!isCurrentDay && (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-base text-muted-foreground">
                         {format(dateObj, 'EEEE')}
                       </p>
                     )}
@@ -1226,8 +1226,8 @@ function AppointmentCard({
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <Dog size={16} className="flex-shrink-0 text-foreground/70" />
-            <h3 className="font-semibold">
+            <Dog size={18} className="flex-shrink-0 text-foreground/70" />
+            <h3 className="font-semibold text-base">
               {appointment.petName}
               {staffMemberData && (
                 <span className="font-normal text-muted-foreground">
@@ -1238,33 +1238,33 @@ function AppointmentCard({
           </div>
           
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
-            <User size={14} />
+            <User size={16} />
             <span>{appointment.customerFirstName} {appointment.customerLastName}</span>
           </div>
 
           <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
             <div className="flex items-center gap-1.5">
-              <Package size={14} />
+              <Package size={16} />
               <span>{appointment.service}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Calendar size={14} />
+              <Calendar size={16} />
               <span>{format(parseISO(appointment.date), 'MMM d')}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Clock size={14} />
+              <Clock size={16} />
               <span>{appointment.time}</span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-4 flex-shrink-0">
-          <Badge variant="outline" className="flex-shrink-0">
+          <Badge variant="outline" className="flex-shrink-0 text-sm">
             {appointment.status}
           </Badge>
-          <div className="text-base font-bold">${appointment.price}</div>
+          <div className="text-lg font-bold">${appointment.price}</div>
           {appointment.staffId && (
-            <div className={cn('w-2.5 h-2.5 rounded-full', getStaffColor(appointment.staffId))} />
+            <div className={cn('w-3 h-3 rounded-full', getStaffColor(appointment.staffId))} />
           )}
         </div>
       </div>
@@ -1272,20 +1272,20 @@ function AppointmentCard({
       {showActions && isActive && onEdit && onStatusChange && (
         <div className="mt-3 pt-3 border-t flex items-center gap-2 flex-wrap animate-in fade-in slide-in-from-top-2 duration-200" onClick={(e) => e.stopPropagation()}>
           {appointment.status === 'scheduled' && (
-            <Button size="sm" variant="outline" onClick={() => onStatusChange('confirmed')}>
-              <CheckCircle size={14} className="mr-1" />
+            <Button size="sm" variant="outline" onClick={() => onStatusChange('confirmed')} className="text-sm">
+              <CheckCircle size={16} className="mr-1.5" />
               Confirm
             </Button>
           )}
           {(appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
-            <Button size="sm" variant="outline" onClick={() => onStatusChange('checked-in')}>
-              <CheckCircle size={14} className="mr-1" />
+            <Button size="sm" variant="outline" onClick={() => onStatusChange('checked-in')} className="text-sm">
+              <CheckCircle size={16} className="mr-1.5" />
               Check In
             </Button>
           )}
           {appointment.status === 'checked-in' && (
-            <Button size="sm" variant="outline" onClick={() => onStatusChange('in-progress')}>
-              <Clock size={14} className="mr-1" />
+            <Button size="sm" variant="outline" onClick={() => onStatusChange('in-progress')} className="text-sm">
+              <Clock size={16} className="mr-1.5" />
               Start
             </Button>
           )}
@@ -1301,13 +1301,13 @@ function AppointmentCard({
               Checkout
             </Button>
           )}
-          <Button size="sm" variant="outline" onClick={onEdit}>
-            <PencilSimple size={14} className="mr-1" />
+          <Button size="sm" variant="outline" onClick={onEdit} className="text-sm">
+            <PencilSimple size={16} className="mr-1.5" />
             Edit
           </Button>
           {onRebook && (
-            <Button size="sm" variant="outline" onClick={onRebook}>
-              <ArrowClockwise size={14} className="mr-1" />
+            <Button size="sm" variant="outline" onClick={onRebook} className="text-sm">
+              <ArrowClockwise size={16} className="mr-1.5" />
               Rebook
             </Button>
           )}
