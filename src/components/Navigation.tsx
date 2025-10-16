@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Calendar, Users, ChartBar, CashRegister, Gear, UserCircle, Package, ChartLineUp } from '@phosphor-icons/react'
+import { Button } from '@/components/ui/button'
 import logo from '@/assets/images/IMG_0330.png'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings'
@@ -10,7 +11,7 @@ interface NavigationProps {
   isCompact?: boolean
 }
 
-export function Navigation({ currentView, onNavigate }: NavigationProps) {
+export function Navigation({ currentView, onNavigate, isCompact }: NavigationProps) {
   const navItems = [
     { id: 'dashboard' as View, label: 'Dashboard', icon: ChartBar, gradient: 'from-blue-400 to-blue-600' },
     { id: 'appointments' as View, label: 'Appointments', icon: Calendar, gradient: 'from-purple-400 to-purple-600' },
@@ -228,6 +229,6 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
           )}
         </motion.button>
       </div>
-    </motion.nav>
+    </nav>
   )
 }
