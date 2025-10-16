@@ -47,7 +47,7 @@ interface Transaction {
   tax: number
   total: number
   paymentMethod: 'cash' | 'card'
-  timestamp: Date
+  timestamp: string
 }
 
 export function PointOfSale() {
@@ -117,7 +117,7 @@ export function PointOfSale() {
       tax,
       total,
       paymentMethod,
-      timestamp: new Date()
+      timestamp: new Date().toISOString()
     }
 
     setTransactions(currentTransactions => [transaction, ...(currentTransactions || [])])
@@ -312,25 +312,44 @@ export function PointOfSale() {
               {transactionsList.slice(0, 5).map(transaction => {
                 const customer = customersList.find(c => c.id === transaction.customerId)
                 const total = transaction?.total ?? 0
-                const itemCount = transaction?.items?.reduce((sum, item) => sum + (item?.quantity ?? 0), 0) ?? 0
+                const items = transaction?.items ?? []
+                const itemCount = items.reduce((sum, item) => sum + (item?.quantity ?? 0), 0)
                 const paymentMethod = transaction?.paymentMethod ?? 'card'
+                const timestamp = transaction?.timestamp ? new Date(transaction.timestamp) : new Date()
+                const isValidDate = !isNaN(timestamp.getTime())
+                
                 return (
-                  <div key={transaction.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
+                  <div key={transaction.id} className="flex items-start justify-between p-4 border rounded-lg">
+                    <div className="flex-1">
                       <p className="font-medium">
                         {customer ? `${customer.firstName} ${customer.lastName}` : 'Walk-in Customer'}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {new Date(transaction.timestamp).toLocaleDateString()} at{' '}
-                        {new Date(transaction.timestamp).toLocaleTimeString()}
+                        {isValidDate ? (
+                          <>
+                            {timestamp.toLocaleDateString()} at{' '}
+                            {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </>
+                        ) : (
+                          'Date unavailable'
+                        )}
                       </p>
-                      <p className="text-sm text-muted-foreground">
-                        {itemCount} item(s) • {paymentMethod}
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {itemCount} item{itemCount !== 1 ? 's' : ''} • {paymentMethod}
                       </p>
+                      {items.length > 0 && (
+                        <div className="mt-2 space-y-1">
+                          {items.map((item, idx) => (
+                            <p key={idx} className="text-xs text-muted-foreground">
+                              • {item.service.name} × {item.quantity}
+                            </p>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold">${total.toFixed(2)}</p>
-                      <Badge variant={paymentMethod === 'cash' ? 'secondary' : 'default'}>
+                    <div className="text-right ml-4">
+                      <p className="font-bold text-lg">${total.toFixed(2)}</p>
+                      <Badge variant={paymentMethod === 'cash' ? 'secondary' : 'default'} className="mt-1">
                         {paymentMethod}
                       </Badge>
                     </div>
