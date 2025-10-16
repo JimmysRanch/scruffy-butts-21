@@ -23,22 +23,22 @@ export function Navigation({ currentView, onNavigate, isCompact = false }: Navig
 
   return (
     <nav className="frosted sticky top-0 z-50 border-b border-white/20">
-      <div className={`flex items-center justify-between ${isCompact ? 'h-9 px-3' : 'h-11 px-4'} max-w-[2000px] mx-auto`}>
-        <div className="flex items-center gap-2">
-          <div className="glass-dark rounded-lg p-1 liquid-shine">
+      <div className={`flex items-center justify-between ${isCompact ? 'h-12 px-4' : 'h-14 px-6'} max-w-[2000px] mx-auto`}>
+        <div className="flex items-center gap-3">
+          <div className="glass-dark rounded-lg p-1.5 liquid-shine">
             <img 
               src={logo} 
               alt="Scruffy Butts Logo" 
-              className={`${isCompact ? 'h-4' : 'h-5'} w-auto object-contain`}
+              className={`${isCompact ? 'h-5' : 'h-6'} w-auto object-contain`}
             />
           </div>
-          <h1 className={`font-bold text-foreground ${isCompact ? 'text-sm' : 'text-base'} hidden sm:block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
+          <h1 className={`font-bold text-foreground ${isCompact ? 'text-base' : 'text-lg'} hidden sm:block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
             Scruffy Butts
           </h1>
         </div>
         
-        <div className="flex items-center space-x-0.5">
-          <div className="flex space-x-0.5">
+        <div className="flex items-center space-x-1">
+          <div className="flex space-x-1">
             {navItems.map((item) => {
               const Icon = item.icon
               const isActive = currentView === item.id
@@ -51,31 +51,31 @@ export function Navigation({ currentView, onNavigate, isCompact = false }: Navig
                   onClick={() => onNavigate(item.id)}
                   className={`
                     flex items-center space-x-1.5
-                    ${isCompact ? 'h-6 px-2 text-xs' : 'h-7 px-2.5 text-xs'} 
+                    ${isCompact ? 'h-8 px-3 text-xs' : 'h-9 px-4 text-sm'} 
                     ${isActive ? 'glass shadow-lg' : 'glass-button'}
                     transition-all duration-300
                   `}
                 >
-                  <Icon size={isCompact ? 14 : 16} weight={isActive ? "fill" : "regular"} />
+                  <Icon size={isCompact ? 16 : 18} weight={isActive ? "fill" : "regular"} />
                   <span className="hidden lg:inline">{item.label}</span>
                 </Button>
               )
             })}
           </div>
           
-          <div className="ml-1 pl-1 border-l border-white/20">
+          <div className="ml-2 pl-2 border-l border-white/20">
             <Button
               variant={currentView === 'settings' ? "default" : "ghost"}
               size="sm"
               onClick={() => onNavigate('settings')}
               className={`
                 flex items-center space-x-1.5
-                ${isCompact ? 'h-6 px-2 text-xs' : 'h-7 px-2.5 text-xs'} 
+                ${isCompact ? 'h-8 px-3 text-xs' : 'h-9 px-4 text-sm'} 
                 ${currentView === 'settings' ? 'glass shadow-lg' : 'glass-button'}
                 transition-all duration-300
               `}
             >
-              <Gear size={isCompact ? 14 : 16} weight={currentView === 'settings' ? "fill" : "regular"} />
+              <Gear size={isCompact ? 16 : 18} weight={currentView === 'settings' ? "fill" : "regular"} />
               <span className="hidden lg:inline">Settings</span>
             </Button>
           </div>

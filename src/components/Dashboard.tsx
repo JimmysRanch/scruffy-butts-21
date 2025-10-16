@@ -85,54 +85,54 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   }
 
   return (
-    <div className={isCompact ? 'space-y-2' : 'space-y-3'}>
-      <div className={`grid md:grid-cols-3 ${isCompact ? 'gap-2' : 'gap-3'}`}>
+    <div className={isCompact ? 'space-y-3' : 'space-y-4'}>
+      <div className={`grid md:grid-cols-3 ${isCompact ? 'gap-3' : 'gap-4'}`}>
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-4 pt-3">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-5 pt-4">
             <CardTitle className="text-sm font-medium">Today's Appointments</CardTitle>
-            <div className="glass-dark p-1.5 rounded-lg liquid-glow">
+            <div className="glass-dark p-2 rounded-lg liquid-glow">
               <Calendar className="h-4 w-4 text-primary" weight="fill" />
             </div>
           </CardHeader>
-          <CardContent className="px-4 pb-3">
-            <div className="text-xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          <CardContent className="px-5 pb-4">
+            <div className="text-2xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
               {todayAppointments.length}
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-muted-foreground mt-1">
               {todayAppointments.filter(a => a.status === 'completed').length} completed
             </p>
           </CardContent>
         </Card>
 
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('customers')}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-4 pt-3">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-5 pt-4">
             <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-            <div className="glass-dark p-1.5 rounded-lg liquid-glow">
+            <div className="glass-dark p-2 rounded-lg liquid-glow">
               <Users className="h-4 w-4 text-accent" weight="fill" />
             </div>
           </CardHeader>
-          <CardContent className="px-4 pb-3">
-            <div className="text-xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          <CardContent className="px-5 pb-4">
+            <div className="text-2xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
               {customers?.length || 0}
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-muted-foreground mt-1">
               {pets?.length || 0} pets registered
             </p>
           </CardContent>
         </Card>
 
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-4 pt-3">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-5 pt-4">
             <CardTitle className="text-sm font-medium">This Week</CardTitle>
-            <div className="glass-dark p-1.5 rounded-lg liquid-glow">
+            <div className="glass-dark p-2 rounded-lg liquid-glow">
               <ChartBar className="h-4 w-4 text-primary" weight="fill" />
             </div>
           </CardHeader>
-          <CardContent className="px-4 pb-3">
-            <div className="text-xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          <CardContent className="px-5 pb-4">
+            <div className="text-2xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
               {weekAppointments.length}
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-muted-foreground mt-1">
               appointments scheduled
             </p>
           </CardContent>
@@ -140,31 +140,31 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       </div>
 
       <Card className="frosted border-white/20 liquid-shine">
-        <CardHeader className="pb-2 px-4 pt-3">
+        <CardHeader className="pb-3 px-5 pt-4">
           <CardTitle className="flex items-center gap-2 text-base">
-            <div className="glass-dark p-1 rounded-lg liquid-pulse">
+            <div className="glass-dark p-1.5 rounded-lg liquid-pulse">
               <Calendar className="h-4 w-4" weight="fill" />
             </div>
             Today's Schedule
           </CardTitle>
           <CardDescription className="text-xs">Appointments scheduled for today</CardDescription>
         </CardHeader>
-        <CardContent className="px-4 pb-3">
+        <CardContent className="px-5 pb-4">
           {todayAppointments.length === 0 ? (
-            <div className="text-center text-muted-foreground py-6">
-              <div className="glass-dark w-fit mx-auto p-3 rounded-2xl mb-2">
-                <Dog className="h-8 w-8 opacity-50" weight="fill" />
+            <div className="text-center text-muted-foreground py-8">
+              <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
+                <Dog className="h-10 w-10 opacity-50" weight="fill" />
               </div>
               <p className="text-sm">No appointments scheduled for today</p>
             </div>
           ) : (
             <div className="space-y-2">
               {todayAppointments.slice(0, 6).map((apt) => (
-                <div key={apt.id} className="glass-dark rounded-lg border border-white/20 hover:glass transition-all duration-200 p-2">
+                <div key={apt.id} className="glass-dark rounded-lg border border-white/20 hover:glass transition-all duration-200 p-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex items-center gap-1 font-medium min-w-[55px] glass-dark px-1.5 py-0.5 rounded text-xs">
-                        <Clock size={12} weight="fill" />
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1.5 font-medium min-w-[60px] glass-dark px-2 py-1 rounded text-xs">
+                        <Clock size={14} weight="fill" />
                         {apt.time}
                       </div>
                       <div>
@@ -172,7 +172,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                         <div className="text-muted-foreground text-xs">{getCustomerName(apt.customerId)}</div>
                       </div>
                     </div>
-                    <Badge className={`${getStatusColor(apt.status)} backdrop-blur-sm text-xs py-0`}>
+                    <Badge className={`${getStatusColor(apt.status)} backdrop-blur-sm text-xs py-0.5 px-2`}>
                       {apt.status}
                     </Badge>
                   </div>

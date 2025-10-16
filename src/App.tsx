@@ -84,7 +84,7 @@ function App() {
   return (
     <div className="min-h-screen">
       <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
-      <main className={`w-full px-3 md:px-4 lg:px-5 xl:px-6 max-w-[2000px] mx-auto ${isCompact ? 'py-1.5' : 'py-2 sm:py-3'}`}>
+      <main className={`w-full px-4 max-w-[2000px] mx-auto ${isCompact ? 'py-2' : 'py-4'}`}>
         {renderView()}
       </main>
       <Toaster />
