@@ -120,7 +120,7 @@ export function PointOfSale() {
       timestamp: new Date()
     }
 
-    setTransactions(prev => [transaction, ...(prev || [])])
+    setTransactions(currentTransactions => [transaction, ...(currentTransactions || [])])
     setCart([])
     setSelectedCustomer('walk-in')
     toast.success(`Payment of $${total.toFixed(2)} processed successfully!`)
@@ -312,7 +312,7 @@ export function PointOfSale() {
               {transactionsList.slice(0, 5).map(transaction => {
                 const customer = customersList.find(c => c.id === transaction.customerId)
                 const total = transaction?.total ?? 0
-                const itemCount = transaction?.items?.length ?? 0
+                const itemCount = transaction?.items?.reduce((sum, item) => sum + (item?.quantity ?? 0), 0) ?? 0
                 const paymentMethod = transaction?.paymentMethod ?? 'card'
                 return (
                   <div key={transaction.id} className="flex items-center justify-between p-4 border rounded-lg">
