@@ -45,16 +45,18 @@ interface Appointment {
   checkOutTime?: string
 }
 
-interface Staff {
+interface StaffMember {
   id: string
-  name: string
-  role: string
-  color: string
-  phone?: string
-  email?: string
-  specialties?: string[]
-  hourlyRate?: number
-  commissionRate?: number
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  position: string
+  status: 'active' | 'inactive'
+  rating: number
+  canBeBooked?: boolean
+  bookableServices?: string[]
+  color?: string
 }
 
 interface Service {
@@ -91,7 +93,7 @@ const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'
 
 export function GroomerStats() {
   const [appointments = []] = useKV<Appointment[]>('appointments', [])
-  const [staff = []] = useKV<Staff[]>('staff', [])
+  const [staffMembers = []] = useKV<StaffMember[]>('staff-members', [])
   const [services = []] = useKV<Service[]>('services', [])
   const [transactions = []] = useKV<Transaction[]>('transactions', [])
   
@@ -143,7 +145,7 @@ export function GroomerStats() {
 
   const staffRankings = useMemo(() => {
     const rankings = new Map<string, {
-      staff: Staff
+      staff: StaffMember
       revenue: number
       netSales: number
       appointments: number
@@ -156,7 +158,7 @@ export function GroomerStats() {
       productSales: number
     }>()
 
-    staff.forEach(member => {
+    staffMembers.forEach(member => {
       rankings.set(member.id, {
         staff: member,
         revenue: 0,
@@ -213,7 +215,7 @@ export function GroomerStats() {
     return Array.from(rankings.values())
       .filter(r => r.appointments > 0)
       .sort((a, b) => b.netSales - a.netSales)
-  }, [filteredData, staff, services])
+  }, [filteredData, staffMembers, services])
 
   const revenueByCategory = useMemo(() => {
     const categories = new Map<string, number>()
@@ -296,9 +298,9 @@ export function GroomerStats() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Staff</SelectItem>
-              {staff.map(member => (
+              {staffMembers.map(member => (
                 <SelectItem key={member.id} value={member.id}>
-                  {member.name}
+                  {member.firstName} {member.lastName}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -380,12 +382,12 @@ export function GroomerStats() {
                 
                 <div 
                   className="w-1 h-8 rounded-full shrink-0" 
-                  style={{ backgroundColor: ranking.staff.color }}
+                  style={{ backgroundColor: ranking.staff.color || '#6366f1' }}
                 />
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 mb-0">
-                    <p className="font-semibold text-xs truncate">{ranking.staff.name}</p>
+                    <p className="font-semibold text-xs truncate">{ranking.staff.firstName} {ranking.staff.lastName}</p>
                     <Badge variant="secondary" className="text-[10px] px-1 py-0">{ranking.completed}</Badge>
                   </div>
                   <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
@@ -441,9 +443,12 @@ export function GroomerStats() {
         <Card className="frosted p-4">
           <h3 className="text-base font-semibold mb-3">Revenue by Staff</h3>
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={staffRankings}>
+            <BarChart data={staffRankings.map(r => ({ 
+              ...r, 
+              staffName: `${r.staff.firstName} ${r.staff.lastName}` 
+            }))}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
-              <XAxis dataKey="staff.name" tick={{ fontSize: 12 }} />
+              <XAxis dataKey="staffName" tick={{ fontSize: 12 }} />
               <YAxis tickFormatter={(value) => `$${value}`} tick={{ fontSize: 12 }} />
               <ChartTooltip formatter={(value: number) => formatCurrency(value)} />
               <Legend wrapperStyle={{ fontSize: '12px' }} />
@@ -464,9 +469,9 @@ export function GroomerStats() {
                 <div className="flex items-center gap-2">
                   <div 
                     className="w-2 h-2 rounded-full shrink-0" 
-                    style={{ backgroundColor: ranking.staff.color }}
+                    style={{ backgroundColor: ranking.staff.color || '#6366f1' }}
                   />
-                  <p className="font-semibold text-sm">{ranking.staff.name}</p>
+                  <p className="font-semibold text-sm">{ranking.staff.firstName} {ranking.staff.lastName}</p>
                 </div>
                 {ranking.avgTipRate >= 15 && (
                   <Star className="w-4 h-4 text-accent" weight="fill" />
