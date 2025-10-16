@@ -68,10 +68,10 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
                 ${isActive ? 'frosted shadow-xl' : 'glass-button hover:glass'}
               `}
             >
-              <div className="flex items-center gap-4 p-4 relative z-10">
+              <div className="flex items-center gap-3 px-4 py-3 relative z-10">
                 <motion.div 
                   className={`
-                    relative w-12 h-12 rounded-lg flex items-center justify-center
+                    relative w-10 h-10 rounded-lg flex items-center justify-center
                     bg-gradient-to-br ${item.gradient}
                     shadow-lg
                   `}
@@ -87,7 +87,7 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
                   }}
                 >
                   <Icon 
-                    size={24} 
+                    size={20} 
                     weight={isActive ? "fill" : "duotone"} 
                     className="text-white relative z-10"
                   />
@@ -108,7 +108,7 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
                 
                 <div className="flex-1 text-left">
                   <span className={`
-                    text-sm font-semibold
+                    text-base font-semibold
                     ${isActive ? 'text-foreground' : 'text-foreground/80 group-hover:text-foreground'}
                     transition-colors
                   `}>
@@ -119,7 +119,7 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
                 {isActive && (
                   <motion.div
                     layoutId="activeIndicator"
-                    className="w-1 h-8 bg-gradient-to-b from-primary to-accent rounded-full"
+                    className="w-1 h-6 bg-gradient-to-b from-primary to-accent rounded-full"
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   />
                 )}
@@ -150,9 +150,9 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
             ${currentView === 'settings' ? 'frosted shadow-xl' : 'glass-button hover:glass'}
           `}
         >
-          <div className="flex items-center gap-4 p-4 relative z-10">
+          <div className="flex items-center gap-3 px-4 py-3 relative z-10">
             <motion.div 
-              className="relative w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-400 to-gray-600 shadow-lg"
+              className="relative w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-400 to-gray-600 shadow-lg"
               whileHover={{ 
                 scale: 1.1,
                 rotate: 180,
@@ -161,7 +161,7 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               <Gear 
-                size={24} 
+                size={20} 
                 weight={currentView === 'settings' ? "fill" : "duotone"} 
                 className="text-white"
               />
@@ -170,7 +170,7 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
             
             <div className="flex-1 text-left">
               <span className={`
-                text-sm font-semibold
+                text-base font-semibold
                 ${currentView === 'settings' ? 'text-foreground' : 'text-foreground/80 group-hover:text-foreground'}
                 transition-colors
               `}>
@@ -181,7 +181,7 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
             {currentView === 'settings' && (
               <motion.div
                 layoutId="activeIndicator"
-                className="w-1 h-8 bg-gradient-to-b from-primary to-accent rounded-full"
+                className="w-1 h-6 bg-gradient-to-b from-primary to-accent rounded-full"
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
             )}
