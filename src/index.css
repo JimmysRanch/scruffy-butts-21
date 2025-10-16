@@ -6,6 +6,19 @@
     @apply border-border;
   }
   
+  html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    overscroll-behavior: none;
+  }
+  
+  input, textarea, select, button {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  
   body {
     font-family: 'Inter', sans-serif;
     background: linear-gradient(135deg, 
@@ -14,6 +27,21 @@
       oklch(0.96 0.02 260) 100%);
     background-attachment: fixed;
     min-height: 100vh;
+    min-height: 100dvh;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  #root {
+    isolation: isolate;
+  }
+  
+  @supports (padding: max(0px)) {
+    body {
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
   }
 
   .glass {
