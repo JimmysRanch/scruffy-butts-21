@@ -199,8 +199,10 @@ export function GroomerStats() {
       ranking.tips += txn.tip || 0
       ranking.netSales += txn.subtotal - (txn.discount || 0) - (txn.refund || 0)
       
-      const productItems = txn.items.filter(item => !services.some(s => s.id === item.id))
-      ranking.productSales += productItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      if (txn.items && Array.isArray(txn.items)) {
+        const productItems = txn.items.filter(item => !services.some(s => s.id === item.id))
+        ranking.productSales += productItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      }
     })
 
     rankings.forEach(ranking => {
@@ -221,11 +223,13 @@ export function GroomerStats() {
     const categories = new Map<string, number>()
     
     filteredData.transactions.forEach(txn => {
-      txn.items.forEach(item => {
-        const service = services.find(s => s.id === item.id)
-        const category = service ? service.category : 'Retail'
-        categories.set(category, (categories.get(category) || 0) + item.price * item.quantity)
-      })
+      if (txn.items && Array.isArray(txn.items)) {
+        txn.items.forEach(item => {
+          const service = services.find(s => s.id === item.id)
+          const category = service ? service.category : 'Retail'
+          categories.set(category, (categories.get(category) || 0) + item.price * item.quantity)
+        })
+      }
     })
 
     return Array.from(categories.entries()).map(([name, value]) => ({ name, value }))
