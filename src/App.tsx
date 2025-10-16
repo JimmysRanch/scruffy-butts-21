@@ -10,7 +10,6 @@ import { InventoryManager } from '@/components/InventoryManager'
 import { Settings } from '@/components/Settings'
 import { Navigation } from '@/components/Navigation'
 import { GroomerStats } from '@/components/GroomerStats'
-import { PWAInstallPrompt } from '@/components/PWAInstallPrompt'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings'
 
@@ -106,7 +105,6 @@ function App() {
         {renderView()}
       </main>
       <Toaster />
-      <PWAInstallPrompt />
     </div>
   )
 }

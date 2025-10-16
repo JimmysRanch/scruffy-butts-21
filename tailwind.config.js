@@ -21,7 +21,6 @@ const defaultTheme = {
     screens: {
       coarse: { raw: "(pointer: coarse)" },
       fine: { raw: "(pointer: fine)" },
-      pwa: { raw: "(display-mode: standalone)" },
     },
     colors: {
       neutral: {
