@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, Minus, ShoppingCart, CreditCard, Money } from '@phosphor-icons/react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Plus, Minus, ShoppingCart, CreditCard, Money, Receipt, X } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 interface Service {
@@ -58,6 +59,8 @@ export function PointOfSale() {
   const [cart, setCart] = useState<CartItem[]>([])
   const [selectedCustomer, setSelectedCustomer] = useState<string>('walk-in')
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card'>('card')
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
+  const [receiptDialogOpen, setReceiptDialogOpen] = useState(false)
 
   const isCompact = appearance?.compactMode || false
 
@@ -124,6 +127,16 @@ export function PointOfSale() {
     setCart([])
     setSelectedCustomer('walk-in')
     toast.success(`Payment of $${total.toFixed(2)} processed successfully!`)
+  }
+
+  const openReceipt = (transaction: Transaction) => {
+    setSelectedTransaction(transaction)
+    setReceiptDialogOpen(true)
+  }
+
+  const closeReceipt = () => {
+    setReceiptDialogOpen(false)
+    setSelectedTransaction(null)
   }
 
   return (
@@ -319,11 +332,18 @@ export function PointOfSale() {
                 const isValidDate = !isNaN(timestamp.getTime())
                 
                 return (
-                  <div key={transaction.id} className="flex items-start justify-between p-4 border rounded-lg">
+                  <div 
+                    key={transaction.id} 
+                    className="flex items-start justify-between p-4 border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
+                    onClick={() => openReceipt(transaction)}
+                  >
                     <div className="flex-1">
-                      <p className="font-medium">
-                        {customer ? `${customer.firstName} ${customer.lastName}` : 'Walk-in Customer'}
-                      </p>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Receipt size={16} className="text-primary" />
+                        <p className="font-medium">
+                          {customer ? `${customer.firstName} ${customer.lastName}` : 'Walk-in Customer'}
+                        </p>
+                      </div>
                       <p className="text-sm text-muted-foreground">
                         {isValidDate ? (
                           <>
@@ -339,11 +359,16 @@ export function PointOfSale() {
                       </p>
                       {items.length > 0 && (
                         <div className="mt-2 space-y-1">
-                          {items.map((item, idx) => (
+                          {items.slice(0, 2).map((item, idx) => (
                             <p key={idx} className="text-xs text-muted-foreground">
                               • {item.service.name} × {item.quantity}
                             </p>
                           ))}
+                          {items.length > 2 && (
+                            <p className="text-xs text-muted-foreground italic">
+                              + {items.length - 2} more item{items.length - 2 !== 1 ? 's' : ''}
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>
@@ -364,6 +389,131 @@ export function PointOfSale() {
           )}
         </CardContent>
       </Card>
+
+      {/* Receipt Dialog */}
+      <Dialog open={receiptDialogOpen} onOpenChange={setReceiptDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Receipt size={20} />
+              Transaction Receipt
+            </DialogTitle>
+          </DialogHeader>
+          {selectedTransaction && (
+            <div className="space-y-4">
+              {/* Business Header */}
+              <div className="text-center border-b pb-4">
+                <h2 className="font-bold text-xl">Scruffy Butts</h2>
+                <p className="text-sm text-muted-foreground">Professional Dog Grooming</p>
+              </div>
+
+              {/* Transaction Info */}
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Transaction ID:</span>
+                  <span className="font-mono">#{selectedTransaction.id.slice(-8)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Date:</span>
+                  <span>
+                    {new Date(selectedTransaction.timestamp).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Time:</span>
+                  <span>
+                    {new Date(selectedTransaction.timestamp).toLocaleTimeString([], { 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Customer:</span>
+                  <span className="font-medium">
+                    {selectedTransaction.customerId 
+                      ? (() => {
+                          const customer = customersList.find(c => c.id === selectedTransaction.customerId)
+                          return customer ? `${customer.firstName} ${customer.lastName}` : 'Walk-in Customer'
+                        })()
+                      : 'Walk-in Customer'
+                    }
+                  </span>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Items */}
+              <div className="space-y-3">
+                <h3 className="font-semibold">Items</h3>
+                {selectedTransaction.items.map((item, idx) => (
+                  <div key={idx} className="flex justify-between items-start text-sm">
+                    <div className="flex-1">
+                      <p className="font-medium">{item.service.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        ${item.service.price.toFixed(2)} × {item.quantity}
+                      </p>
+                    </div>
+                    <p className="font-medium">
+                      ${(item.service.price * item.quantity).toFixed(2)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <Separator />
+
+              {/* Totals */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Subtotal:</span>
+                  <span>${selectedTransaction.subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Tax (8%):</span>
+                  <span>${selectedTransaction.tax.toFixed(2)}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between font-bold text-lg">
+                  <span>Total:</span>
+                  <span>${selectedTransaction.total.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Payment Method */}
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Payment Method:</span>
+                <Badge variant={selectedTransaction.paymentMethod === 'cash' ? 'secondary' : 'default'}>
+                  {selectedTransaction.paymentMethod === 'cash' ? (
+                    <div className="flex items-center gap-1">
+                      <Money size={14} />
+                      Cash
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <CreditCard size={14} />
+                      Card
+                    </div>
+                  )}
+                </Badge>
+              </div>
+
+              {/* Footer */}
+              <div className="text-center pt-4 border-t">
+                <p className="text-sm text-muted-foreground">Thank you for your business!</p>
+              </div>
+
+              {/* Close Button */}
+              <Button onClick={closeReceipt} className="w-full" variant="outline">
+                Close
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
