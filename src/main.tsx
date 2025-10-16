@@ -14,3 +14,5 @@ createRoot(document.getElementById('root')!).render(
     <App />
    </ErrorBoundary>
 )
+
+console.info('App mounted successfully')
