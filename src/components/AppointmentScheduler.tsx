@@ -508,301 +508,321 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
     apt.status !== 'no-show'
   ).length
 
+  const selectedCustomer = selectedAppointment 
+    ? customers?.find(c => c.id === selectedAppointment.customerId)
+    : null
+
+  const selectedStaff = selectedAppointment?.staffId
+    ? staffMembers?.find(s => s.id === selectedAppointment.staffId)
+    : null
+
   return (
     <div className="space-y-3">
       {showFilters && (
-          <div className="glass-card rounded-[1.25rem] overflow-hidden">
-            <div className="pt-5 pb-4 px-5">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div>
-                  <Label className="text-xs text-white/70 font-semibold">Status</Label>
-                  <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as FilterStatus)}>
-                    <SelectTrigger className="h-8">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="scheduled">Scheduled</SelectItem>
-                      <SelectItem value="confirmed">Confirmed</SelectItem>
-                      <SelectItem value="checked-in">Checked In</SelectItem>
-                      <SelectItem value="in-progress">In Progress</SelectItem>
-                      <SelectItem value="ready-for-pickup">Ready for Pickup</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                      <SelectItem value="no-show">No Show</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+        <div className="glass-card rounded-[1.25rem] overflow-hidden">
+          <div className="pt-5 pb-4 px-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <Label className="text-xs text-white/70 font-semibold">Status</Label>
+                <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as FilterStatus)}>
+                  <SelectTrigger className="h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="scheduled">Scheduled</SelectItem>
+                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                    <SelectItem value="checked-in">Checked In</SelectItem>
+                    <SelectItem value="in-progress">In Progress</SelectItem>
+                    <SelectItem value="ready-for-pickup">Ready for Pickup</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                    <SelectItem value="no-show">No Show</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                <div>
-                  <Label className="text-xs text-white/70 font-semibold">Staff Member</Label>
-                  <Select value={filterStaff} onValueChange={setFilterStaff}>
-                    <SelectTrigger className="h-8">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Staff</SelectItem>
-                      {(staffMembers || []).map((member) => (
-                        <SelectItem key={member.id} value={member.id}>
-                          {member.firstName} {member.lastName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div>
+                <Label className="text-xs text-white/70 font-semibold">Staff Member</Label>
+                <Select value={filterStaff} onValueChange={setFilterStaff}>
+                  <SelectTrigger className="h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Staff</SelectItem>
+                    {(staffMembers || []).map((member) => (
+                      <SelectItem key={member.id} value={member.id}>
+                        {member.firstName} {member.lastName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-                <div className="flex items-end">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setFilterStatus('all')
-                      setFilterStaff('all')
-                      setSearchQuery('')
-                    }}
-                    className="w-full h-8 text-xs"
-                  >
-                    Clear Filters
-                  </Button>
-                </div>
+              <div className="flex items-end">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setFilterStatus('all')
+                    setFilterStaff('all')
+                    setSearchQuery('')
+                  }}
+                  className="w-full h-8 text-xs"
+                >
+                  Clear Filters
+                </Button>
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
       <div className="glass-card rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.005]">
         <div className="p-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-          <div className="flex items-center gap-2 flex-wrap">
-            <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
-              <TabsList>
-                <TabsTrigger value="list">List</TabsTrigger>
-                <TabsTrigger value="day">Day</TabsTrigger>
-                <TabsTrigger value="week">Week</TabsTrigger>
-                <TabsTrigger value="month">Month</TabsTrigger>
-              </TabsList>
-            </Tabs>
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
+                <TabsList>
+                  <TabsTrigger value="list">List</TabsTrigger>
+                  <TabsTrigger value="day">Day</TabsTrigger>
+                  <TabsTrigger value="week">Week</TabsTrigger>
+                  <TabsTrigger value="month">Month</TabsTrigger>
+                </TabsList>
+              </Tabs>
 
-            <div className="flex items-center gap-2 flex-1 lg:flex-initial">
-              <div className="relative flex-1 lg:flex-initial">
-                <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                <Input
-                  placeholder="Search appointments..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-full lg:w-64"
-                />
-              </div>
-              
-              <Button 
-                className="flex items-center gap-2 flex-shrink-0"
-                onClick={() => {
-                  if (onNavigateToNewAppointment) {
-                    onNavigateToNewAppointment()
-                  } else {
-                    setIsNewAppointmentOpen(true)
-                  }
-                }}
-              >
-                <Plus size={18} />
-                <span>New Appointment</span>
-              </Button>
-              
-              <Dialog open={isNewAppointmentOpen} onOpenChange={(open) => {
-                setIsNewAppointmentOpen(open)
-                if (!open) resetForm()
-              }}>
-                <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>
-                      {selectedAppointment ? 'Edit Appointment' : 'Schedule New Appointment'}
-                    </DialogTitle>
-                    <DialogDescription>
-                      {selectedAppointment ? 'Update appointment details' : 'Create a new grooming appointment'}
-                    </DialogDescription>
-                  </DialogHeader>
+              <div className="flex items-center gap-2 flex-1 lg:flex-initial">
+                <div className="relative flex-1 lg:flex-initial">
+                  <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                  <Input
+                    placeholder="Search appointments..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 w-full lg:w-64"
+                  />
+                </div>
 
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="col-span-2">
-                        <Label htmlFor="customer">Customer *</Label>
-                        <Select value={formCustomer} onValueChange={setFormCustomer}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select customer" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {(customers || []).map((customer) => (
-                              <SelectItem key={customer.id} value={customer.id}>
-                                {customer.firstName && customer.lastName 
-                                  ? `${customer.firstName} ${customer.lastName}` 
-                                  : customer.name || 'Unknown'}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={cn(showFilters && 'bg-primary/10')}
+                >
+                  <Funnel size={18} />
+                </Button>
+                
+                <Button 
+                  className="flex items-center gap-2 flex-shrink-0"
+                  onClick={() => {
+                    if (onNavigateToNewAppointment) {
+                      onNavigateToNewAppointment()
+                    } else {
+                      setIsNewAppointmentOpen(true)
+                    }
+                  }}
+                >
+                  <Plus size={18} />
+                  <span className="hidden sm:inline">New Appointment</span>
+                </Button>
+                
+                <Dialog open={isNewAppointmentOpen} onOpenChange={(open) => {
+                  setIsNewAppointmentOpen(open)
+                  if (!open) resetForm()
+                }}>
+                  <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>
+                        {selectedAppointment ? 'Edit Appointment' : 'Schedule New Appointment'}
+                      </DialogTitle>
+                      <DialogDescription>
+                        {selectedAppointment ? 'Update appointment details' : 'Create a new grooming appointment'}
+                      </DialogDescription>
+                    </DialogHeader>
 
-                      {selectedCustomerData && (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
                         <div className="col-span-2">
-                          <Label htmlFor="pet">Pet *</Label>
-                          <Select value={formPet} onValueChange={setFormPet}>
+                          <Label htmlFor="customer">Customer *</Label>
+                          <Select value={formCustomer} onValueChange={setFormCustomer}>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select pet" />
+                              <SelectValue placeholder="Select customer" />
                             </SelectTrigger>
                             <SelectContent>
-                              {selectedCustomerData.pets.map((pet) => (
-                                <SelectItem key={pet.id} value={pet.id}>
-                                  {pet.name} ({pet.breed})
+                              {(customers || []).map((customer) => (
+                                <SelectItem key={customer.id} value={customer.id}>
+                                  {customer.firstName && customer.lastName 
+                                    ? `${customer.firstName} ${customer.lastName}` 
+                                    : customer.name || 'Unknown'}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </div>
+
+                        {selectedCustomerData && (
+                          <div className="col-span-2">
+                            <Label htmlFor="pet">Pet *</Label>
+                            <Select value={formPet} onValueChange={setFormPet}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select pet" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {selectedCustomerData.pets.map((pet) => (
+                                  <SelectItem key={pet.id} value={pet.id}>
+                                    {pet.name} ({pet.breed})
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+
+                        <div className="col-span-2">
+                          <Label htmlFor="service">Service *</Label>
+                          <Select value={formService} onValueChange={setFormService}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select service" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {(services || []).map((service) => (
+                                <SelectItem key={service.id} value={service.id}>
+                                  {service.name} - ${service.price}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="col-span-2">
+                          <Label htmlFor="staff">Assign Staff (Optional)</Label>
+                          <Select value={formStaff} onValueChange={setFormStaff}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Unassigned" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="unassigned">Unassigned</SelectItem>
+                              {(staffMembers || []).map((member) => (
+                                <SelectItem key={member.id} value={member.id}>
+                                  {member.firstName} {member.lastName}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="date">Date *</Label>
+                          <Input
+                            id="date"
+                            type="date"
+                            value={formDate}
+                            onChange={(e) => setFormDate(e.target.value)}
+                            min={format(new Date(), 'yyyy-MM-dd')}
+                          />
+                        </div>
+
+                        <div>
+                          <Label htmlFor="time">Time *</Label>
+                          <Select value={formTime} onValueChange={setFormTime}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select time" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {TIME_SLOTS.map((time) => (
+                                <SelectItem key={time} value={time}>
+                                  {time}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      {selectedServiceData && (
+                        <div className="p-3 bg-secondary rounded-lg space-y-1">
+                          <p className="text-sm font-medium">{selectedServiceData.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Duration: {selectedServiceData.duration} min • Price: ${selectedServiceData.price}
+                          </p>
+                          {formTime && (
+                            <p className="text-sm text-muted-foreground">
+                              End time: {calculateEndTime(formTime, selectedServiceData.duration)}
+                            </p>
+                          )}
+                        </div>
                       )}
 
-                      <div className="col-span-2">
-                        <Label htmlFor="service">Service *</Label>
-                        <Select value={formService} onValueChange={setFormService}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select service" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {(services || []).map((service) => (
-                              <SelectItem key={service.id} value={service.id}>
-                                {service.name} - ${service.price}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="col-span-2">
-                        <Label htmlFor="staff">Assign Staff (Optional)</Label>
-                        <Select value={formStaff} onValueChange={setFormStaff}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Unassigned" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="unassigned">Unassigned</SelectItem>
-                            {(staffMembers || []).map((member) => (
-                              <SelectItem key={member.id} value={member.id}>
-                                {member.firstName} {member.lastName}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
                       <div>
-                        <Label htmlFor="date">Date *</Label>
-                        <Input
-                          id="date"
-                          type="date"
-                          value={formDate}
-                          onChange={(e) => setFormDate(e.target.value)}
-                          min={format(new Date(), 'yyyy-MM-dd')}
+                        <Label htmlFor="notes">Notes (Optional)</Label>
+                        <Textarea
+                          id="notes"
+                          placeholder="Special instructions or notes..."
+                          value={formNotes}
+                          onChange={(e) => setFormNotes(e.target.value)}
+                          rows={3}
                         />
                       </div>
 
-                      <div>
-                        <Label htmlFor="time">Time *</Label>
-                        <Select value={formTime} onValueChange={setFormTime}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select time" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {TIME_SLOTS.map((time) => (
-                              <SelectItem key={time} value={time}>
-                                {time}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    {selectedServiceData && (
-                      <div className="p-3 bg-secondary rounded-lg space-y-1">
-                        <p className="text-sm font-medium">{selectedServiceData.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Duration: {selectedServiceData.duration} min • Price: ${selectedServiceData.price}
-                        </p>
-                        {formTime && (
-                          <p className="text-sm text-muted-foreground">
-                            End time: {calculateEndTime(formTime, selectedServiceData.duration)}
-                          </p>
-                        )}
-                      </div>
-                    )}
-
-                    <div>
-                      <Label htmlFor="notes">Notes (Optional)</Label>
-                      <Textarea
-                        id="notes"
-                        placeholder="Special instructions or notes..."
-                        value={formNotes}
-                        onChange={(e) => setFormNotes(e.target.value)}
-                        rows={3}
-                      />
-                    </div>
-
-                    <div className="space-y-3 p-3 bg-muted rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Bell size={16} />
-                          <Label htmlFor="reminder" className="cursor-pointer">Send reminder</Label>
+                      <div className="space-y-3 p-3 bg-muted rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Bell size={16} />
+                            <Label htmlFor="reminder" className="cursor-pointer">Send reminder</Label>
+                          </div>
+                          <Switch
+                            id="reminder"
+                            checked={formSendReminder}
+                            onCheckedChange={setFormSendReminder}
+                          />
                         </div>
-                        <Switch
-                          id="reminder"
-                          checked={formSendReminder}
-                          onCheckedChange={setFormSendReminder}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Envelope size={16} />
-                          <Label htmlFor="confirmation" className="cursor-pointer">Send confirmation</Label>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Envelope size={16} />
+                            <Label htmlFor="confirmation" className="cursor-pointer">Send confirmation</Label>
+                          </div>
+                          <Switch
+                            id="confirmation"
+                            checked={formSendConfirmation}
+                            onCheckedChange={setFormSendConfirmation}
+                          />
                         </div>
-                        <Switch
-                          id="confirmation"
-                          checked={formSendConfirmation}
-                          onCheckedChange={setFormSendConfirmation}
-                        />
                       </div>
                     </div>
-                  </div>
 
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => {
-                      setIsNewAppointmentOpen(false)
-                      resetForm()
-                    }}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleCreateAppointment}>
-                      {selectedAppointment ? 'Update' : 'Schedule'} Appointment
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => {
+                        setIsNewAppointmentOpen(false)
+                        resetForm()
+                      }}>
+                        Cancel
+                      </Button>
+                      <Button onClick={handleCreateAppointment}>
+                        {selectedAppointment ? 'Update' : 'Schedule'} Appointment
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              {viewMode !== 'list' && (
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="icon" onClick={navigatePrevious}>
+                    <CaretLeft size={18} />
+                  </Button>
+                  <Button variant="outline" onClick={navigateToday} className="text-sm">
+                    Today
+                  </Button>
+                  <Button variant="outline" size="icon" onClick={navigateNext}>
+                    <CaretRight size={18} />
+                  </Button>
+                </div>
+              )}
+              <div className="text-sm font-medium text-white/80">
+                {getDateRangeLabel()}
+              </div>
             </div>
           </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            {viewMode !== 'list' && (
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="icon" onClick={navigatePrevious}>
-                  <CaretLeft size={18} />
-                </Button>
-                <Button variant="outline" onClick={navigateToday}>
-                  Today
-                </Button>
-                <Button variant="outline" size="icon" onClick={navigateNext}>
-                  <CaretRight size={18} />
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
         </div>
       </div>
 
@@ -821,6 +841,82 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
           setActiveAppointmentId={setActiveAppointmentId}
         />
       )}
+
+      {viewMode === 'day' && (
+        <DayView
+          date={currentDate}
+          appointments={getAppointmentsForDate(currentDate)}
+          onViewAppointment={handleViewAppointment}
+          onEditAppointment={handleEditAppointment}
+          onDeleteAppointment={(apt) => handleDeleteAppointment(apt.id)}
+          onDuplicateAppointment={handleDuplicateAppointment}
+          onRebookAppointment={handleRebookAppointment}
+          onStatusChange={updateAppointmentStatus}
+          getStaffColor={getStaffColor}
+          staffMembers={staffMembers || []}
+          timeSlots={TIME_SLOTS}
+        />
+      )}
+
+      {viewMode === 'week' && (
+        <WeekView
+          weekDates={getWeekDates()}
+          appointments={filteredAppointments}
+          onViewAppointment={handleViewAppointment}
+          getStaffColor={getStaffColor}
+          staffMembers={staffMembers || []}
+        />
+      )}
+
+      {viewMode === 'month' && (
+        <MonthView
+          monthDates={getMonthDates()}
+          currentDate={currentDate}
+          appointments={filteredAppointments}
+          onViewAppointment={handleViewAppointment}
+          getStaffColor={getStaffColor}
+        />
+      )}
+
+      <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Appointment Details</SheetTitle>
+            <SheetDescription>View and manage appointment</SheetDescription>
+          </SheetHeader>
+          
+          {selectedAppointment && (
+            <AppointmentDetails
+              appointment={selectedAppointment}
+              customer={selectedCustomer}
+              staffMember={selectedStaff}
+              onStatusChange={(status) => updateAppointmentStatus(selectedAppointment.id, status)}
+              onEdit={handleEditAppointment}
+              onDelete={() => handleDeleteAppointment(selectedAppointment.id)}
+              onDuplicate={handleDuplicateAppointment}
+              onRebook={handleRebookAppointment}
+              onClose={() => setIsDetailOpen(false)}
+              onCheckout={() => {
+                setIsDetailOpen(false)
+                setIsCheckoutOpen(true)
+              }}
+            />
+          )}
+        </SheetContent>
+      </Sheet>
+
+      <AppointmentCheckout
+        open={isCheckoutOpen}
+        onOpenChange={setIsCheckoutOpen}
+        appointment={selectedAppointment}
+        customer={selectedCustomer || null}
+        staffMember={selectedStaff}
+        onComplete={handleCheckoutComplete}
+        onBack={() => {
+          setIsCheckoutOpen(false)
+          setIsDetailOpen(true)
+        }}
+      />
     </div>
   )
 }
@@ -1092,6 +1188,207 @@ function AppointmentCard({
   )
 }
 
+function DayView({
+  date,
+  appointments,
+  onViewAppointment,
+  onEditAppointment,
+  onDeleteAppointment,
+  onDuplicateAppointment,
+  onRebookAppointment,
+  onStatusChange,
+  getStaffColor,
+  staffMembers,
+  timeSlots
+}: {
+  date: Date
+  appointments: Appointment[]
+  onViewAppointment: (apt: Appointment) => void
+  onEditAppointment: (apt: Appointment) => void
+  onDeleteAppointment: (apt: Appointment) => void
+  onDuplicateAppointment: (apt: Appointment) => void
+  onRebookAppointment: (apt: Appointment) => void
+  onStatusChange: (id: string, status: Appointment['status']) => void
+  getStaffColor: (staffId?: string) => string
+  staffMembers: StaffMember[]
+  timeSlots: string[]
+}) {
+  return (
+    <div className="glass-card rounded-[1.25rem] overflow-hidden p-4">
+      <div className="space-y-2">
+        {timeSlots.map((timeSlot) => {
+          const aptsAtTime = appointments.filter(apt => apt.time === timeSlot)
+          return (
+            <div key={timeSlot} className="flex gap-3 min-h-[60px]">
+              <div className="w-24 flex-shrink-0 text-sm font-medium text-white/70 pt-2">
+                {timeSlot}
+              </div>
+              <div className="flex-1 space-y-2">
+                {aptsAtTime.length > 0 ? (
+                  aptsAtTime.map((apt) => (
+                    <AppointmentCard
+                      key={apt.id}
+                      appointment={apt}
+                      onClick={() => onViewAppointment(apt)}
+                      onEdit={() => onEditAppointment(apt)}
+                      onDelete={() => onDeleteAppointment(apt)}
+                      onDuplicate={() => onDuplicateAppointment(apt)}
+                      onRebook={() => onRebookAppointment(apt)}
+                      onStatusChange={(status) => onStatusChange(apt.id, status)}
+                      getStaffColor={getStaffColor}
+                      staffMembers={staffMembers}
+                      showActions={false}
+                    />
+                  ))
+                ) : (
+                  <div className="h-full min-h-[60px] border-2 border-dashed border-white/10 rounded-lg" />
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function WeekView({
+  weekDates,
+  appointments,
+  onViewAppointment,
+  getStaffColor,
+  staffMembers
+}: {
+  weekDates: Date[]
+  appointments: Appointment[]
+  onViewAppointment: (apt: Appointment) => void
+  getStaffColor: (staffId?: string) => string
+  staffMembers: StaffMember[]
+}) {
+  return (
+    <div className="glass-card rounded-[1.25rem] overflow-hidden p-4">
+      <div className="grid grid-cols-7 gap-2">
+        {weekDates.map((date) => {
+          const dateStr = format(date, 'yyyy-MM-dd')
+          const dayAppts = appointments.filter(apt => apt.date === dateStr)
+          const isCurrentDay = isToday(date)
+          
+          return (
+            <div
+              key={dateStr}
+              className={cn(
+                'border rounded-lg p-2 min-h-[200px]',
+                isCurrentDay ? 'bg-primary/10 border-primary/40' : 'border-white/10'
+              )}
+            >
+              <div className="text-center mb-2">
+                <div className="text-xs font-medium text-white/60">
+                  {format(date, 'EEE')}
+                </div>
+                <div className={cn(
+                  'text-lg font-bold',
+                  isCurrentDay ? 'text-primary' : 'text-white/90'
+                )}>
+                  {format(date, 'd')}
+                </div>
+              </div>
+              <div className="space-y-1">
+                {dayAppts.map((apt) => (
+                  <div
+                    key={apt.id}
+                    onClick={() => onViewAppointment(apt)}
+                    className={cn(
+                      'text-xs p-2 rounded cursor-pointer hover:opacity-80 transition-opacity',
+                      STATUS_COLORS[apt.status]
+                    )}
+                  >
+                    <div className="font-semibold truncate">{apt.petName}</div>
+                    <div className="truncate text-xs">{apt.time}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function MonthView({
+  monthDates,
+  currentDate,
+  appointments,
+  onViewAppointment,
+  getStaffColor
+}: {
+  monthDates: Date[]
+  currentDate: Date
+  appointments: Appointment[]
+  onViewAppointment: (apt: Appointment) => void
+  getStaffColor: (staffId?: string) => string
+}) {
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  
+  return (
+    <div className="glass-card rounded-[1.25rem] overflow-hidden p-4">
+      <div className="grid grid-cols-7 gap-1 mb-2">
+        {daysOfWeek.map((day) => (
+          <div key={day} className="text-center text-sm font-semibold text-white/70 py-2">
+            {day}
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {monthDates.map((date) => {
+          const dateStr = format(date, 'yyyy-MM-dd')
+          const dayAppts = appointments.filter(apt => apt.date === dateStr)
+          const isCurrentDay = isToday(date)
+          const isCurrentMonth = date.getMonth() === currentDate.getMonth()
+          
+          return (
+            <div
+              key={dateStr}
+              className={cn(
+                'border rounded-lg p-2 min-h-[100px]',
+                isCurrentDay && 'bg-primary/10 border-primary/40',
+                !isCurrentDay && 'border-white/10',
+                !isCurrentMonth && 'opacity-40'
+              )}
+            >
+              <div className={cn(
+                'text-sm font-semibold mb-1',
+                isCurrentDay ? 'text-primary' : 'text-white/90'
+              )}>
+                {format(date, 'd')}
+              </div>
+              <div className="space-y-1">
+                {dayAppts.slice(0, 3).map((apt) => (
+                  <div
+                    key={apt.id}
+                    onClick={() => onViewAppointment(apt)}
+                    className={cn(
+                      'text-xs px-1 py-0.5 rounded cursor-pointer hover:opacity-80 transition-opacity truncate',
+                      STATUS_COLORS[apt.status]
+                    )}
+                  >
+                    {apt.time} {apt.petName}
+                  </div>
+                ))}
+                {dayAppts.length > 3 && (
+                  <div className="text-xs text-white/60 px-1">
+                    +{dayAppts.length - 3} more
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 function AppointmentDetails({ 
   appointment, 
   customer, 
@@ -1105,8 +1402,8 @@ function AppointmentDetails({
   onCheckout
 }: { 
   appointment: Appointment
-  customer?: Customer
-  staffMember?: StaffMember
+  customer?: Customer | null
+  staffMember?: StaffMember | null
   onStatusChange: (status: Appointment['status']) => void
   onEdit: (apt: Appointment) => void
   onDelete: () => void
