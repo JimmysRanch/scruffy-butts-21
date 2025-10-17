@@ -574,26 +574,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="frosted rounded-2xl p-5 shadow-lg"
-        >
-          <div className="mb-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Lifetime Spend</p>
-          </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="text-3xl font-bold text-primary mb-1">
-                ${totalSpendFromAppointments.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-              </p>
-              <p className="text-xs text-muted-foreground">Across {completedAppointments.length} completed visit{completedAppointments.length !== 1 ? 's' : ''}</p>
-            </div>
-          </div>
-        </motion.div>
-
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -798,33 +779,17 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                       Add a new furry friend to this client's profile.
                     </DialogDescription>
                   </DialogHeader>
+                  
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="pet-avatar">Pet Photo</Label>
-                      <div className="mt-2 flex items-center gap-4">
-                        {petForm.avatar ? (
-                          <div className="relative">
-                            <Avatar className="w-24 h-24 border-2 border-border">
-                              <AvatarImage src={petForm.avatar} alt="Pet avatar" />
-                              <AvatarFallback>
-                                <Dog size={32} weight="fill" />
-                              </AvatarFallback>
-                            </Avatar>
-                            <Button
-                              size="icon"
-                              variant="destructive"
-                              className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-                              onClick={handleRemoveAvatar}
-                            >
-                              <X size={14} />
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="w-24 h-24 border-2 border-dashed border-border rounded-lg flex items-center justify-center bg-muted/50">
-                            <Dog size={32} className="text-muted-foreground" />
+                      <Label>Photo</Label>
+                      <div className="flex flex-col items-center space-y-3">
+                        {petForm.avatar && (
+                          <div className="relative w-24 h-24 rounded-full overflow-hidden">
+                            <img src={petForm.avatar} alt="Pet preview" className="w-full h-full object-cover" />
                           </div>
                         )}
-                        <div className="flex-1">
+                        <div className="w-full">
                           <input
                             ref={fileInputRef}
                             type="file"
@@ -906,7 +871,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
               <div className="text-center py-16">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3 }}
                 >
                   <Dog size={64} className="mx-auto text-muted-foreground mb-4" weight="thin" />
