@@ -99,9 +99,9 @@ function App() {
   const isCompact = appearance?.compactMode || false
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen">
       <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
-      <main className={`flex-1 ml-24 w-full px-4 max-w-[2000px] mx-auto ${isCompact ? 'py-2' : 'py-4'}`}>
+      <main className={`pt-24 w-full px-4 max-w-[2000px] mx-auto ${isCompact ? 'py-2' : 'py-4'}`}>
         {renderView()}
       </main>
       <Toaster />
