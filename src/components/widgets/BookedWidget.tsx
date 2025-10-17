@@ -1,5 +1,5 @@
 import { useKV } from '@github/spark/hooks'
-import { Card } from '@/components/ui/card'
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CaretUp } from '@phosphor-icons/react'
 import { startOfWeek, addDays, isSameDay, format } from 'date-fns'
 
@@ -70,55 +70,26 @@ export function BookedWidget() {
   const lastWeekAvg = 52
   const percentageChange = avgPercentage - lastWeekAvg
 
-  const maxPercentage = 100
-
   return (
-    <Card className="glass col-span-2 border-white/20 transition-all duration-300 hover:shadow-2xl overflow-hidden">
-      <div className="p-6">
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h3 className="text-2xl font-semibold text-foreground mb-1">Booked</h3>
-          </div>
-          <div className="text-right">
-            <div className="text-5xl font-bold text-foreground">{avgPercentage}%</div>
-            <div className="flex items-center justify-end gap-1 mt-1 text-emerald-600">
-              <CaretUp weight="fill" size={16} />
-              <span className="text-sm font-medium">{percentageChange}% vs last week</span>
-            </div>
-          </div>
+    <>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
+        <CardTitle className="text-xs font-medium">Weekly Capacity</CardTitle>
+        <div className="glass-dark p-1 rounded-lg">
+          <CaretUp className="h-3 w-3 text-primary" weight="fill" />
         </div>
-
-        <div className="relative h-48">
-          <div className="absolute inset-0 flex items-end justify-between gap-4">
-            {weekData.map((data, index) => {
-              const heightPercentage = (data.percentage / maxPercentage) * 100
-              return (
-                <div key={index} className="flex-1 flex flex-col items-center gap-3">
-                  <div className="relative w-full flex flex-col items-center">
-                    <span className="text-sm font-semibold text-foreground mb-1">{data.percentage}%</span>
-                    <div 
-                      className="w-full rounded-full bg-gradient-to-t from-[#ff6b7a] to-[#ff8a97] transition-all duration-500 ease-out shadow-lg"
-                      style={{ 
-                        height: `${Math.max(heightPercentage, 5)}%`,
-                        minHeight: '40px'
-                      }}
-                    />
-                  </div>
-                  <span className="text-sm text-muted-foreground font-medium">{data.day}</span>
-                </div>
-              )
-            })}
-          </div>
-          
-          <div className="absolute left-0 top-0 bottom-12 flex flex-col justify-between pointer-events-none">
-            <span className="text-xs text-muted-foreground/60">100</span>
-            <span className="text-xs text-muted-foreground/60">80</span>
-            <span className="text-xs text-muted-foreground/60">60</span>
-            <span className="text-xs text-muted-foreground/60">40</span>
-            <span className="text-xs text-muted-foreground/60">20</span>
-          </div>
+      </CardHeader>
+      <CardContent className="pb-1 pt-1 px-3">
+        <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          {avgPercentage}%
         </div>
-      </div>
-    </Card>
+        <p className="text-[10px] text-muted-foreground mt-0 flex items-center gap-0.5">
+          <CaretUp className="h-2 w-2 text-emerald-600" weight="fill" />
+          <span className="text-emerald-600">
+            {percentageChange}%
+          </span>
+          {' '}vs last week
+        </p>
+      </CardContent>
+    </>
   )
 }
