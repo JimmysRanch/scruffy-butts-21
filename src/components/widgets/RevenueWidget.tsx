@@ -88,16 +88,27 @@ export function RevenueWidget({ period }: RevenueWidgetProps) {
 
   return (
     <Card className="h-full border-0 bg-transparent shadow-none">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-3 pt-2">
-        <CardTitle className="text-[10px] font-medium">Revenue</CardTitle>
-        <div className="glass-dark p-1 rounded-md">
-          <CurrencyDollar className="h-3 w-3 text-accent" weight="fill" />
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{label}</CardTitle>
+        <div className="glass-dark p-2 rounded-lg">
+          <CurrencyDollar className="h-5 w-5 text-accent" weight="fill" />
         </div>
       </CardHeader>
-      <CardContent className="px-3 pb-2">
-        <div className="text-5xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent leading-none">
-          ${current >= 1000 ? (current / 1000).toFixed(1) + 'K' : current.toFixed(0)}
+      <CardContent>
+        <div className="text-3xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          ${current.toFixed(2)}
         </div>
+        <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+          {isPositive ? (
+            <TrendUp className="h-3 w-3 text-emerald-600" weight="fill" />
+          ) : (
+            <TrendDown className="h-3 w-3 text-red-600" weight="fill" />
+          )}
+          <span className={isPositive ? 'text-emerald-600' : 'text-red-600'}>
+            {Math.abs(change).toFixed(1)}%
+          </span>
+          {' '}from {period === 'today' ? 'yesterday' : period === 'week' ? 'last week' : 'last month'}
+        </p>
       </CardContent>
     </Card>
   )
