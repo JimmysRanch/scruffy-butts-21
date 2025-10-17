@@ -611,6 +611,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
           className="glass-widget glass-widget-lavender rounded-[1.25rem] p-5 shadow-lg @container min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]"
         >
           <div className="mb-3">
