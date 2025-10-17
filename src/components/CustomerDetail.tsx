@@ -404,6 +404,35 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
   )
   
   const lifetimeValue = customerTransactions.reduce((sum, txn) => sum + txn.total, 0)
+  
+  const completedAppointments = customerAppointments.filter(apt => apt.status === 'completed')
+  const totalSpendFromAppointments = completedAppointments.reduce((sum, apt) => sum + apt.price, 0)
+  const averagePerVisit = completedAppointments.length > 0 ? totalSpendFromAppointments / completedAppointments.length : 0
+  
+  const lastVisit = completedAppointments.length > 0
+    ? completedAppointments.sort((a, b) => new Date(b.date + ' ' + b.time).getTime() - new Date(a.date + ' ' + a.time).getTime())[0]
+    : null
+  
+  const sortedVisits = completedAppointments.sort((a, b) => new Date(a.date + ' ' + a.time).getTime() - new Date(b.date + ' ' + b.time).getTime())
+  let averageWeeksBetweenVisits: number | null = null
+  if (sortedVisits.length >= 2) {
+    const intervals: number[] = []
+    for (let i = 1; i < sortedVisits.length; i++) {
+      const prevDate = new Date(sortedVisits[i - 1].date).getTime()
+      const currDate = new Date(sortedVisits[i].date).getTime()
+      const weeksBetween = (currDate - prevDate) / (1000 * 60 * 60 * 24 * 7)
+      intervals.push(weeksBetween)
+    }
+    averageWeeksBetweenVisits = intervals.reduce((sum, val) => sum + val, 0) / intervals.length
+  }
+  
+  const recommendedCadence = averageWeeksBetweenVisits ? Math.round(averageWeeksBetweenVisits) : 6
+  
+  const upcomingAppointments = customerAppointments.filter(
+    apt => apt.status === 'scheduled' || apt.status === 'confirmed'
+  ).sort((a, b) => new Date(a.date + ' ' + a.time).getTime() - new Date(b.date + ' ' + b.time).getTime())
+  
+  const nextAppointment = upcomingAppointments[0]
 
   return (
     <motion.div 
@@ -434,48 +463,10 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                   VIP Client
                 </Badge>
               </div>
-              <p className="text-muted-foreground flex items-center space-x-2 mb-4">
+              <p className="text-muted-foreground flex items-center space-x-2">
                 <Calendar size={16} />
                 <span>Client since {new Date(customer.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
               </p>
-              
-              <div className="grid grid-cols-3 gap-6">
-                <div className="glass-dark rounded-xl p-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Heart size={20} className="text-primary" weight="fill" />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">{customer.pets.length}</p>
-                      <p className="text-xs text-muted-foreground">Furry Friends</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="glass-dark rounded-xl p-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
-                      <Scissors size={20} className="text-accent" />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">{appointmentCount}</p>
-                      <p className="text-xs text-muted-foreground">Appointments</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="glass-dark rounded-xl p-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                      <CreditCard size={20} className="text-green-500" />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">${lifetimeValue.toFixed(2)}</p>
-                      <p className="text-xs text-muted-foreground">Lifetime Value</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -581,6 +572,103 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             </DialogContent>
           </Dialog>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="frosted rounded-2xl p-5 shadow-lg"
+        >
+          <div className="mb-3">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Lifetime Spend</p>
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-3xl font-bold text-primary mb-1">
+                ${totalSpendFromAppointments.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+              </p>
+              <p className="text-xs text-muted-foreground">Across {completedAppointments.length} completed visit{completedAppointments.length !== 1 ? 's' : ''}</p>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="frosted rounded-2xl p-5 shadow-lg"
+        >
+          <div className="mb-3">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Average Per Visit</p>
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-3xl font-bold text-primary mb-1">
+                ${averagePerVisit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {lastVisit ? `Last visit ${new Date(lastVisit.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : 'No visits yet'}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="frosted rounded-2xl p-5 shadow-lg"
+        >
+          <div className="mb-3">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Recommended Cadence</p>
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <div className="flex items-baseline space-x-2 mb-1">
+                <p className="text-3xl font-bold text-primary">{recommendedCadence}</p>
+                <p className="text-lg font-medium text-primary">week{recommendedCadence !== 1 ? 's' : ''}</p>
+                <Badge className="bg-accent text-white border-0 px-2 py-0.5 text-xs">Goal</Badge>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {averageWeeksBetweenVisits 
+                  ? `Actual average ${averageWeeksBetweenVisits.toFixed(1)} weeks`
+                  : 'Based on industry standards'
+                }
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="frosted rounded-2xl p-5 shadow-lg"
+        >
+          <div className="mb-3">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Next Appointment</p>
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              {nextAppointment ? (
+                <>
+                  <p className="text-lg font-bold text-primary mb-1">
+                    {new Date(nextAppointment.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {nextAppointment.time} - {nextAppointment.service}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">No upcoming appointments scheduled.</p>
+                </>
+              )}
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
