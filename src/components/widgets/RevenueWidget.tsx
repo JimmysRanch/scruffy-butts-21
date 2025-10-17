@@ -1,115 +1,204 @@
-import { useKV } from '@github/spark/hooks'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { TrendUp, TrendDown, CurrencyDollar } from '@phosphor-icons/react'
-import { format, startOfWeek, startOfMonth, endOfWeek, endOfMonth } from 'date-fns'
+import React, { useMemo, useId } from "react";
 
-interface Transaction {
-  id: string
-  total: number
-  timestamp: Date | string
+type Point = { label: string; value: number };
+
+export type RevenueWidgetProps = {
+  title?: string;
+  data: Point[];
+  total: number;
+  currency?: string;
+  decimals?: number;
+  max?: number;
+  color?: "cyan" | "blue" | "emerald" | "violet";
+};
+
+const colorMap = {
+  cyan: {
+    ring: "ring-cyan-400/30",
+    glow: "shadow-[0_0_40px_rgba(34,211,238,0.35)]",
+    text: "text-cyan-300",
+    bar: { from: "#22d3ee", to: "#06b6d4" },
+  },
+  blue: {
+    ring: "ring-sky-400/30",
+    glow: "shadow-[0_0_40px_rgba(56,189,248,0.35)]",
+    text: "text-sky-300",
+    bar: { from: "#38bdf8", to: "#0ea5e9" },
+  },
+  emerald: {
+    ring: "ring-emerald-400/30",
+    glow: "shadow-[0_0_40px_rgba(52,211,153,0.35)]",
+    text: "text-emerald-300",
+    bar: { from: "#34d399", to: "#10b981" },
+  },
+  violet: {
+    ring: "ring-violet-400/30",
+    glow: "shadow-[0_0_40px_rgba(167,139,250,0.35)]",
+    text: "text-violet-300",
+    bar: { from: "#a78bfa", to: "#8b5cf6" },
+  },
+} as const;
+
+function niceMax(n: number): number {
+  if (n <= 0) return 1;
+  const pow10 = Math.pow(10, Math.floor(Math.log10(n)));
+  const d = n / pow10;
+  const step = d <= 1 ? 1 : d <= 2 ? 2 : d <= 5 ? 5 : 10;
+  return step * pow10;
 }
 
-interface RevenueWidgetProps {
-  period: 'today' | 'week' | 'month'
+function useCurrencyFormatter(currency: string, decimals: number) {
+  return useMemo(
+    () =>
+      new Intl.NumberFormat(undefined, {
+        style: "currency",
+        currency,
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      }),
+    [currency, decimals]
+  );
 }
 
-export function RevenueWidget({ period }: RevenueWidgetProps) {
-  const [transactions] = useKV<Transaction[]>('transactions', [])
+export default function RevenueWidget({
+  title = "REVENUE",
+  data,
+  total,
+  currency = "USD",
+  decimals = 2,
+  max,
+  color = "cyan",
+}: RevenueWidgetProps) {
+  const palette = colorMap[color];
+  const gradientId = useId().replace(/:/g, "-");
 
-  const getRevenue = () => {
-    if (!transactions) return { current: 0, previous: 0, label: '' }
+  const values = data.map((d) => d.value);
+  const computedMax = Math.max(...values, 0);
+  const yMax = max ?? niceMax(computedMax);
+  const rows = 5;
 
-    const now = new Date()
-    let currentStart: Date
-    let currentEnd: Date
-    let previousStart: Date
-    let previousEnd: Date
-    let label: string
+  const width = 640;
+  const height = 300;
+  const pad = { top: 18, right: 16, bottom: 54, left: 44 };
+  const chartW = width - pad.left - pad.right;
+  const chartH = height - pad.top - pad.bottom;
 
-    switch (period) {
-      case 'today':
-        currentStart = new Date(now.setHours(0, 0, 0, 0))
-        currentEnd = new Date(now.setHours(23, 59, 59, 999))
-        previousStart = new Date(currentStart)
-        previousStart.setDate(previousStart.getDate() - 1)
-        previousEnd = new Date(previousStart)
-        previousEnd.setHours(23, 59, 59, 999)
-        label = "Today's Revenue"
-        break
-      case 'week':
-        currentStart = startOfWeek(now)
-        currentEnd = endOfWeek(now)
-        previousStart = new Date(currentStart)
-        previousStart.setDate(previousStart.getDate() - 7)
-        previousEnd = new Date(currentEnd)
-        previousEnd.setDate(previousEnd.getDate() - 7)
-        label = "This Week's Revenue"
-        break
-      case 'month':
-        currentStart = startOfMonth(now)
-        currentEnd = endOfMonth(now)
-        previousStart = new Date(currentStart)
-        previousStart.setMonth(previousStart.getMonth() - 1)
-        previousEnd = endOfMonth(previousStart)
-        label = "This Month's Revenue"
-        break
-    }
+  const barCount = Math.max(data.length, 1);
+  const barW = chartW / (barCount * 1.6);
+  const gap = barW * 0.6;
 
-    const current = transactions
-      .filter(t => {
-        try {
-          const date = new Date(t.timestamp)
-          if (isNaN(date.getTime())) return false
-          return date >= currentStart && date <= currentEnd
-        } catch {
-          return false
-        }
-      })
-      .reduce((sum, t) => sum + t.total, 0)
-
-    const previous = transactions
-      .filter(t => {
-        try {
-          const date = new Date(t.timestamp)
-          if (isNaN(date.getTime())) return false
-          return date >= previousStart && date <= previousEnd
-        } catch {
-          return false
-        }
-      })
-      .reduce((sum, t) => sum + t.total, 0)
-
-    return { current, previous, label }
-  }
-
-  const { current, previous, label } = getRevenue()
-  const change = previous > 0 ? ((current - previous) / previous) * 100 : 0
-  const isPositive = change >= 0
+  const currencyFmt = useCurrencyFormatter(currency, decimals);
 
   return (
-    <Card className="h-full border-0 bg-transparent shadow-none">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
-        <CardTitle className="text-xs font-medium">{label}</CardTitle>
-        <div className="glass-dark p-1 rounded-lg">
-          <CurrencyDollar className="h-3 w-3 text-accent" weight="fill" />
+    <div
+      className={[
+        "rounded-3xl bg-slate-900/80 backdrop-blur",
+        "p-6 sm:p-7 ring-1",
+        palette.ring,
+        palette.glow,
+        "text-slate-200"
+      ].join(" ")}
+    >
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-wide">
+          {title}
+        </h2>
+      </div>
+
+      <div className="mt-4">
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          className="w-full h-auto"
+          role="img"
+          aria-label={`${title} bar chart`}
+        >
+          <defs>
+            <linearGradient id={`g-${gradientId}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={palette.bar.from} />
+              <stop offset="100%" stopColor={palette.bar.to} />
+            </linearGradient>
+          </defs>
+
+          <g transform={`translate(${pad.left},${pad.top})`}> 
+            <rect
+              x={0}
+              y={0}
+              width={chartW}
+              height={chartH}
+              rx={12}
+              className="fill-slate-800/50"
+            />
+
+            {[...Array(rows + 1)].map((_, i) => {
+              const y = (chartH / rows) * i;
+              const v = Math.round(yMax - (yMax / rows) * i);
+              return (
+                <g key={i}>
+                  <line
+                    x1={0}
+                    x2={chartW}
+                    y1={y}
+                    y2={y}
+                    className="stroke-slate-600/40"
+                    strokeWidth={1}
+                  />
+                  <text
+                    x={-10}
+                    y={y + 4}
+                    textAnchor="end"
+                    className="fill-slate-400 text-[10px]"
+                  >
+                    {v}
+                  </text>
+                </g>
+              );
+            })}
+
+            {data.map((d, i) => {
+              const x = i * (barW + gap) + gap * 0.5;
+              const h = yMax === 0 ? 0 : (d.value / yMax) * chartH;
+              const y = chartH - h;
+              return (
+                <g key={i}>
+                  <rect
+                    x={x}
+                    y={y}
+                    width={barW}
+                    height={h}
+                    rx={6}
+                    fill={`url(#g-${gradientId})`}
+                    className="opacity-90"
+                  />
+                  <text
+                    x={x + barW / 2}
+                    y={chartH + 18}
+                    textAnchor="middle"
+                    className="fill-slate-300 text-[11px] tracking-wide"
+                  >
+                    {d.label}
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+        </svg>
+      </div>
+
+      <div className="mt-3 sm:mt-4 text-center">
+        <div className="uppercase tracking-widest text-xs sm:text-sm text-slate-400">
+          Total
         </div>
-      </CardHeader>
-      <CardContent className="pb-1 pt-1 px-3">
-        <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
-          ${current.toFixed(2)}
+        <div
+          className={[
+            "mt-1 font-extrabold",
+            "text-3xl sm:text-4xl md:text-5xl",
+            palette.text,
+          ].join(" ")}
+          aria-label={`Total ${currencyFmt.format(total)}`}
+        >
+          {currencyFmt.format(total)}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-0 flex items-center gap-1">
-          {isPositive ? (
-            <TrendUp className="h-2 w-2 text-emerald-600" weight="fill" />
-          ) : (
-            <TrendDown className="h-2 w-2 text-red-600" weight="fill" />
-          )}
-          <span className={isPositive ? 'text-emerald-600' : 'text-red-600'}>
-            {Math.abs(change).toFixed(1)}%
-          </span>
-          {' '}from {period === 'today' ? 'yesterday' : period === 'week' ? 'last week' : 'last month'}
-        </p>
-      </CardContent>
-    </Card>
-  )
+      </div>
+    </div>
+  );
 }
