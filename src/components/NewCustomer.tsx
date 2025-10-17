@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { ArrowLeft } from '@phosphor-icons/react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ArrowLeft, Plus, Trash } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 interface Pet {
@@ -50,19 +51,53 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
     notes: ''
   })
 
+  const [pets, setPets] = useState<Omit<Pet, 'id'>[]>([{
+    name: '',
+    breed: '',
+    size: undefined,
+    notes: ''
+  }])
+
+  const addPet = () => {
+    setPets([...pets, {
+      name: '',
+      breed: '',
+      size: undefined,
+      notes: ''
+    }])
+  }
+
+  const removePet = (index: number) => {
+    if (pets.length > 1) {
+      setPets(pets.filter((_, i) => i !== index))
+    }
+  }
+
+  const updatePet = (index: number, field: keyof Omit<Pet, 'id'>, value: string) => {
+    const updatedPets = [...pets]
+    updatedPets[index] = { ...updatedPets[index], [field]: value }
+    setPets(updatedPets)
+  }
+
   const handleCreateCustomer = () => {
     if (!customerForm.firstName || !customerForm.lastName || !customerForm.email || !customerForm.phone) {
       toast.error('Please fill in all required fields')
       return
     }
 
+    const validPets = pets.filter(pet => pet.name && pet.breed)
+    
     const newCustomer: Customer = {
       id: `customer-${Date.now()}`,
       firstName: customerForm.firstName,
       lastName: customerForm.lastName,
       email: customerForm.email,
       phone: customerForm.phone,
-      pets: [],
+      pets: validPets.map((pet, index) => ({
+        ...pet,
+        id: `pet-${Date.now()}-${index}`,
+        size: pet.size as 'small' | 'medium' | 'large' | undefined
+      })),
       createdAt: new Date().toISOString(),
       address: customerForm.address,
       city: customerForm.city,
@@ -221,6 +256,96 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                 Add Client
               </Button>
             </div>
+          </div>
+        </CardContent>
+      </div>
+
+      <div className="glass-card rounded-[1.25rem] overflow-hidden">
+        <CardHeader className="border-b border-white/10">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-white/90">Pet Information</CardTitle>
+            <Button 
+              size="sm"
+              onClick={addPet}
+              className="h-8"
+            >
+              <Plus size={16} />
+              Add Pet
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="space-y-6">
+            {pets.map((pet, index) => (
+              <div key={index} className="space-y-4 pb-6 border-b border-white/10 last:border-b-0 last:pb-0">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-white/90 font-medium">Pet #{index + 1}</h3>
+                  {pets.length > 1 && (
+                    <Button 
+                      size="sm"
+                      variant="outline"
+                      onClick={() => removePet(index)}
+                      className="h-8 text-destructive hover:text-destructive"
+                    >
+                      <Trash size={16} />
+                    </Button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor={`pet-name-${index}`} className="text-white/70">Pet Name</Label>
+                    <Input
+                      id={`pet-name-${index}`}
+                      value={pet.name}
+                      onChange={(e) => updatePet(index, 'name', e.target.value)}
+                      placeholder="Enter pet name"
+                      className="mt-1.5"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`pet-breed-${index}`} className="text-white/70">Breed</Label>
+                    <Input
+                      id={`pet-breed-${index}`}
+                      value={pet.breed}
+                      onChange={(e) => updatePet(index, 'breed', e.target.value)}
+                      placeholder="Enter breed"
+                      className="mt-1.5"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor={`pet-size-${index}`} className="text-white/70">Size</Label>
+                  <Select
+                    value={pet.size || ''}
+                    onValueChange={(value) => updatePet(index, 'size', value)}
+                  >
+                    <SelectTrigger id={`pet-size-${index}`} className="mt-1.5">
+                      <SelectValue placeholder="Select size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="small">Small</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="large">Large</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor={`pet-notes-${index}`} className="text-white/70">Pet Notes</Label>
+                  <Textarea
+                    id={`pet-notes-${index}`}
+                    value={pet.notes}
+                    onChange={(e) => updatePet(index, 'notes', e.target.value)}
+                    placeholder="Special care instructions, temperament, etc..."
+                    className="mt-1.5"
+                    rows={3}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </CardContent>
       </div>
