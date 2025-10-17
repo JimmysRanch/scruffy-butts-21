@@ -88,17 +88,17 @@ export function RevenueWidget({ period }: RevenueWidgetProps) {
 
   return (
     <Card className="h-full border-0 bg-transparent shadow-none">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
         <CardTitle className="text-xs font-medium">{label}</CardTitle>
         <div className="glass-dark p-1 rounded-lg">
           <CurrencyDollar className="h-3 w-3 text-accent" weight="fill" />
         </div>
       </CardHeader>
-      <CardContent className="pb-2">
+      <CardContent className="pb-2 pt-1 px-3">
         <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
           ${current.toFixed(2)}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
+        <p className="text-[10px] text-muted-foreground mt-0 flex items-center gap-1">
           {isPositive ? (
             <TrendUp className="h-2 w-2 text-emerald-600" weight="fill" />
           ) : (
