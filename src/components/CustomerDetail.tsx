@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { 
   ArrowLeft, 
+  User, 
   Phone, 
   Envelope, 
   Heart, 
@@ -730,153 +731,120 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <div className="frosted rounded-2xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold mb-4 flex items-center space-x-2">
-                <Clock size={20} className="text-primary" />
-                <span>Quick Actions</span>
-              </h3>
-              
-              <div className="space-y-3">
-                <Button className="w-full justify-start liquid-button" variant="outline">
-                  <Calendar size={18} className="mr-3" />
-                  Book Appointment
-                </Button>
-                <Button 
-                  className="w-full justify-start liquid-button bg-primary text-primary-foreground hover:bg-primary/90" 
-                  onClick={() => setIsCheckoutOpen(true)}
-                >
-                  <CreditCard size={18} className="mr-3" />
-                  Quick Checkout
-                </Button>
-                <Button className="w-full justify-start liquid-button" variant="outline">
-                  <ChatCircleDots size={18} className="mr-3" />
-                  Send Message
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        <motion.div 
-          className="lg:col-span-2"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.15 }}
-        >
-          <div className="frosted rounded-2xl p-6 shadow-lg liquid-flow">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold flex items-center space-x-2">
-                <Dog size={20} className="text-accent" weight="fill" />
-                <span>Furry Friends ({customer.pets.length})</span>
-              </h3>
-              <Dialog open={isNewPetOpen} onOpenChange={(open) => {
-                if (!open && fileInputRef.current) {
-                  fileInputRef.current.value = ''
-                }
-                setIsNewPetOpen(open)
-              }}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="liquid-button">
-                    <Plus size={16} className="mr-2" />
-                    Add Pet
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Add New Pet</DialogTitle>
-                    <DialogDescription>
-                      Add a new furry friend to this client's profile.
-                    </DialogDescription>
-                  </DialogHeader>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <Label>Photo</Label>
-                      <div className="flex flex-col items-center space-y-3">
-                        {petForm.avatar && (
-                          <div className="relative w-24 h-24 rounded-full overflow-hidden">
-                            <img src={petForm.avatar} alt="Pet preview" className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                        <div className="w-full">
-                          <input
-                            ref={fileInputRef}
-                            type="file"
-                            id="pet-avatar"
-                            accept="image/*"
-                            onChange={handleAvatarUpload}
-                            className="hidden"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="w-full"
-                          >
-                            <UploadSimple size={16} className="mr-2" />
-                            {petForm.avatar ? 'Change Photo' : 'Upload Photo'}
-                          </Button>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Max 5MB, JPG or PNG
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="pet-name">Pet Name</Label>
-                      <Input
-                        id="pet-name"
-                        value={petForm.name}
-                        onChange={(e) => setPetForm({ ...petForm, name: e.target.value })}
-                        placeholder="Enter pet name"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="pet-breed">Breed</Label>
-                      <Input
-                        id="pet-breed"
-                        value={petForm.breed}
-                        onChange={(e) => setPetForm({ ...petForm, breed: e.target.value })}
-                        placeholder="Enter breed"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="pet-size">Size</Label>
-                      <Select value={petForm.size} onValueChange={(value: 'small' | 'medium' | 'large') => setPetForm({ ...petForm, size: value })}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="small">Small</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="large">Large</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="pet-notes">Notes</Label>
-                      <Textarea
-                        id="pet-notes"
-                        value={petForm.notes}
-                        onChange={(e) => setPetForm({ ...petForm, notes: e.target.value })}
-                        placeholder="Any special care instructions or notes..."
-                      />
-                    </div>
-
-                    <Button onClick={handleAddPet} className="w-full">
+            <div className="frosted rounded-2xl p-6 shadow-lg h-full">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-foreground flex items-center space-x-2">
+                  <Dog size={24} className="text-primary" weight="fill" />
+                  <span>Pets</span>
+                </h2>
+                <Dialog open={isNewPetOpen} onOpenChange={(open) => {
+                  if (!open && fileInputRef.current) {
+                    fileInputRef.current.value = ''
+                  }
+                  setIsNewPetOpen(open)
+                }}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" className="liquid-button">
+                      <Plus size={16} className="mr-2" />
                       Add Pet
                     </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Add New Pet</DialogTitle>
+                      <DialogDescription>
+                        Add a new pet for {customer.firstName} {customer.lastName}.
+                      </DialogDescription>
+                    </DialogHeader>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="new-pet-avatar">Pet Photo</Label>
+                        <div className="flex flex-col items-center space-y-3">
+                          {petForm.avatar && (
+                            <div className="relative w-24 h-24 rounded-full overflow-hidden">
+                              <img src={petForm.avatar} alt="Pet preview" className="w-full h-full object-cover" />
+                            </div>
+                          )}
+                          <div className="w-full">
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              id="pet-avatar"
+                              accept="image/*"
+                              onChange={handleAvatarUpload}
+                              className="hidden"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => fileInputRef.current?.click()}
+                              className="w-full"
+                            >
+                              <UploadSimple size={16} className="mr-2" />
+                              {petForm.avatar ? 'Change Photo' : 'Upload Photo'}
+                            </Button>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Max 5MB, JPG or PNG
+                            </p>
+                          </div>
+                        </div>
+                      </div>
 
-            {customer.pets.length === 0 ? (
+                      <div>
+                        <Label htmlFor="pet-name">Pet Name</Label>
+                        <Input
+                          id="pet-name"
+                          value={petForm.name}
+                          onChange={(e) => setPetForm({ ...petForm, name: e.target.value })}
+                          placeholder="Enter pet name"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="pet-breed">Breed</Label>
+                        <Input
+                          id="pet-breed"
+                          value={petForm.breed}
+                          onChange={(e) => setPetForm({ ...petForm, breed: e.target.value })}
+                          placeholder="Enter breed"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="pet-size">Size</Label>
+                        <Select value={petForm.size} onValueChange={(value: 'small' | 'medium' | 'large') => setPetForm({ ...petForm, size: value })}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="small">Small</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="large">Large</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="pet-notes">Notes</Label>
+                        <Textarea
+                          id="pet-notes"
+                          value={petForm.notes}
+                          onChange={(e) => setPetForm({ ...petForm, notes: e.target.value })}
+                          placeholder="Any special care instructions or notes..."
+                        />
+                      </div>
+
+                      <Button onClick={handleAddPet} className="w-full">
+                        Add Pet
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+              {customer.pets.length === 0 ? (
               <div className="text-center py-16">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -1026,6 +994,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             )}
           </div>
         </motion.div>
+      </div>
       </div>
 
       <Dialog open={isEditPetOpen} onOpenChange={(open) => {
