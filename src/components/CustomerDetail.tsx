@@ -574,7 +574,31 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="frosted rounded-2xl p-5 shadow-lg liquid-wave"
+        >
+          <div className="mb-3">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Lifetime Spend</p>
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-3xl font-bold text-accent mb-1">
+                ${(lifetimeValue + totalSpendFromAppointments).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {completedAppointments.length} completed visit{completedAppointments.length !== 1 ? 's' : ''}
+              </p>
+            </div>
+            <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
+              <Heart size={24} className="text-accent" weight="fill" />
+            </div>
+          </div>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
