@@ -129,9 +129,6 @@ export function TransactionReceipt({ open, onOpenChange, transaction }: Transact
               <div className="flex justify-between items-start text-sm">
                 <div className="flex-1">
                   <p className="font-medium">{transaction.service}</p>
-                  <p className="text-xs text-muted-foreground">
-                    ${transaction.subtotal.toFixed(2)}
-                  </p>
                 </div>
                 <p className="font-medium">
                   ${transaction.subtotal.toFixed(2)}
@@ -144,9 +141,11 @@ export function TransactionReceipt({ open, onOpenChange, transaction }: Transact
                   <div key={idx} className="flex justify-between items-start text-sm">
                     <div className="flex-1">
                       <p className="font-medium">{item.service.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        ${item.service.price.toFixed(2)} × {item.quantity}
-                      </p>
+                      {item.quantity > 1 && (
+                        <p className="text-xs text-muted-foreground">
+                          Quantity: {item.quantity}
+                        </p>
+                      )}
                     </div>
                     <p className="font-medium">
                       ${(item.service.price * item.quantity).toFixed(2)}
