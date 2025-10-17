@@ -89,7 +89,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   return (
     <div className={isCompact ? 'space-y-6' : 'space-y-8'}>
       <div className={`grid lg:grid-cols-5 md:grid-cols-2 ${isCompact ? 'gap-2' : 'gap-3'}`}>
-        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20" onClick={() => onNavigate('appointments')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
             <CardTitle className="text-xs font-medium">Today's Appointments</CardTitle>
             <div className="glass-dark p-1 rounded-lg">
@@ -106,7 +106,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardContent>
         </Card>
 
-        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('customers')}>
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20" onClick={() => onNavigate('customers')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
             <CardTitle className="text-xs font-medium">Total Customers</CardTitle>
             <div className="glass-dark p-1 rounded-lg">
@@ -123,7 +123,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardContent>
         </Card>
 
-        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20" onClick={() => onNavigate('appointments')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
             <CardTitle className="text-xs font-medium">This Week</CardTitle>
             <div className="glass-dark p-1 rounded-lg">
@@ -140,17 +140,17 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </CardContent>
         </Card>
         
-        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph">
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20">
           <BookedWidget />
         </Card>
 
         <RevenueGaugeWidget />
       </div>
 
-      <Card className="frosted border-white/20 liquid-shine">
+      <Card className="frosted border-white/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <div className="glass-dark p-2 rounded-lg liquid-pulse">
+            <div className="glass-dark p-2 rounded-lg">
               <Calendar className="h-5 w-5" weight="fill" />
             </div>
             Today's Schedule
