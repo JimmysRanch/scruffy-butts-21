@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -5,6 +6,8 @@ import { Calendar, Users, ChartBar, Clock, Dog } from '@phosphor-icons/react'
 import { isToday, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns'
 import { RevenueGaugeWidget } from '@/components/widgets/RevenueGaugeWidget'
 import { BookedWidget } from '@/components/widgets/BookedWidget'
+import { RecentActivity } from '@/components/RecentActivity'
+import { seedActivityData } from '@/lib/seed-activity-data'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
 
@@ -46,6 +49,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [customers] = useKV<Customer[]>('customers', [])
   const [pets] = useKV<Pet[]>('pets', [])
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {})
+
+  useEffect(() => {
+    seedActivityData()
+  }, [])
 
   const isCompact = appearance?.compactMode || false
 
@@ -138,49 +145,53 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         <RevenueGaugeWidget />
       </div>
 
-      <Card className="frosted border-white/20 @container min-w-0">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <div className="glass-dark p-2 rounded-lg shrink-0">
-              <Calendar className="h-5 w-5" weight="fill" />
-            </div>
-            <span className="truncate">Today's Schedule</span>
-          </CardTitle>
-          <CardDescription className="truncate">Appointments scheduled for today</CardDescription>
-        </CardHeader>
-        <CardContent className="min-w-0">
-          {todayAppointments.length === 0 ? (
-            <div className="text-center text-muted-foreground py-12">
-              <div className="glass-dark w-fit mx-auto p-6 rounded-2xl mb-4">
-                <Dog className="h-12 w-12 opacity-50" weight="fill" />
+      <div className={`grid grid-cols-1 lg:grid-cols-2 ${isCompact ? 'gap-2' : 'gap-3'}`}>
+        <RecentActivity />
+        
+        <Card className="frosted border-white/20 @container min-w-0">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <div className="glass-dark p-2 rounded-lg shrink-0">
+                <Calendar className="h-5 w-5" weight="fill" />
               </div>
-              <p>No appointments scheduled for today</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {todayAppointments.slice(0, 6).map((apt) => (
-                <div key={apt.id} className="glass-dark rounded-xl border border-white/20 hover:glass transition-all duration-200 p-4 min-w-0">
-                  <div className="flex flex-col @[480px]:flex-row @[480px]:items-center justify-between gap-3 min-w-0">
-                    <div className="flex items-center gap-4 min-w-0 overflow-hidden">
-                      <div className="flex items-center gap-2 font-medium min-w-[70px] glass-dark px-3 py-1.5 rounded-lg shrink-0">
-                        <Clock size={16} weight="fill" />
-                        {apt.time}
-                      </div>
-                      <div className="min-w-0 overflow-hidden">
-                        <div className="font-medium truncate">{getPetName(apt.petId)}</div>
-                        <div className="text-muted-foreground text-sm truncate">{getCustomerName(apt.customerId)}</div>
-                      </div>
-                    </div>
-                    <Badge className={`${getStatusColor(apt.status)} backdrop-blur-sm shrink-0 self-start @[480px]:self-center`}>
-                      {apt.status}
-                    </Badge>
-                  </div>
+              <span className="truncate">Today's Schedule</span>
+            </CardTitle>
+            <CardDescription className="truncate">Appointments scheduled for today</CardDescription>
+          </CardHeader>
+          <CardContent className="min-w-0">
+            {todayAppointments.length === 0 ? (
+              <div className="text-center text-muted-foreground py-12">
+                <div className="glass-dark w-fit mx-auto p-6 rounded-2xl mb-4">
+                  <Dog className="h-12 w-12 opacity-50" weight="fill" />
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                <p>No appointments scheduled for today</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {todayAppointments.slice(0, 6).map((apt) => (
+                  <div key={apt.id} className="glass-dark rounded-xl border border-white/20 hover:glass transition-all duration-200 p-4 min-w-0">
+                    <div className="flex flex-col @[480px]:flex-row @[480px]:items-center justify-between gap-3 min-w-0">
+                      <div className="flex items-center gap-4 min-w-0 overflow-hidden">
+                        <div className="flex items-center gap-2 font-medium min-w-[70px] glass-dark px-3 py-1.5 rounded-lg shrink-0">
+                          <Clock size={16} weight="fill" />
+                          {apt.time}
+                        </div>
+                        <div className="min-w-0 overflow-hidden">
+                          <div className="font-medium truncate">{getPetName(apt.petId)}</div>
+                          <div className="text-muted-foreground text-sm truncate">{getCustomerName(apt.customerId)}</div>
+                        </div>
+                      </div>
+                      <Badge className={`${getStatusColor(apt.status)} backdrop-blur-sm shrink-0 self-start @[480px]:self-center`}>
+                        {apt.status}
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
