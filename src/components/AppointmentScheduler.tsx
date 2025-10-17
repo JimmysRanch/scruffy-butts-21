@@ -807,10 +807,7 @@ export function AppointmentScheduler() {
       </div>
 
       <Card>
-        <CardHeader className="pb-3 pt-4 px-4">
-          <CardTitle className="text-lg">{getDateRangeLabel()}</CardTitle>
-        </CardHeader>
-        <CardContent className="px-4 pb-4">{viewMode === 'day' && (
+        <CardContent className="px-4 pb-4 pt-4">{viewMode === 'day' && (
             <DayView
               date={currentDate}
               appointments={getAppointmentsForDate(currentDate)}
