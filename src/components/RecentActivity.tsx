@@ -88,7 +88,7 @@ export function RecentActivity() {
                   <div className="flex-1 min-w-0 overflow-hidden">
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <p className="text-xs truncate text-white/90">
-                        <span className="font-semibold">{activity.action}</span> by {activity.staffName}
+                        <span className="font-semibold">{activity.action}</span> <span className="text-white/50">by {activity.staffName}</span>
                       </p>
                       <Badge variant="outline" className="text-[10px] px-2 py-0.5 shrink-0 whitespace-nowrap font-semibold border-white/20 text-white/70">
                         {formatDistanceToNow(activity.timestamp, { addSuffix: true })}
