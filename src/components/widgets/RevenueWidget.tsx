@@ -88,27 +88,16 @@ export function RevenueWidget({ period }: RevenueWidgetProps) {
 
   return (
     <Card className="h-full border-0 bg-transparent shadow-none">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-5 pt-4">
-        <CardTitle className="text-sm font-medium">{label}</CardTitle>
-        <div className="glass-dark p-2 rounded-lg liquid-glow">
-          <CurrencyDollar className="h-4 w-4 text-accent" weight="fill" />
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-3 pt-2">
+        <CardTitle className="text-[10px] font-medium">Revenue</CardTitle>
+        <div className="glass-dark p-1 rounded-md">
+          <CurrencyDollar className="h-3 w-3 text-accent" weight="fill" />
         </div>
       </CardHeader>
-      <CardContent className="px-5 pb-4">
-        <div className="text-2xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
-          ${current.toFixed(2)}
+      <CardContent className="px-3 pb-2">
+        <div className="text-5xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent leading-none">
+          ${current >= 1000 ? (current / 1000).toFixed(1) + 'K' : current.toFixed(0)}
         </div>
-        {previous > 0 && (
-          <p className={`text-xs mt-1 flex items-center gap-1 ${isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-            {isPositive ? <TrendUp size={14} weight="bold" /> : <TrendDown size={14} weight="bold" />}
-            {isPositive ? '+' : ''}{change.toFixed(1)}% from yesterday
-          </p>
-        )}
-        {previous === 0 && current === 0 && (
-          <p className="text-xs text-muted-foreground mt-1">
-            No transactions yet
-          </p>
-        )}
       </CardContent>
     </Card>
   )
