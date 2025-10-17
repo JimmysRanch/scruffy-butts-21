@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Calendar, Users, ChartBar, Clock, Dog } from '@phosphor-icons/react'
 import { isToday, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns'
 import { RevenueWidget } from '@/components/widgets/RevenueWidget'
+import { BookedWidget } from '@/components/widgets/BookedWidget'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
 
@@ -141,6 +142,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
         <div className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('pos')}>
           <RevenueWidget period="today" />
+        </div>
+        
+        <div className="lg:col-span-4 md:col-span-4">
+          <BookedWidget />
         </div>
       </div>
 
