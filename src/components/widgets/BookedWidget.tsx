@@ -1,6 +1,6 @@
 import { useKV } from '@github/spark/hooks'
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { CaretUp } from '@phosphor-icons/react'
+import { ChartBar } from '@phosphor-icons/react'
 import { startOfWeek, addDays, isSameDay, format } from 'date-fns'
 
 interface Appointment {
@@ -75,19 +75,15 @@ export function BookedWidget() {
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
         <CardTitle className="text-xs font-medium">Weekly Capacity</CardTitle>
         <div className="glass-dark p-1 rounded-lg">
-          <CaretUp className="h-3 w-3 text-primary" weight="fill" />
+          <ChartBar className="h-3 w-3 text-accent" weight="fill" />
         </div>
       </CardHeader>
       <CardContent className="pb-1 pt-1 px-3">
         <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
           {avgPercentage}%
         </div>
-        <p className="text-[10px] text-muted-foreground mt-0 flex items-center gap-0.5">
-          <CaretUp className="h-2 w-2 text-emerald-600" weight="fill" />
-          <span className="text-emerald-600">
-            {percentageChange}%
-          </span>
-          {' '}vs last week
+        <p className="text-[10px] text-muted-foreground mt-0">
+          {percentageChange >= 0 ? '+' : ''}{percentageChange}% vs last week
         </p>
       </CardContent>
     </>
