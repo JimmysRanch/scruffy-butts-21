@@ -616,22 +616,20 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="frosted rounded-2xl p-5 shadow-lg liquid-wave"
+          className="frosted rounded-2xl p-5 shadow-lg"
         >
           <div className="mb-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Lifetime Spend</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Lifetime Value</p>
           </div>
           <div className="flex items-end justify-between">
             <div>
-              <p className="text-3xl font-bold text-accent mb-1">
-                ${(lifetimeValue + totalSpendFromAppointments).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </p>
+              <div className="flex items-baseline space-x-2 mb-1">
+                <CreditCard size={20} className="text-accent" weight="fill" />
+                <p className="text-3xl font-bold text-foreground">${lifetimeValue.toFixed(2)}</p>
+              </div>
               <p className="text-xs text-muted-foreground">
-                {completedAppointments.length} completed visit{completedAppointments.length !== 1 ? 's' : ''}
+                Total revenue from client
               </p>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-              <Heart size={24} className="text-accent" weight="fill" />
             </div>
           </div>
         </motion.div>
@@ -643,15 +641,16 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           className="frosted rounded-2xl p-5 shadow-lg"
         >
           <div className="mb-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Average Per Visit</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Visits</p>
           </div>
           <div className="flex items-end justify-between">
             <div>
-              <p className="text-3xl font-bold text-primary mb-1">
-                ${averagePerVisit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </p>
+              <div className="flex items-baseline space-x-2 mb-1">
+                <Scissors size={20} className="text-primary" weight="fill" />
+                <p className="text-3xl font-bold text-foreground">{completedAppointments.length}</p>
+              </div>
               <p className="text-xs text-muted-foreground">
-                {lastVisit ? `Last visit ${new Date(lastVisit.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : 'No visits yet'}
+                Completed appointments
               </p>
             </div>
           </div>
@@ -664,20 +663,16 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           className="frosted rounded-2xl p-5 shadow-lg"
         >
           <div className="mb-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Recommended Cadence</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Average Per Visit</p>
           </div>
           <div className="flex items-end justify-between">
             <div>
               <div className="flex items-baseline space-x-2 mb-1">
-                <p className="text-3xl font-bold text-primary">{recommendedCadence}</p>
-                <p className="text-lg font-medium text-primary">week{recommendedCadence !== 1 ? 's' : ''}</p>
-                <Badge className="bg-accent text-white border-0 px-2 py-0.5 text-xs">Goal</Badge>
+                <CreditCard size={20} className="text-accent" weight="fill" />
+                <p className="text-3xl font-bold text-foreground">${averagePerVisit.toFixed(2)}</p>
               </div>
               <p className="text-xs text-muted-foreground">
-                {averageWeeksBetweenVisits 
-                  ? `Actual average ${averageWeeksBetweenVisits.toFixed(1)} weeks`
-                  : 'Based on industry standards'
-                }
+                Average transaction value
               </p>
             </div>
           </div>
@@ -690,28 +685,71 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           className="frosted rounded-2xl p-5 shadow-lg"
         >
           <div className="mb-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Next Appointment</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Recommended Cadence</p>
           </div>
           <div className="flex items-end justify-between">
             <div>
-              {nextAppointment ? (
-                <>
-                  <p className="text-lg font-bold text-primary mb-1">
-                    {new Date(nextAppointment.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {nextAppointment.time} - {nextAppointment.service}
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="text-sm font-medium text-muted-foreground mb-1">No upcoming appointments scheduled.</p>
-                </>
-              )}
+              <div className="flex items-baseline space-x-2 mb-1">
+                <Calendar size={20} className="text-primary" weight="fill" />
+                <p className="text-3xl font-bold text-foreground">{recommendedCadence}</p>
+                <p className="text-base font-medium text-muted-foreground">week{recommendedCadence !== 1 ? 's' : ''}</p>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {averageWeeksBetweenVisits 
+                  ? `Actual avg: ${averageWeeksBetweenVisits.toFixed(1)} weeks`
+                  : 'Based on industry standards'
+                }
+              </p>
             </div>
           </div>
         </motion.div>
       </div>
+
+      {lastVisit && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="frosted rounded-2xl p-6 shadow-lg"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-bold text-foreground mb-2">Last Visit</h3>
+              <div className="flex items-center space-x-4 text-sm">
+                <span className="flex items-center space-x-2">
+                  <Calendar size={16} className="text-muted-foreground" />
+                  <span className="text-foreground">
+                    {new Date(lastVisit.date).toLocaleDateString('en-US', { 
+                      month: 'long', 
+                      day: 'numeric', 
+                      year: 'numeric' 
+                    })}
+                  </span>
+                </span>
+                <span className="flex items-center space-x-2">
+                  <Scissors size={16} className="text-muted-foreground" />
+                  <span className="text-foreground">{lastVisit.service}</span>
+                </span>
+                <span className="flex items-center space-x-2">
+                  <CreditCard size={16} className="text-muted-foreground" />
+                  <span className="text-foreground">${lastVisit.price.toFixed(2)}</span>
+                </span>
+              </div>
+            </div>
+            {nextAppointment && (
+              <div className="text-right">
+                <p className="text-xs text-muted-foreground mb-1">Next Appointment</p>
+                <p className="text-lg font-bold text-primary">
+                  {new Date(nextAppointment.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {nextAppointment.time} - {nextAppointment.service}
+                </p>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
