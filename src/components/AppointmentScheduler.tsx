@@ -770,19 +770,19 @@ export function AppointmentScheduler() {
                     />
                   </div>
                 </div>
-
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button variant="outline" onClick={() => {
-                    setIsNewAppointmentOpen(false)
-                    resetForm()
-                  }}>
-                    Cancel
-                  </Button>
-                  <Button onClick={handleCreateAppointment}>
-                    {selectedAppointment ? 'Update' : 'Schedule'} Appointment
-                  </Button>
-                </div>
               </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => {
+                  setIsNewAppointmentOpen(false)
+                  resetForm()
+                }}>
+                  Cancel
+                </Button>
+                <Button onClick={handleCreateAppointment}>
+                  {selectedAppointment ? 'Update' : 'Schedule'} Appointment
+                </Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
