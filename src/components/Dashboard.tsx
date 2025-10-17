@@ -9,7 +9,7 @@ import { BookedWidget } from '@/components/widgets/BookedWidget'
 import { RecentActivity } from '@/components/RecentActivity'
 import { seedActivityData } from '@/lib/seed-activity-data'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment'
 
 interface AppearanceSettings {
   compactMode?: boolean

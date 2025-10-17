@@ -120,7 +120,11 @@ const TIME_SLOTS = [
   '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM'
 ]
 
-export function AppointmentScheduler() {
+interface AppointmentSchedulerProps {
+  onNavigateToNewAppointment?: () => void
+}
+
+export function AppointmentScheduler({ onNavigateToNewAppointment }: AppointmentSchedulerProps = {}) {
   const [appointments, setAppointments] = useKV<Appointment[]>('appointments', [])
   const [customers] = useKV<Customer[]>('customers', [])
   const [services] = useKV<Service[]>('services', [])
@@ -589,16 +593,24 @@ export function AppointmentScheduler() {
                 />
               </div>
               
+              <Button 
+                className="flex items-center gap-2 flex-shrink-0"
+                onClick={() => {
+                  if (onNavigateToNewAppointment) {
+                    onNavigateToNewAppointment()
+                  } else {
+                    setIsNewAppointmentOpen(true)
+                  }
+                }}
+              >
+                <Plus size={18} />
+                <span>New Appointment</span>
+              </Button>
+              
               <Dialog open={isNewAppointmentOpen} onOpenChange={(open) => {
                 setIsNewAppointmentOpen(open)
                 if (!open) resetForm()
               }}>
-                <DialogTrigger asChild>
-                  <Button className="flex items-center gap-2 flex-shrink-0">
-                    <Plus size={18} />
-                    <span>New Appointment</span>
-                  </Button>
-                </DialogTrigger>
                 <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>

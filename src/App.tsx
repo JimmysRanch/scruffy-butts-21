@@ -10,8 +10,9 @@ import { InventoryManager } from '@/components/InventoryManager'
 import { Settings } from '@/components/Settings'
 import { Navigation } from '@/components/Navigation'
 import { GroomerStats } from '@/components/GroomerStats'
+import { NewAppointment } from '@/components/NewAppointment'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment'
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'system'
@@ -23,7 +24,7 @@ function App() {
   const [currentView, setCurrentView] = useState<View>(() => {
     const params = new URLSearchParams(window.location.search)
     const view = params.get('view') as View | null
-    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings'].includes(view)
+    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings', 'new-appointment'].includes(view)
       ? view
       : 'dashboard'
   })
@@ -78,7 +79,7 @@ function App() {
       case 'dashboard':
         return <Dashboard onNavigate={setCurrentView} />
       case 'appointments':
-        return <AppointmentScheduler />
+        return <AppointmentScheduler onNavigateToNewAppointment={() => setCurrentView('new-appointment')} />
       case 'customers':
         return <CustomerManager />
       case 'staff':
@@ -91,6 +92,8 @@ function App() {
         return <GroomerStats />
       case 'settings':
         return <Settings />
+      case 'new-appointment':
+        return <NewAppointment onBack={() => setCurrentView('appointments')} />
       default:
         return <Dashboard onNavigate={setCurrentView} />
     }
