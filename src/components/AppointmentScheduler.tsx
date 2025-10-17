@@ -803,9 +803,11 @@ export function AppointmentScheduler() {
           onDeleteAppointment={handleDeleteAppointment}
           onDuplicateAppointment={handleDuplicateAppointment}
           onRebookAppointment={handleRebookAppointment}
-          onStatusChange={handleStatusChange}
+          onStatusChange={updateAppointmentStatus}
           getStaffColor={getStaffColor}
           staffMembers={staffMembers || []}
+          activeAppointmentId={activeAppointmentId}
+          setActiveAppointmentId={setActiveAppointmentId}
         />
       )}
 
@@ -853,7 +855,7 @@ export function AppointmentScheduler() {
                 staffMember={selectedAppointment.staffId 
                   ? (staffMembers || []).find(s => s.id === selectedAppointment.staffId) 
                   : undefined}
-                onStatusChange={(status) => handleStatusChange(selectedAppointment.id, status)}
+                onStatusChange={(status) => updateAppointmentStatus(selectedAppointment.id, status)}
                 onEdit={handleEditAppointment}
                 onDelete={() => handleDeleteAppointment(selectedAppointment.id)}
                 onDuplicate={handleDuplicateAppointment}
@@ -976,12 +978,14 @@ function MonthView({
   dates, 
   currentDate, 
   getAppointmentsForDate, 
-  onDateClick 
+  onViewAppointment,
+  getStaffColor 
 }: { 
   dates: Date[]
   currentDate: Date
   getAppointmentsForDate: (date: Date) => Appointment[]
-  onDateClick: (date: Date) => void
+  onViewAppointment: (apt: Appointment) => void
+  getStaffColor: (staffId?: string) => string
 }) {
   return (
     <div className="grid grid-cols-7 gap-1">
@@ -998,9 +1002,8 @@ function MonthView({
         return (
           <div
             key={date.toISOString()}
-            onClick={() => onDateClick(date)}
             className={cn(
-              'border rounded p-1.5 min-h-[65px] cursor-pointer hover:bg-accent transition-colors',
+              'border rounded p-1.5 min-h-[65px]',
               !isCurrentMonth && 'opacity-40',
               isCurrentDay && 'border-primary bg-primary/5'
             )}
@@ -1292,7 +1295,7 @@ function AppointmentCard({
   )
 }
 
-function AppointmentDetail({ 
+function AppointmentDetails({ 
   appointment, 
   customer, 
   staffMember,
@@ -1308,10 +1311,10 @@ function AppointmentDetail({
   customer?: Customer
   staffMember?: StaffMember
   onStatusChange: (status: Appointment['status']) => void
-  onEdit: () => void
+  onEdit: (apt: Appointment) => void
   onDelete: () => void
-  onDuplicate: () => void
-  onRebook: () => void
+  onDuplicate: (apt: Appointment) => void
+  onRebook: (apt: Appointment) => void
   onClose: () => void
   onCheckout?: () => void
 }) {
@@ -1465,11 +1468,11 @@ function AppointmentDetail({
           More Actions
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" onClick={onEdit}>
+          <Button variant="outline" onClick={() => onEdit(appointment)}>
             <PencilSimple size={16} className="mr-2" />
             Edit
           </Button>
-          <Button variant="outline" onClick={onRebook}>
+          <Button variant="outline" onClick={() => onRebook(appointment)}>
             <ArrowClockwise size={16} className="mr-2" />
             Rebook
           </Button>
