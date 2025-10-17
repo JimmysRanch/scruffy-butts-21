@@ -57,12 +57,13 @@ export function RecentActivity() {
 
   return (
     <div className="frosted border-white/20 rounded-xl overflow-hidden @container min-w-0 shadow-lg">
-      <div className="h-2 bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite]" />
-      <div className="px-4 pt-3 pb-4">
-        <div className="flex items-center gap-2 mb-3">
-          <ClockCounterClockwise className="h-5 w-5 text-primary" weight="fill" />
-          <h3 className="font-semibold text-sm text-foreground">Recent Activity</h3>
+      <div className="bg-gradient-to-r from-primary via-accent to-primary px-4 py-3">
+        <div className="flex items-center gap-2">
+          <ClockCounterClockwise className="h-5 w-5 text-primary-foreground" weight="fill" />
+          <h3 className="font-semibold text-sm text-primary-foreground">Recent Activity</h3>
         </div>
+      </div>
+      <div className="px-4 py-4">
         {recentActivities.length === 0 ? (
           <div className="text-center text-muted-foreground py-8">
             <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
