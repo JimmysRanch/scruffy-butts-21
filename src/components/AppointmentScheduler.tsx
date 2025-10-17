@@ -506,17 +506,90 @@ export function AppointmentScheduler() {
 
   return (
     <div className="space-y-3">
+      {showFilters && (
+        <Card>
+          <CardContent className="pt-4 pb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <Label className="text-xs">Status</Label>
+                <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as FilterStatus)}>
+                  <SelectTrigger className="h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="scheduled">Scheduled</SelectItem>
+                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                    <SelectItem value="checked-in">Checked In</SelectItem>
+                    <SelectItem value="in-progress">In Progress</SelectItem>
+                    <SelectItem value="ready-for-pickup">Ready for Pickup</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                    <SelectItem value="no-show">No Show</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-xs">Staff Member</Label>
+                <Select value={filterStaff} onValueChange={setFilterStaff}>
+                  <SelectTrigger className="h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Staff</SelectItem>
+                    {(staffMembers || []).map((member) => (
+                      <SelectItem key={member.id} value={member.id}>
+                        {member.firstName} {member.lastName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-end">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setFilterStatus('all')
+                    setFilterStaff('all')
+                    setSearchQuery('')
+                  }}
+                  className="w-full h-8 text-xs"
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-        <div>
-          <h1 className="font-bold text-foreground text-2xl">
-            Appointments
-          </h1>
-          <p className="text-muted-foreground text-base">
-            {upcomingCount} upcoming • {todayCount} today
-          </p>
-        </div>
+        <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
+          <TabsList>
+            <TabsTrigger value="list">List</TabsTrigger>
+            <TabsTrigger value="day">Day</TabsTrigger>
+            <TabsTrigger value="week">Week</TabsTrigger>
+            <TabsTrigger value="month">Month</TabsTrigger>
+          </TabsList>
+        </Tabs>
 
         <div className="flex items-center gap-2 flex-wrap">
+          {viewMode !== 'list' && (
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="icon" onClick={navigatePrevious}>
+                <CaretLeft size={18} />
+              </Button>
+              <Button variant="outline" onClick={navigateToday}>
+                Today
+              </Button>
+              <Button variant="outline" size="icon" onClick={navigateNext}>
+                <CaretRight size={18} />
+              </Button>
+            </div>
+          )}
+
           <div className="relative flex-1 lg:flex-initial">
             <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
             <Input
@@ -720,90 +793,6 @@ export function AppointmentScheduler() {
             </DialogContent>
           </Dialog>
         </div>
-      </div>
-
-      {showFilters && (
-        <Card>
-          <CardContent className="pt-4 pb-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div>
-                <Label className="text-xs">Status</Label>
-                <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as FilterStatus)}>
-                  <SelectTrigger className="h-8">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="scheduled">Scheduled</SelectItem>
-                    <SelectItem value="confirmed">Confirmed</SelectItem>
-                    <SelectItem value="checked-in">Checked In</SelectItem>
-                    <SelectItem value="in-progress">In Progress</SelectItem>
-                    <SelectItem value="ready-for-pickup">Ready for Pickup</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                    <SelectItem value="no-show">No Show</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label className="text-xs">Staff Member</Label>
-                <Select value={filterStaff} onValueChange={setFilterStaff}>
-                  <SelectTrigger className="h-8">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Staff</SelectItem>
-                    {(staffMembers || []).map((member) => (
-                      <SelectItem key={member.id} value={member.id}>
-                        {member.firstName} {member.lastName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-end">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setFilterStatus('all')
-                    setFilterStaff('all')
-                    setSearchQuery('')
-                  }}
-                  className="w-full h-8 text-xs"
-                >
-                  Clear Filters
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="flex items-center justify-between">
-        <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
-          <TabsList>
-            <TabsTrigger value="list">List</TabsTrigger>
-            <TabsTrigger value="day">Day</TabsTrigger>
-            <TabsTrigger value="week">Week</TabsTrigger>
-            <TabsTrigger value="month">Month</TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        {viewMode !== 'list' && (
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={navigatePrevious}>
-              <CaretLeft size={18} />
-            </Button>
-            <Button variant="outline" onClick={navigateToday}>
-              Today
-            </Button>
-            <Button variant="outline" size="icon" onClick={navigateNext}>
-              <CaretRight size={18} />
-            </Button>
-          </div>
-        )}
       </div>
 
       <Card>
