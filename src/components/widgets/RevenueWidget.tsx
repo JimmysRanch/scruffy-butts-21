@@ -94,7 +94,7 @@ export function RevenueWidget({ period }: RevenueWidgetProps) {
           <CurrencyDollar className="h-3 w-3 text-accent" weight="fill" />
         </div>
       </CardHeader>
-      <CardContent className="pb-2 pt-1 px-3">
+      <CardContent className="pb-1 pt-1 px-3">
         <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
           ${current.toFixed(2)}
         </div>
