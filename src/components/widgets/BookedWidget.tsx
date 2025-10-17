@@ -1,7 +1,7 @@
 import { useKV } from '@github/spark/hooks'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChartBar, CaretUp, CaretDown } from '@phosphor-icons/react'
-import { startOfWeek, endOfWeek, isWithinInterval } from 'date-fns'
+import { Card } from '@/components/ui/card'
+import { CaretUp } from '@phosphor-icons/react'
+import { startOfWeek, addDays, isSameDay, format } from 'date-fns'
 
 interface Appointment {
   id: string
@@ -31,57 +31,94 @@ export function BookedWidget() {
 
   const today = new Date()
   const weekStart = startOfWeek(today, { weekStartsOn: 0 })
-  const weekEnd = endOfWeek(today, { weekStartsOn: 0 })
 
-  const getCurrentWeekPercentage = (): number => {
-    const weekAppointments = (appointments || []).filter(apt =>
-      isWithinInterval(new Date(apt.date), { start: weekStart, end: weekEnd }) &&
+  const getDayPercentage = (dayOffset: number): number => {
+    const targetDate = addDays(weekStart, dayOffset)
+    
+    const dayAppointments = (appointments || []).filter(apt =>
+      isSameDay(new Date(apt.date), targetDate) &&
       apt.status !== 'cancelled' &&
       apt.status !== 'no-show'
     )
 
-    const totalWeekHours = (staffMembers || []).reduce((total, staff) => {
-      let weekHours = 0
-      const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-      days.forEach(day => {
-        const daySchedule = staff.regularSchedule?.[day]
-        if (daySchedule?.enabled && daySchedule?.canBeBooked && daySchedule.start && daySchedule.end) {
-          const [startHour] = daySchedule.start.split(':').map(Number)
-          const [endHour] = daySchedule.end.split(':').map(Number)
-          weekHours += (endHour - startHour)
-        }
-      })
-      return total + weekHours
+    const dayName = format(targetDate, 'EEEE').toLowerCase()
+    const totalDayHours = (staffMembers || []).reduce((total, staff) => {
+      const daySchedule = staff.regularSchedule?.[dayName]
+      if (daySchedule?.enabled && daySchedule?.canBeBooked && daySchedule.start && daySchedule.end) {
+        const [startHour] = daySchedule.start.split(':').map(Number)
+        const [endHour] = daySchedule.end.split(':').map(Number)
+        return total + (endHour - startHour)
+      }
+      return total
     }, 0)
 
-    if (totalWeekHours === 0) return 0
+    if (totalDayHours === 0) return 0
 
-    const bookedHours = weekAppointments.length * 1
-    return Math.min(Math.round((bookedHours / totalWeekHours) * 100), 100)
+    const bookedHours = dayAppointments.length * 1
+    return Math.min(Math.round((bookedHours / totalDayHours) * 100), 100)
   }
 
-  const currentWeekPercentage = getCurrentWeekPercentage()
-  const lastWeekPercentage = 52
-  const percentageChange = currentWeekPercentage - lastWeekPercentage
-  const isPositive = percentageChange > 0
+  const weekData = [
+    { day: 'Tue', percentage: getDayPercentage(2) },
+    { day: 'Wed', percentage: getDayPercentage(3) },
+    { day: 'Thu', percentage: getDayPercentage(4) },
+    { day: 'Fri', percentage: getDayPercentage(5) },
+    { day: 'Sat', percentage: getDayPercentage(6) }
+  ]
+
+  const avgPercentage = Math.round(weekData.reduce((sum, d) => sum + d.percentage, 0) / weekData.length)
+  const lastWeekAvg = 52
+  const percentageChange = avgPercentage - lastWeekAvg
+
+  const maxPercentage = 100
 
   return (
-    <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
-        <CardTitle className="text-xs font-medium">Booked This Week</CardTitle>
-        <div className="glass-dark p-1 rounded-lg">
-          <ChartBar className="h-3 w-3 text-primary" weight="fill" />
+    <Card className="glass col-span-2 border-white/20 transition-all duration-300 hover:shadow-2xl overflow-hidden">
+      <div className="p-6">
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <h3 className="text-2xl font-semibold text-foreground mb-1">Booked</h3>
+          </div>
+          <div className="text-right">
+            <div className="text-5xl font-bold text-foreground">{avgPercentage}%</div>
+            <div className="flex items-center justify-end gap-1 mt-1 text-emerald-600">
+              <CaretUp weight="fill" size={16} />
+              <span className="text-sm font-medium">{percentageChange}% vs last week</span>
+            </div>
+          </div>
         </div>
-      </CardHeader>
-      <CardContent className="pb-1 pt-1 px-3">
-        <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
-          {currentWeekPercentage}%
+
+        <div className="relative h-48">
+          <div className="absolute inset-0 flex items-end justify-between gap-4">
+            {weekData.map((data, index) => {
+              const heightPercentage = (data.percentage / maxPercentage) * 100
+              return (
+                <div key={index} className="flex-1 flex flex-col items-center gap-3">
+                  <div className="relative w-full flex flex-col items-center">
+                    <span className="text-sm font-semibold text-foreground mb-1">{data.percentage}%</span>
+                    <div 
+                      className="w-full rounded-full bg-gradient-to-t from-[#ff6b7a] to-[#ff8a97] transition-all duration-500 ease-out shadow-lg"
+                      style={{ 
+                        height: `${Math.max(heightPercentage, 5)}%`,
+                        minHeight: '40px'
+                      }}
+                    />
+                  </div>
+                  <span className="text-sm text-muted-foreground font-medium">{data.day}</span>
+                </div>
+              )
+            })}
+          </div>
+          
+          <div className="absolute left-0 top-0 bottom-12 flex flex-col justify-between pointer-events-none">
+            <span className="text-xs text-muted-foreground/60">100</span>
+            <span className="text-xs text-muted-foreground/60">80</span>
+            <span className="text-xs text-muted-foreground/60">60</span>
+            <span className="text-xs text-muted-foreground/60">40</span>
+            <span className="text-xs text-muted-foreground/60">20</span>
+          </div>
         </div>
-        <p className={`text-[10px] mt-0 flex items-center gap-0.5 ${isPositive ? 'text-emerald-600' : 'text-red-600'}`}>
-          {isPositive ? <CaretUp weight="fill" size={10} /> : <CaretDown weight="fill" size={10} />}
-          {Math.abs(percentageChange)}% vs last week
-        </p>
-      </CardContent>
+      </div>
     </Card>
   )
 }

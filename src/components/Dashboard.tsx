@@ -88,7 +88,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
   return (
     <div className={isCompact ? 'space-y-6' : 'space-y-8'}>
-      <div className={`grid lg:grid-cols-8 md:grid-cols-4 ${isCompact ? 'gap-2' : 'gap-3'}`}>
+      <div className={`grid lg:grid-cols-4 md:grid-cols-2 ${isCompact ? 'gap-2' : 'gap-3'}`}>
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
             <CardTitle className="text-xs font-medium">Today's Appointments</CardTitle>
