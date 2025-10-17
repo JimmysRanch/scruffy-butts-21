@@ -119,10 +119,32 @@ export function CustomerDetail({ customerId, onBack, onEditPet }: CustomerDetail
   const [isNewPetOpen, setIsNewPetOpen] = useState(false)
   const [isEditCustomerOpen, setIsEditCustomerOpen] = useState(false)
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null)
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
-  const [showGroomingHistory, setShowGroomingHistory] = useState(false)
   const [selectedPetForHistory, setSelectedPetForHistory] = useState<string | null>(null)
+  const [showGroomingHistory, setShowGroomingHistory] = useState(false)
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  
+  const customer = (customers || []).find(c => c.id === customerId)
+  
+  const [customerForm, setCustomerForm] = useState({
+    firstName: customer?.firstName || '',
+    lastName: customer?.lastName || '',
+    email: customer?.email || '',
+    phone: customer?.phone || '',
+    address: customer?.address || '',
+    city: customer?.city || '',
+    state: customer?.state || 'Texas',
+    zip: customer?.zip || '',
+    notes: customer?.notes || ''
+  })
+  
+  const [petForm, setPetForm] = useState({
+    name: '',
+    breed: '',
+    size: 'medium' as 'small' | 'medium' | 'large',
+    notes: '',
+    avatar: ''
+  })
   
   useEffect(() => {
     if (customers && customers.length > 0) {
@@ -159,8 +181,6 @@ export function CustomerDetail({ customerId, onBack, onEditPet }: CustomerDetail
       }
     }
   }, [customers, setCustomers])
-  
-  const customer = (customers || []).find(c => c.id === customerId)
   
   const getGroomingHistoryForPet = (petId: string): GroomingVisit[] => {
     const petAppointments = (appointments || []).filter(
@@ -203,26 +223,6 @@ export function CustomerDetail({ customerId, onBack, onEditPet }: CustomerDetail
     if (history.length === 0) return null
     return history[0].date
   }
-  
-  const [customerForm, setCustomerForm] = useState({
-    firstName: customer?.firstName || '',
-    lastName: customer?.lastName || '',
-    email: customer?.email || '',
-    phone: customer?.phone || '',
-    address: customer?.address || '',
-    city: customer?.city || '',
-    state: customer?.state || 'Texas',
-    zip: customer?.zip || '',
-    notes: customer?.notes || ''
-  })
-  
-  const [petForm, setPetForm] = useState({
-    name: '',
-    breed: '',
-    size: 'medium' as 'small' | 'medium' | 'large',
-    notes: '',
-    avatar: ''
-  })
 
   if (!customer) {
     return (
@@ -305,48 +305,46 @@ export function CustomerDetail({ customerId, onBack, onEditPet }: CustomerDetail
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file) return
-
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please upload an image file')
-      return
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('File size must be less than 5MB')
+        return
+      }
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPetForm({ ...petForm, avatar: reader.result as string })
+      }
+      reader.readAsDataURL(file)
     }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image size should be less than 5MB')
-      return
-    }
-
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      const result = event.target?.result as string
-      setPetForm({ ...petForm, avatar: result })
-    }
-    reader.readAsDataURL(file)
   }
 
-  const getSizeColor = (size: string | undefined) => {
-    if (!size) return 'secondary'
+  const getSizeColor = (size?: 'small' | 'medium' | 'large'): 'default' | 'secondary' | 'outline' => {
     switch (size) {
       case 'small':
-        return 'default'
-      case 'medium':
         return 'secondary'
+      case 'medium':
+        return 'default'
       case 'large':
         return 'outline'
       default:
-        return 'secondary'
+        return 'default'
     }
   }
 
-  const getSizeLabel = (size: string | undefined) => {
-    if (!size) return 'Unknown'
-    return size.charAt(0).toUpperCase() + size.slice(1)
+  const getSizeLabel = (size?: 'small' | 'medium' | 'large'): string => {
+    switch (size) {
+      case 'small':
+        return 'Small'
+      case 'medium':
+        return 'Medium'
+      case 'large':
+        return 'Large'
+      default:
+        return 'Medium'
+    }
   }
 
-  const customerAppointments = (appointments || []).filter(
-    apt => apt.customerId === customerId
-  )
+  const customerAppointments = (appointments || []).filter(apt => apt.customerId === customerId)
   
   const appointmentCount = customerAppointments.length
   
@@ -369,12 +367,13 @@ export function CustomerDetail({ customerId, onBack, onEditPet }: CustomerDetail
   if (sortedVisits.length >= 2) {
     const intervals: number[] = []
     for (let i = 1; i < sortedVisits.length; i++) {
-      const prevDate = new Date(sortedVisits[i - 1].date).getTime()
-      const currDate = new Date(sortedVisits[i].date).getTime()
-      const weeksBetween = (currDate - prevDate) / (1000 * 60 * 60 * 24 * 7)
-      intervals.push(weeksBetween)
+      const prevDate = new Date(sortedVisits[i - 1].date)
+      const currDate = new Date(sortedVisits[i].date)
+      const diffMs = currDate.getTime() - prevDate.getTime()
+      const diffWeeks = diffMs / (1000 * 60 * 60 * 24 * 7)
+      intervals.push(diffWeeks)
     }
-    averageWeeksBetweenVisits = intervals.reduce((sum, val) => sum + val, 0) / intervals.length
+    averageWeeksBetweenVisits = intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length
   }
   
   const recommendedCadence = averageWeeksBetweenVisits ? Math.round(averageWeeksBetweenVisits) : 6
@@ -1022,66 +1021,37 @@ export function CustomerDetail({ customerId, onBack, onEditPet }: CustomerDetail
                               <Calendar size={14} />
                               <span>{new Date(visit.date).toLocaleDateString('en-US', { 
                                 month: 'short', 
-                                day: 'numeric', 
-                                year: 'numeric' 
+                                day: 'numeric',
+                                year: 'numeric'
                               })}</span>
                             </span>
                             <span className="flex items-center space-x-1">
                               <Clock size={14} />
                               <span>{visit.duration} min</span>
                             </span>
+                            <span className="flex items-center space-x-1">
+                              <CreditCard size={14} />
+                              <span>${visit.price.toFixed(2)}</span>
+                            </span>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-lg font-bold text-foreground">${visit.price.toFixed(2)}</p>
-                          {visit.rating !== undefined && (
-                            <div className="flex items-center space-x-1 mt-1">
-                              <Star size={14} weight="fill" className="text-accent" />
-                              <span className="text-sm font-medium text-accent">{visit.rating.toFixed(1)}</span>
-                            </div>
-                          )}
-                        </div>
+                        {visit.rating && (
+                          <div className="flex items-center space-x-1">
+                            <Star size={18} weight="fill" className="text-accent" />
+                            <span className="text-foreground font-bold">{visit.rating.toFixed(1)}</span>
+                          </div>
+                        )}
                       </div>
-                      
                       {visit.notes && (
-                        <div className="bg-background/50 rounded-lg p-3 mt-3">
+                        <div className="bg-background/50 rounded-lg p-3">
                           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-                            Visit Notes
+                            Service Notes
                           </p>
                           <p className="text-sm text-foreground">{visit.notes}</p>
                         </div>
                       )}
                     </motion.div>
                   ))}
-                </div>
-              )}
-              
-              {getGroomingHistoryForPet(selectedPetForHistory).length > 0 && (
-                <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-xl">
-                  <h4 className="font-bold text-foreground mb-3">Summary</h4>
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div>
-                      <p className="text-2xl font-bold text-primary">{getGroomingHistoryForPet(selectedPetForHistory).length}</p>
-                      <p className="text-xs text-muted-foreground">Total Visits</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold text-primary">
-                        ${getGroomingHistoryForPet(selectedPetForHistory).reduce((sum, v) => sum + v.price, 0).toFixed(2)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">Total Spent</p>
-                    </div>
-                    {getPetAverageRating(selectedPetForHistory) !== undefined && (
-                      <div>
-                        <div className="flex items-center justify-center space-x-1">
-                          <Star size={18} weight="fill" className="text-accent" />
-                          <p className="text-2xl font-bold text-accent">
-                            {getPetAverageRating(selectedPetForHistory)!.toFixed(1)}
-                          </p>
-                        </div>
-                        <p className="text-xs text-muted-foreground">Avg Rating</p>
-                      </div>
-                    )}
-                  </div>
                 </div>
               )}
             </div>
