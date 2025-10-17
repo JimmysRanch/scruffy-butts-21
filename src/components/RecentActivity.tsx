@@ -1,5 +1,4 @@
 import { useKV } from '@github/spark/hooks'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Activity } from '@/lib/activity-tracker'
 import { 
@@ -57,16 +56,13 @@ export function RecentActivity() {
   const recentActivities = (activities || []).slice(0, 10)
 
   return (
-    <Card className="frosted border-white/20 @container min-w-0">
-      <CardHeader className="pb-2 pt-2 px-4">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <div className="glass-dark p-1.5 rounded-lg shrink-0">
-            <ClockCounterClockwise className="h-4 w-4" weight="fill" />
-          </div>
-          <span className="truncate">Recent Activity</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="min-w-0 px-4 pb-4 pt-0">
+    <div className="frosted border-white/20 rounded-xl overflow-hidden @container min-w-0 shadow-lg">
+      <div className="h-2 bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite]" />
+      <div className="px-4 pt-3 pb-4">
+        <div className="flex items-center gap-2 mb-3">
+          <ClockCounterClockwise className="h-5 w-5 text-primary" weight="fill" />
+          <h3 className="font-semibold text-sm text-foreground">Recent Activity</h3>
+        </div>
         {recentActivities.length === 0 ? (
           <div className="text-center text-muted-foreground py-8">
             <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
@@ -100,7 +96,7 @@ export function RecentActivity() {
             ))}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
