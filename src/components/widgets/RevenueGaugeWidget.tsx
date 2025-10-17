@@ -59,18 +59,18 @@ export function RevenueGaugeWidget() {
 
   return (
     <Card className="glass cursor-pointer hover:glass-dark border-white/20 min-w-0">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
-        <CardTitle className="text-xs font-medium truncate">Today's Revenue</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0 pt-1.5 px-2.5">
+        <CardTitle className="text-[11px] font-medium truncate">Today's Revenue</CardTitle>
       </CardHeader>
-      <CardContent className="pb-1 pt-1 px-3 min-w-0">
-        <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+      <CardContent className="pb-1 pt-0.5 px-2.5 min-w-0">
+        <div className="text-base font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
           ${Math.round(todayRevenue)}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-0 flex items-center gap-1 overflow-hidden">
+        <p className="text-[9px] text-muted-foreground mt-0 flex items-center gap-1 overflow-hidden">
           {isPositive ? (
-            <TrendUp className="h-3 w-3 text-emerald-600 shrink-0" weight="bold" />
+            <TrendUp className="h-2.5 w-2.5 text-emerald-600 shrink-0" weight="bold" />
           ) : (
-            <TrendDown className="h-3 w-3 text-red-600 shrink-0" weight="bold" />
+            <TrendDown className="h-2.5 w-2.5 text-red-600 shrink-0" weight="bold" />
           )}
           <span className={isPositive ? 'text-emerald-600' : 'text-red-600'}>
             {Math.abs(Math.round(percentChange))}%

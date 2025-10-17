@@ -58,43 +58,43 @@ export function RecentActivity() {
 
   return (
     <Card className="frosted border-white/20 @container min-w-0">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <div className="glass-dark p-2 rounded-lg shrink-0">
-            <ClockCounterClockwise className="h-5 w-5" weight="fill" />
+      <CardHeader className="pb-3 pt-4 px-4">
+        <CardTitle className="flex items-center gap-2 text-base">
+          <div className="glass-dark p-1.5 rounded-lg shrink-0">
+            <ClockCounterClockwise className="h-4 w-4" weight="fill" />
           </div>
           <span className="truncate">Recent Activity</span>
         </CardTitle>
-        <CardDescription className="truncate">Latest actions by staff members</CardDescription>
+        <CardDescription className="truncate text-xs">Latest actions by staff members</CardDescription>
       </CardHeader>
-      <CardContent className="min-w-0">
+      <CardContent className="min-w-0 px-4 pb-4">
         {recentActivities.length === 0 ? (
-          <div className="text-center text-muted-foreground py-12">
-            <div className="glass-dark w-fit mx-auto p-6 rounded-2xl mb-4">
-              <ClockCounterClockwise className="h-12 w-12 opacity-50" weight="fill" />
+          <div className="text-center text-muted-foreground py-8">
+            <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
+              <ClockCounterClockwise className="h-10 w-10 opacity-50" weight="fill" />
             </div>
-            <p>No recent activity to display</p>
+            <p className="text-sm">No recent activity to display</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {recentActivities.map((activity) => (
               <div 
                 key={activity.id} 
-                className="glass-dark rounded-xl border border-white/20 hover:glass transition-all duration-200 p-4 min-w-0"
+                className="glass-dark rounded-lg border border-white/20 hover:glass transition-all duration-200 p-3 min-w-0"
               >
-                <div className="flex items-start gap-3 min-w-0">
-                  <div className={`glass-dark p-2 rounded-lg shrink-0 ${getActivityColor(activity.type)} border`}>
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <div className={`glass-dark p-1.5 rounded-lg shrink-0 ${getActivityColor(activity.type)} border`}>
                     {getActivityIcon(activity.type)}
                   </div>
                   <div className="flex-1 min-w-0 overflow-hidden">
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <p className="font-medium text-sm truncate">{activity.action}</p>
-                      <Badge variant="outline" className="text-xs shrink-0 whitespace-nowrap">
+                    <div className="flex items-start justify-between gap-2 mb-0.5">
+                      <p className="font-medium text-xs truncate">{activity.action}</p>
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0 whitespace-nowrap">
                         {formatDistanceToNow(activity.timestamp, { addSuffix: true })}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground truncate mb-1">{activity.details}</p>
-                    <p className="text-xs text-muted-foreground">by {activity.staffName}</p>
+                    <p className="text-xs text-muted-foreground truncate mb-0.5">{activity.details}</p>
+                    <p className="text-[10px] text-muted-foreground">by {activity.staffName}</p>
                   </div>
                 </div>
               </div>

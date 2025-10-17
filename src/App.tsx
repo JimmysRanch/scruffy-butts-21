@@ -101,7 +101,7 @@ function App() {
   return (
     <div className="min-h-[100svh] md:min-h-[100dvh]">
       <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
-      <main className={`pt-24 w-full px-4 max-w-[2000px] mx-auto pb-[env(safe-area-inset-bottom)] ${isCompact ? 'py-2' : 'py-4'}`}>
+      <main className="pt-20 w-full px-3 max-w-[2000px] mx-auto pb-[env(safe-area-inset-bottom)]">
         {renderView()}
       </main>
       <Toaster />
