@@ -799,7 +799,7 @@ export function AppointmentScheduler() {
           appointments={filteredAppointments}
           onViewAppointment={handleViewAppointment}
           onEditAppointment={handleEditAppointment}
-          onDeleteAppointment={handleDeleteAppointment}
+          onDeleteAppointment={(apt) => handleDeleteAppointment(apt.id)}
           onDuplicateAppointment={handleDuplicateAppointment}
           onRebookAppointment={handleRebookAppointment}
           onStatusChange={updateAppointmentStatus}
@@ -809,228 +809,14 @@ export function AppointmentScheduler() {
           setActiveAppointmentId={setActiveAppointmentId}
         />
       )}
-
-      {viewMode === 'day' && (
-        <DayView
-          date={currentDate}
-          appointments={getAppointmentsForDate(currentDate)}
-          onViewAppointment={handleViewAppointment}
-          getStaffColor={getStaffColor}
-        />
-      )}
-
-      {viewMode === 'week' && (
-        <WeekView
-          dates={getWeekDates()}
-          getAppointmentsForDate={getAppointmentsForDate}
-          onViewAppointment={handleViewAppointment}
-          getStaffColor={getStaffColor}
-        />
-      )}
-
-      {viewMode === 'month' && (
-        <MonthView
-          dates={getMonthDates()}
-          currentDate={currentDate}
-          getAppointmentsForDate={getAppointmentsForDate}
-          onViewAppointment={handleViewAppointment}
-          getStaffColor={getStaffColor}
-        />
-      )}
-
-      <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
-          {selectedAppointment && (
-            <>
-              <SheetHeader>
-                <SheetTitle>Appointment Details</SheetTitle>
-                <SheetDescription>
-                  {format(parseISO(selectedAppointment.date), 'EEEE, MMMM d, yyyy')} at {selectedAppointment.time}
-                </SheetDescription>
-              </SheetHeader>
-              <AppointmentDetails
-                appointment={selectedAppointment}
-                customer={(customers || []).find(c => c.id === selectedAppointment.customerId)}
-                staffMember={selectedAppointment.staffId 
-                  ? (staffMembers || []).find(s => s.id === selectedAppointment.staffId) 
-                  : undefined}
-                onStatusChange={(status) => updateAppointmentStatus(selectedAppointment.id, status)}
-                onEdit={handleEditAppointment}
-                onDelete={() => handleDeleteAppointment(selectedAppointment.id)}
-                onDuplicate={handleDuplicateAppointment}
-                onRebook={handleRebookAppointment}
-                onClose={() => setIsDetailOpen(false)}
-                onCheckout={() => {
-                  setIsDetailOpen(false)
-                  setIsCheckoutOpen(true)
-                }}
-              />
-            </>
-          )}
-        </SheetContent>
-      </Sheet>
-
-      <AppointmentCheckout
-        open={isCheckoutOpen}
-        onOpenChange={setIsCheckoutOpen}
-        appointment={selectedAppointment}
-        customer={(customers || []).find(c => c.id === selectedAppointment?.customerId) || null}
-        staffMember={selectedAppointment?.staffId 
-          ? (staffMembers || []).find(s => s.id === selectedAppointment.staffId) || null 
-          : null}
-        onComplete={handleCheckoutComplete}
-        onBack={() => {
-          setIsCheckoutOpen(false)
-          setIsDetailOpen(true)
-        }}
-      />
     </div>
   )
 }
 
-function DayView({ 
-  date, 
-  appointments, 
+function ListView({
+  appointments,
   onViewAppointment,
-  getStaffColor 
-}: { 
-  date: Date;
-  appointments: Appointment[];
-  onViewAppointment: (apt: Appointment) => void;
-  getStaffColor: (staffId?: string) => string;
-}) {
-  return (
-    <div className="space-y-2">
-      {appointments.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <Calendar size={48} className="mx-auto mb-2 opacity-50" />
-          <p className="text-base">No appointments scheduled for this day</p>
-        </div>
-      ) : (
-        appointments.map((apt) => (
-          <AppointmentCard
-            key={apt.id}
-            appointment={apt}
-            onClick={() => onViewAppointment(apt)}
-            getStaffColor={getStaffColor}
-          />
-        ))
-      )}
-    </div>
-  )
-}
-
-function WeekView({ 
-  dates, 
-  getAppointmentsForDate, 
-  onViewAppointment,
-  getStaffColor 
-}: { 
-  dates: Date[];
-  getAppointmentsForDate: (date: Date) => Appointment[];
-  onViewAppointment: (apt: Appointment) => void;
-  getStaffColor: (staffId?: string) => string;
-}) {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-7 gap-1.5">
-      {dates.map((date) => {
-        const dayAppointments = getAppointmentsForDate(date)
-        const isCurrentDay = isToday(date)
-        
-        return (
-          <div key={date.toISOString()} className={cn(
-            'border rounded-lg p-1.5 min-h-[100px]',
-            isCurrentDay && 'border-primary bg-primary/5'
-          )}>
-            <div className="font-medium text-xs mb-1.5">
-              <div className={cn(isCurrentDay && 'text-primary')}>{format(date, 'EEE')}</div>
-              <div className={cn('text-xl', isCurrentDay && 'text-primary')}>{format(date, 'd')}</div>
-            </div>
-            <div className="space-y-1">
-              {dayAppointments.slice(0, 3).map((apt) => (
-                <div
-                  key={apt.id}
-                  onClick={() => onViewAppointment(apt)}
-                  className={cn(
-                    'text-xs p-1.5 rounded cursor-pointer hover:opacity-80 transition-opacity border',
-                    STATUS_COLORS[apt.status]
-                  )}
-                >
-                  <div className="font-medium truncate">{apt.petName}</div>
-                  <div className="text-[10px] opacity-75">{apt.time}</div>
-                </div>
-              ))}
-              {dayAppointments.length > 3 && (
-                <div className="text-[10px] text-muted-foreground text-center py-0.5">
-                  +{dayAppointments.length - 3} more
-                </div>
-              )}
-            </div>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-function MonthView({ 
-  dates, 
-  currentDate, 
-  getAppointmentsForDate, 
-  onViewAppointment,
-  getStaffColor 
-}: { 
-  dates: Date[];
-  currentDate: Date;
-  getAppointmentsForDate: (date: Date) => Appointment[];
-  onViewAppointment: (apt: Appointment) => void;
-  getStaffColor: (staffId?: string) => string;
-}) {
-  return (
-    <div className="grid grid-cols-7 gap-1">
-      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-        <div key={day} className="text-center text-xs font-medium text-muted-foreground p-1.5">
-          {day}
-        </div>
-      ))}
-      {dates.map((date) => {
-        const dayAppointments = getAppointmentsForDate(date)
-        const isCurrentDay = isToday(date)
-        const isCurrentMonth = date.getMonth() === currentDate.getMonth()
-        
-        return (
-          <div
-            key={date.toISOString()}
-            className={cn(
-              'border rounded p-1.5 min-h-[65px]',
-              isCurrentDay && 'border-primary bg-primary/5'
-            )}
-          >
-            <div className={cn(
-              'text-xs font-medium mb-1',
-              isCurrentDay && 'text-primary'
-            )}>
-              {format(date, 'd')}
-            </div>
-            {dayAppointments.length > 0 && (
-              <div className="space-y-0.5">
-                <div className="w-full h-1 rounded bg-blue-500" />
-                <div className="text-[10px] text-muted-foreground">
-                  {dayAppointments.length} apt{dayAppointments.length !== 1 ? 's' : ''}
-                </div>
-              </div>
-            )}
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-function ListView({ 
-  appointments, 
-  onViewAppointment, 
-  onEditAppointment, 
+  onEditAppointment,
   onDeleteAppointment,
   onDuplicateAppointment,
   onRebookAppointment,
@@ -1039,11 +825,11 @@ function ListView({
   staffMembers,
   activeAppointmentId,
   setActiveAppointmentId
-}: { 
+}: {
   appointments: Appointment[]
   onViewAppointment: (apt: Appointment) => void
   onEditAppointment: (apt: Appointment) => void
-  onDeleteAppointment: (id: string) => void
+  onDeleteAppointment: (apt: Appointment) => void
   onDuplicateAppointment: (apt: Appointment) => void
   onRebookAppointment: (apt: Appointment) => void
   onStatusChange: (id: string, status: Appointment['status']) => void
@@ -1125,7 +911,7 @@ function ListView({
                   appointment={apt}
                   onClick={() => onViewAppointment(apt)}
                   onEdit={() => onEditAppointment(apt)}
-                  onDelete={() => onDeleteAppointment(apt.id)}
+                  onDelete={() => onDeleteAppointment(apt)}
                   onDuplicate={() => onDuplicateAppointment(apt)}
                   onRebook={() => onRebookAppointment(apt)}
                   onStatusChange={(status) => onStatusChange(apt.id, status)}
@@ -1140,6 +926,72 @@ function ListView({
           </div>
         )
       })}
+    </div>
+  )
+}
+
+function DayView({
+  appointments,
+  onViewAppointment,
+  onEditAppointment,
+  onDeleteAppointment,
+  onDuplicateAppointment,
+  onRebookAppointment,
+  onStatusChange,
+  getStaffColor,
+  staffMembers,
+  activeAppointmentId,
+  setActiveAppointmentId,
+  currentDate
+}: {
+  appointments: Appointment[]
+  onViewAppointment: (apt: Appointment) => void
+  onEditAppointment: (apt: Appointment) => void
+  onDeleteAppointment: (apt: Appointment) => void
+  onDuplicateAppointment: (apt: Appointment) => void
+  onRebookAppointment: (apt: Appointment) => void
+  onStatusChange: (id: string, status: Appointment['status']) => void
+  getStaffColor: (staffId?: string) => string
+  staffMembers: StaffMember[]
+  activeAppointmentId: string | null
+  setActiveAppointmentId: (id: string | null) => void
+  currentDate: Date
+}) {
+  const dateStr = format(currentDate, 'yyyy-MM-dd')
+  const dayAppointments = appointments.filter(apt => apt.date === dateStr).sort((a, b) => {
+    const timeA = a.time || ''
+    const timeB = b.time || ''
+    return timeA.localeCompare(timeB)
+  })
+
+  if (dayAppointments.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        <CalendarBlank size={48} className="mx-auto mb-2 opacity-50" />
+        <p className="text-base">No appointments for this day</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-3 pb-8">
+      {dayAppointments.map((apt) => (
+        <AppointmentCard
+          key={apt.id}
+          appointment={apt}
+          onClick={() => onViewAppointment(apt)}
+          onEdit={() => onEditAppointment(apt)}
+          onDelete={() => onDeleteAppointment(apt)}
+          onDuplicate={() => onDuplicateAppointment(apt)}
+          onRebook={() => onRebookAppointment(apt)}
+          onStatusChange={(status) => onStatusChange(apt.id, status)}
+          getStaffColor={getStaffColor}
+          staffMembers={staffMembers}
+          showActions
+          isActive={activeAppointmentId === apt.id}
+          setActive={() => setActiveAppointmentId(apt.id)}
+        />
+      ))}
     </div>
   )
 }
