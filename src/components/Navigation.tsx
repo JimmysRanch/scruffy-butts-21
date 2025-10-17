@@ -22,8 +22,8 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
     <nav className="fixed top-0 left-0 right-0 z-50 pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
       <div className="glass-nav">
         <div className="max-w-[2000px] mx-auto px-6 py-4">
-          <div className="flex items-center gap-6 md:gap-8 min-w-0">
-            <div className="flex items-center gap-1.5 md:gap-2 flex-1 overflow-x-auto min-w-0 scrollbar-hide">
+          <div className="flex items-center justify-center gap-6 md:gap-8 min-w-0">
+            <div className="flex items-center gap-1.5 md:gap-2 overflow-x-auto min-w-0 scrollbar-hide">
               {navItems.map((item) => {
                 const isActive = currentView === item.id
                 
