@@ -58,7 +58,7 @@ export function RevenueGaugeWidget() {
   const isPositive = percentChange >= 0
 
   return (
-    <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph min-w-0">
+    <Card className="glass cursor-pointer hover:glass-dark border-white/20 min-w-0">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
         <CardTitle className="text-xs font-medium truncate">Today's Revenue</CardTitle>
       </CardHeader>
