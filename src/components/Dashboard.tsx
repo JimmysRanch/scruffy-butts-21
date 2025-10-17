@@ -144,9 +144,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           <RevenueWidget period="today" />
         </div>
         
-        <div className="lg:col-span-4 md:col-span-4">
-          <BookedWidget />
-        </div>
+        <BookedWidget />
       </div>
 
       <Card className="frosted border-white/20 liquid-shine">
