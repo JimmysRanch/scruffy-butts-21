@@ -87,13 +87,14 @@ export function RecentActivity() {
                   </div>
                   <div className="flex-1 min-w-0 overflow-hidden">
                     <div className="flex items-start justify-between gap-2 mb-1">
-                      <p className="font-semibold text-xs truncate text-white/90">{activity.action}</p>
+                      <p className="font-semibold text-xs truncate text-white/90">
+                        {activity.action} <span className="font-semibold">by {activity.staffName}</span>
+                      </p>
                       <Badge variant="outline" className="text-[10px] px-2 py-0.5 shrink-0 whitespace-nowrap font-semibold border-white/20 text-white/70">
                         {formatDistanceToNow(activity.timestamp, { addSuffix: true })}
                       </Badge>
                     </div>
-                    <p className="text-xs text-white/50 truncate mb-1 font-medium">{activity.details}</p>
-                    <p className="text-[10px] text-white/50 font-medium">by {activity.staffName}</p>
+                    <p className="text-xs text-white/50 truncate font-medium">{activity.details}</p>
                   </div>
                 </div>
               </div>
