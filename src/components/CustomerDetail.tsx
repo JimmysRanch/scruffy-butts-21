@@ -394,7 +394,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
   }
 
   const customerAppointments = (appointments || []).filter(
-    apt => apt.customerId === customerId && apt.status !== 'cancelled' && apt.status !== 'no-show'
+    apt => apt.customerId === customerId
   )
   
   const appointmentCount = customerAppointments.length
