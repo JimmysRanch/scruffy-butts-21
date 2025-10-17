@@ -374,9 +374,9 @@
   --input: rgba(31, 38, 135, 0.1);
   --ring: oklch(0.48 0.14 250);
 
-  --radius: 1rem;
+  --radius: 0.75rem;
 
-  --spacing: 0.25rem;
+  --spacing: 0.20rem;
 }
 
 .dark {

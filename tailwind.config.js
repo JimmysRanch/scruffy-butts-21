@@ -143,7 +143,4 @@ const defaultTheme = {
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: { ...defaultTheme, ...theme },
-  plugins: [
-    require('@tailwindcss/container-queries'),
-  ],
 };
