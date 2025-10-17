@@ -393,10 +393,6 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
     return size.charAt(0).toUpperCase() + size.slice(1)
   }
 
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
-  }
-
   const customerAppointments = (appointments || []).filter(
     apt => apt.customerId === customerId && apt.status !== 'cancelled' && apt.status !== 'no-show'
   )
@@ -427,12 +423,6 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             >
               <ArrowLeft size={20} />
             </Button>
-            
-            <Avatar className="w-24 h-24 border-4 border-white shadow-lg liquid-glow">
-              <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-2xl font-bold">
-                {getInitials(customer.firstName, customer.lastName)}
-              </AvatarFallback>
-            </Avatar>
 
             <div className="flex-1">
               <div className="flex items-center space-x-3 mb-2">
