@@ -910,6 +910,10 @@ export function AppointmentScheduler() {
           ? (staffMembers || []).find(s => s.id === selectedAppointment.staffId) || null 
           : null}
         onComplete={handleCheckoutComplete}
+        onBack={() => {
+          setIsCheckoutOpen(false)
+          setIsDetailOpen(true)
+        }}
       />
     </div>
   )

@@ -13,11 +13,11 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 ## Essential Features
 
 ### Appointment Scheduling
-- **Functionality**: Comprehensive appointment management with multiple calendar views (day/week/month/list), staff assignments, enhanced status workflows (scheduled→confirmed→checked-in→in-progress→ready-for-pickup→completed), pickup notification system with customer acknowledgment tracking, integrated checkout process with payment handling, search and filtering, conflict detection, reminder/confirmation toggles, duplicate appointments, and detailed appointment tracking with check-in/check-out times
-- **Purpose**: Core business function - without appointments, there's no revenue. Streamlines the complete service lifecycle from booking through payment and pickup
+- **Functionality**: Comprehensive appointment management with multiple calendar views (day/week/month/list), staff assignments, enhanced status workflows (scheduled→confirmed→checked-in→in-progress→ready-for-pickup→completed), pickup notification system with customer acknowledgment tracking, flexible integrated checkout with add-on services/products, payment handling, search and filtering, conflict detection, reminder/confirmation toggles, duplicate appointments, and detailed appointment tracking with check-in/check-out times
+- **Purpose**: Core business function - without appointments, there's no revenue. Streamlines the complete service lifecycle from booking through payment and pickup with flexible upsell opportunities
 - **Trigger**: Click "New Appointment" button, select date/time in calendar, edit existing appointment, or click ready-for-pickup appointments to initiate checkout
-- **Progression**: Select customer → Choose pet → Select service → Assign staff (optional) → Pick date/time → Add notes → Toggle reminders/confirmations → Schedule → Appointment appears in calendar → Status workflow (confirm → check in → start → ready for pickup [sends notification] → customer arrives [acknowledge] → checkout slide-out opens [process payment] → complete & mark picked up) → Track throughout lifecycle
-- **Success criteria**: Multiple view modes work smoothly, appointments persist with full details, conflict warnings appear, status transitions work correctly, pickup notifications send automatically, customer acknowledgment tracked, checkout slide-out sheet opens for ready-for-pickup appointments maintaining UI consistency, payment processing completes transaction, search/filter returns accurate results, staff color-coding displays, past appointments flagged, detailed view shows complete history including payment and pickup status
+- **Progression**: Select customer → Choose pet → Select service → Assign staff (optional) → Pick date/time → Add notes → Toggle reminders/confirmations → Schedule → Appointment appears in calendar → Status workflow (confirm → check in → start → ready for pickup [sends notification] → customer arrives [acknowledge] → flexible checkout sheet opens [review appointment service → optionally add services/products → adjust quantities → apply discounts/tips → process payment → back button available to return to appointment detail] → complete & mark picked up) → Track throughout lifecycle
+- **Success criteria**: Multiple view modes work smoothly, appointments persist with full details, conflict warnings appear, status transitions work correctly, pickup notifications send automatically, customer acknowledgment tracked, checkout sheet maintains consistent UI (no modal switches), ability to add services and retail products during checkout, original appointment service protected from removal but can add unlimited items, back button returns to appointment detail without losing data, payment processing completes transaction with all items, search/filter returns accurate results, staff color-coding displays, past appointments flagged, detailed view shows complete history including payment and pickup status
 
 ### Customer & Pet Management
 - **Functionality**: Store customer contact info, pet profiles with breed, size, grooming history, special needs, and quick checkout functionality
@@ -41,11 +41,11 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 - **Success criteria**: Real-time data display, accurate appointment counts, status badges reflect current appointment state, clickable cards navigate to relevant sections
 
 ### Point of Sale (POS)
-- **Functionality**: Process payments for services, manage cart, track transactions, support cash/card payments
-- **Purpose**: Complete the service delivery cycle by handling payments and generating sales records
-- **Trigger**: Click "POS" tab or complete service delivery
-- **Progression**: Select services → Add to cart → Choose customer (optional) → Select payment method → Process payment → Receipt generated
-- **Success criteria**: Payments process correctly, transactions persist, cart management works smoothly
+- **Functionality**: Flexible transaction processing integrated throughout the app - available as standalone POS for walk-ins and embedded in appointment checkout for seamless upselling, manage cart with services and products, track all transactions, support multiple payment methods (cash/card/cashapp/chime), generate comprehensive receipts
+- **Purpose**: Complete the service delivery cycle by handling payments and generating sales records, maximize revenue through easy add-on sales during appointment pickup
+- **Trigger**: Click "POS" tab for walk-in sales, or automatically integrated when checking out appointments (can add products/services to appointment checkout)
+- **Progression**: Standalone: Select services/products → Add to cart → Choose customer (optional) → Process payment → Receipt generated | Integrated: During appointment checkout → Click "Add Items" → Select additional services/products → Return to checkout → Complete payment with all items
+- **Success criteria**: Payments process correctly for all methods, transactions persist with complete item details, cart management works smoothly, checkout seamlessly integrates with appointments, can add retail products during service checkout, standalone POS works for walk-ins, receipts show all purchased items
 
 ### Settings Management
 - **Functionality**: Configure business information, notification preferences, appearance settings, and security options
@@ -86,12 +86,13 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 - **Status Workflows**: Only show valid status transitions based on current state and appointment timing, enforce ready-for-pickup before checkout
 - **Search & Filter**: Handle empty search results with helpful messaging, clear all filters button
 - **Payment Processing**: Handle payment failures gracefully with retry options and clear error messages, require customer arrival acknowledgment before processing payment
+- **Checkout Flow**: Stay within sheet interface (no modal switches), allow back navigation to appointment detail, protect original appointment service from deletion but allow adding unlimited items, show clear item types (service vs product), validate product stock before adding, gracefully handle empty services/products lists
 - **Cart Management**: Prevent accidental cart clearing with confirmation dialogs for significant actions
 - **Low Stock Alerts**: Prominent notifications when inventory items reach reorder levels
 - **Negative Stock**: Prevent stock levels from going negative with validation on usage transactions
 - **Date Navigation**: Smooth navigation between dates with today button for quick return to current date
 - **Dashboard Metrics**: Handle zero-state gracefully when no data exists yet
-- **Pickup Workflow**: Require customer arrival acknowledgment before enabling checkout, prevent skipping ready-for-pickup status
+- **Pickup Workflow**: Require customer arrival acknowledgment before enabling checkout, prevent skipping ready-for-pickup status, enable easy upselling during pickup with quick add services/products button
 
 ## Design Direction
 The design should feel professional yet warm with a modern **liquid glass aesthetic** - like a high-end veterinary clinic that genuinely loves animals. The interface features glassmorphic elements with frosted glass effects, backdrop blur, subtle gradients, and translucent surfaces that create depth and sophistication while maintaining the business-focused functionality. The liquid glass design provides a premium, modern feel with smooth animations and layered transparency effects.
