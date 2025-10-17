@@ -71,18 +71,28 @@ export function BookedWidget() {
   const percentageChange = avgPercentage - lastWeekAvg
 
   return (
-    <>
-      <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-2 px-3">
-        <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/90">Weekly Capacity</h3>
+    <div className="relative z-10">
+      <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+        <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Weekly Capacity</h3>
       </div>
-      <div className="pb-2 pt-1 px-3 min-w-0">
-        <div className="text-2xl font-bold bg-gradient-to-br from-accent via-primary to-accent bg-clip-text text-transparent">
+      <div className="pb-3 pt-1 px-4 min-w-0">
+        <div className="text-2xl font-bold text-white/95">
           {avgPercentage}%
         </div>
-        <p className="text-[10px] text-muted-foreground mt-0.5 truncate font-medium">
+        <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
           {percentageChange >= 0 ? '+' : ''}{percentageChange}% vs. last week
         </p>
       </div>
-    </>
+      <div className="absolute bottom-2 right-3 flex gap-0.5 items-end opacity-40">
+        {weekData.map((d, i) => (
+          <div key={i} className="w-5 flex flex-col items-center gap-0.5">
+            <div 
+              className="w-full rounded-t-sm bg-amber-400 shadow-[0_0_8px_oklch(0.60_0.18_60)]" 
+              style={{ height: `${Math.max(d.percentage * 0.18, 4)}px` }}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }

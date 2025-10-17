@@ -56,27 +56,56 @@ export function RevenueGaugeWidget() {
     : todayRevenue > 0 ? 100 : 0
   
   const isPositive = percentChange >= 0
+  const radius = 28
+  const circumference = 2 * Math.PI * radius
+  const progressPercentage = Math.min(Math.abs(percentChange), 100)
+  const strokeDashoffset = circumference - (progressPercentage / 100) * circumference
 
   return (
-    <div className="glass-widget rounded-2xl cursor-pointer min-w-0">
-      <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-2 px-3">
-        <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/90">Today's Revenue</h3>
+    <div className="relative z-10">
+      <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+        <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Today's Revenue</h3>
       </div>
-      <div className="pb-2 pt-1 px-3 min-w-0">
-        <div className="text-2xl font-bold bg-gradient-to-br from-accent via-primary to-accent bg-clip-text text-transparent">
+      <div className="pb-3 pt-1 px-4 min-w-0">
+        <div className="text-2xl font-bold text-white/95">
           ${Math.round(todayRevenue)}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 overflow-hidden">
+        <p className="text-[10px] text-white/60 mt-0.5 flex items-center gap-1 overflow-hidden">
           {isPositive ? (
-            <TrendUp className="h-3 w-3 text-emerald-400 shrink-0" weight="bold" />
+            <TrendUp className="h-3 w-3 text-emerald-400 shrink-0 drop-shadow-[0_0_4px_oklch(0.60_0.20_160)]" weight="bold" />
           ) : (
-            <TrendDown className="h-3 w-3 text-red-400 shrink-0" weight="bold" />
+            <TrendDown className="h-3 w-3 text-red-400 shrink-0 drop-shadow-[0_0_4px_oklch(0.60_0.20_20)]" weight="bold" />
           )}
           <span className={isPositive ? 'text-emerald-400' : 'text-red-400'}>
             {Math.abs(Math.round(percentChange))}%
           </span>
           <span className="truncate">vs. yesterday</span>
         </p>
+      </div>
+      <div className="absolute bottom-2 right-2 opacity-50">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle
+            cx="32"
+            cy="32"
+            r={radius}
+            fill="none"
+            stroke="oklch(0.60 0.18 160 / 0.2)"
+            strokeWidth="4"
+          />
+          <circle
+            cx="32"
+            cy="32"
+            r={radius}
+            fill="none"
+            stroke={isPositive ? "oklch(0.60 0.18 160)" : "oklch(0.60 0.18 20)"}
+            strokeWidth="4"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            transform="rotate(-90 32 32)"
+            className={isPositive ? "drop-shadow-[0_0_8px_oklch(0.60_0.18_160)]" : "drop-shadow-[0_0_8px_oklch(0.60_0.18_20)]"}
+          />
+        </svg>
       </div>
     </div>
   )

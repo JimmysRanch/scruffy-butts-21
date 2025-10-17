@@ -18,17 +18,17 @@ export function RecentActivity() {
   const getActivityIcon = (type: Activity['type']) => {
     switch (type) {
       case 'appointment':
-        return <CalendarCheck size={16} weight="fill" className="text-primary" />
+        return <CalendarCheck size={16} weight="fill" className="text-primary drop-shadow-[0_0_6px_oklch(0.60_0.20_280)]" />
       case 'customer':
-        return <User size={16} weight="fill" className="text-emerald-600" />
+        return <User size={16} weight="fill" className="text-emerald-400 drop-shadow-[0_0_6px_oklch(0.60_0.20_160)]" />
       case 'inventory':
-        return <Package size={16} weight="fill" className="text-amber-600" />
+        return <Package size={16} weight="fill" className="text-amber-400 drop-shadow-[0_0_6px_oklch(0.60_0.20_60)]" />
       case 'sale':
-        return <ShoppingCart size={16} weight="fill" className="text-blue-600" />
+        return <ShoppingCart size={16} weight="fill" className="text-blue-400 drop-shadow-[0_0_6px_oklch(0.60_0.20_240)]" />
       case 'staff':
-        return <UsersFour size={16} weight="fill" className="text-purple-600" />
+        return <UsersFour size={16} weight="fill" className="text-purple-400 drop-shadow-[0_0_6px_oklch(0.60_0.20_300)]" />
       case 'service':
-        return <Scissors size={16} weight="fill" className="text-pink-600" />
+        return <Scissors size={16} weight="fill" className="text-pink-400 drop-shadow-[0_0_6px_oklch(0.60_0.20_340)]" />
       default:
         return <ClockCounterClockwise size={16} weight="fill" />
     }
@@ -37,38 +37,40 @@ export function RecentActivity() {
   const getActivityColor = (type: Activity['type']) => {
     switch (type) {
       case 'appointment':
-        return 'bg-primary/20 text-primary border-primary/30'
+        return 'bg-primary/25 text-primary border-primary/40 shadow-[0_0_12px_oklch(0.60_0.20_280/0.3)]'
       case 'customer':
-        return 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30'
+        return 'bg-emerald-500/25 text-emerald-300 border-emerald-500/40 shadow-[0_0_12px_oklch(0.60_0.20_160/0.3)]'
       case 'inventory':
-        return 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30'
+        return 'bg-amber-500/25 text-amber-300 border-amber-500/40 shadow-[0_0_12px_oklch(0.60_0.20_60/0.3)]'
       case 'sale':
-        return 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/30'
+        return 'bg-blue-500/25 text-blue-300 border-blue-500/40 shadow-[0_0_12px_oklch(0.60_0.20_240/0.3)]'
       case 'staff':
-        return 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/30'
+        return 'bg-purple-500/25 text-purple-300 border-purple-500/40 shadow-[0_0_12px_oklch(0.60_0.20_300/0.3)]'
       case 'service':
-        return 'bg-pink-500/20 text-pink-700 dark:text-pink-300 border-pink-500/30'
+        return 'bg-pink-500/25 text-pink-300 border-pink-500/40 shadow-[0_0_12px_oklch(0.60_0.20_340/0.3)]'
       default:
-        return 'bg-gray-500/20 text-gray-700 dark:text-gray-300 border-gray-500/30'
+        return 'bg-gray-500/25 text-gray-300 border-gray-500/40'
     }
   }
 
   const recentActivities = (activities || []).slice(0, 10)
 
   return (
-    <div className="glass-card rounded-2xl overflow-hidden @container min-w-0">
-      <div className="bg-gradient-to-r from-accent via-primary to-accent/90 px-5 py-3.5 relative">
-        <div className="absolute inset-0 bg-white/5 backdrop-blur-sm"></div>
-        <div className="flex items-center gap-2.5 relative z-10">
-          <ClockCounterClockwise className="h-5 w-5 text-white" weight="duotone" />
-          <h3 className="font-bold text-sm text-white tracking-wide">Recent Activity</h3>
-        </div>
+    <>
+      <div className="pb-4 pt-5 px-5">
+        <h2 className="flex items-center gap-2.5 text-lg font-bold tracking-tight text-white/90">
+          <div className="p-2 rounded-xl bg-gradient-to-br from-accent/30 via-primary/30 to-accent/30 ring-1 ring-white/15 shrink-0 shadow-[0_0_12px_oklch(0.65_0.20_290)]">
+            <ClockCounterClockwise className="h-5 w-5 text-accent drop-shadow-[0_0_4px_oklch(0.65_0.22_310)]" weight="duotone" />
+          </div>
+          <span className="truncate">Recent Activity</span>
+        </h2>
+        <p className="truncate text-xs font-medium text-white/50 mt-1">Latest actions by staff members</p>
       </div>
-      <div className="px-5 py-5">
+      <div className="px-5 pb-5">
         {recentActivities.length === 0 ? (
-          <div className="text-center text-muted-foreground py-12">
+          <div className="text-center text-white/50 py-12">
             <div className="w-fit mx-auto p-5 rounded-2xl mb-4 bg-white/5 ring-1 ring-white/10">
-              <ClockCounterClockwise className="h-12 w-12 opacity-40 text-muted-foreground" weight="duotone" />
+              <ClockCounterClockwise className="h-12 w-12 opacity-40 text-white/50" weight="duotone" />
             </div>
             <p className="text-sm font-medium">No recent activity to display</p>
           </div>
@@ -77,7 +79,7 @@ export function RecentActivity() {
             {recentActivities.map((activity) => (
               <div 
                 key={activity.id} 
-                className="rounded-xl border border-white/10 hover:border-accent/50 hover:bg-white/5 transition-all duration-200 p-3.5 min-w-0 backdrop-blur-sm"
+                className="rounded-xl border border-white/10 hover:border-accent/50 hover:bg-white/5 transition-all duration-300 p-3.5 min-w-0 backdrop-blur-sm hover:shadow-[0_0_20px_oklch(0.65_0.22_310/0.3)]"
               >
                 <div className="flex items-start gap-3 min-w-0">
                   <div className={`p-2 rounded-lg shrink-0 ${getActivityColor(activity.type)} border ring-1 ring-current/10`}>
@@ -85,13 +87,13 @@ export function RecentActivity() {
                   </div>
                   <div className="flex-1 min-w-0 overflow-hidden">
                     <div className="flex items-start justify-between gap-2 mb-1">
-                      <p className="font-semibold text-xs truncate text-foreground">{activity.action}</p>
-                      <Badge variant="outline" className="text-[10px] px-2 py-0.5 shrink-0 whitespace-nowrap font-semibold border-white/20">
+                      <p className="font-semibold text-xs truncate text-white/90">{activity.action}</p>
+                      <Badge variant="outline" className="text-[10px] px-2 py-0.5 shrink-0 whitespace-nowrap font-semibold border-white/20 text-white/70">
                         {formatDistanceToNow(activity.timestamp, { addSuffix: true })}
                       </Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground truncate mb-1 font-medium">{activity.details}</p>
-                    <p className="text-[10px] text-muted-foreground font-medium">by {activity.staffName}</p>
+                    <p className="text-xs text-white/50 truncate mb-1 font-medium">{activity.details}</p>
+                    <p className="text-[10px] text-white/50 font-medium">by {activity.staffName}</p>
                   </div>
                 </div>
               </div>
@@ -99,6 +101,6 @@ export function RecentActivity() {
           </div>
         )}
       </div>
-    </div>
+    </>
   )
 }

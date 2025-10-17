@@ -99,9 +99,9 @@ function App() {
   const isCompact = appearance?.compactMode || false
 
   return (
-    <div className="min-h-[100svh] md:min-h-[100dvh]">
+    <div className="min-h-[100svh] md:min-h-[100dvh] relative">
       <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
-      <main className="pt-20 w-full px-3 max-w-[2000px] mx-auto pb-[env(safe-area-inset-bottom)]">
+      <main className="pt-24 w-full px-4 max-w-[2000px] mx-auto pb-8 relative z-10">
         {renderView()}
       </main>
       <Toaster />
