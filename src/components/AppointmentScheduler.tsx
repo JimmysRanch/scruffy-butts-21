@@ -795,90 +795,76 @@ export function AppointmentScheduler() {
         </div>
       </div>
 
-      <Card>
-        <CardContent className="px-4 pb-4 pt-4">{viewMode === 'day' && (
-            <DayView
-              date={currentDate}
-              appointments={getAppointmentsForDate(currentDate)}
-              onViewAppointment={handleViewAppointment}
-              getStaffColor={getStaffColor}
-            />
-          )}
+      {viewMode === 'list' && (
+        <ListView
+          appointments={filteredAppointments}
+          onViewAppointment={handleViewAppointment}
+          onEditAppointment={handleEditAppointment}
+          onDeleteAppointment={handleDeleteAppointment}
+          onDuplicateAppointment={handleDuplicateAppointment}
+          onRebookAppointment={handleRebookAppointment}
+          onStatusChange={handleStatusChange}
+          getStaffColor={getStaffColor}
+          staffMembers={staffMembers || []}
+        />
+      )}
 
-          {viewMode === 'week' && (
-            <WeekView
-              dates={getWeekDates()}
-              getAppointmentsForDate={getAppointmentsForDate}
-              onViewAppointment={handleViewAppointment}
-              getStaffColor={getStaffColor}
-            />
-          )}
+      {viewMode === 'day' && (
+        <DayView
+          date={currentDate}
+          appointments={getAppointmentsForDate(currentDate)}
+          onViewAppointment={handleViewAppointment}
+          getStaffColor={getStaffColor}
+        />
+      )}
 
-          {viewMode === 'month' && (
-            <MonthView
-              dates={getMonthDates()}
-              currentDate={currentDate}
-              getAppointmentsForDate={getAppointmentsForDate}
-              onDateClick={(date) => {
-                setSelectedDate(date)
-                setCurrentDate(date)
-                setViewMode('day')
-              }}
-            />
-          )}
+      {viewMode === 'week' && (
+        <WeekView
+          dates={getWeekDates()}
+          getAppointmentsForDate={getAppointmentsForDate}
+          onViewAppointment={handleViewAppointment}
+          getStaffColor={getStaffColor}
+        />
+      )}
 
-          {viewMode === 'list' && (
-            <ListView
-              appointments={filteredAppointments}
-              onViewAppointment={handleViewAppointment}
-              onEditAppointment={handleEditAppointment}
-              onDeleteAppointment={handleDeleteAppointment}
-              onDuplicateAppointment={handleDuplicateAppointment}
-              onRebookAppointment={handleRebookAppointment}
-              onStatusChange={updateAppointmentStatus}
-              getStaffColor={getStaffColor}
-              staffMembers={staffMembers || []}
-              activeAppointmentId={activeAppointmentId}
-              setActiveAppointmentId={setActiveAppointmentId}
-            />
-          )}
-        </CardContent>
-      </Card>
+      {viewMode === 'month' && (
+        <MonthView
+          dates={getMonthDates()}
+          currentDate={currentDate}
+          getAppointmentsForDate={getAppointmentsForDate}
+          onViewAppointment={handleViewAppointment}
+          getStaffColor={getStaffColor}
+        />
+      )}
 
       <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <SheetContent className="w-full sm:max-w-lg overflow-y-auto px-6">
+        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
           {selectedAppointment && (
-            <AppointmentDetail
-              appointment={selectedAppointment}
-              customer={(customers || []).find(c => c.id === selectedAppointment.customerId)}
-              staffMember={(staffMembers || []).find(s => s.id === selectedAppointment.staffId)}
-              onStatusChange={(status) => {
-                updateAppointmentStatus(selectedAppointment.id, status)
-                setSelectedAppointment({ ...selectedAppointment, status })
-                if (status === 'ready-for-pickup') {
+            <>
+              <SheetHeader>
+                <SheetTitle>Appointment Details</SheetTitle>
+                <SheetDescription>
+                  {format(parseISO(selectedAppointment.date), 'EEEE, MMMM d, yyyy')} at {selectedAppointment.time}
+                </SheetDescription>
+              </SheetHeader>
+              <AppointmentDetails
+                appointment={selectedAppointment}
+                customer={(customers || []).find(c => c.id === selectedAppointment.customerId)}
+                staffMember={selectedAppointment.staffId 
+                  ? (staffMembers || []).find(s => s.id === selectedAppointment.staffId) 
+                  : undefined}
+                onStatusChange={(status) => handleStatusChange(selectedAppointment.id, status)}
+                onEdit={handleEditAppointment}
+                onDelete={() => handleDeleteAppointment(selectedAppointment.id)}
+                onDuplicate={handleDuplicateAppointment}
+                onRebook={handleRebookAppointment}
+                onClose={() => setIsDetailOpen(false)}
+                onCheckout={() => {
                   setIsDetailOpen(false)
                   setIsCheckoutOpen(true)
-                }
-              }}
-              onEdit={() => {
-                setIsDetailOpen(false)
-                handleEditAppointment(selectedAppointment)
-              }}
-              onDelete={() => handleDeleteAppointment(selectedAppointment.id)}
-              onDuplicate={() => {
-                handleDuplicateAppointment(selectedAppointment)
-                setIsDetailOpen(false)
-              }}
-              onRebook={() => {
-                handleRebookAppointment(selectedAppointment)
-                setIsDetailOpen(false)
-              }}
-              onClose={() => setIsDetailOpen(false)}
-              onCheckout={() => {
-                setIsDetailOpen(false)
-                setIsCheckoutOpen(true)
-              }}
-            />
+                }}
+              />
+            </>
           )}
         </SheetContent>
       </Sheet>
