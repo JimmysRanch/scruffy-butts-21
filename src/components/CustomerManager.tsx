@@ -12,6 +12,7 @@ import { Plus, User, Phone, Heart } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { CustomerDetail } from './CustomerDetail'
 import { NewCustomer } from './NewCustomer'
+import { EditPet } from './EditPet'
 
 interface Pet {
   id: string
@@ -44,6 +45,7 @@ export function CustomerManager() {
   const [isNewPetOpen, setIsNewPetOpen] = useState(false)
   const [selectedCustomerId, setSelectedCustomerId] = useState('')
   const [viewingCustomerId, setViewingCustomerId] = useState<string | null>(null)
+  const [editingPet, setEditingPet] = useState<{ customerId: string; petId: string } | null>(null)
   
   const isCompact = appearance?.compactMode || false
   
@@ -125,12 +127,27 @@ export function CustomerManager() {
     return <NewCustomer onBack={() => setIsCreatingCustomer(false)} />
   }
 
+  // If editing a pet, show the edit pet page
+  if (editingPet) {
+    return (
+      <EditPet
+        customerId={editingPet.customerId}
+        petId={editingPet.petId}
+        onBack={() => {
+          setEditingPet(null)
+          setViewingCustomerId(editingPet.customerId)
+        }}
+      />
+    )
+  }
+
   // If viewing a specific customer, show the detail view
   if (viewingCustomerId) {
     return (
       <CustomerDetail 
         customerId={viewingCustomerId} 
-        onBack={() => setViewingCustomerId(null)} 
+        onBack={() => setViewingCustomerId(null)}
+        onEditPet={(petId) => setEditingPet({ customerId: viewingCustomerId, petId })}
       />
     )
   }

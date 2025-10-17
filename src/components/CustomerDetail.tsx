@@ -28,8 +28,7 @@ import {
   Clock,
   CreditCard,
   ChatCircleDots,
-  UploadSimple,
-  X
+  UploadSimple
 } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
@@ -109,17 +108,16 @@ interface Staff {
 interface CustomerDetailProps {
   customerId: string
   onBack: () => void
+  onEditPet?: (petId: string) => void
 }
 
-export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
+export function CustomerDetail({ customerId, onBack, onEditPet }: CustomerDetailProps) {
   const [customers, setCustomers] = useKV<Customer[]>('customers', [])
   const [appointments] = useKV<Appointment[]>('appointments', [])
   const [transactions] = useKV<Transaction[]>('transactions', [])
   const [staff] = useKV<Staff[]>('staff', [])
   const [isNewPetOpen, setIsNewPetOpen] = useState(false)
   const [isEditCustomerOpen, setIsEditCustomerOpen] = useState(false)
-  const [isEditPetOpen, setIsEditPetOpen] = useState(false)
-  const [editingPet, setEditingPet] = useState<Pet | null>(null)
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [showGroomingHistory, setShowGroomingHistory] = useState(false)
@@ -299,50 +297,10 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
     setIsNewPetOpen(false)
   }
 
-  const handleUpdatePet = () => {
-    if (!petForm.name || !petForm.breed || !editingPet) {
-      toast.error('Please fill in all required fields')
-      return
-    }
-
-    setCustomers((current) =>
-      (current || []).map(c =>
-        c.id === customerId
-          ? {
-              ...c,
-              pets: c.pets.map(pet =>
-                pet.id === editingPet.id
-                  ? {
-                      ...pet,
-                      name: petForm.name,
-                      breed: petForm.breed,
-                      size: petForm.size,
-                      notes: petForm.notes,
-                      avatar: petForm.avatar
-                    }
-                  : pet
-              )
-            }
-          : c
-      )
-    )
-
-    toast.success('Pet updated successfully!')
-    setPetForm({ name: '', breed: '', size: 'medium', notes: '', avatar: '' })
-    setEditingPet(null)
-    setIsEditPetOpen(false)
-  }
-
   const handleEditPet = (pet: Pet) => {
-    setEditingPet(pet)
-    setPetForm({
-      name: pet.name,
-      breed: pet.breed,
-      size: pet.size || 'medium',
-      notes: pet.notes || '',
-      avatar: pet.avatar || ''
-    })
-    setIsEditPetOpen(true)
+    if (onEditPet) {
+      onEditPet(pet.id)
+    }
   }
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -365,13 +323,6 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
       setPetForm({ ...petForm, avatar: result })
     }
     reader.readAsDataURL(file)
-  }
-
-  const handleRemoveAvatar = () => {
-    setPetForm({ ...petForm, avatar: '' })
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
   }
 
   const getSizeColor = (size: string | undefined) => {
@@ -1020,123 +971,6 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
         </motion.div>
       </div>
       </div>
-
-      <Dialog open={isEditPetOpen} onOpenChange={(open) => {
-        if (!open && fileInputRef.current) {
-          fileInputRef.current.value = ''
-        }
-        setIsEditPetOpen(open)
-      }}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Edit Pet Information</DialogTitle>
-            <DialogDescription>
-              Update your pet's information.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="edit-pet-avatar">Pet Photo</Label>
-              <div className="mt-2 flex items-center gap-4">
-                {petForm.avatar ? (
-                  <div className="relative">
-                    <Avatar className="w-24 h-24 border-2 border-border">
-                      <AvatarImage src={petForm.avatar} alt="Pet avatar" />
-                      <AvatarFallback>
-                        <Dog size={32} weight="fill" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <Button
-                      size="icon"
-                      variant="destructive"
-                      className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-                      onClick={handleRemoveAvatar}
-                    >
-                      <X size={14} />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="w-24 h-24 border-2 border-dashed border-border rounded-lg flex items-center justify-center bg-muted/50">
-                    <Dog size={32} className="text-muted-foreground" />
-                  </div>
-                )}
-                <div className="flex-1">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    id="edit-pet-avatar"
-                    accept="image/*"
-                    onChange={handleAvatarUpload}
-                    className="hidden"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-full"
-                  >
-                    <UploadSimple size={16} className="mr-2" />
-                    {petForm.avatar ? 'Change Photo' : 'Upload Photo'}
-                  </Button>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Max 5MB, JPG or PNG
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="edit-pet-name">Pet Name</Label>
-              <Input
-                id="edit-pet-name"
-                value={petForm.name}
-                onChange={(e) => setPetForm({ ...petForm, name: e.target.value })}
-                placeholder="Enter pet name"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="edit-pet-breed">Breed</Label>
-              <Input
-                id="edit-pet-breed"
-                value={petForm.breed}
-                onChange={(e) => setPetForm({ ...petForm, breed: e.target.value })}
-                placeholder="Enter breed"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="edit-pet-size">Size</Label>
-              <Select value={petForm.size} onValueChange={(value: 'small' | 'medium' | 'large') => setPetForm({ ...petForm, size: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="small">Small</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="large">Large</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="edit-pet-notes">Notes</Label>
-              <Textarea
-                id="edit-pet-notes"
-                value={petForm.notes}
-                onChange={(e) => setPetForm({ ...petForm, notes: e.target.value })}
-                placeholder="Any special care instructions or notes..."
-              />
-            </div>
-
-            <Button onClick={handleUpdatePet} className="w-full">
-              Update Pet
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       <QuickCheckout
         open={isCheckoutOpen}
