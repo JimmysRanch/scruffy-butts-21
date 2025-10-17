@@ -58,7 +58,7 @@ export function RecentActivity() {
 
   return (
     <Card className="frosted border-white/20 @container min-w-0">
-      <CardHeader className="pb-2 pt-3 px-4">
+      <CardHeader className="pb-2 pt-2 px-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <div className="glass-dark p-1.5 rounded-lg shrink-0">
             <ClockCounterClockwise className="h-4 w-4" weight="fill" />
@@ -66,7 +66,7 @@ export function RecentActivity() {
           <span className="truncate">Recent Activity</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="min-w-0 px-4 pb-4">
+      <CardContent className="min-w-0 px-4 pb-4 pt-0">
         {recentActivities.length === 0 ? (
           <div className="text-center text-muted-foreground py-8">
             <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
