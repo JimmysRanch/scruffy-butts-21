@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Plus, User, Phone, Heart } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { CustomerDetail } from './CustomerDetail'
+import { NewCustomer } from './NewCustomer'
 
 interface Pet {
   id: string
@@ -39,7 +40,7 @@ interface Customer {
 export function CustomerManager() {
   const [customers, setCustomers] = useKV<Customer[]>('customers', [])
   const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
-  const [isNewCustomerOpen, setIsNewCustomerOpen] = useState(false)
+  const [isCreatingCustomer, setIsCreatingCustomer] = useState(false)
   const [isNewPetOpen, setIsNewPetOpen] = useState(false)
   const [selectedCustomerId, setSelectedCustomerId] = useState('')
   const [viewingCustomerId, setViewingCustomerId] = useState<string | null>(null)
@@ -70,47 +71,12 @@ export function CustomerManager() {
     }
   }, [customers, setCustomers])
   
-  const [customerForm, setCustomerForm] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: ''
-  })
-  
   const [petForm, setPetForm] = useState({
     name: '',
     breed: '',
     size: 'medium' as 'small' | 'medium' | 'large',
     notes: ''
   })
-
-  const handleCreateCustomer = () => {
-    if (!customerForm.firstName || !customerForm.lastName || !customerForm.email || !customerForm.phone) {
-      toast.error('Please fill in all required fields')
-      return
-    }
-
-    const newCustomer: Customer = {
-      id: `customer-${Date.now()}`,
-      firstName: customerForm.firstName,
-      lastName: customerForm.lastName,
-      email: customerForm.email,
-      phone: customerForm.phone,
-      pets: [],
-      createdAt: new Date().toISOString(),
-      address: '',
-      city: '',
-      state: 'Texas',
-      zip: '',
-      notes: ''
-    }
-
-    setCustomers((current) => [...(current || []), newCustomer])
-    toast.success('Client added successfully!')
-    
-    setCustomerForm({ firstName: '', lastName: '', email: '', phone: '' })
-    setIsNewCustomerOpen(false)
-  }
 
   const handleAddPet = () => {
     if (!petForm.name || !petForm.breed || !selectedCustomerId) {
@@ -152,6 +118,11 @@ export function CustomerManager() {
       default:
         return 'secondary'
     }
+  }
+
+  // If creating a new customer, show the creation page
+  if (isCreatingCustomer) {
+    return <NewCustomer onBack={() => setIsCreatingCustomer(false)} />
   }
 
   // If viewing a specific customer, show the detail view
@@ -258,72 +229,13 @@ export function CustomerManager() {
             </DialogContent>
           </Dialog>
 
-          <Dialog open={isNewCustomerOpen} onOpenChange={setIsNewCustomerOpen}>
-            <DialogTrigger asChild>
-              <Button className="flex items-center space-x-2 h-8 text-xs">
-                <Plus size={16} />
-                <span>New Client</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Add New Client</DialogTitle>
-                <DialogDescription>
-                  Create a new client profile for your grooming business.
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="customer-first-name">First Name</Label>
-                    <Input
-                      id="customer-first-name"
-                      value={customerForm.firstName}
-                      onChange={(e) => setCustomerForm({ ...customerForm, firstName: e.target.value })}
-                      placeholder="Enter first name"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="customer-last-name">Last Name</Label>
-                    <Input
-                      id="customer-last-name"
-                      value={customerForm.lastName}
-                      onChange={(e) => setCustomerForm({ ...customerForm, lastName: e.target.value })}
-                      placeholder="Enter last name"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="customer-email">Email</Label>
-                  <Input
-                    id="customer-email"
-                    type="email"
-                    value={customerForm.email}
-                    onChange={(e) => setCustomerForm({ ...customerForm, email: e.target.value })}
-                    placeholder="Enter email address"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="customer-phone">Phone</Label>
-                  <Input
-                    id="customer-phone"
-                    type="tel"
-                    value={customerForm.phone}
-                    onChange={(e) => setCustomerForm({ ...customerForm, phone: e.target.value })}
-                    placeholder="Enter phone number"
-                  />
-                </div>
-
-                <Button onClick={handleCreateCustomer} className="w-full">
-                  Add Client
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            className="flex items-center space-x-2 h-8 text-xs"
+            onClick={() => setIsCreatingCustomer(true)}
+          >
+            <Plus size={16} />
+            <span>New Client</span>
+          </Button>
         </div>
       </div>
 
@@ -337,7 +249,7 @@ export function CustomerManager() {
             <p className="text-white/50 mb-6 text-sm">
               Add your first client to get started with managing your grooming business
             </p>
-            <Button onClick={() => setIsNewCustomerOpen(true)}>
+            <Button onClick={() => setIsCreatingCustomer(true)}>
               Add First Client
             </Button>
           </div>
