@@ -6,7 +6,7 @@ import {
   CalendarCheck, 
   User, 
   Package, 
-  ShoppingCart, 
+  CurrencyDollar, 
   UsersFour,
   Scissors
 } from '@phosphor-icons/react'
@@ -20,11 +20,11 @@ export function RecentActivity() {
       case 'appointment':
         return <CalendarCheck size={16} weight="fill" className="text-primary drop-shadow-[0_0_6px_oklch(0.60_0.20_280)]" />
       case 'customer':
-        return <User size={16} weight="fill" className="text-emerald-400 drop-shadow-[0_0_6px_oklch(0.60_0.20_160)]" />
+        return <User size={16} weight="fill" className="text-cyan-400 drop-shadow-[0_0_6px_oklch(0.60_0.20_200)]" />
       case 'inventory':
         return <Package size={16} weight="fill" className="text-amber-400 drop-shadow-[0_0_6px_oklch(0.60_0.20_60)]" />
       case 'sale':
-        return <ShoppingCart size={16} weight="fill" className="text-blue-400 drop-shadow-[0_0_6px_oklch(0.60_0.20_240)]" />
+        return <CurrencyDollar size={16} weight="fill" className="text-emerald-400 drop-shadow-[0_0_6px_oklch(0.60_0.20_160)]" />
       case 'staff':
         return <UsersFour size={16} weight="fill" className="text-purple-400 drop-shadow-[0_0_6px_oklch(0.60_0.20_300)]" />
       case 'service':
@@ -39,11 +39,11 @@ export function RecentActivity() {
       case 'appointment':
         return 'bg-primary/25 text-primary border-primary/40 shadow-[0_0_12px_oklch(0.60_0.20_280/0.3)]'
       case 'customer':
-        return 'bg-emerald-500/25 text-emerald-300 border-emerald-500/40 shadow-[0_0_12px_oklch(0.60_0.20_160/0.3)]'
+        return 'bg-cyan-500/25 text-cyan-300 border-cyan-500/40 shadow-[0_0_12px_oklch(0.60_0.20_200/0.3)]'
       case 'inventory':
         return 'bg-amber-500/25 text-amber-300 border-amber-500/40 shadow-[0_0_12px_oklch(0.60_0.20_60/0.3)]'
       case 'sale':
-        return 'bg-blue-500/25 text-blue-300 border-blue-500/40 shadow-[0_0_12px_oklch(0.60_0.20_240/0.3)]'
+        return 'bg-emerald-500/25 text-emerald-300 border-emerald-500/40 shadow-[0_0_12px_oklch(0.60_0.20_160/0.3)]'
       case 'staff':
         return 'bg-purple-500/25 text-purple-300 border-purple-500/40 shadow-[0_0_12px_oklch(0.60_0.20_300/0.3)]'
       case 'service':
