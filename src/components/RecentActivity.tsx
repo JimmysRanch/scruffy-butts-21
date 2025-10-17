@@ -58,7 +58,7 @@ export function RecentActivity() {
 
   return (
     <Card className="frosted border-white/20 @container min-w-0">
-      <CardHeader className="pb-3 pt-4 px-4">
+      <CardHeader className="pb-2 pt-3 px-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <div className="glass-dark p-1.5 rounded-lg shrink-0">
             <ClockCounterClockwise className="h-4 w-4" weight="fill" />
