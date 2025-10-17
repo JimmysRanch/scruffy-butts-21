@@ -88,76 +88,76 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
   return (
     <div className={isCompact ? 'space-y-6' : 'space-y-8'}>
-      <div className={`grid lg:grid-cols-5 md:grid-cols-2 ${isCompact ? 'gap-2' : 'gap-3'}`}>
-        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20" onClick={() => onNavigate('appointments')}>
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 [grid-auto-rows:minmax(5rem,auto)] ${isCompact ? 'gap-2' : 'gap-3'}`}>
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 min-w-0" onClick={() => onNavigate('appointments')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
-            <CardTitle className="text-xs font-medium">Today's Appointments</CardTitle>
-            <div className="glass-dark p-1 rounded-lg">
+            <CardTitle className="text-xs font-medium truncate">Today's Appointments</CardTitle>
+            <div className="glass-dark p-1 rounded-lg shrink-0">
               <Calendar className="h-3 w-3 text-primary" weight="fill" />
             </div>
           </CardHeader>
-          <CardContent className="pb-1 pt-1 px-3">
+          <CardContent className="pb-1 pt-1 px-3 min-w-0">
             <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
               {todayAppointments.length}
             </div>
-            <p className="text-[10px] text-muted-foreground mt-0">
+            <p className="text-[10px] text-muted-foreground mt-0 truncate">
               {todayAppointments.length === 1 ? 'appointment' : 'appointments'} scheduled
             </p>
           </CardContent>
         </Card>
 
-        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20" onClick={() => onNavigate('customers')}>
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 min-w-0" onClick={() => onNavigate('customers')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
-            <CardTitle className="text-xs font-medium">Total Customers</CardTitle>
-            <div className="glass-dark p-1 rounded-lg">
+            <CardTitle className="text-xs font-medium truncate">Total Customers</CardTitle>
+            <div className="glass-dark p-1 rounded-lg shrink-0">
               <Users className="h-3 w-3 text-accent" weight="fill" />
             </div>
           </CardHeader>
-          <CardContent className="pb-1 pt-1 px-3">
+          <CardContent className="pb-1 pt-1 px-3 min-w-0">
             <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
               {customers?.length || 0}
             </div>
-            <p className="text-[10px] text-muted-foreground mt-0">
+            <p className="text-[10px] text-muted-foreground mt-0 truncate">
               Active {customers?.length === 1 ? 'customer' : 'customers'}
             </p>
           </CardContent>
         </Card>
 
-        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20" onClick={() => onNavigate('appointments')}>
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 min-w-0" onClick={() => onNavigate('appointments')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
-            <CardTitle className="text-xs font-medium">This Week</CardTitle>
-            <div className="glass-dark p-1 rounded-lg">
+            <CardTitle className="text-xs font-medium truncate">This Week</CardTitle>
+            <div className="glass-dark p-1 rounded-lg shrink-0">
               <ChartBar className="h-3 w-3 text-primary" weight="fill" />
             </div>
           </CardHeader>
-          <CardContent className="pb-1 pt-1 px-3">
+          <CardContent className="pb-1 pt-1 px-3 min-w-0">
             <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
               {weekAppointments.length}
             </div>
-            <p className="text-[10px] text-muted-foreground mt-0">
+            <p className="text-[10px] text-muted-foreground mt-0 truncate">
               {weekAppointments.length === 1 ? 'appointment' : 'appointments'} this week
             </p>
           </CardContent>
         </Card>
         
-        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20">
+        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 min-w-0">
           <BookedWidget />
         </Card>
 
         <RevenueGaugeWidget />
       </div>
 
-      <Card className="frosted border-white/20">
+      <Card className="frosted border-white/20 @container min-w-0">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <div className="glass-dark p-2 rounded-lg">
+            <div className="glass-dark p-2 rounded-lg shrink-0">
               <Calendar className="h-5 w-5" weight="fill" />
             </div>
-            Today's Schedule
+            <span className="truncate">Today's Schedule</span>
           </CardTitle>
-          <CardDescription>Appointments scheduled for today</CardDescription>
+          <CardDescription className="truncate">Appointments scheduled for today</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="min-w-0">
           {todayAppointments.length === 0 ? (
             <div className="text-center text-muted-foreground py-12">
               <div className="glass-dark w-fit mx-auto p-6 rounded-2xl mb-4">
@@ -168,19 +168,19 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           ) : (
             <div className="space-y-3">
               {todayAppointments.slice(0, 6).map((apt) => (
-                <div key={apt.id} className="glass-dark rounded-xl border border-white/20 hover:glass transition-all duration-200 p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2 font-medium min-w-[70px] glass-dark px-3 py-1.5 rounded-lg">
+                <div key={apt.id} className="glass-dark rounded-xl border border-white/20 hover:glass transition-all duration-200 p-4 min-w-0">
+                  <div className="flex flex-col @[480px]:flex-row @[480px]:items-center justify-between gap-3 min-w-0">
+                    <div className="flex items-center gap-4 min-w-0 overflow-hidden">
+                      <div className="flex items-center gap-2 font-medium min-w-[70px] glass-dark px-3 py-1.5 rounded-lg shrink-0">
                         <Clock size={16} weight="fill" />
                         {apt.time}
                       </div>
-                      <div>
-                        <div className="font-medium">{getPetName(apt.petId)}</div>
-                        <div className="text-muted-foreground text-sm">{getCustomerName(apt.customerId)}</div>
+                      <div className="min-w-0 overflow-hidden">
+                        <div className="font-medium truncate">{getPetName(apt.petId)}</div>
+                        <div className="text-muted-foreground text-sm truncate">{getCustomerName(apt.customerId)}</div>
                       </div>
                     </div>
-                    <Badge className={`${getStatusColor(apt.status)} backdrop-blur-sm`}>
+                    <Badge className={`${getStatusColor(apt.status)} backdrop-blur-sm shrink-0 self-start @[480px]:self-center`}>
                       {apt.status}
                     </Badge>
                   </div>

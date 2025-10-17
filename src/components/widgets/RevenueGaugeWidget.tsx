@@ -58,27 +58,27 @@ export function RevenueGaugeWidget() {
   const isPositive = percentChange >= 0
 
   return (
-    <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph">
+    <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph min-w-0">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
-        <CardTitle className="text-xs font-medium">Today's Revenue</CardTitle>
-        <div className="glass-dark p-1 rounded-lg">
+        <CardTitle className="text-xs font-medium truncate">Today's Revenue</CardTitle>
+        <div className="glass-dark p-1 rounded-lg shrink-0">
           <CurrencyDollar className="h-3 w-3 text-primary" weight="fill" />
         </div>
       </CardHeader>
-      <CardContent className="pb-1 pt-1 px-3">
+      <CardContent className="pb-1 pt-1 px-3 min-w-0">
         <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
           ${Math.round(todayRevenue)}
         </div>
-        <p className="text-[10px] text-muted-foreground mt-0 flex items-center gap-1">
+        <p className="text-[10px] text-muted-foreground mt-0 flex items-center gap-1 overflow-hidden">
           {isPositive ? (
-            <TrendUp className="h-3 w-3 text-emerald-600" weight="bold" />
+            <TrendUp className="h-3 w-3 text-emerald-600 shrink-0" weight="bold" />
           ) : (
-            <TrendDown className="h-3 w-3 text-red-600" weight="bold" />
+            <TrendDown className="h-3 w-3 text-red-600 shrink-0" weight="bold" />
           )}
           <span className={isPositive ? 'text-emerald-600' : 'text-red-600'}>
             {Math.abs(Math.round(percentChange))}%
           </span>
-          <span>vs yesterday</span>
+          <span className="truncate">vs yesterday</span>
         </p>
       </CardContent>
     </Card>

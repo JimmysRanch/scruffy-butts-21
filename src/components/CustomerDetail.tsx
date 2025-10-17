@@ -441,46 +441,46 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
       transition={{ duration: 0.4 }}
       className="space-y-6"
     >
-      <div className="frosted rounded-2xl p-6 shadow-lg">
-        <div className="flex items-start justify-between">
-          <div className="flex items-start space-x-6 flex-1">
+      <div className="frosted rounded-2xl p-4 md:p-6 shadow-lg @container">
+        <div className="flex flex-col @[800px]:flex-row items-start justify-between gap-4">
+          <div className="flex items-start space-x-3 @[600px]:space-x-6 flex-1 min-w-0 w-full">
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={onBack}
-              className="liquid-button -ml-2 mt-1"
+              className="liquid-button -ml-2 mt-1 shrink-0"
             >
               <ArrowLeft size={20} />
             </Button>
 
-            <div className="flex-1">
-              <div className="flex items-start justify-between gap-6">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h1 className="text-4xl font-bold text-foreground">
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-col @[600px]:flex-row @[600px]:items-start justify-between gap-4 @[600px]:gap-6">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col @[400px]:flex-row @[400px]:items-center space-y-2 @[400px]:space-y-0 @[400px]:space-x-3 mb-2">
+                    <h1 className="text-2xl @[600px]:text-4xl font-bold text-foreground truncate">
                       {customer.firstName} {customer.lastName}
                     </h1>
-                    <Badge className="bg-accent/20 text-accent border-accent/30 liquid-pulse">
+                    <Badge className="bg-accent/20 text-accent border-accent/30 liquid-pulse self-start @[400px]:self-center whitespace-nowrap">
                       <Star size={12} className="mr-1" weight="fill" />
                       VIP Client
                     </Badge>
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                    <span className="flex items-center space-x-1">
-                      <Calendar size={14} />
-                      <span>Client since {new Date(customer.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+                    <span className="flex items-center space-x-1 min-w-0 overflow-hidden">
+                      <Calendar size={14} className="shrink-0" />
+                      <span className="truncate">Client since {new Date(customer.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
                     </span>
                   </div>
                 </div>
                 
-                <div className="flex flex-col gap-1.5 text-sm text-muted-foreground">
-                  <span className="flex items-center space-x-2">
-                    <Phone size={14} />
-                    <span>{customer.phone}</span>
+                <div className="flex flex-col gap-1.5 text-sm text-muted-foreground min-w-0 @[600px]:min-w-[200px]">
+                  <span className="flex items-center space-x-2 min-w-0">
+                    <Phone size={14} className="shrink-0" />
+                    <span className="truncate">{customer.phone}</span>
                   </span>
-                  <span className="flex items-center space-x-2">
-                    <Envelope size={14} />
-                    <span className="truncate max-w-[200px]">{customer.email}</span>
+                  <span className="flex items-center space-x-2 min-w-0">
+                    <Envelope size={14} className="shrink-0" />
+                    <span className="truncate">{customer.email}</span>
                   </span>
                 </div>
               </div>
@@ -488,16 +488,16 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
               {(customer.address || customer.notes) && (
                 <>
                   <Separator className="my-4" />
-                  <div className="flex gap-6 text-sm">
+                  <div className="flex flex-col @[600px]:flex-row gap-3 @[600px]:gap-6 text-sm min-w-0">
                     {customer.address && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <MapPin size={14} />
-                        <span>{customer.address}</span>
+                      <div className="flex items-center gap-2 text-muted-foreground min-w-0">
+                        <MapPin size={14} className="shrink-0" />
+                        <span className="truncate">{customer.address}</span>
                       </div>
                     )}
                     {customer.notes && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <NotePencil size={14} />
+                      <div className="flex items-center gap-2 text-muted-foreground min-w-0">
+                        <NotePencil size={14} className="shrink-0" />
                         <span className="truncate">{customer.notes}</span>
                       </div>
                     )}
@@ -524,7 +524,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             setIsEditCustomerOpen(open)
           }}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="liquid-button">
+              <Button variant="outline" className="liquid-button shrink-0 self-start @[800px]:self-auto">
                 <Pencil size={16} className="mr-2" />
                 Edit Client
               </Button>
@@ -611,23 +611,23 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 [grid-auto-rows:minmax(8rem,auto)]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="frosted rounded-2xl p-5 shadow-lg"
+          className="frosted rounded-2xl p-5 shadow-lg @container min-w-0"
         >
           <div className="mb-3">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Lifetime Spend</p>
           </div>
-          <div className="flex items-end justify-between">
-            <div>
+          <div className="flex items-end justify-between min-w-0">
+            <div className="min-w-0 overflow-hidden">
               <div className="flex items-baseline space-x-2 mb-1">
-                <CreditCard size={20} className="text-accent" weight="fill" />
-                <p className="text-3xl font-bold text-foreground">${lifetimeValue.toFixed(2)}</p>
+                <CreditCard size={20} className="text-accent shrink-0" weight="fill" />
+                <p className="text-3xl font-bold text-foreground truncate">${lifetimeValue.toFixed(2)}</p>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground truncate">
                 Total revenue from client
               </p>
             </div>
@@ -638,18 +638,18 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="frosted rounded-2xl p-5 shadow-lg"
+          className="frosted rounded-2xl p-5 shadow-lg @container min-w-0"
         >
           <div className="mb-3">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Visits</p>
           </div>
-          <div className="flex items-end justify-between">
-            <div>
+          <div className="flex items-end justify-between min-w-0">
+            <div className="min-w-0 overflow-hidden">
               <div className="flex items-baseline space-x-2 mb-1">
-                <Scissors size={20} className="text-primary" weight="fill" />
+                <Scissors size={20} className="text-primary shrink-0" weight="fill" />
                 <p className="text-3xl font-bold text-foreground">{completedAppointments.length}</p>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground truncate">
                 Completed appointments
               </p>
             </div>
@@ -660,18 +660,18 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="frosted rounded-2xl p-5 shadow-lg"
+          className="frosted rounded-2xl p-5 shadow-lg @container min-w-0"
         >
           <div className="mb-3">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Average Per Visit</p>
           </div>
-          <div className="flex items-end justify-between">
-            <div>
+          <div className="flex items-end justify-between min-w-0">
+            <div className="min-w-0 overflow-hidden">
               <div className="flex items-baseline space-x-2 mb-1">
-                <CreditCard size={20} className="text-accent" weight="fill" />
-                <p className="text-3xl font-bold text-foreground">${averagePerVisit.toFixed(2)}</p>
+                <CreditCard size={20} className="text-accent shrink-0" weight="fill" />
+                <p className="text-3xl font-bold text-foreground truncate">${averagePerVisit.toFixed(2)}</p>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground truncate">
                 Average transaction value
               </p>
             </div>
@@ -682,19 +682,19 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="frosted rounded-2xl p-5 shadow-lg"
+          className="frosted rounded-2xl p-5 shadow-lg @container min-w-0"
         >
           <div className="mb-3">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Recommended Cadence</p>
           </div>
-          <div className="flex items-end justify-between">
-            <div>
+          <div className="flex items-end justify-between min-w-0">
+            <div className="min-w-0 overflow-hidden">
               <div className="flex items-baseline space-x-2 mb-1">
-                <Calendar size={20} className="text-primary" weight="fill" />
+                <Calendar size={20} className="text-primary shrink-0" weight="fill" />
                 <p className="text-3xl font-bold text-foreground">{recommendedCadence}</p>
-                <p className="text-base font-medium text-muted-foreground">week{recommendedCadence !== 1 ? 's' : ''}</p>
+                <p className="text-base font-medium text-muted-foreground whitespace-nowrap">week{recommendedCadence !== 1 ? 's' : ''}</p>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground truncate">
                 {averageWeeksBetweenVisits 
                   ? `Actual avg: ${averageWeeksBetweenVisits.toFixed(1)} weeks`
                   : 'Based on industry standards'
@@ -710,15 +710,15 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="frosted rounded-2xl p-6 shadow-lg"
+          className="frosted rounded-2xl p-6 shadow-lg @container min-w-0"
         >
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex flex-col @[600px]:flex-row @[600px]:items-center justify-between gap-4 min-w-0">
+            <div className="min-w-0 overflow-hidden">
               <h3 className="text-lg font-bold text-foreground mb-2">Last Visit</h3>
-              <div className="flex items-center space-x-4 text-sm">
+              <div className="flex flex-col @[400px]:flex-row @[400px]:items-center @[400px]:space-x-4 gap-2 @[400px]:gap-0 text-sm">
                 <span className="flex items-center space-x-2">
-                  <Calendar size={16} className="text-muted-foreground" />
-                  <span className="text-foreground">
+                  <Calendar size={16} className="text-muted-foreground shrink-0" />
+                  <span className="text-foreground truncate">
                     {new Date(lastVisit.date).toLocaleDateString('en-US', { 
                       month: 'long', 
                       day: 'numeric', 
@@ -727,22 +727,22 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                   </span>
                 </span>
                 <span className="flex items-center space-x-2">
-                  <Scissors size={16} className="text-muted-foreground" />
-                  <span className="text-foreground">{lastVisit.service}</span>
+                  <Scissors size={16} className="text-muted-foreground shrink-0" />
+                  <span className="text-foreground truncate">{lastVisit.service}</span>
                 </span>
                 <span className="flex items-center space-x-2">
-                  <CreditCard size={16} className="text-muted-foreground" />
+                  <CreditCard size={16} className="text-muted-foreground shrink-0" />
                   <span className="text-foreground">${lastVisit.price.toFixed(2)}</span>
                 </span>
               </div>
             </div>
             {nextAppointment && (
-              <div className="text-right">
+              <div className="text-left @[600px]:text-right shrink-0">
                 <p className="text-xs text-muted-foreground mb-1">Next Appointment</p>
                 <p className="text-lg font-bold text-primary">
                   {new Date(nextAppointment.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground truncate">
                   {nextAppointment.time} - {nextAppointment.service}
                 </p>
               </div>
@@ -751,18 +751,19 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
         </motion.div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 min-w-0">
+        <div className="lg:col-span-1 min-w-0">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
+            className="min-w-0"
           >
-            <div className="frosted rounded-2xl p-6 shadow-lg h-full">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-foreground flex items-center space-x-2">
-                  <Dog size={24} className="text-primary" weight="fill" />
-                  <span>Pets</span>
+            <div className="frosted rounded-2xl p-6 shadow-lg h-full min-w-0">
+              <div className="flex items-center justify-between mb-6 min-w-0">
+                <h2 className="text-2xl font-bold text-foreground flex items-center space-x-2 min-w-0">
+                  <Dog size={24} className="text-primary shrink-0" weight="fill" />
+                  <span className="truncate">Pets</span>
                 </h2>
                 <Dialog open={isNewPetOpen} onOpenChange={(open) => {
                   if (!open && fileInputRef.current) {

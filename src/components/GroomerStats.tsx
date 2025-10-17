@@ -321,64 +321,64 @@ export function GroomerStats() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
-        <Card className="frosted p-3">
-          <div className="flex items-center gap-2 mb-1">
-            <CurrencyDollar className="w-5 h-5 text-primary" weight="duotone" />
-            <p className="text-xs font-medium text-muted-foreground">Revenue</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-2 [grid-auto-rows:minmax(5rem,auto)]">
+        <Card className="frosted p-3 @container min-w-0">
+          <div className="flex items-center gap-2 mb-1 min-w-0">
+            <CurrencyDollar className="w-5 h-5 text-primary shrink-0" weight="duotone" />
+            <p className="text-xs font-medium text-muted-foreground truncate">Revenue</p>
           </div>
-          <p className="text-xl font-bold">{formatCurrency(totalMetrics.netSales)}</p>
+          <p className="text-xl font-bold truncate">{formatCurrency(totalMetrics.netSales)}</p>
         </Card>
 
-        <Card className="frosted p-3">
-          <div className="flex items-center gap-2 mb-1">
-            <Scissors className="w-5 h-5 text-accent" weight="duotone" />
-            <p className="text-xs font-medium text-muted-foreground">Avg Ticket</p>
+        <Card className="frosted p-3 @container min-w-0">
+          <div className="flex items-center gap-2 mb-1 min-w-0">
+            <Scissors className="w-5 h-5 text-accent shrink-0" weight="duotone" />
+            <p className="text-xs font-medium text-muted-foreground truncate">Avg Ticket</p>
           </div>
-          <p className="text-xl font-bold">{formatCurrency(totalMetrics.avgTicket)}</p>
+          <p className="text-xl font-bold truncate">{formatCurrency(totalMetrics.avgTicket)}</p>
         </Card>
 
-        <Card className="frosted p-3">
-          <div className="flex items-center gap-2 mb-1">
-            <TrendUp className="w-5 h-5 text-primary" weight="duotone" />
-            <p className="text-xs font-medium text-muted-foreground">Completed</p>
+        <Card className="frosted p-3 @container min-w-0">
+          <div className="flex items-center gap-2 mb-1 min-w-0">
+            <TrendUp className="w-5 h-5 text-primary shrink-0" weight="duotone" />
+            <p className="text-xs font-medium text-muted-foreground truncate">Completed</p>
           </div>
           <p className="text-xl font-bold">{totalMetrics.completedCount}</p>
         </Card>
 
-        <Card className="frosted p-3">
-          <div className="flex items-center gap-2 mb-1">
-            <Star className="w-5 h-5 text-accent" weight="duotone" />
-            <p className="text-xs font-medium text-muted-foreground">Tips</p>
+        <Card className="frosted p-3 @container min-w-0">
+          <div className="flex items-center gap-2 mb-1 min-w-0">
+            <Star className="w-5 h-5 text-accent shrink-0" weight="duotone" />
+            <p className="text-xs font-medium text-muted-foreground truncate">Tips</p>
           </div>
-          <p className="text-xl font-bold">{formatCurrency(totalMetrics.totalTips)}</p>
+          <p className="text-xl font-bold truncate">{formatCurrency(totalMetrics.totalTips)}</p>
         </Card>
 
-        <Card className="frosted p-3">
-          <div className="flex items-center gap-2 mb-1">
-            <Star className="w-5 h-5 text-accent" weight="fill" />
-            <p className="text-xs font-medium text-muted-foreground">Tip Rate</p>
+        <Card className="frosted p-3 @container min-w-0">
+          <div className="flex items-center gap-2 mb-1 min-w-0">
+            <Star className="w-5 h-5 text-accent shrink-0" weight="fill" />
+            <p className="text-xs font-medium text-muted-foreground truncate">Tip Rate</p>
           </div>
           <p className="text-xl font-bold">{formatPercent(totalMetrics.avgTipRate)}</p>
         </Card>
 
-        <Card className="frosted p-3">
-          <div className="flex items-center gap-2 mb-1">
-            <TrendDown className="w-5 h-5 text-destructive" weight="duotone" />
-            <p className="text-xs font-medium text-muted-foreground">No-Shows</p>
+        <Card className="frosted p-3 @container min-w-0">
+          <div className="flex items-center gap-2 mb-1 min-w-0">
+            <TrendDown className="w-5 h-5 text-destructive shrink-0" weight="duotone" />
+            <p className="text-xs font-medium text-muted-foreground truncate">No-Shows</p>
           </div>
           <p className="text-xl font-bold">{totalMetrics.noShows}</p>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <Card className="frosted p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 min-w-0">
+        <Card className="frosted p-4 @container min-w-0">
           <h3 className="text-base font-semibold mb-3">Staff Rankings</h3>
-          <div className="space-y-2">
+          <div className="space-y-2 min-w-0">
             {staffRankings.slice(0, 5).map((ranking, index) => (
               <div 
                 key={ranking.staff.id} 
-                className="flex items-center gap-3 p-2 rounded-lg hover:bg-secondary/20 transition-colors"
+                className="flex items-center gap-3 p-2 rounded-lg hover:bg-secondary/20 transition-colors min-w-0"
               >
                 <div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary/10 text-primary font-bold text-sm shrink-0">
                   {index + 1}
@@ -389,19 +389,19 @@ export function GroomerStats() {
                   style={{ backgroundColor: ranking.staff.color || '#6366f1' }}
                 />
                 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 mb-0">
+                <div className="flex-1 min-w-0 overflow-hidden">
+                  <div className="flex items-center gap-1.5 mb-0 min-w-0">
                     <p className="font-semibold text-xs truncate">{ranking.staff.firstName} {ranking.staff.lastName}</p>
-                    <Badge variant="secondary" className="text-[10px] px-1 py-0">{ranking.completed}</Badge>
+                    <Badge variant="secondary" className="text-[10px] px-1 py-0 shrink-0">{ranking.completed}</Badge>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span>{formatCurrency(ranking.avgTicket)} avg</span>
-                    <span>{formatCurrency(ranking.tips)} tips</span>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground overflow-hidden">
+                    <span className="truncate">{formatCurrency(ranking.avgTicket)} avg</span>
+                    <span className="truncate">{formatCurrency(ranking.tips)} tips</span>
                   </div>
                 </div>
                 
                 <div className="text-right shrink-0">
-                  <p className="text-base font-bold">{formatCurrency(ranking.netSales)}</p>
+                  <p className="text-base font-bold whitespace-nowrap">{formatCurrency(ranking.netSales)}</p>
                 </div>
               </div>
             ))}
@@ -413,28 +413,30 @@ export function GroomerStats() {
           </div>
         </Card>
 
-        <Card className="frosted p-4">
+        <Card className="frosted p-4 @container min-w-0">
           <h3 className="text-base font-semibold mb-3">Revenue Breakdown</h3>
           {revenueByCategory.length > 0 ? (
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={revenueByCategory}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={70}
-                  label={(entry) => `${entry.name}: ${formatCurrency(entry.value)}`}
-                  labelLine={{ stroke: 'currentColor', strokeWidth: 1 }}
-                >
-                  {revenueByCategory.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <ChartTooltip formatter={(value: number) => formatCurrency(value)} />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="w-full aspect-[2/1] min-h-[200px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={revenueByCategory}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={70}
+                    label={(entry) => `${entry.name}: ${formatCurrency(entry.value)}`}
+                    labelLine={{ stroke: 'currentColor', strokeWidth: 1 }}
+                  >
+                    {revenueByCategory.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <ChartTooltip formatter={(value: number) => formatCurrency(value)} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           ) : (
             <div className="h-[240px] flex items-center justify-center text-sm text-muted-foreground">
               No revenue data available
@@ -444,10 +446,11 @@ export function GroomerStats() {
       </div>
 
       {staffRankings.length > 0 && (
-        <Card className="frosted p-4">
+        <Card className="frosted p-4 @container min-w-0">
           <h3 className="text-base font-semibold mb-3">Revenue by Staff</h3>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={staffRankings.map(r => ({ 
+          <div className="w-full aspect-[16/9] min-h-[280px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={staffRankings.map(r => ({ 
               ...r, 
               staffName: `${r.staff.firstName} ${r.staff.lastName}` 
             }))}>
@@ -460,17 +463,18 @@ export function GroomerStats() {
               <Bar dataKey="tips" name="Tips" fill="#10b981" radius={[4, 4, 0, 0]} />
               <Bar dataKey="productSales" name="Products" fill="#f59e0b" radius={[4, 4, 0, 0]} />
             </BarChart>
-          </ResponsiveContainer>
+            </ResponsiveContainer>
+          </div>
         </Card>
       )}
 
-      <Card className="frosted p-4">
+      <Card className="frosted p-4 @container min-w-0">
         <h3 className="text-base font-semibold mb-3">Detailed Performance</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 min-w-0">
           {staffRankings.map(ranking => (
-            <div key={ranking.staff.id} className="p-3 rounded-lg bg-secondary/20 border border-border">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
+            <div key={ranking.staff.id} className="p-3 rounded-lg bg-secondary/20 border border-border min-w-0">
+              <div className="flex items-center justify-between mb-2 min-w-0">
+                <div className="flex items-center gap-2 min-w-0 overflow-hidden">
                   <div 
                     className="w-2 h-2 rounded-full shrink-0" 
                     style={{ backgroundColor: ranking.staff.color || '#6366f1' }}
