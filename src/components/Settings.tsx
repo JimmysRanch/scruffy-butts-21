@@ -35,6 +35,7 @@ import {
 import { StaffPosition } from './StaffManager'
 import { seedShifts, seedTimeOffRequests } from '@/lib/seed-schedule-data'
 import { seedReportsData } from '@/lib/seed-reports-data'
+import { ServiceWithPricing, PricingMethod, DEFAULT_SERVICES, WeightClass, WEIGHT_CLASSES } from '@/lib/pricing-types'
 
 interface Service {
   id: string
@@ -57,6 +58,7 @@ interface BusinessSettings {
   timezone: string
   currency: string
   taxRate: number
+  defaultPricingMethod?: PricingMethod
 }
 
 interface NotificationSettings {
@@ -75,16 +77,17 @@ interface AppearanceSettings {
 
 export function Settings() {
   const [businessSettings, setBusinessSettings] = useKV<BusinessSettings>('business-settings', {
-    name: 'PawGroomer Studio',
-    email: 'contact@pawgroomer.com',
+    name: 'Scruffy Butts',
+    email: 'contact@scruffybutts.com',
     phone: '+1 (555) 123-4567',
     address: '123 Pet Street',
     city: 'Austin',
     state: 'Texas',
     zip: '78701',
-    timezone: 'America/New_York',
+    timezone: 'America/Chicago',
     currency: 'USD',
-    taxRate: 8.25
+    taxRate: 8.25,
+    defaultPricingMethod: 'weight'
   })
 
   const [notifications, setNotifications] = useKV<NotificationSettings>('notification-settings', {
@@ -119,9 +122,9 @@ export function Settings() {
     { id: 'front_desk', name: 'Front Desk', permissions: ['manage_customers', 'view_appointments', 'pos'], description: 'Customer service representative' }
   ])
 
-  const [services, setServices] = useKV<Service[]>('services', [])
+  const [services, setServices] = useKV<ServiceWithPricing[]>('services', [])
 
-  const [activeTab, setActiveTab] = useState<'business' | 'services' | 'notifications' | 'appearance' | 'security' | 'staff-positions'>('business')
+  const [activeTab, setActiveTab] = useState<'business' | 'services' | 'notifications' | 'appearance' | 'security' | 'staff-positions' | 'pricing'>('business')
   const [showPositionDialog, setShowPositionDialog] = useState(false)
   const [editingPosition, setEditingPosition] = useState<StaffPosition | null>(null)
   const [positionFormData, setPositionFormData] = useState({
@@ -131,13 +134,20 @@ export function Settings() {
   })
 
   const [showServiceDialog, setShowServiceDialog] = useState(false)
-  const [editingService, setEditingService] = useState<Service | null>(null)
+  const [editingService, setEditingService] = useState<ServiceWithPricing | null>(null)
   const [serviceFormData, setServiceFormData] = useState({
     name: '',
     description: '',
     duration: 60,
-    price: 50,
-    category: 'Basic Grooming'
+    category: 'Basic Grooming',
+    pricingMethod: 'weight' as PricingMethod,
+    basePrice: 0,
+    weightPricing: {
+      small: 0,
+      medium: 0,
+      large: 0,
+      giant: 0
+    }
   })
 
   const availablePermissions = [
@@ -236,8 +246,15 @@ export function Settings() {
       name: '',
       description: '',
       duration: 60,
-      price: 50,
-      category: 'Basic Grooming'
+      category: 'Basic Grooming',
+      pricingMethod: 'weight',
+      basePrice: 0,
+      weightPricing: {
+        small: 0,
+        medium: 0,
+        large: 0,
+        giant: 0
+      }
     })
     setEditingService(null)
   }
@@ -245,7 +262,7 @@ export function Settings() {
   const handleServiceSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!serviceFormData.name || !serviceFormData.description || serviceFormData.duration <= 0 || serviceFormData.price <= 0) {
+    if (!serviceFormData.name || !serviceFormData.description || serviceFormData.duration <= 0) {
       toast.error('Please fill in all required fields with valid values')
       return
     }
@@ -259,21 +276,25 @@ export function Settings() {
                 name: serviceFormData.name,
                 description: serviceFormData.description,
                 duration: serviceFormData.duration,
-                price: serviceFormData.price,
-                category: serviceFormData.category
+                category: serviceFormData.category,
+                pricingMethod: serviceFormData.pricingMethod,
+                basePrice: serviceFormData.pricingMethod === 'service' ? serviceFormData.basePrice : undefined,
+                weightPricing: serviceFormData.pricingMethod === 'weight' ? serviceFormData.weightPricing : undefined
               }
             : s
         )
       )
       toast.success('Service updated successfully')
     } else {
-      const newService: Service = {
+      const newService: ServiceWithPricing = {
         id: `service-${Date.now()}`,
         name: serviceFormData.name,
         description: serviceFormData.description,
         duration: serviceFormData.duration,
-        price: serviceFormData.price,
         category: serviceFormData.category,
+        pricingMethod: serviceFormData.pricingMethod,
+        basePrice: serviceFormData.pricingMethod === 'service' ? serviceFormData.basePrice : undefined,
+        weightPricing: serviceFormData.pricingMethod === 'weight' ? serviceFormData.weightPricing : undefined,
         createdAt: new Date().toISOString()
       }
 
@@ -285,14 +306,21 @@ export function Settings() {
     resetServiceForm()
   }
 
-  const handleEditService = (service: Service) => {
+  const handleEditService = (service: ServiceWithPricing) => {
     setEditingService(service)
     setServiceFormData({
       name: service.name,
       description: service.description,
       duration: service.duration,
-      price: service.price,
-      category: service.category
+      category: service.category,
+      pricingMethod: service.pricingMethod,
+      basePrice: service.basePrice || 0,
+      weightPricing: service.weightPricing || {
+        small: 0,
+        medium: 0,
+        large: 0,
+        giant: 0
+      }
     })
     setShowServiceDialog(true)
   }
@@ -323,7 +351,14 @@ export function Settings() {
       const data = await seedReportsData()
       
       setStaff(data.staff)
-      setServices(data.services)
+      const migratedServices = data.services.map(s => ({
+        ...s,
+        pricingMethod: 'service' as PricingMethod,
+        basePrice: s.price,
+        weightPricing: undefined,
+        breedPricing: undefined
+      }))
+      setServices(migratedServices)
       setCustomers(data.customers)
       setAppointments(data.appointments)
       setTransactions(data.transactions)
@@ -580,6 +615,29 @@ export function Settings() {
                     />
                   </div>
                 </div>
+
+                <Separator />
+
+                <div className="space-y-2">
+                  <Label htmlFor="default-pricing">Default Pricing Method</Label>
+                  <Select
+                    value={businessSettings?.defaultPricingMethod || 'weight'}
+                    onValueChange={(value: PricingMethod) => setBusinessSettings(prev => ({ ...prev!, defaultPricingMethod: value }))}
+                  >
+                    <SelectTrigger id="default-pricing">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="weight">Weight-Based Pricing</SelectItem>
+                      <SelectItem value="service">Flat Rate Pricing</SelectItem>
+                      <SelectItem value="breed">Breed-Based Pricing</SelectItem>
+                      <SelectItem value="hybrid">Hybrid Pricing</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-muted-foreground">
+                    This will be the default pricing method when creating new services
+                  </p>
+                </div>
               </CardContent>
             </Card>
           )}
@@ -597,10 +655,30 @@ export function Settings() {
                       Manage your grooming services, pricing, and duration
                     </CardDescription>
                   </div>
-                  <Button onClick={() => setShowServiceDialog(true)} className="flex items-center gap-2">
-                    <Plus size={18} />
-                    Add Service
-                  </Button>
+                  <div className="flex gap-2">
+                    {(services || []).length === 0 && (
+                      <Button 
+                        variant="outline"
+                        onClick={() => {
+                          const defaultServices: ServiceWithPricing[] = DEFAULT_SERVICES.map((s, i) => ({
+                            ...s,
+                            id: `service-default-${i}`,
+                            createdAt: new Date().toISOString()
+                          }))
+                          setServices(defaultServices)
+                          toast.success('Default Scruffy Butts services loaded!')
+                        }} 
+                        className="flex items-center gap-2"
+                      >
+                        <Database size={18} />
+                        Load Default Services
+                      </Button>
+                    )}
+                    <Button onClick={() => setShowServiceDialog(true)} className="flex items-center gap-2">
+                      <Plus size={18} />
+                      Add Service
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
@@ -609,11 +687,29 @@ export function Settings() {
                     <Scissors size={48} className="mx-auto text-muted-foreground mb-4" />
                     <h3 className="text-lg font-medium mb-2">No services yet</h3>
                     <p className="text-muted-foreground mb-4">
-                      Add your first grooming service to start building your service catalog
+                      Load the default Scruffy Butts services or add your first grooming service
                     </p>
-                    <Button onClick={() => setShowServiceDialog(true)}>
-                      Add First Service
-                    </Button>
+                    <div className="flex gap-2 justify-center">
+                      <Button 
+                        variant="outline"
+                        onClick={() => {
+                          const defaultServices: ServiceWithPricing[] = DEFAULT_SERVICES.map((s, i) => ({
+                            ...s,
+                            id: `service-default-${i}`,
+                            createdAt: new Date().toISOString()
+                          }))
+                          setServices(defaultServices)
+                          toast.success('Default Scruffy Butts services loaded!')
+                        }}
+                      >
+                        <Database size={18} className="mr-2" />
+                        Load Default Services
+                      </Button>
+                      <Button onClick={() => setShowServiceDialog(true)}>
+                        <Plus size={18} className="mr-2" />
+                        Add Custom Service
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -627,15 +723,28 @@ export function Settings() {
                               <Badge variant="outline" className="text-xs">{service.category}</Badge>
                             </div>
                             <p className="text-sm text-muted-foreground mb-2">{service.description}</p>
-                            <div className="flex items-center gap-4 text-sm">
+                            <div className="flex items-center gap-4 text-sm flex-wrap">
                               <div className="flex items-center gap-1">
                                 <Clock size={16} className="text-muted-foreground" />
                                 <span>{service.duration} min</span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <CurrencyDollar size={16} className="text-muted-foreground" />
-                                <span className="font-medium">${service.price}</span>
+                                <Badge variant="secondary">{service.pricingMethod}</Badge>
                               </div>
+                              {service.pricingMethod === 'service' && service.basePrice && (
+                                <div className="flex items-center gap-1">
+                                  <CurrencyDollar size={16} className="text-muted-foreground" />
+                                  <span className="font-medium">${service.basePrice}</span>
+                                </div>
+                              )}
+                              {service.pricingMethod === 'weight' && service.weightPricing && (
+                                <div className="flex items-center gap-2 text-xs">
+                                  <span>S: ${service.weightPricing.small}</span>
+                                  <span>M: ${service.weightPricing.medium}</span>
+                                  <span>L: ${service.weightPricing.large}</span>
+                                  <span>XL: ${service.weightPricing.giant}</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                           <div className="flex gap-2 ml-4">
@@ -1115,30 +1224,121 @@ export function Settings() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="service-price">Price ($) *</Label>
+                  <Label htmlFor="service-category">Category *</Label>
                   <Input
-                    id="service-price"
-                    type="number"
-                    value={serviceFormData.price}
-                    onChange={(e) => setServiceFormData({ ...serviceFormData, price: parseFloat(e.target.value) || 0 })}
-                    placeholder="50.00"
-                    min="0"
-                    step="0.01"
+                    id="service-category"
+                    value={serviceFormData.category}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, category: e.target.value })}
+                    placeholder="e.g., Basic Grooming"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="service-category">Category *</Label>
-                <Input
-                  id="service-category"
-                  value={serviceFormData.category}
-                  onChange={(e) => setServiceFormData({ ...serviceFormData, category: e.target.value })}
-                  placeholder="e.g., Basic Grooming, Full Service"
-                  required
-                />
+                <Label htmlFor="pricing-method">Pricing Method *</Label>
+                <Select
+                  value={serviceFormData.pricingMethod}
+                  onValueChange={(value: PricingMethod) => setServiceFormData({ ...serviceFormData, pricingMethod: value })}
+                >
+                  <SelectTrigger id="pricing-method">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="weight">Weight-Based</SelectItem>
+                    <SelectItem value="service">Flat Rate</SelectItem>
+                    <SelectItem value="breed">Breed-Based</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+
+              {serviceFormData.pricingMethod === 'service' && (
+                <div className="space-y-2">
+                  <Label htmlFor="base-price">Base Price ($) *</Label>
+                  <Input
+                    id="base-price"
+                    type="number"
+                    value={serviceFormData.basePrice}
+                    onChange={(e) => setServiceFormData({ ...serviceFormData, basePrice: parseFloat(e.target.value) || 0 })}
+                    placeholder="50.00"
+                    min="0"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              )}
+
+              {serviceFormData.pricingMethod === 'weight' && (
+                <div className="space-y-3">
+                  <Label>Weight-Based Pricing ($) *</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label htmlFor="price-small" className="text-xs">{WEIGHT_CLASSES.small.label}</Label>
+                      <Input
+                        id="price-small"
+                        type="number"
+                        value={serviceFormData.weightPricing.small}
+                        onChange={(e) => setServiceFormData({ 
+                          ...serviceFormData, 
+                          weightPricing: { ...serviceFormData.weightPricing, small: parseFloat(e.target.value) || 0 }
+                        })}
+                        placeholder="30"
+                        min="0"
+                        step="0.01"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="price-medium" className="text-xs">{WEIGHT_CLASSES.medium.label}</Label>
+                      <Input
+                        id="price-medium"
+                        type="number"
+                        value={serviceFormData.weightPricing.medium}
+                        onChange={(e) => setServiceFormData({ 
+                          ...serviceFormData, 
+                          weightPricing: { ...serviceFormData.weightPricing, medium: parseFloat(e.target.value) || 0 }
+                        })}
+                        placeholder="35"
+                        min="0"
+                        step="0.01"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="price-large" className="text-xs">{WEIGHT_CLASSES.large.label}</Label>
+                      <Input
+                        id="price-large"
+                        type="number"
+                        value={serviceFormData.weightPricing.large}
+                        onChange={(e) => setServiceFormData({ 
+                          ...serviceFormData, 
+                          weightPricing: { ...serviceFormData.weightPricing, large: parseFloat(e.target.value) || 0 }
+                        })}
+                        placeholder="40"
+                        min="0"
+                        step="0.01"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="price-giant" className="text-xs">{WEIGHT_CLASSES.giant.label}</Label>
+                      <Input
+                        id="price-giant"
+                        type="number"
+                        value={serviceFormData.weightPricing.giant}
+                        onChange={(e) => setServiceFormData({ 
+                          ...serviceFormData, 
+                          weightPricing: { ...serviceFormData.weightPricing, giant: parseFloat(e.target.value) || 0 }
+                        })}
+                        placeholder="45"
+                        min="0"
+                        step="0.01"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <DialogFooter>

@@ -8,29 +8,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ArrowLeft, Plus, Trash } from '@phosphor-icons/react'
 import { toast } from 'sonner'
-
-interface Pet {
-  id: string
-  name: string
-  breed: string
-  size?: 'small' | 'medium' | 'large'
-  notes?: string
-}
-
-interface Customer {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  pets: Pet[]
-  createdAt: string
-  address?: string
-  city?: string
-  state?: string
-  zip?: string
-  notes?: string
-}
+import { WeightClass, WEIGHT_CLASSES } from '@/lib/pricing-types'
+import { Customer, Pet } from '@/lib/types'
 
 interface NewCustomerProps {
   onBack: () => void
@@ -54,7 +33,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
   const [pets, setPets] = useState<Omit<Pet, 'id'>[]>([{
     name: '',
     breed: '',
-    size: undefined,
+    weightClass: undefined,
     notes: ''
   }])
 
@@ -62,7 +41,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
     setPets([...pets, {
       name: '',
       breed: '',
-      size: undefined,
+      weightClass: undefined,
       notes: ''
     }])
   }
@@ -96,7 +75,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
       pets: validPets.map((pet, index) => ({
         ...pet,
         id: `pet-${Date.now()}-${index}`,
-        size: pet.size as 'small' | 'medium' | 'large' | undefined
+        weightClass: pet.weightClass as WeightClass | undefined
       })),
       createdAt: new Date().toISOString(),
       address: customerForm.address,
@@ -317,18 +296,19 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                 </div>
 
                 <div>
-                  <Label htmlFor={`pet-size-${index}`} className="text-white/70">Size</Label>
+                  <Label htmlFor={`pet-weight-${index}`} className="text-white/70">Weight Class</Label>
                   <Select
-                    value={pet.size || ''}
-                    onValueChange={(value) => updatePet(index, 'size', value)}
+                    value={pet.weightClass || ''}
+                    onValueChange={(value) => updatePet(index, 'weightClass', value)}
                   >
-                    <SelectTrigger id={`pet-size-${index}`} className="mt-1.5">
-                      <SelectValue placeholder="Select size" />
+                    <SelectTrigger id={`pet-weight-${index}`} className="mt-1.5">
+                      <SelectValue placeholder="Select weight class" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="small">Small</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="large">Large</SelectItem>
+                      <SelectItem value="small">{WEIGHT_CLASSES.small.label}</SelectItem>
+                      <SelectItem value="medium">{WEIGHT_CLASSES.medium.label}</SelectItem>
+                      <SelectItem value="large">{WEIGHT_CLASSES.large.label}</SelectItem>
+                      <SelectItem value="giant">{WEIGHT_CLASSES.giant.label}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
