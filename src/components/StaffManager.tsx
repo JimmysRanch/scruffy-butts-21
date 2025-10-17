@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -11,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Switch } from '@/components/ui/switch'
-import { Plus, UserCircle, Phone, EnvelopeSimple, MapPin, Calendar, Star, Scissors } from '@phosphor-icons/react'
+import { Plus, UserCircle, Phone, EnvelopeSimple, MapPin, Calendar, Star, Scissors, ArrowLeft } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { StaffSchedule } from './StaffSchedule'
 
@@ -197,7 +196,7 @@ export function StaffManager() {
     { id: 'bather', name: 'Bather', permissions: ['view_appointments'], description: 'Bathing specialist' },
     { id: 'front_desk', name: 'Front Desk', permissions: ['manage_customers', 'view_appointments', 'pos'], description: 'Customer service representative' }
   ])
-  const [showDialog, setShowDialog] = useState(false)
+  const [showForm, setShowForm] = useState(false)
   const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null)
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null)
   const [currentTab, setCurrentTab] = useState('staff')
@@ -332,7 +331,7 @@ export function StaffManager() {
       toast.success('Staff member added successfully')
     }
 
-    setShowDialog(false)
+    setShowForm(false)
     resetForm()
   }
 
@@ -357,7 +356,7 @@ export function StaffManager() {
       bookableServices: staffMember.bookableServices ?? []
     })
     setSelectedStaff(null)
-    setShowDialog(true)
+    setShowForm(true)
   }
 
   const handleDelete = (id: string) => {
@@ -383,6 +382,369 @@ export function StaffManager() {
     )
   }
 
+  if (showForm) {
+    return (
+      <div className="space-y-3">
+        <Card className="frosted">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-xl">
+                  {editingStaff ? 'Edit Staff Member' : 'Add New Staff Member'}
+                </CardTitle>
+                <CardDescription className="mt-1">
+                  {editingStaff 
+                    ? 'Update the staff member information below'
+                    : 'Enter the details for the new team member'
+                  }
+                </CardDescription>
+              </div>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setShowForm(false)
+                  resetForm()
+                }}
+                className="glass-button"
+              >
+                <ArrowLeft size={16} className="mr-2" />
+                Back to List
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="first-name">First Name *</Label>
+                  <Input
+                    id="first-name"
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    className="glass-dark"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="last-name">Last Name *</Label>
+                  <Input
+                    id="last-name"
+                    value={formData.lastName}
+                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    className="glass-dark"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="position">Position *</Label>
+                  <Select
+                    value={formData.position}
+                    onValueChange={(value) => setFormData({ ...formData, position: value })}
+                  >
+                    <SelectTrigger id="position" className="glass-dark">
+                      <SelectValue placeholder="Select a position" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {staffPositions?.map((position) => (
+                        <SelectItem key={position.id} value={position.name}>
+                          <div className="flex flex-col">
+                            <span>{position.name}</span>
+                            {position.description && (
+                              <span className="text-xs text-muted-foreground">
+                                {position.description}
+                              </span>
+                            )}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="glass-dark"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    id="phone"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="glass-dark"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="hireDate">Hire Date</Label>
+                  <Input
+                    id="hireDate"
+                    type="date"
+                    value={formData.hireDate}
+                    onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
+                    className="glass-dark"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}
+                  >
+                    <SelectTrigger id="status" className="glass-dark">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address</Label>
+                  <Input
+                    id="address"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    placeholder="Street address"
+                    className="glass-dark"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="city">City</Label>
+                  <Input
+                    id="city"
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    placeholder="City"
+                    className="glass-dark"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="state">State</Label>
+                  <Select
+                    value={formData.state}
+                    onValueChange={(value) => setFormData({ ...formData, state: value })}
+                  >
+                    <SelectTrigger id="state" className="glass-dark">
+                      <SelectValue placeholder="Select state" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Alabama">Alabama</SelectItem>
+                      <SelectItem value="Alaska">Alaska</SelectItem>
+                      <SelectItem value="Arizona">Arizona</SelectItem>
+                      <SelectItem value="Arkansas">Arkansas</SelectItem>
+                      <SelectItem value="California">California</SelectItem>
+                      <SelectItem value="Colorado">Colorado</SelectItem>
+                      <SelectItem value="Connecticut">Connecticut</SelectItem>
+                      <SelectItem value="Delaware">Delaware</SelectItem>
+                      <SelectItem value="Florida">Florida</SelectItem>
+                      <SelectItem value="Georgia">Georgia</SelectItem>
+                      <SelectItem value="Hawaii">Hawaii</SelectItem>
+                      <SelectItem value="Idaho">Idaho</SelectItem>
+                      <SelectItem value="Illinois">Illinois</SelectItem>
+                      <SelectItem value="Indiana">Indiana</SelectItem>
+                      <SelectItem value="Iowa">Iowa</SelectItem>
+                      <SelectItem value="Kansas">Kansas</SelectItem>
+                      <SelectItem value="Kentucky">Kentucky</SelectItem>
+                      <SelectItem value="Louisiana">Louisiana</SelectItem>
+                      <SelectItem value="Maine">Maine</SelectItem>
+                      <SelectItem value="Maryland">Maryland</SelectItem>
+                      <SelectItem value="Massachusetts">Massachusetts</SelectItem>
+                      <SelectItem value="Michigan">Michigan</SelectItem>
+                      <SelectItem value="Minnesota">Minnesota</SelectItem>
+                      <SelectItem value="Mississippi">Mississippi</SelectItem>
+                      <SelectItem value="Missouri">Missouri</SelectItem>
+                      <SelectItem value="Montana">Montana</SelectItem>
+                      <SelectItem value="Nebraska">Nebraska</SelectItem>
+                      <SelectItem value="Nevada">Nevada</SelectItem>
+                      <SelectItem value="New Hampshire">New Hampshire</SelectItem>
+                      <SelectItem value="New Jersey">New Jersey</SelectItem>
+                      <SelectItem value="New Mexico">New Mexico</SelectItem>
+                      <SelectItem value="New York">New York</SelectItem>
+                      <SelectItem value="North Carolina">North Carolina</SelectItem>
+                      <SelectItem value="North Dakota">North Dakota</SelectItem>
+                      <SelectItem value="Ohio">Ohio</SelectItem>
+                      <SelectItem value="Oklahoma">Oklahoma</SelectItem>
+                      <SelectItem value="Oregon">Oregon</SelectItem>
+                      <SelectItem value="Pennsylvania">Pennsylvania</SelectItem>
+                      <SelectItem value="Rhode Island">Rhode Island</SelectItem>
+                      <SelectItem value="South Carolina">South Carolina</SelectItem>
+                      <SelectItem value="South Dakota">South Dakota</SelectItem>
+                      <SelectItem value="Tennessee">Tennessee</SelectItem>
+                      <SelectItem value="Texas">Texas</SelectItem>
+                      <SelectItem value="Utah">Utah</SelectItem>
+                      <SelectItem value="Vermont">Vermont</SelectItem>
+                      <SelectItem value="Virginia">Virginia</SelectItem>
+                      <SelectItem value="Washington">Washington</SelectItem>
+                      <SelectItem value="West Virginia">West Virginia</SelectItem>
+                      <SelectItem value="Wisconsin">Wisconsin</SelectItem>
+                      <SelectItem value="Wyoming">Wyoming</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="zip">Zip Code</Label>
+                  <Input
+                    id="zip"
+                    value={formData.zip}
+                    onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
+                    placeholder="Zip code"
+                    className="glass-dark"
+                  />
+                </div>
+
+                <div className="md:col-span-2 space-y-2">
+                  <Label htmlFor="specialties">Specialties</Label>
+                  <Input
+                    id="specialties"
+                    value={formData.specialties}
+                    onChange={(e) => setFormData({ ...formData, specialties: e.target.value })}
+                    placeholder="e.g., Large Dogs, Show Cuts, Nail Trimming (comma separated)"
+                    className="glass-dark"
+                  />
+                </div>
+
+                <div className="md:col-span-2 space-y-3 p-4 rounded-lg border border-border glass-dark">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <Label htmlFor="can-be-booked" className="text-base font-semibold">
+                        Booking Availability
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Allow this staff member to be booked for appointments
+                      </p>
+                    </div>
+                    <Switch
+                      id="can-be-booked"
+                      checked={formData.canBeBooked}
+                      onCheckedChange={(checked) => {
+                        setFormData({ ...formData, canBeBooked: checked })
+                        if (!checked) {
+                          setFormData({ ...formData, canBeBooked: checked, bookableServices: [] })
+                        } else if (formData.position) {
+                          const defaultServices = getDefaultBookableServices(formData.position)
+                          setFormData({ ...formData, canBeBooked: checked, bookableServices: defaultServices })
+                        }
+                      }}
+                    />
+                  </div>
+
+                  {formData.canBeBooked && (
+                    <div className="space-y-3 pt-3 border-t border-border">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-sm font-medium">Bookable Services</Label>
+                        {formData.position && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              const defaultServices = getDefaultBookableServices(formData.position)
+                              setFormData({ ...formData, bookableServices: defaultServices })
+                            }}
+                            className="text-xs"
+                          >
+                            Use {formData.position} defaults
+                          </Button>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Select which services this staff member can perform
+                      </p>
+                      
+                      {!services || services.length === 0 ? (
+                        <div className="text-sm text-muted-foreground p-3 border border-dashed rounded">
+                          <Scissors size={16} className="inline mr-2" />
+                          No services available. Add services first in the Settings.
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto">
+                          {services.map((service) => (
+                            <div key={service.id} className="flex items-start space-x-2">
+                              <Checkbox
+                                id={`service-${service.id}`}
+                                checked={formData.bookableServices.includes(service.id)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setFormData({
+                                      ...formData,
+                                      bookableServices: [...formData.bookableServices, service.id]
+                                    })
+                                  } else {
+                                    setFormData({
+                                      ...formData,
+                                      bookableServices: formData.bookableServices.filter(id => id !== service.id)
+                                    })
+                                  }
+                                }}
+                              />
+                              <Label
+                                htmlFor={`service-${service.id}`}
+                                className="text-sm font-normal cursor-pointer leading-tight"
+                              >
+                                <div>{service.name}</div>
+                                <div className="text-xs text-muted-foreground">{service.category}</div>
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="md:col-span-2 space-y-2">
+                  <Label htmlFor="notes">Notes</Label>
+                  <Textarea
+                    id="notes"
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    placeholder="Additional notes about the staff member"
+                    rows={3}
+                    className="glass-dark"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => {
+                    setShowForm(false)
+                    resetForm()
+                  }} 
+                  className="glass-button"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="glass-button">
+                  {editingStaff ? 'Update Staff Member' : 'Add Staff Member'}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-3">
       <div className="frosted rounded-xl p-3">
@@ -396,7 +758,7 @@ export function StaffManager() {
             </p>
           </div>
           {currentTab === 'staff' && (
-            <Button onClick={() => setShowDialog(true)} className="glass-button h-8 text-xs">
+            <Button onClick={() => setShowForm(true)} className="glass-button h-8 text-xs">
               <Plus size={16} className="mr-1.5" />
               <span>Add Staff Member</span>
             </Button>
@@ -418,7 +780,7 @@ export function StaffManager() {
                   <p className="text-muted-foreground text-center mb-3 text-sm">
                     Start building your team by adding your first staff member
                   </p>
-                  <Button onClick={() => setShowDialog(true)} className="glass-button h-8 text-xs">
+                  <Button onClick={() => setShowForm(true)} className="glass-button h-8 text-xs">
                     Add First Staff Member
                   </Button>
                 </CardContent>
@@ -506,341 +868,6 @@ export function StaffManager() {
           </TabsContent>
         </Tabs>
       </div>
-
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="frosted max-w-2xl">
-          <form onSubmit={handleSubmit}>
-            <DialogHeader>
-              <DialogTitle>
-                {editingStaff ? 'Edit Staff Member' : 'Add New Staff Member'}
-              </DialogTitle>
-              <DialogDescription>
-                {editingStaff 
-                  ? 'Update the staff member information below'
-                  : 'Enter the details for the new team member'
-                }
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="first-name">First Name *</Label>
-                <Input
-                  id="first-name"
-                  value={formData.firstName}
-                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  className="glass-dark"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="last-name">Last Name *</Label>
-                <Input
-                  id="last-name"
-                  value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  className="glass-dark"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="position">Position *</Label>
-                <Select
-                  value={formData.position}
-                  onValueChange={(value) => setFormData({ ...formData, position: value })}
-                >
-                  <SelectTrigger id="position" className="glass-dark">
-                    <SelectValue placeholder="Select a position" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {staffPositions?.map((position) => (
-                      <SelectItem key={position.id} value={position.name}>
-                        <div className="flex flex-col">
-                          <span>{position.name}</span>
-                          {position.description && (
-                            <span className="text-xs text-muted-foreground">
-                              {position.description}
-                            </span>
-                          )}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="glass-dark"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="glass-dark"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="hireDate">Hire Date</Label>
-                <Input
-                  id="hireDate"
-                  type="date"
-                  value={formData.hireDate}
-                  onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
-                  className="glass-dark"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select
-                  value={formData.status}
-                  onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}
-                >
-                  <SelectTrigger id="status" className="glass-dark">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  placeholder="Street address"
-                  className="glass-dark"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
-                <Input
-                  id="city"
-                  value={formData.city}
-                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  placeholder="City"
-                  className="glass-dark"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="state">State</Label>
-                <Select
-                  value={formData.state}
-                  onValueChange={(value) => setFormData({ ...formData, state: value })}
-                >
-                  <SelectTrigger id="state" className="glass-dark">
-                    <SelectValue placeholder="Select state" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Alabama">Alabama</SelectItem>
-                    <SelectItem value="Alaska">Alaska</SelectItem>
-                    <SelectItem value="Arizona">Arizona</SelectItem>
-                    <SelectItem value="Arkansas">Arkansas</SelectItem>
-                    <SelectItem value="California">California</SelectItem>
-                    <SelectItem value="Colorado">Colorado</SelectItem>
-                    <SelectItem value="Connecticut">Connecticut</SelectItem>
-                    <SelectItem value="Delaware">Delaware</SelectItem>
-                    <SelectItem value="Florida">Florida</SelectItem>
-                    <SelectItem value="Georgia">Georgia</SelectItem>
-                    <SelectItem value="Hawaii">Hawaii</SelectItem>
-                    <SelectItem value="Idaho">Idaho</SelectItem>
-                    <SelectItem value="Illinois">Illinois</SelectItem>
-                    <SelectItem value="Indiana">Indiana</SelectItem>
-                    <SelectItem value="Iowa">Iowa</SelectItem>
-                    <SelectItem value="Kansas">Kansas</SelectItem>
-                    <SelectItem value="Kentucky">Kentucky</SelectItem>
-                    <SelectItem value="Louisiana">Louisiana</SelectItem>
-                    <SelectItem value="Maine">Maine</SelectItem>
-                    <SelectItem value="Maryland">Maryland</SelectItem>
-                    <SelectItem value="Massachusetts">Massachusetts</SelectItem>
-                    <SelectItem value="Michigan">Michigan</SelectItem>
-                    <SelectItem value="Minnesota">Minnesota</SelectItem>
-                    <SelectItem value="Mississippi">Mississippi</SelectItem>
-                    <SelectItem value="Missouri">Missouri</SelectItem>
-                    <SelectItem value="Montana">Montana</SelectItem>
-                    <SelectItem value="Nebraska">Nebraska</SelectItem>
-                    <SelectItem value="Nevada">Nevada</SelectItem>
-                    <SelectItem value="New Hampshire">New Hampshire</SelectItem>
-                    <SelectItem value="New Jersey">New Jersey</SelectItem>
-                    <SelectItem value="New Mexico">New Mexico</SelectItem>
-                    <SelectItem value="New York">New York</SelectItem>
-                    <SelectItem value="North Carolina">North Carolina</SelectItem>
-                    <SelectItem value="North Dakota">North Dakota</SelectItem>
-                    <SelectItem value="Ohio">Ohio</SelectItem>
-                    <SelectItem value="Oklahoma">Oklahoma</SelectItem>
-                    <SelectItem value="Oregon">Oregon</SelectItem>
-                    <SelectItem value="Pennsylvania">Pennsylvania</SelectItem>
-                    <SelectItem value="Rhode Island">Rhode Island</SelectItem>
-                    <SelectItem value="South Carolina">South Carolina</SelectItem>
-                    <SelectItem value="South Dakota">South Dakota</SelectItem>
-                    <SelectItem value="Tennessee">Tennessee</SelectItem>
-                    <SelectItem value="Texas">Texas</SelectItem>
-                    <SelectItem value="Utah">Utah</SelectItem>
-                    <SelectItem value="Vermont">Vermont</SelectItem>
-                    <SelectItem value="Virginia">Virginia</SelectItem>
-                    <SelectItem value="Washington">Washington</SelectItem>
-                    <SelectItem value="West Virginia">West Virginia</SelectItem>
-                    <SelectItem value="Wisconsin">Wisconsin</SelectItem>
-                    <SelectItem value="Wyoming">Wyoming</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="zip">Zip Code</Label>
-                <Input
-                  id="zip"
-                  value={formData.zip}
-                  onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
-                  placeholder="Zip code"
-                  className="glass-dark"
-                />
-              </div>
-
-              <div className="md:col-span-2 space-y-2">
-                <Label htmlFor="specialties">Specialties</Label>
-                <Input
-                  id="specialties"
-                  value={formData.specialties}
-                  onChange={(e) => setFormData({ ...formData, specialties: e.target.value })}
-                  placeholder="e.g., Large Dogs, Show Cuts, Nail Trimming (comma separated)"
-                  className="glass-dark"
-                />
-              </div>
-
-              <div className="md:col-span-2 space-y-3 p-4 rounded-lg border border-border glass-dark">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <Label htmlFor="can-be-booked" className="text-base font-semibold">
-                      Booking Availability
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      Allow this staff member to be booked for appointments
-                    </p>
-                  </div>
-                  <Switch
-                    id="can-be-booked"
-                    checked={formData.canBeBooked}
-                    onCheckedChange={(checked) => {
-                      setFormData({ ...formData, canBeBooked: checked })
-                      if (!checked) {
-                        setFormData({ ...formData, canBeBooked: checked, bookableServices: [] })
-                      } else if (formData.position) {
-                        const defaultServices = getDefaultBookableServices(formData.position)
-                        setFormData({ ...formData, canBeBooked: checked, bookableServices: defaultServices })
-                      }
-                    }}
-                  />
-                </div>
-
-                {formData.canBeBooked && (
-                  <div className="space-y-3 pt-3 border-t border-border">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-medium">Bookable Services</Label>
-                      {formData.position && (
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            const defaultServices = getDefaultBookableServices(formData.position)
-                            setFormData({ ...formData, bookableServices: defaultServices })
-                          }}
-                          className="text-xs"
-                        >
-                          Use {formData.position} defaults
-                        </Button>
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Select which services this staff member can perform
-                    </p>
-                    
-                    {!services || services.length === 0 ? (
-                      <div className="text-sm text-muted-foreground p-3 border border-dashed rounded">
-                        <Scissors size={16} className="inline mr-2" />
-                        No services available. Add services first in the Settings.
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto">
-                        {services.map((service) => (
-                          <div key={service.id} className="flex items-start space-x-2">
-                            <Checkbox
-                              id={`service-${service.id}`}
-                              checked={formData.bookableServices.includes(service.id)}
-                              onCheckedChange={(checked) => {
-                                if (checked) {
-                                  setFormData({
-                                    ...formData,
-                                    bookableServices: [...formData.bookableServices, service.id]
-                                  })
-                                } else {
-                                  setFormData({
-                                    ...formData,
-                                    bookableServices: formData.bookableServices.filter(id => id !== service.id)
-                                  })
-                                }
-                              }}
-                            />
-                            <Label
-                              htmlFor={`service-${service.id}`}
-                              className="text-sm font-normal cursor-pointer leading-tight"
-                            >
-                              <div>{service.name}</div>
-                              <div className="text-xs text-muted-foreground">{service.category}</div>
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <div className="md:col-span-2 space-y-2">
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea
-                  id="notes"
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  placeholder="Additional notes about the staff member"
-                  rows={3}
-                  className="glass-dark"
-                />
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowDialog(false)} className="glass-button">
-                Cancel
-              </Button>
-              <Button type="submit" className="glass-button">
-                {editingStaff ? 'Update Staff Member' : 'Add Staff Member'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
