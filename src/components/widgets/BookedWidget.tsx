@@ -72,17 +72,17 @@ export function BookedWidget() {
 
   return (
     <>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0 pt-1.5 px-2.5">
-        <CardTitle className="text-[11px] font-medium truncate">Weekly Capacity</CardTitle>
-      </CardHeader>
-      <CardContent className="pb-1 pt-0.5 px-2.5 min-w-0">
-        <div className="text-base font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+      <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-2 px-3">
+        <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/90">Weekly Capacity</h3>
+      </div>
+      <div className="pb-2 pt-1 px-3 min-w-0">
+        <div className="text-2xl font-bold bg-gradient-to-br from-accent via-primary to-accent bg-clip-text text-transparent">
           {avgPercentage}%
         </div>
-        <p className="text-[9px] text-muted-foreground mt-0 truncate">
-          {percentageChange >= 0 ? '+' : ''}{percentageChange}% vs last week
+        <p className="text-[10px] text-muted-foreground mt-0.5 truncate font-medium">
+          {percentageChange >= 0 ? '+' : ''}{percentageChange}% vs. last week
         </p>
-      </CardContent>
+      </div>
     </>
   )
 }

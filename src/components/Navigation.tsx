@@ -20,11 +20,11 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
-      <div className="border-b border-border/40 backdrop-blur-xl bg-gradient-to-r from-card/95 via-card/98 to-card/95 shadow-sm">
+      <div className="glass-nav">
         <div className="max-w-[2000px] mx-auto px-6 py-4">
           <div className="flex items-center gap-6 md:gap-8 min-w-0">
             <div className="flex items-center gap-3 md:gap-4 shrink-0">
-              <div className="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-accent via-accent to-accent/80 flex items-center justify-center shadow-md ring-1 ring-accent/20">
+              <div className="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-accent via-primary to-accent/80 flex items-center justify-center shadow-lg ring-1 ring-white/20">
                 <svg width="24" height="24" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="md:w-7 md:h-7">
                   <circle cx="100" cy="80" r="35" fill="white" opacity="0.95"/>
                   <ellipse cx="100" cy="140" rx="50" ry="60" fill="white" opacity="0.95"/>
@@ -40,7 +40,7 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
               </div>
             </div>
             
-            <div className="w-px h-10 bg-gradient-to-b from-transparent via-border to-transparent hidden sm:block shrink-0" />
+            <div className="w-px h-10 bg-gradient-to-b from-transparent via-white/10 to-transparent hidden sm:block shrink-0" />
             
             <div className="flex items-center gap-1.5 md:gap-2 flex-1 overflow-x-auto min-w-0 scrollbar-hide">
               {navItems.map((item) => {
@@ -53,10 +53,10 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
                     className={`
                       relative px-4 md:px-5 py-2.5 rounded-xl transition-all duration-300
                       text-xs md:text-sm font-semibold whitespace-nowrap shrink-0
-                      tracking-wide
+                      tracking-wide backdrop-blur-sm
                       ${isActive 
-                        ? 'text-accent-foreground bg-gradient-to-br from-accent via-accent to-accent/90 shadow-md ring-1 ring-accent/30' 
-                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary/80 hover:shadow-sm'
+                        ? 'text-white bg-gradient-to-br from-primary via-accent to-primary shadow-lg ring-1 ring-white/20' 
+                        : 'text-muted-foreground hover:text-foreground hover:bg-white/10 hover:shadow-md'
                       }
                     `}
                   >

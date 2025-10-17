@@ -95,19 +95,20 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 - **Pickup Workflow**: Require customer arrival acknowledgment before enabling checkout, prevent skipping ready-for-pickup status, enable easy upselling during pickup with quick add services/products button
 
 ## Design Direction
-The design should evoke luxury, sophistication, and premium quality - like a high-end boutique pet spa. The interface features refined materials with elegant typography (Playfair Display for headlines, Inter for body), rich warm accent colors with gold undertones, sophisticated spacing with generous padding, subtle shadows and borders that create depth without heaviness, and a cohesive color palette of warm creams, deep charcoals, and luxurious gold accents. Every interaction should feel smooth, intentional, and premium.
+The design should evoke luxury, sophistication, and premium quality through a cutting-edge liquid glass aesthetic. The interface features translucent frosted glass surfaces with sophisticated blur effects, vibrant purple-to-pink gradients that flow through the UI, rich depth created through layered transparency and shadows, and subtle shine effects that catch the eye. Every surface feels like premium liquid glass with smooth animations, creating an expensive, modern, and futuristic experience that's both visually stunning and highly functional.
 
 ## Color Selection
-Analogous warm palette with gold accents - Creating a luxurious, high-end experience that feels both expensive and approachable.
+Analogous purple-to-pink gradient palette with liquid glass effects - Creating a luxurious, high-tech experience that feels both expensive and cutting-edge.
 
-- **Primary Color**: Deep Charcoal (oklch(0.20 0.03 30)) - Communicates sophistication, premium quality, and timeless elegance
-- **Secondary Colors**: Warm Cream (oklch(0.92 0.01 90)) for subtle backgrounds and Soft Taupe (oklch(0.94 0.008 90)) for muted elements  
-- **Accent Color**: Luxe Gold (oklch(0.55 0.15 45)) - Rich, expensive highlight for CTAs and important actions that conveys premium quality
+- **Primary Color**: Deep Purple (oklch(0.65 0.22 280)) - Communicates innovation, luxury, and premium quality with vibrant energy
+- **Secondary Colors**: Rich gradient backgrounds from deep blue-purple (oklch(0.15 0.08 280)) through violet to magenta, creating depth and visual interest
+- **Accent Color**: Bright Magenta-Pink (oklch(0.70 0.25 310)) - Eye-catching highlight for CTAs and important actions that conveys premium quality and energy
+- **Glass Effects**: Translucent surfaces with 40% opacity, 20px blur, and subtle white borders/highlights creating the signature liquid glass appearance
 - **Foreground/Background Pairings**:
-  - Background (Warm Off-White oklch(0.97 0.01 90)): Deep Charcoal text (oklch(0.15 0.02 30)) - Ratio 13.2:1 ✓
-  - Card (Pure Cream oklch(0.99 0.005 90)): Deep Charcoal text (oklch(0.15 0.02 30)) - Ratio 14.8:1 ✓  
-  - Primary (Deep Charcoal oklch(0.20 0.03 30)): Cream text (oklch(0.98 0.005 90)) - Ratio 11.5:1 ✓
-  - Accent (Luxe Gold oklch(0.55 0.15 45)): Cream text (oklch(0.98 0.005 90)) - Ratio 5.2:1 ✓
+  - Background (Deep Purple Gradient oklch(0.15 0.08 280)): White text (oklch(0.98 0.01 280)) - Ratio 12.1:1 ✓
+  - Card (Glass Purple oklch(0.25 0.06 270 / 0.4)): White text (oklch(0.98 0.01 270)) - Enhanced by backdrop blur ✓  
+  - Primary (Vibrant Purple oklch(0.65 0.22 280)): White text (oklch(0.98 0.01 280)) - Ratio 7.2:1 ✓
+  - Accent (Bright Magenta oklch(0.70 0.25 310)): White text (oklch(0.98 0.01 310)) - Ratio 6.8:1 ✓
 
 ## Font Selection
 Sophisticated dual-typeface system combining elegant serif headlines with clean sans-serif body text - Playfair Display for luxurious, attention-commanding headlines paired with Inter for exceptional readability and modern professionalism.
@@ -120,10 +121,10 @@ Sophisticated dual-typeface system combining elegant serif headlines with clean 
   - Small (Labels): Inter Semibold/14px/wide tracking - Premium detail
 
 ## Animations
-Refined, luxurious animations that feel smooth and intentional - never rushed or distracting. Every motion should reinforce the premium quality of the experience.
+Smooth, liquid animations that feel fluid and premium - never jarring or slow. Every motion should reinforce the glass-like quality with gentle easing and subtle scale transforms.
 
-- **Purposeful Meaning**: Smooth, eased transitions communicate craftsmanship and attention to detail, making every interaction feel polished and expensive
-- **Hierarchy of Movement**: Subtle hover states with gentle elevation changes, smooth navigation transitions, refined form feedback that feels responsive without being playful
+- **Purposeful Meaning**: Fluid, eased transitions with gentle blur and scale effects communicate premium quality and cutting-edge technology, making every interaction feel polished and futuristic
+- **Hierarchy of Movement**: Smooth hover states with subtle elevation and scale changes (1.02x), elegant sheet/dialog transitions with backdrop blur, refined form feedback with glow effects on focus
 
 ## Component Selection
 - **Components**: Cards for appointments/customers/transactions/settings/staff/inventory items/report metrics/dashboard stats, Multi-view calendar (day/week/month/list) with tabs for scheduling, Forms for data entry with inline validation, Tables for service lists and inventory, Badges for appointment status colors and stock levels, Shopping cart UI for POS, Switch components for settings toggles and appointment reminders, Tabs for inventory sections and calendar views and report categories, Dialog for appointment creation/editing and metric definitions, Sheet for appointment details sidebar and checkout processes (maintaining UI consistency), Filters panel with search, Charts (bar/line/pie) for visual analytics, Select dropdowns for date ranges and grouping options and payment methods

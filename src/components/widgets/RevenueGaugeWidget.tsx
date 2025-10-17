@@ -58,26 +58,26 @@ export function RevenueGaugeWidget() {
   const isPositive = percentChange >= 0
 
   return (
-    <Card className="glass cursor-pointer hover:glass-dark border-white/20 min-w-0">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0 pt-1.5 px-2.5">
-        <CardTitle className="text-[11px] font-medium truncate">Today's Revenue</CardTitle>
-      </CardHeader>
-      <CardContent className="pb-1 pt-0.5 px-2.5 min-w-0">
-        <div className="text-base font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+    <div className="glass-widget rounded-2xl cursor-pointer min-w-0">
+      <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-2 px-3">
+        <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/90">Today's Revenue</h3>
+      </div>
+      <div className="pb-2 pt-1 px-3 min-w-0">
+        <div className="text-2xl font-bold bg-gradient-to-br from-accent via-primary to-accent bg-clip-text text-transparent">
           ${Math.round(todayRevenue)}
         </div>
-        <p className="text-[9px] text-muted-foreground mt-0 flex items-center gap-1 overflow-hidden">
+        <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 overflow-hidden">
           {isPositive ? (
-            <TrendUp className="h-2.5 w-2.5 text-emerald-600 shrink-0" weight="bold" />
+            <TrendUp className="h-3 w-3 text-emerald-400 shrink-0" weight="bold" />
           ) : (
-            <TrendDown className="h-2.5 w-2.5 text-red-600 shrink-0" weight="bold" />
+            <TrendDown className="h-3 w-3 text-red-400 shrink-0" weight="bold" />
           )}
-          <span className={isPositive ? 'text-emerald-600' : 'text-red-600'}>
+          <span className={isPositive ? 'text-emerald-400' : 'text-red-400'}>
             {Math.abs(Math.round(percentChange))}%
           </span>
-          <span className="truncate">vs yesterday</span>
+          <span className="truncate">vs. yesterday</span>
         </p>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
