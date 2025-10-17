@@ -252,7 +252,7 @@ export function NewAppointment({ onBack }: NewAppointmentProps) {
                     )}
                   </SelectContent>
                 </Select>
-                {selectedPetData && (
+                {selectedPetData && selectedPetData.weight && (
                   <p className="text-sm text-muted-foreground mt-2">
                     Weight Class: {selectedPetData.weight.replace('-', ' - ').replace('under', 'Under').replace('over', 'Over')} lbs
                   </p>
