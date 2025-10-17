@@ -1,5 +1,3 @@
-import { Calendar, Users, ChartBar, CashRegister, Gear, UserCircle, Package, ChartLineUp } from '@phosphor-icons/react'
-
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings'
 
 interface NavigationProps {
@@ -10,14 +8,14 @@ interface NavigationProps {
 
 export function Navigation({ currentView, onNavigate }: NavigationProps) {
   const navItems = [
-    { id: 'dashboard' as View, label: 'Dashboard', icon: ChartBar, gradient: 'from-blue-400 to-blue-600' },
-    { id: 'appointments' as View, label: 'Appointments', icon: Calendar, gradient: 'from-purple-400 to-purple-600' },
-    { id: 'customers' as View, label: 'Clients', icon: Users, gradient: 'from-pink-400 to-pink-600' },
-    { id: 'staff' as View, label: 'Staff', icon: UserCircle, gradient: 'from-green-400 to-green-600' },
-    { id: 'pos' as View, label: 'POS', icon: CashRegister, gradient: 'from-yellow-400 to-yellow-600' },
-    { id: 'inventory' as View, label: 'Inventory', icon: Package, gradient: 'from-orange-400 to-orange-600' },
-    { id: 'reports' as View, label: 'Reports', icon: ChartLineUp, gradient: 'from-teal-400 to-teal-600' },
-    { id: 'settings' as View, label: 'Settings', icon: Gear, gradient: 'from-gray-400 to-gray-600' },
+    { id: 'dashboard' as View, label: 'Dashboard' },
+    { id: 'appointments' as View, label: 'Appointments' },
+    { id: 'customers' as View, label: 'Clients' },
+    { id: 'staff' as View, label: 'Staff' },
+    { id: 'pos' as View, label: 'POS' },
+    { id: 'inventory' as View, label: 'Inventory' },
+    { id: 'reports' as View, label: 'Reports' },
+    { id: 'settings' as View, label: 'Settings' },
   ]
 
   return (
@@ -43,46 +41,24 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
             
             <div className="flex items-center gap-2 flex-1 overflow-x-auto">
               {navItems.map((item) => {
-                const Icon = item.icon
                 const isActive = currentView === item.id
                 
                 return (
                   <button
                     key={item.id}
                     onClick={() => onNavigate(item.id)}
-                    className="flex items-center gap-2 group relative px-4 py-2 rounded-xl transition-all duration-300"
+                    className={`
+                      relative px-4 py-2 rounded-lg transition-all duration-200
+                      text-sm font-medium whitespace-nowrap
+                      ${isActive 
+                        ? 'text-foreground bg-white/60 dark:bg-white/10 shadow-sm' 
+                        : 'text-muted-foreground hover:text-foreground hover:bg-white/40 dark:hover:bg-white/5'
+                      }
+                    `}
                   >
-                    <div 
-                      className={`
-                        w-10 h-10 rounded-xl transition-all duration-300
-                        bg-gradient-to-br ${item.gradient}
-                        shadow-md hover:shadow-lg
-                        flex items-center justify-center
-                        ${isActive ? 'scale-95' : 'hover:scale-105 active:scale-95'}
-                      `}
-                      style={{
-                        boxShadow: isActive 
-                          ? '0 4px 12px rgba(0, 0, 0, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.1)'
-                          : '0 4px 12px rgba(0, 0, 0, 0.15)'
-                      }}
-                    >
-                      <Icon 
-                        size={22} 
-                        weight={isActive ? "fill" : "regular"} 
-                        className="text-white drop-shadow-sm"
-                      />
-                    </div>
-                    <span 
-                      className={`
-                        text-sm font-medium whitespace-nowrap hidden md:block
-                        transition-colors duration-200
-                        ${isActive ? 'text-foreground' : 'text-muted-foreground'}
-                      `}
-                    >
-                      {item.label}
-                    </span>
+                    {item.label}
                     {isActive && (
-                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 rounded-full bg-primary/80" />
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-primary" />
                     )}
                   </button>
                 )
