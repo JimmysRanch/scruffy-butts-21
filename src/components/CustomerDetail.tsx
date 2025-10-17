@@ -233,13 +233,13 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft size={18} />
           </Button>
-          <h1 className="text-3xl font-bold text-foreground">Customer Not Found</h1>
+          <h1 className="text-3xl font-bold text-white/90">Customer Not Found</h1>
         </div>
-        <Card>
-          <CardContent className="text-center py-12">
-            <p className="text-muted-foreground">The requested customer could not be found.</p>
-          </CardContent>
-        </Card>
+        <div className="glass-card rounded-[1.25rem] overflow-hidden">
+          <div className="text-center py-12 px-6">
+            <p className="text-white/60">The requested customer could not be found.</p>
+          </div>
+        </div>
       </div>
     )
   }
@@ -441,14 +441,14 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
       transition={{ duration: 0.4 }}
       className="space-y-6"
     >
-      <div className="frosted rounded-2xl p-4 md:p-6 shadow-lg @container">
+      <div className="glass-card rounded-[1.25rem] p-4 md:p-6 shadow-lg @container overflow-hidden">
         <div className="flex flex-col @[800px]:flex-row items-start justify-between gap-4">
           <div className="flex items-start space-x-3 @[600px]:space-x-6 flex-1 min-w-0 w-full">
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={onBack}
-              className="liquid-button -ml-2 mt-1 shrink-0"
+              className="-ml-2 mt-1 shrink-0"
             >
               <ArrowLeft size={20} />
             </Button>
@@ -457,30 +457,30 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
               <div className="flex flex-col @[600px]:flex-row @[600px]:items-start justify-between gap-4 @[600px]:gap-6">
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col @[400px]:flex-row @[400px]:items-center space-y-2 @[400px]:space-y-0 @[400px]:space-x-3 mb-2">
-                    <h1 className="text-2xl @[600px]:text-4xl font-bold text-foreground truncate">
+                    <h1 className="text-2xl @[600px]:text-4xl font-bold text-white/90 truncate">
                       {customer.firstName} {customer.lastName}
                     </h1>
-                    <Badge className="bg-accent/20 text-accent border-accent/30 liquid-pulse self-start @[400px]:self-center whitespace-nowrap">
+                    <Badge className="bg-accent/25 text-accent-foreground border-accent/40 ring-1 ring-accent/30 shadow-[0_0_12px_oklch(0.65_0.22_310/0.3)] self-start @[400px]:self-center whitespace-nowrap">
                       <Star size={12} className="mr-1" weight="fill" />
                       VIP Client
                     </Badge>
                   </div>
-                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                  <div className="flex items-center space-x-4 text-sm text-white/60">
                     <span className="flex items-center space-x-1 min-w-0 overflow-hidden">
-                      <Calendar size={14} className="shrink-0" />
-                      <span className="truncate">Client since {new Date(customer.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+                      <Calendar size={14} className="shrink-0" weight="duotone" />
+                      <span className="truncate font-medium">Client since {new Date(customer.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
                     </span>
                   </div>
                 </div>
                 
-                <div className="flex flex-col gap-1.5 text-sm text-muted-foreground min-w-0 @[600px]:min-w-[200px]">
+                <div className="flex flex-col gap-1.5 text-sm text-white/60 min-w-0 @[600px]:min-w-[200px]">
                   <span className="flex items-center space-x-2 min-w-0">
-                    <Phone size={14} className="shrink-0" />
-                    <span className="truncate">{customer.phone}</span>
+                    <Phone size={14} className="shrink-0" weight="duotone" />
+                    <span className="truncate font-medium">{customer.phone}</span>
                   </span>
                   <span className="flex items-center space-x-2 min-w-0">
-                    <Envelope size={14} className="shrink-0" />
-                    <span className="truncate">{customer.email}</span>
+                    <Envelope size={14} className="shrink-0" weight="duotone" />
+                    <span className="truncate font-medium">{customer.email}</span>
                   </span>
                 </div>
               </div>
@@ -490,15 +490,15 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                   <Separator className="my-4" />
                   <div className="flex flex-col @[600px]:flex-row gap-3 @[600px]:gap-6 text-sm min-w-0">
                     {customer.address && (
-                      <div className="flex items-center gap-2 text-muted-foreground min-w-0">
-                        <MapPin size={14} className="shrink-0" />
-                        <span className="truncate">{customer.address}</span>
+                      <div className="flex items-center gap-2 text-white/60 min-w-0">
+                        <MapPin size={14} className="shrink-0" weight="duotone" />
+                        <span className="truncate font-medium">{customer.address}</span>
                       </div>
                     )}
                     {customer.notes && (
-                      <div className="flex items-center gap-2 text-muted-foreground min-w-0">
-                        <NotePencil size={14} className="shrink-0" />
-                        <span className="truncate">{customer.notes}</span>
+                      <div className="flex items-center gap-2 text-white/60 min-w-0">
+                        <NotePencil size={14} className="shrink-0" weight="duotone" />
+                        <span className="truncate font-medium">{customer.notes}</span>
                       </div>
                     )}
                   </div>
@@ -524,7 +524,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             setIsEditCustomerOpen(open)
           }}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="liquid-button shrink-0 self-start @[800px]:self-auto">
+              <Button variant="outline" className="shrink-0 self-start @[800px]:self-auto">
                 <Pencil size={16} className="mr-2" />
                 Edit Client
               </Button>
@@ -616,18 +616,18 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="frosted rounded-2xl p-5 shadow-lg @container min-w-0"
+          className="glass-widget glass-widget-lavender rounded-[1.25rem] p-5 shadow-lg @container min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]"
         >
           <div className="mb-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Lifetime Spend</p>
+            <p className="text-xs font-semibold text-white/60 uppercase tracking-wider">Lifetime Spend</p>
           </div>
           <div className="flex items-end justify-between min-w-0">
             <div className="min-w-0 overflow-hidden">
               <div className="flex items-baseline space-x-2 mb-1">
-                <CreditCard size={20} className="text-accent shrink-0" weight="fill" />
-                <p className="text-3xl font-bold text-foreground truncate">${lifetimeValue.toFixed(2)}</p>
+                <CreditCard size={20} className="text-accent shrink-0 drop-shadow-[0_0_8px_oklch(0.65_0.22_310)]" weight="fill" />
+                <p className="text-3xl font-bold text-white/95 truncate">${lifetimeValue.toFixed(2)}</p>
               </div>
-              <p className="text-xs text-muted-foreground truncate">
+              <p className="text-xs text-white/60 truncate font-medium">
                 Total revenue from client
               </p>
             </div>
@@ -638,18 +638,18 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="frosted rounded-2xl p-5 shadow-lg @container min-w-0"
+          className="glass-widget glass-widget-turquoise rounded-[1.25rem] p-5 shadow-lg @container min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]"
         >
           <div className="mb-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Visits</p>
+            <p className="text-xs font-semibold text-white/60 uppercase tracking-wider">Total Visits</p>
           </div>
           <div className="flex items-end justify-between min-w-0">
             <div className="min-w-0 overflow-hidden">
               <div className="flex items-baseline space-x-2 mb-1">
-                <Scissors size={20} className="text-primary shrink-0" weight="fill" />
-                <p className="text-3xl font-bold text-foreground">{completedAppointments.length}</p>
+                <Scissors size={20} className="text-primary shrink-0 drop-shadow-[0_0_8px_oklch(0.60_0.20_280)]" weight="fill" />
+                <p className="text-3xl font-bold text-white/95">{completedAppointments.length}</p>
               </div>
-              <p className="text-xs text-muted-foreground truncate">
+              <p className="text-xs text-white/60 truncate font-medium">
                 Completed appointments
               </p>
             </div>
@@ -660,18 +660,18 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="frosted rounded-2xl p-5 shadow-lg @container min-w-0"
+          className="glass-widget glass-widget-rose rounded-[1.25rem] p-5 shadow-lg @container min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]"
         >
           <div className="mb-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Average Per Visit</p>
+            <p className="text-xs font-semibold text-white/60 uppercase tracking-wider">Average Per Visit</p>
           </div>
           <div className="flex items-end justify-between min-w-0">
             <div className="min-w-0 overflow-hidden">
               <div className="flex items-baseline space-x-2 mb-1">
-                <CreditCard size={20} className="text-accent shrink-0" weight="fill" />
-                <p className="text-3xl font-bold text-foreground truncate">${averagePerVisit.toFixed(2)}</p>
+                <CreditCard size={20} className="text-accent shrink-0 drop-shadow-[0_0_8px_oklch(0.65_0.22_310)]" weight="fill" />
+                <p className="text-3xl font-bold text-white/95 truncate">${averagePerVisit.toFixed(2)}</p>
               </div>
-              <p className="text-xs text-muted-foreground truncate">
+              <p className="text-xs text-white/60 truncate font-medium">
                 Average transaction value
               </p>
             </div>
@@ -682,19 +682,19 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="frosted rounded-2xl p-5 shadow-lg @container min-w-0"
+          className="glass-widget glass-widget-gold rounded-[1.25rem] p-5 shadow-lg @container min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]"
         >
           <div className="mb-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Recommended Cadence</p>
+            <p className="text-xs font-semibold text-white/60 uppercase tracking-wider">Recommended Cadence</p>
           </div>
           <div className="flex items-end justify-between min-w-0">
             <div className="min-w-0 overflow-hidden">
               <div className="flex items-baseline space-x-2 mb-1">
-                <Calendar size={20} className="text-primary shrink-0" weight="fill" />
-                <p className="text-3xl font-bold text-foreground">{recommendedCadence}</p>
-                <p className="text-base font-medium text-muted-foreground whitespace-nowrap">week{recommendedCadence !== 1 ? 's' : ''}</p>
+                <Calendar size={20} className="text-primary shrink-0 drop-shadow-[0_0_8px_oklch(0.60_0.20_280)]" weight="fill" />
+                <p className="text-3xl font-bold text-white/95">{recommendedCadence}</p>
+                <p className="text-base font-medium text-white/60 whitespace-nowrap">week{recommendedCadence !== 1 ? 's' : ''}</p>
               </div>
-              <p className="text-xs text-muted-foreground truncate">
+              <p className="text-xs text-white/60 truncate font-medium">
                 {averageWeeksBetweenVisits 
                   ? `Actual avg: ${averageWeeksBetweenVisits.toFixed(1)} weeks`
                   : 'Based on industry standards'
@@ -710,15 +710,15 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="frosted rounded-2xl p-6 shadow-lg @container min-w-0"
+          className="glass-card rounded-[1.25rem] p-6 shadow-lg @container min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.01]"
         >
           <div className="flex flex-col @[600px]:flex-row @[600px]:items-center justify-between gap-4 min-w-0">
             <div className="min-w-0 overflow-hidden">
-              <h3 className="text-lg font-bold text-foreground mb-2">Last Visit</h3>
+              <h3 className="text-lg font-bold text-white/90 mb-2">Last Visit</h3>
               <div className="flex flex-col @[400px]:flex-row @[400px]:items-center @[400px]:space-x-4 gap-2 @[400px]:gap-0 text-sm">
                 <span className="flex items-center space-x-2">
-                  <Calendar size={16} className="text-muted-foreground shrink-0" />
-                  <span className="text-foreground truncate">
+                  <Calendar size={16} className="text-white/60 shrink-0" weight="duotone" />
+                  <span className="text-white/90 truncate font-medium">
                     {new Date(lastVisit.date).toLocaleDateString('en-US', { 
                       month: 'long', 
                       day: 'numeric', 
@@ -727,22 +727,22 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                   </span>
                 </span>
                 <span className="flex items-center space-x-2">
-                  <Scissors size={16} className="text-muted-foreground shrink-0" />
-                  <span className="text-foreground truncate">{lastVisit.service}</span>
+                  <Scissors size={16} className="text-white/60 shrink-0" weight="duotone" />
+                  <span className="text-white/90 truncate font-medium">{lastVisit.service}</span>
                 </span>
                 <span className="flex items-center space-x-2">
-                  <CreditCard size={16} className="text-muted-foreground shrink-0" />
-                  <span className="text-foreground">${lastVisit.price.toFixed(2)}</span>
+                  <CreditCard size={16} className="text-white/60 shrink-0" weight="duotone" />
+                  <span className="text-white/90 font-medium">${lastVisit.price.toFixed(2)}</span>
                 </span>
               </div>
             </div>
             {nextAppointment && (
               <div className="text-left @[600px]:text-right shrink-0">
-                <p className="text-xs text-muted-foreground mb-1">Next Appointment</p>
+                <p className="text-xs text-white/60 mb-1 font-medium">Next Appointment</p>
                 <p className="text-lg font-bold text-primary">
                   {new Date(nextAppointment.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </p>
-                <p className="text-xs text-muted-foreground truncate">
+                <p className="text-xs text-white/60 truncate font-medium">
                   {nextAppointment.time} - {nextAppointment.service}
                 </p>
               </div>
@@ -759,10 +759,10 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             transition={{ delay: 0.1 }}
             className="min-w-0"
           >
-            <div className="frosted rounded-2xl p-6 shadow-lg h-full min-w-0">
+            <div className="glass-card rounded-[1.25rem] p-6 shadow-lg h-full min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.01]">
               <div className="flex items-center justify-between mb-6 min-w-0">
-                <h2 className="text-2xl font-bold text-foreground flex items-center space-x-2 min-w-0">
-                  <Dog size={24} className="text-primary shrink-0" weight="fill" />
+                <h2 className="text-2xl font-bold text-white/90 flex items-center space-x-2 min-w-0">
+                  <Dog size={24} className="text-primary shrink-0 drop-shadow-[0_0_8px_oklch(0.60_0.20_280)]" weight="fill" />
                   <span className="truncate">Pets</span>
                 </h2>
                 <Dialog open={isNewPetOpen} onOpenChange={(open) => {
@@ -772,7 +772,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                   setIsNewPetOpen(open)
                 }}>
                   <DialogTrigger asChild>
-                    <Button size="sm" className="liquid-button">
+                    <Button size="sm">
                       <Plus size={16} className="mr-2" />
                       Add Pet
                     </Button>

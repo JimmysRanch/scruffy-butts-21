@@ -75,62 +75,61 @@ function StaffProfile({ staff, onBack, onEdit }: StaffProfileProps) {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center">
-              <UserCircle size={48} className="text-muted-foreground" />
+      <div className="glass-card rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.005]">
+        <div className="p-6">
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="w-16 h-16 rounded-full bg-accent/25 flex items-center justify-center ring-1 ring-accent/40 shadow-[0_0_12px_oklch(0.65_0.22_310/0.3)]">
+              <UserCircle size={48} className="text-accent" weight="duotone" />
             </div>
             <div>
-              <CardTitle className="text-2xl">{staff.firstName} {staff.lastName}</CardTitle>
-              <CardDescription className="text-lg">{staff.position}</CardDescription>
+              <h2 className="text-2xl font-bold text-white/90">{staff.firstName} {staff.lastName}</h2>
+              <p className="text-lg text-white/60 font-medium">{staff.position}</p>
               <div className="flex items-center mt-2 gap-3">
                 <Badge variant={staff.status === 'active' ? 'default' : 'secondary'}>
                   {staff.status}
                 </Badge>
                 {staff.canBeBooked !== false && (
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+                  <Badge variant="outline" className="bg-primary/25 text-primary-foreground border-primary/30 ring-1 ring-primary/20">
                     Bookable
                   </Badge>
                 )}
                 <div className="flex items-center">
-                  <Star size={16} className="text-yellow-500 mr-1" weight="fill" />
-                  <span className="text-sm font-medium">{staff.rating}/5</span>
+                  <Star size={16} className="text-yellow-400 mr-1 drop-shadow-[0_0_8px_oklch(0.80_0.15_80)]" weight="fill" />
+                  <span className="text-sm font-semibold text-white/90">{staff.rating}/5</span>
                 </div>
               </div>
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
+          <div className="space-y-6 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <EnvelopeSimple size={18} className="text-muted-foreground" />
-                <span>{staff.email}</span>
+              <div className="flex items-center space-x-2 text-white/80">
+                <EnvelopeSimple size={18} className="text-white/60" weight="duotone" />
+                <span className="font-medium">{staff.email}</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <Phone size={18} className="text-muted-foreground" />
-                <span>{staff.phone}</span>
+              <div className="flex items-center space-x-2 text-white/80">
+                <Phone size={18} className="text-white/60" weight="duotone" />
+                <span className="font-medium">{staff.phone}</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <MapPin size={18} className="text-muted-foreground" />
-                <span>
+              <div className="flex items-center space-x-2 text-white/80">
+                <MapPin size={18} className="text-white/60" weight="duotone" />
+                <span className="font-medium">
                   {staff.address && <>{staff.address}, </>}
                   {staff.city}{staff.city && (staff.state || staff.zip) ? ', ' : ''}{staff.state} {staff.zip}
                 </span>
               </div>
-              <div className="flex items-center space-x-2">
-                <Calendar size={18} className="text-muted-foreground" />
-                <span>Hired: {new Date(staff.hireDate).toLocaleDateString()}</span>
+              <div className="flex items-center space-x-2 text-white/80">
+                <Calendar size={18} className="text-white/60" weight="duotone" />
+                <span className="font-medium">Hired: {new Date(staff.hireDate).toLocaleDateString()}</span>
               </div>
             </div>
             
             <div className="space-y-4">
               <div>
-                <h4 className="font-semibold mb-2">Specialties</h4>
+                <h4 className="font-semibold mb-2 text-white/90">Specialties</h4>
                 <div className="flex flex-wrap gap-2">
                   {staff.specialties.map((specialty, index) => (
-                    <Badge key={index} variant="outline">
+                    <Badge key={index} variant="outline" className="bg-white/10 border-white/20">
                       {specialty}
                     </Badge>
                   ))}
@@ -139,18 +138,18 @@ function StaffProfile({ staff, onBack, onEdit }: StaffProfileProps) {
               
               {staff.canBeBooked !== false && bookableServiceNames.length > 0 && (
                 <div>
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <Scissors size={16} />
+                  <h4 className="font-semibold mb-2 flex items-center gap-2 text-white/90">
+                    <Scissors size={16} weight="duotone" />
                     Bookable Services
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {bookableServiceNames.map((serviceName, index) => (
-                      <Badge key={index} variant="secondary" className="bg-green-50 text-green-700">
+                      <Badge key={index} variant="secondary" className="bg-primary/25 text-primary-foreground ring-1 ring-primary/20">
                         {serviceName}
                       </Badge>
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-xs text-white/60 mt-2 font-medium">
                     This staff member can be booked for {bookableServiceNames.length} service{bookableServiceNames.length !== 1 ? 's' : ''}
                   </p>
                 </div>
@@ -158,11 +157,11 @@ function StaffProfile({ staff, onBack, onEdit }: StaffProfileProps) {
               
               {staff.canBeBooked === false && (
                 <div>
-                  <h4 className="font-semibold mb-2">Booking Status</h4>
-                  <Badge variant="outline" className="bg-gray-50">
+                  <h4 className="font-semibold mb-2 text-white/90">Booking Status</h4>
+                  <Badge variant="outline" className="bg-white/10 border-white/20">
                     Not available for booking
                   </Badge>
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-xs text-white/60 mt-2 font-medium">
                     This staff member is only scheduled for office work
                   </p>
                 </div>
@@ -170,16 +169,17 @@ function StaffProfile({ staff, onBack, onEdit }: StaffProfileProps) {
               
               {staff.notes && (
                 <div>
-                  <h4 className="font-semibold mb-2">Notes</h4>
-                  <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
+                  <h4 className="font-semibold mb-2 text-white/90">Notes</h4>
+                  <p className="text-sm text-white/70 bg-white/5 p-3 rounded-lg border border-white/10 font-medium">
                     {staff.notes}
                   </p>
                 </div>
               )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        </div>
+      </div>
     </div>
   )
 }

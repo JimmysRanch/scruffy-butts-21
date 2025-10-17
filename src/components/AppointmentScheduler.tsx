@@ -507,11 +507,11 @@ export function AppointmentScheduler() {
   return (
     <div className="space-y-3">
       {showFilters && (
-          <Card>
-            <CardContent className="pt-4 pb-4">
+          <div className="glass-card rounded-[1.25rem] overflow-hidden">
+            <div className="pt-5 pb-4 px-5">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
-                  <Label className="text-xs">Status</Label>
+                  <Label className="text-xs text-white/70 font-semibold">Status</Label>
                   <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as FilterStatus)}>
                     <SelectTrigger className="h-8">
                       <SelectValue />
@@ -531,7 +531,7 @@ export function AppointmentScheduler() {
                 </div>
 
                 <div>
-                  <Label className="text-xs">Staff Member</Label>
+                  <Label className="text-xs text-white/70 font-semibold">Staff Member</Label>
                   <Select value={filterStaff} onValueChange={setFilterStaff}>
                     <SelectTrigger className="h-8">
                       <SelectValue />
@@ -561,12 +561,12 @@ export function AppointmentScheduler() {
                   </Button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
-      <Card className="glass">
-        <CardContent className="p-4">
+      <div className="glass-card rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.005]">
+        <div className="p-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div className="flex items-center gap-2 flex-wrap">
             <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
@@ -791,8 +791,8 @@ export function AppointmentScheduler() {
             )}
           </div>
         </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {viewMode === 'list' && (
         <ListView
@@ -840,9 +840,13 @@ function ListView({
 }) {
   if (appointments.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        <List size={48} className="mx-auto mb-2 opacity-50" />
-        <p className="text-base">No appointments found</p>
+      <div className="glass-card rounded-[1.25rem] overflow-hidden">
+        <div className="text-center py-12 px-6">
+          <div className="w-fit mx-auto p-5 rounded-2xl mb-4 bg-white/5 ring-1 ring-white/10">
+            <List size={48} className="mx-auto text-white/50" weight="duotone" />
+          </div>
+          <p className="text-base text-white/60 font-medium">No appointments found</p>
+        </div>
       </div>
     )
   }
@@ -875,17 +879,16 @@ function ListView({
         const isPastDay = isBefore(dateObj, startOfDay(new Date())) && !isCurrentDay
         
         return (
-          <div key={date} className="space-y-2">
+          <div key={date} className="space-y-3">
             <div className={cn(
-              'sticky top-[220px] z-10 bg-background/95 backdrop-blur-sm py-1.5 border-b-2',
-              isCurrentDay && 'border-primary',
-              !isCurrentDay && 'border-border'
+              'glass-card sticky top-[220px] z-10 backdrop-blur-md py-2 px-4 rounded-xl overflow-hidden',
+              isCurrentDay && 'ring-1 ring-primary/40 shadow-[0_0_20px_oklch(0.60_0.20_280/0.4)]'
             )}>
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className={cn(
                     'font-bold text-lg',
-                    isCurrentDay && 'text-primary'
+                    isCurrentDay ? 'text-primary drop-shadow-[0_0_8px_oklch(0.60_0.20_280)]' : 'text-white/90'
                   )}>
                     {isCurrentDay 
                       ? 'Today' 
@@ -893,18 +896,18 @@ function ListView({
                     }
                   </h3>
                   {!isCurrentDay && (
-                    <p className="text-base text-muted-foreground">
+                    <p className="text-sm text-white/60 font-medium">
                       {format(dateObj, 'EEEE')}
                     </p>
                   )}
                 </div>
-                <Badge variant={isCurrentDay ? 'default' : 'secondary'} className="text-sm">
+                <Badge variant={isCurrentDay ? 'default' : 'secondary'} className="text-sm font-semibold">
                   {appointmentsForDate.length} appointment{appointmentsForDate.length !== 1 ? 's' : ''}
                 </Badge>
               </div>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {appointmentsForDate.map((apt) => (
                 <AppointmentCard
                   key={apt.id}

@@ -328,58 +328,60 @@ export function CustomerManager() {
       </div>
 
       {(customers || []).length === 0 ? (
-        <Card>
-          <CardContent className="text-center py-8">
-            <User size={48} className="mx-auto text-muted-foreground mb-3" />
-            <h3 className="font-medium mb-2 text-lg">No clients yet</h3>
-            <p className="text-muted-foreground mb-4 text-base">
+        <div className="glass-card rounded-[1.25rem] overflow-hidden">
+          <div className="text-center py-12 px-6">
+            <div className="w-fit mx-auto p-5 rounded-2xl mb-4 bg-white/5 ring-1 ring-white/10">
+              <User size={48} className="mx-auto text-white/50" weight="duotone" />
+            </div>
+            <h3 className="font-semibold mb-2 text-lg text-white/90">No clients yet</h3>
+            <p className="text-white/50 mb-6 text-sm">
               Add your first client to get started with managing your grooming business
             </p>
             <Button onClick={() => setIsNewCustomerOpen(true)}>
               Add First Client
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {(customers || []).map((customer) => (
             <div 
               key={customer.id} 
-              className="flex flex-col @[600px]:flex-row items-start @[600px]:items-center justify-between bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer p-4 gap-3 @container min-w-0"
+              className="glass-card rounded-[1.25rem] flex flex-col @[600px]:flex-row items-start @[600px]:items-center justify-between hover:scale-[1.01] transition-all duration-300 cursor-pointer p-4 gap-3 @container min-w-0"
               onClick={() => setViewingCustomerId(customer.id)}
             >
               <div className="flex items-center flex-1 min-w-0 space-x-3 w-full @[600px]:w-auto">
                 <div className="flex-shrink-0">
-                  <div className="bg-primary/10 rounded-full flex items-center justify-center w-11 h-11">
-                    <User size={22} className="text-primary" />
+                  <div className="bg-accent/25 rounded-full flex items-center justify-center w-11 h-11 ring-1 ring-accent/40 shadow-[0_0_12px_oklch(0.65_0.22_310/0.3)]">
+                    <User size={22} className="text-accent" weight="duotone" />
                   </div>
                 </div>
                 
                 <div className="flex-1 min-w-0 overflow-hidden">
                   <div className="flex items-center space-x-2 mb-0.5 min-w-0">
-                    <h3 className="font-medium text-foreground truncate text-base">
+                    <h3 className="font-semibold text-white/90 truncate text-base">
                       {customer.firstName && customer.lastName 
                         ? `${customer.firstName} ${customer.lastName}` 
                         : customer.name || 'Unknown Customer'}
                     </h3>
-                    <span className="text-muted-foreground bg-secondary rounded-full text-xs px-2 py-0.5 whitespace-nowrap shrink-0">
+                    <span className="text-white/60 bg-white/10 rounded-full text-xs px-2.5 py-0.5 whitespace-nowrap shrink-0 font-medium">
                       {customer.pets.length} pet{customer.pets.length !== 1 ? 's' : ''}
                     </span>
                   </div>
                   
-                  <div className="flex items-center text-muted-foreground space-x-3 text-sm min-w-0">
+                  <div className="flex items-center text-white/50 space-x-3 text-sm min-w-0">
                     <div className="flex items-center space-x-1.5 min-w-0">
-                      <Phone size={14} className="shrink-0" />
-                      <span className="truncate">{customer.phone}</span>
+                      <Phone size={14} className="shrink-0" weight="duotone" />
+                      <span className="truncate font-medium">{customer.phone}</span>
                     </div>
                   </div>
                   
                   {customer.pets.length > 0 && (
                     <div className="flex items-start @[400px]:items-center space-x-2 mt-1.5 min-w-0">
-                      <span className="text-muted-foreground text-xs shrink-0">Pets:</span>
-                      <div className="flex flex-wrap gap-1 min-w-0">
+                      <span className="text-white/50 text-xs shrink-0 font-medium">Pets:</span>
+                      <div className="flex flex-wrap gap-1.5 min-w-0">
                         {customer.pets.map((pet) => (
-                          <span key={pet.id} className="bg-accent/20 text-accent-foreground rounded text-xs px-2 py-0.5 whitespace-nowrap">
+                          <span key={pet.id} className="bg-primary/25 text-primary-foreground rounded-lg text-xs px-2.5 py-1 whitespace-nowrap ring-1 ring-primary/30 shadow-sm">
                             {pet.name} ({pet.breed})
                           </span>
                         ))}
