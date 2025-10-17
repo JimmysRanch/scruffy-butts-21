@@ -13,7 +13,6 @@ import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { 
   ArrowLeft, 
-  User, 
   Phone, 
   Envelope, 
   Heart, 
@@ -442,8 +441,8 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
       className="space-y-6"
     >
       <div className="frosted rounded-2xl p-6 shadow-lg">
-        <div className="flex items-start justify-between">
-          <div className="flex items-start space-x-6">
+        <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start space-x-6 flex-1">
             <Button 
               variant="ghost" 
               size="sm" 
@@ -572,6 +571,54 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             </DialogContent>
           </Dialog>
         </div>
+
+        <Separator className="mb-5" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <Envelope size={18} className="text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-0.5">Email</p>
+              <p className="text-sm font-medium text-foreground truncate">{customer.email}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
+              <Phone size={18} className="text-accent" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-0.5">Phone</p>
+              <p className="text-sm font-medium text-foreground">{customer.phone}</p>
+            </div>
+          </div>
+
+          {customer.address && (
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                <MapPin size={18} className="text-green-500" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-0.5">Address</p>
+                <p className="text-sm font-medium text-foreground truncate">{customer.address}</p>
+              </div>
+            </div>
+          )}
+
+          {customer.notes && (
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                <NotePencil size={18} className="text-purple-500" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-0.5">Notes</p>
+                <p className="text-sm font-medium text-foreground truncate">{customer.notes}</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -677,73 +724,11 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 space-y-6">
+        <div className="lg:col-span-1">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
-          >
-            <div className="frosted rounded-2xl p-6 shadow-lg liquid-flow">
-              <h3 className="text-lg font-bold mb-6 flex items-center space-x-2">
-                <User size={20} className="text-primary" />
-                <span>Contact Information</span>
-              </h3>
-              
-              <div className="space-y-5">
-                <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Envelope size={18} className="text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Email</p>
-                    <p className="text-sm font-medium text-foreground break-all">{customer.email}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Phone size={18} className="text-accent" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Phone</p>
-                    <p className="text-sm font-medium text-foreground">{customer.phone}</p>
-                  </div>
-                </div>
-
-                {customer.address && (
-                  <div className="flex items-start space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <MapPin size={18} className="text-green-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Address</p>
-                      <p className="text-sm font-medium text-foreground">{customer.address}</p>
-                    </div>
-                  </div>
-                )}
-
-                {customer.notes && (
-                  <>
-                    <Separator className="my-4" />
-                    <div className="flex items-start space-x-3">
-                      <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <NotePencil size={18} className="text-purple-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Notes</p>
-                        <p className="text-sm text-foreground">{customer.notes}</p>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
           >
             <div className="frosted rounded-2xl p-6 shadow-lg">
               <h3 className="text-lg font-bold mb-4 flex items-center space-x-2">
