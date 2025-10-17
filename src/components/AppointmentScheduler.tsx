@@ -602,15 +602,6 @@ export function AppointmentScheduler() {
             </div>
           )}
 
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setShowFilters(!showFilters)}
-            className={cn(showFilters && 'bg-accent')}
-          >
-            <Funnel size={18} />
-          </Button>
-
           <Dialog open={isNewAppointmentOpen} onOpenChange={(open) => {
             setIsNewAppointmentOpen(open)
             if (!open) resetForm()
