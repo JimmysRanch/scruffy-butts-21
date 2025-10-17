@@ -195,11 +195,16 @@ export function QuickCheckout({ open, onOpenChange, customerId, customerName }: 
     setIsProcessing(true)
 
     setTimeout(() => {
+      const now = new Date()
       const transaction: Transaction = {
         id: `txn-${Date.now()}`,
         customerId,
         customerName,
-        date: new Date().toISOString(),
+        date: now.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        }),
         items: lineItems,
         subtotal: calculateSubtotal(),
         tax: calculateTax(),

@@ -39,23 +39,21 @@ interface TransactionReceiptProps {
 export function TransactionReceipt({ open, onOpenChange, transaction }: TransactionReceiptProps) {
   if (!transaction) return null
 
-  const formattedDate = transaction.date || 
-    (transaction.timestamp 
-      ? new Date(transaction.timestamp).toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        })
-      : 'N/A')
+  const formattedDate = transaction.timestamp 
+    ? new Date(transaction.timestamp).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      })
+    : (transaction.date || 'N/A')
 
-  const formattedTime = transaction.time || 
-    (transaction.timestamp 
-      ? new Date(transaction.timestamp).toLocaleTimeString('en-US', { 
-          hour: '2-digit', 
-          minute: '2-digit',
-          hour12: true 
-        })
-      : 'N/A')
+  const formattedTime = transaction.timestamp 
+    ? new Date(transaction.timestamp).toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: true 
+      })
+    : (transaction.time || 'N/A')
 
   const paymentMethodDisplay = transaction.paymentMethod === 'cashapp' 
     ? 'Cash App' 
@@ -169,10 +167,12 @@ export function TransactionReceipt({ open, onOpenChange, transaction }: Transact
                 <span>-${transaction.discount.toFixed(2)}</span>
               </div>
             )}
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Tax:</span>
-              <span>${transaction.tax.toFixed(2)}</span>
-            </div>
+            {transaction.tax > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Tax:</span>
+                <span>${transaction.tax.toFixed(2)}</span>
+              </div>
+            )}
             {transaction.tip && transaction.tip > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Tip:</span>
