@@ -619,7 +619,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
           className="frosted rounded-2xl p-5 shadow-lg"
         >
           <div className="mb-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Lifetime Value</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Lifetime Spend</p>
           </div>
           <div className="flex items-end justify-between">
             <div>
