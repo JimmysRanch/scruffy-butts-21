@@ -65,7 +65,6 @@ export function RecentActivity() {
           </div>
           <span className="truncate">Recent Activity</span>
         </CardTitle>
-        <CardDescription className="truncate text-xs">Latest actions by staff members</CardDescription>
       </CardHeader>
       <CardContent className="min-w-0 px-4 pb-4">
         {recentActivities.length === 0 ? (
