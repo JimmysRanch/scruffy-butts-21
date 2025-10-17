@@ -824,26 +824,10 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
         </DialogContent>
       </Dialog>
 
-      {viewMode === 'list' && (
-        <ListView
-          appointments={filteredAppointments}
-          onViewAppointment={handleViewAppointment}
-          onEditAppointment={handleEditAppointment}
-          onDeleteAppointment={(apt) => handleDeleteAppointment(apt.id)}
-          onDuplicateAppointment={handleDuplicateAppointment}
-          onRebookAppointment={handleRebookAppointment}
-          onStatusChange={updateAppointmentStatus}
-          getStaffColor={getStaffColor}
-          staffMembers={staffMembers || []}
-          activeAppointmentId={activeAppointmentId}
-          setActiveAppointmentId={setActiveAppointmentId}
-        />
-      )}
-
       {viewMode === 'day' && (
         <DayView
-          date={currentDate}
-          appointments={getAppointmentsForDate(currentDate)}
+          date={selectedDate}
+          appointments={filteredAppointments}
           onViewAppointment={handleViewAppointment}
           onEditAppointment={handleEditAppointment}
           onDeleteAppointment={(apt) => handleDeleteAppointment(apt.id)}
