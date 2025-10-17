@@ -61,9 +61,6 @@ export function RevenueGaugeWidget() {
     <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph min-w-0">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
         <CardTitle className="text-xs font-medium truncate">Today's Revenue</CardTitle>
-        <div className="glass-dark p-1 rounded-lg shrink-0">
-          <CurrencyDollar className="h-3 w-3 text-primary" weight="fill" />
-        </div>
       </CardHeader>
       <CardContent className="pb-1 pt-1 px-3 min-w-0">
         <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">

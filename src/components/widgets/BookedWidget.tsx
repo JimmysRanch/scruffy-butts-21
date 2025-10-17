@@ -74,9 +74,6 @@ export function BookedWidget() {
     <>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0.5 pt-2 px-3">
         <CardTitle className="text-xs font-medium truncate">Weekly Capacity</CardTitle>
-        <div className="glass-dark p-1 rounded-lg shrink-0">
-          <ChartBar className="h-3 w-3 text-accent" weight="fill" />
-        </div>
       </CardHeader>
       <CardContent className="pb-1 pt-1 px-3 min-w-0">
         <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
