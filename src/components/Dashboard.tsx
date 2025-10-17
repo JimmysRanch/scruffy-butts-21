@@ -87,53 +87,53 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
   return (
     <div className={isCompact ? 'space-y-6' : 'space-y-8'}>
-      <div className={`grid lg:grid-cols-4 md:grid-cols-2 ${isCompact ? 'gap-4' : 'gap-6'}`}>
+      <div className={`grid lg:grid-cols-8 md:grid-cols-4 ${isCompact ? 'gap-2' : 'gap-3'}`}>
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Appointments</CardTitle>
-            <div className="glass-dark p-2 rounded-lg">
-              <Calendar className="h-5 w-5 text-primary" weight="fill" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+            <CardTitle className="text-xs font-medium">Today's Appointments</CardTitle>
+            <div className="glass-dark p-1 rounded-lg">
+              <Calendar className="h-3 w-3 text-primary" weight="fill" />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          <CardContent className="pb-2">
+            <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
               {todayAppointments.length}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-[10px] text-muted-foreground mt-0.5">
               {todayAppointments.length === 1 ? 'appointment' : 'appointments'} scheduled
             </p>
           </CardContent>
         </Card>
 
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('customers')}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-            <div className="glass-dark p-2 rounded-lg">
-              <Users className="h-5 w-5 text-accent" weight="fill" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+            <CardTitle className="text-xs font-medium">Total Customers</CardTitle>
+            <div className="glass-dark p-1 rounded-lg">
+              <Users className="h-3 w-3 text-accent" weight="fill" />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          <CardContent className="pb-2">
+            <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
               {customers?.length || 0}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-[10px] text-muted-foreground mt-0.5">
               Active {customers?.length === 1 ? 'customer' : 'customers'}
             </p>
           </CardContent>
         </Card>
 
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('appointments')}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">This Week</CardTitle>
-            <div className="glass-dark p-2 rounded-lg">
-              <ChartBar className="h-5 w-5 text-primary" weight="fill" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+            <CardTitle className="text-xs font-medium">This Week</CardTitle>
+            <div className="glass-dark p-1 rounded-lg">
+              <ChartBar className="h-3 w-3 text-primary" weight="fill" />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          <CardContent className="pb-2">
+            <div className="text-lg font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
               {weekAppointments.length}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-[10px] text-muted-foreground mt-0.5">
               {weekAppointments.length === 1 ? 'appointment' : 'appointments'} this week
             </p>
           </CardContent>
