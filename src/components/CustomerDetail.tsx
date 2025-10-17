@@ -482,25 +482,21 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
                     <Envelope size={14} className="shrink-0" weight="duotone" />
                     <span className="truncate font-medium">{customer.email}</span>
                   </span>
+                  {customer.address && (
+                    <span className="flex items-center space-x-2 min-w-0">
+                      <MapPin size={14} className="shrink-0" weight="duotone" />
+                      <span className="truncate font-medium">{customer.address}</span>
+                    </span>
+                  )}
                 </div>
               </div>
 
-              {(customer.address || customer.notes) && (
+              {customer.notes && (
                 <>
                   <Separator className="my-4" />
-                  <div className="flex flex-col @[600px]:flex-row gap-3 @[600px]:gap-6 text-sm min-w-0">
-                    {customer.address && (
-                      <div className="flex items-center gap-2 text-white/60 min-w-0">
-                        <MapPin size={14} className="shrink-0" weight="duotone" />
-                        <span className="truncate font-medium">{customer.address}</span>
-                      </div>
-                    )}
-                    {customer.notes && (
-                      <div className="flex items-center gap-2 text-white/60 min-w-0">
-                        <NotePencil size={14} className="shrink-0" weight="duotone" />
-                        <span className="truncate font-medium">{customer.notes}</span>
-                      </div>
-                    )}
+                  <div className="flex items-center gap-2 text-sm text-white/60 min-w-0">
+                    <NotePencil size={14} className="shrink-0" weight="duotone" />
+                    <span className="truncate font-medium">{customer.notes}</span>
                   </div>
                 </>
               )}
@@ -611,7 +607,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 [grid-auto-rows:minmax(8rem,auto)]">
+      <div className="grid grid-cols-4 gap-4 [grid-auto-rows:minmax(8rem,auto)]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
