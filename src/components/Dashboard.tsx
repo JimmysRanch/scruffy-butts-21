@@ -96,7 +96,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   return (
     <div className="space-y-6 relative z-10">
       <div className="grid grid-cols-5 [grid-auto-rows:minmax(4rem,auto)] gap-4">
-        <div className="glass-widget glass-widget-lavender cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
+        <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
           <div className="relative z-10">
             <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
               <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Today's Appointments</h3>
@@ -111,7 +111,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </div>
             <div className="absolute bottom-2 right-3 opacity-40 group-hover:opacity-60 transition-opacity">
               <svg width="48" height="24" viewBox="0 0 48 24" fill="none">
-                <path d="M2 12 Q 12 4, 24 12 T 46 12" stroke="oklch(0.65 0.20 290)" strokeWidth="2.5" fill="none" strokeLinecap="round" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_290)]"/>
+                <path d="M2 12 Q 12 4, 24 12 T 46 12" stroke="oklch(0.65 0.20 200)" strokeWidth="2.5" fill="none" strokeLinecap="round" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
               </svg>
             </div>
           </div>
@@ -140,7 +140,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </div>
         </div>
 
-        <div className="glass-widget glass-widget-rose cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
+        <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
           <div className="relative z-10">
             <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
               <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">This Week</h3>
@@ -155,19 +155,19 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </div>
             <div className="absolute bottom-1 right-2 opacity-50">
               <svg width="40" height="28" viewBox="0 0 40 28" fill="none">
-                <circle cx="8" cy="20" r="3" fill="oklch(0.65 0.20 340)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_340)]"/>
-                <circle cx="20" cy="12" r="4" fill="oklch(0.65 0.20 340)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_340)]"/>
-                <circle cx="32" cy="16" r="3.5" fill="oklch(0.65 0.20 340)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_340)]"/>
+                <circle cx="8" cy="20" r="3" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+                <circle cx="20" cy="12" r="4" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+                <circle cx="32" cy="16" r="3.5" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
               </svg>
             </div>
           </div>
         </div>
         
-        <div className="glass-widget glass-widget-gold rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
           <BookedWidget />
         </div>
 
-        <div className="glass-widget glass-widget-emerald rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.02]">
           <RevenueGaugeWidget />
         </div>
       </div>
