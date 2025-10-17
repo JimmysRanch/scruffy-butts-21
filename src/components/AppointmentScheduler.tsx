@@ -566,14 +566,26 @@ export function AppointmentScheduler() {
       )}
 
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-        <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
-          <TabsList>
-            <TabsTrigger value="list">List</TabsTrigger>
-            <TabsTrigger value="day">Day</TabsTrigger>
-            <TabsTrigger value="week">Week</TabsTrigger>
-            <TabsTrigger value="month">Month</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
+            <TabsList>
+              <TabsTrigger value="list">List</TabsTrigger>
+              <TabsTrigger value="day">Day</TabsTrigger>
+              <TabsTrigger value="week">Week</TabsTrigger>
+              <TabsTrigger value="month">Month</TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          <div className="relative flex-1 lg:flex-initial">
+            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+            <Input
+              placeholder="Search appointments..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 w-full lg:w-64"
+            />
+          </div>
+        </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           {viewMode !== 'list' && (
@@ -589,16 +601,6 @@ export function AppointmentScheduler() {
               </Button>
             </div>
           )}
-
-          <div className="relative flex-1 lg:flex-initial">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-            <Input
-              placeholder="Search appointments..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 w-full lg:w-64"
-            />
-          </div>
 
           <Button
             variant="outline"
