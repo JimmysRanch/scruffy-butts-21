@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Users, ChartBar, Clock, Dog } from '@phosphor-icons/react'
 import { isToday, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns'
-import { RevenueWidget } from '@/components/widgets/RevenueWidget'
+import { RevenueGaugeWidget } from '@/components/widgets/RevenueGaugeWidget'
 import { BookedWidget } from '@/components/widgets/BookedWidget'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'settings'
@@ -139,14 +139,12 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </p>
           </CardContent>
         </Card>
-
-        <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph" onClick={() => onNavigate('pos')}>
-          <RevenueWidget period="today" />
-        </Card>
         
         <Card className="glass cursor-pointer hover:glass-dark transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl border-white/20 liquid-bubble liquid-morph">
           <BookedWidget />
         </Card>
+
+        <RevenueGaugeWidget />
       </div>
 
       <Card className="frosted border-white/20 liquid-shine">
