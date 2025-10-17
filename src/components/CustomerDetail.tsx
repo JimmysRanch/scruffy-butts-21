@@ -442,7 +442,7 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
       className="space-y-6"
     >
       <div className="frosted rounded-2xl p-6 shadow-lg">
-        <div className="flex items-start justify-between mb-6">
+        <div className="flex items-start justify-between">
           <div className="flex items-start space-x-6 flex-1">
             <Button 
               variant="ghost" 
@@ -454,19 +454,56 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
             </Button>
 
             <div className="flex-1">
-              <div className="flex items-center space-x-3 mb-2">
-                <h1 className="text-4xl font-bold text-foreground">
-                  {customer.firstName} {customer.lastName}
-                </h1>
-                <Badge className="bg-accent/20 text-accent border-accent/30 liquid-pulse">
-                  <Star size={12} className="mr-1" weight="fill" />
-                  VIP Client
-                </Badge>
+              <div className="flex items-start justify-between gap-6">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-3 mb-2">
+                    <h1 className="text-4xl font-bold text-foreground">
+                      {customer.firstName} {customer.lastName}
+                    </h1>
+                    <Badge className="bg-accent/20 text-accent border-accent/30 liquid-pulse">
+                      <Star size={12} className="mr-1" weight="fill" />
+                      VIP Client
+                    </Badge>
+                  </div>
+                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                    <span className="flex items-center space-x-1">
+                      <Calendar size={14} />
+                      <span>Client since {new Date(customer.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col gap-1.5 text-sm text-muted-foreground">
+                  <span className="flex items-center space-x-2">
+                    <Phone size={14} />
+                    <span>{customer.phone}</span>
+                  </span>
+                  <span className="flex items-center space-x-2">
+                    <Envelope size={14} />
+                    <span className="truncate max-w-[200px]">{customer.email}</span>
+                  </span>
+                </div>
               </div>
-              <p className="text-muted-foreground flex items-center space-x-2">
-                <Calendar size={16} />
-                <span>Client since {new Date(customer.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
-              </p>
+
+              {(customer.address || customer.notes) && (
+                <>
+                  <Separator className="my-4" />
+                  <div className="flex gap-6 text-sm">
+                    {customer.address && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <MapPin size={14} />
+                        <span>{customer.address}</span>
+                      </div>
+                    )}
+                    {customer.notes && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <NotePencil size={14} />
+                        <span className="truncate">{customer.notes}</span>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -571,54 +608,6 @@ export function CustomerDetail({ customerId, onBack }: CustomerDetailProps) {
               </div>
             </DialogContent>
           </Dialog>
-        </div>
-
-        <Separator className="mb-5" />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <Envelope size={18} className="text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-0.5">Email</p>
-              <p className="text-sm font-medium text-foreground truncate">{customer.email}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
-              <Phone size={18} className="text-accent" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-0.5">Phone</p>
-              <p className="text-sm font-medium text-foreground">{customer.phone}</p>
-            </div>
-          </div>
-
-          {customer.address && (
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
-                <MapPin size={18} className="text-green-500" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-0.5">Address</p>
-                <p className="text-sm font-medium text-foreground truncate">{customer.address}</p>
-              </div>
-            </div>
-          )}
-
-          {customer.notes && (
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center flex-shrink-0">
-                <NotePencil size={18} className="text-purple-500" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-0.5">Notes</p>
-                <p className="text-sm font-medium text-foreground truncate">{customer.notes}</p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
