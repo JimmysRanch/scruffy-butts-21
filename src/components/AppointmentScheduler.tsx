@@ -1004,7 +1004,6 @@ function MonthView({
             key={date.toISOString()}
             className={cn(
               'border rounded p-1.5 min-h-[65px]',
-              !isCurrentMonth && 'opacity-40',
               isCurrentDay && 'border-primary bg-primary/5'
             )}
           >
