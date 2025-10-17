@@ -95,35 +95,35 @@ A comprehensive digital solution for professional dog groomers to manage appoint
 - **Pickup Workflow**: Require customer arrival acknowledgment before enabling checkout, prevent skipping ready-for-pickup status, enable easy upselling during pickup with quick add services/products button
 
 ## Design Direction
-The design should feel professional yet warm with a modern **liquid glass aesthetic** - like a high-end veterinary clinic that genuinely loves animals. The interface features glassmorphic elements with frosted glass effects, backdrop blur, subtle gradients, and translucent surfaces that create depth and sophistication while maintaining the business-focused functionality. The liquid glass design provides a premium, modern feel with smooth animations and layered transparency effects.
+The design should evoke luxury, sophistication, and premium quality - like a high-end boutique pet spa. The interface features refined materials with elegant typography (Playfair Display for headlines, Inter for body), rich warm accent colors with gold undertones, sophisticated spacing with generous padding, subtle shadows and borders that create depth without heaviness, and a cohesive color palette of warm creams, deep charcoals, and luxurious gold accents. Every interaction should feel smooth, intentional, and premium.
 
 ## Color Selection
-Complementary (opposite colors) - Calming blues paired with warm oranges to balance professionalism with warmth and energy.
+Analogous warm palette with gold accents - Creating a luxurious, high-end experience that feels both expensive and approachable.
 
-- **Primary Color**: Deep Blue (oklch(0.45 0.12 250)) - Communicates trust, professionalism, and reliability
-- **Secondary Colors**: Light Blue (oklch(0.85 0.06 250)) for backgrounds and Warm Gray (oklch(0.75 0.02 50)) for supporting elements  
-- **Accent Color**: Warm Orange (oklch(0.65 0.15 50)) - Friendly, energetic highlight for CTAs and important actions
+- **Primary Color**: Deep Charcoal (oklch(0.20 0.03 30)) - Communicates sophistication, premium quality, and timeless elegance
+- **Secondary Colors**: Warm Cream (oklch(0.92 0.01 90)) for subtle backgrounds and Soft Taupe (oklch(0.94 0.008 90)) for muted elements  
+- **Accent Color**: Luxe Gold (oklch(0.55 0.15 45)) - Rich, expensive highlight for CTAs and important actions that conveys premium quality
 - **Foreground/Background Pairings**:
-  - Background (Light Blue oklch(0.95 0.02 250)): Dark Blue text (oklch(0.25 0.08 250)) - Ratio 8.2:1 ✓
-  - Card (White oklch(1 0 0)): Dark Blue text (oklch(0.25 0.08 250)) - Ratio 12.1:1 ✓  
-  - Primary (Deep Blue oklch(0.45 0.12 250)): White text (oklch(1 0 0)) - Ratio 7.8:1 ✓
-  - Accent (Warm Orange oklch(0.65 0.15 50)): White text (oklch(1 0 0)) - Ratio 4.9:1 ✓
+  - Background (Warm Off-White oklch(0.97 0.01 90)): Deep Charcoal text (oklch(0.15 0.02 30)) - Ratio 13.2:1 ✓
+  - Card (Pure Cream oklch(0.99 0.005 90)): Deep Charcoal text (oklch(0.15 0.02 30)) - Ratio 14.8:1 ✓  
+  - Primary (Deep Charcoal oklch(0.20 0.03 30)): Cream text (oklch(0.98 0.005 90)) - Ratio 11.5:1 ✓
+  - Accent (Luxe Gold oklch(0.55 0.15 45)): Cream text (oklch(0.98 0.005 90)) - Ratio 5.2:1 ✓
 
 ## Font Selection
-Clean, professional sans-serif that conveys both reliability and approachability - Inter for its excellent readability and modern feel.
+Sophisticated dual-typeface system combining elegant serif headlines with clean sans-serif body text - Playfair Display for luxurious, attention-commanding headlines paired with Inter for exceptional readability and modern professionalism.
 
 - **Typographic Hierarchy**: 
-  - H1 (Page Titles): Inter Bold/32px/tight letter spacing
-  - H2 (Section Headers): Inter Semibold/24px/normal spacing  
-  - H3 (Card Titles): Inter Medium/18px/normal spacing
-  - Body (Content): Inter Regular/16px/relaxed line height
-  - Small (Labels): Inter Medium/14px/tight spacing
+  - H1 (Page Titles): Playfair Display Bold/32px/tight letter spacing - Luxury and sophistication
+  - H2 (Section Headers): Playfair Display Semibold/24px/normal spacing - Elegant hierarchy
+  - H3 (Card Titles): Inter Semibold/18px/wide letter spacing - Modern clarity
+  - Body (Content): Inter Regular/16px/relaxed line height - Effortless readability
+  - Small (Labels): Inter Semibold/14px/wide tracking - Premium detail
 
 ## Animations
-Subtle, purposeful animations that guide user attention and provide feedback without feeling playful or distracting from the professional context.
+Refined, luxurious animations that feel smooth and intentional - never rushed or distracting. Every motion should reinforce the premium quality of the experience.
 
-- **Purposeful Meaning**: Smooth transitions communicate care and attention to detail, reflecting grooming precision
-- **Hierarchy of Movement**: Priority on form feedback and navigation transitions, minimal decorative animation
+- **Purposeful Meaning**: Smooth, eased transitions communicate craftsmanship and attention to detail, making every interaction feel polished and expensive
+- **Hierarchy of Movement**: Subtle hover states with gentle elevation changes, smooth navigation transitions, refined form feedback that feels responsive without being playful
 
 ## Component Selection
 - **Components**: Cards for appointments/customers/transactions/settings/staff/inventory items/report metrics/dashboard stats, Multi-view calendar (day/week/month/list) with tabs for scheduling, Forms for data entry with inline validation, Tables for service lists and inventory, Badges for appointment status colors and stock levels, Shopping cart UI for POS, Switch components for settings toggles and appointment reminders, Tabs for inventory sections and calendar views and report categories, Dialog for appointment creation/editing and metric definitions, Sheet for appointment details sidebar and checkout processes (maintaining UI consistency), Filters panel with search, Charts (bar/line/pie) for visual analytics, Select dropdowns for date ranges and grouping options and payment methods

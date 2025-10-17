@@ -56,41 +56,41 @@ export function RecentActivity() {
   const recentActivities = (activities || []).slice(0, 10)
 
   return (
-    <div className="frosted border-white/20 rounded-xl overflow-hidden @container min-w-0 shadow-lg">
-      <div className="bg-gradient-to-r from-primary via-accent to-primary px-4 py-3">
-        <div className="flex items-center gap-2">
-          <ClockCounterClockwise className="h-5 w-5 text-primary-foreground" weight="fill" />
-          <h3 className="font-semibold text-sm text-primary-foreground">Recent Activity</h3>
+    <div className="border border-border/50 rounded-xl overflow-hidden @container min-w-0 shadow-sm bg-gradient-to-br from-card to-card/95">
+      <div className="bg-gradient-to-r from-accent via-accent to-accent/90 px-5 py-3.5">
+        <div className="flex items-center gap-2.5">
+          <ClockCounterClockwise className="h-5 w-5 text-accent-foreground" weight="duotone" />
+          <h3 className="font-bold text-sm text-accent-foreground tracking-wide">Recent Activity</h3>
         </div>
       </div>
-      <div className="px-4 py-4">
+      <div className="px-5 py-5">
         {recentActivities.length === 0 ? (
-          <div className="text-center text-muted-foreground py-8">
-            <div className="glass-dark w-fit mx-auto p-4 rounded-2xl mb-3">
-              <ClockCounterClockwise className="h-10 w-10 opacity-50" weight="fill" />
+          <div className="text-center text-muted-foreground py-12">
+            <div className="w-fit mx-auto p-5 rounded-2xl mb-4 bg-secondary/50 ring-1 ring-border/30">
+              <ClockCounterClockwise className="h-12 w-12 opacity-40 text-muted-foreground" weight="duotone" />
             </div>
-            <p className="text-sm">No recent activity to display</p>
+            <p className="text-sm font-medium">No recent activity to display</p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {recentActivities.map((activity) => (
               <div 
                 key={activity.id} 
-                className="glass-dark rounded-lg border border-white/20 hover:glass transition-all duration-200 p-3 min-w-0"
+                className="rounded-xl border border-border/50 hover:border-accent/30 hover:shadow-sm transition-all duration-200 p-3.5 min-w-0 bg-gradient-to-br from-secondary/30 to-secondary/10"
               >
-                <div className="flex items-start gap-2.5 min-w-0">
-                  <div className={`glass-dark p-1.5 rounded-lg shrink-0 ${getActivityColor(activity.type)} border`}>
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className={`p-2 rounded-lg shrink-0 ${getActivityColor(activity.type)} border ring-1 ring-current/10`}>
                     {getActivityIcon(activity.type)}
                   </div>
                   <div className="flex-1 min-w-0 overflow-hidden">
-                    <div className="flex items-start justify-between gap-2 mb-0.5">
-                      <p className="font-medium text-xs truncate">{activity.action}</p>
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0 whitespace-nowrap">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <p className="font-semibold text-xs truncate">{activity.action}</p>
+                      <Badge variant="outline" className="text-[10px] px-2 py-0.5 shrink-0 whitespace-nowrap font-semibold">
                         {formatDistanceToNow(activity.timestamp, { addSuffix: true })}
                       </Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground truncate mb-0.5">{activity.details}</p>
-                    <p className="text-[10px] text-muted-foreground">by {activity.staffName}</p>
+                    <p className="text-xs text-muted-foreground truncate mb-1 font-medium">{activity.details}</p>
+                    <p className="text-[10px] text-muted-foreground font-medium">by {activity.staffName}</p>
                   </div>
                 </div>
               </div>
