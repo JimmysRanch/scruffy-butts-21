@@ -11,8 +11,9 @@ import { Settings } from '@/components/Settings'
 import { Navigation } from '@/components/Navigation'
 import { GroomerStats } from '@/components/GroomerStats'
 import { NewAppointment } from '@/components/NewAppointment'
+import { DashboardCustomization } from '@/components/DashboardCustomization'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard'
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'system'
@@ -24,7 +25,7 @@ function App() {
   const [currentView, setCurrentView] = useState<View>(() => {
     const params = new URLSearchParams(window.location.search)
     const view = params.get('view') as View | null
-    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings', 'new-appointment', 'add-pet', 'edit-pet'].includes(view)
+    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings', 'new-appointment', 'add-pet', 'edit-pet', 'customize-dashboard'].includes(view)
       ? view
       : 'dashboard'
   })
@@ -94,6 +95,8 @@ function App() {
         return <Settings />
       case 'new-appointment':
         return <NewAppointment onBack={() => setCurrentView('appointments')} />
+      case 'customize-dashboard':
+        return <DashboardCustomization onBack={() => setCurrentView('dashboard')} />
       default:
         return <Dashboard onNavigate={setCurrentView} />
     }

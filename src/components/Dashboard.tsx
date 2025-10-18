@@ -15,12 +15,11 @@ import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsW
 import { TodayScheduleWidget } from '@/components/widgets/TodayScheduleWidget'
 import { RecentActivity } from '@/components/RecentActivity'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
-import { WidgetConfiguration, type WidgetConfig } from '@/components/WidgetConfiguration'
 import { seedActivityData } from '@/lib/seed-activity-data'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'customize-dashboard'
 
 interface AppearanceSettings {
   compactMode?: boolean
@@ -189,9 +188,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
-  const [isWidgetConfigOpen, setIsWidgetConfigOpen] = useState(false)
 
-  const widgetsWithIcons: WidgetConfig[] = (widgets || DEFAULT_WIDGETS).map(w => ({
+  const widgetsWithIcons = (widgets || DEFAULT_WIDGETS).map(w => ({
     ...w,
     icon: WIDGET_ICON_MAP[w.id] || Calendar
   }))
@@ -295,19 +293,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     return staff ? `${staff.firstName} ${staff.lastName}` : null
   }
 
-  const handleToggleWidget = (widgetId: string) => {
-    setWidgets((current) =>
-      (current || DEFAULT_WIDGETS).map(w =>
-        w.id === widgetId ? { ...w, enabled: !w.enabled } : w
-      )
-    )
-  }
-
-  const handleResetLayout = () => {
-    setWidgets(DEFAULT_WIDGETS)
-    toast.success('Dashboard layout reset to default')
-  }
-
   const enabledWidgets = widgetsWithIcons.filter(w => w.enabled)
 
   return (
@@ -320,7 +305,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setIsWidgetConfigOpen(true)}
+          onClick={() => onNavigate('customize-dashboard')}
           className="gap-2"
         >
           <Gear size={16} />
@@ -533,14 +518,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           setIsCheckoutOpen(false)
           setIsDetailOpen(true)
         }}
-      />
-
-      <WidgetConfiguration
-        open={isWidgetConfigOpen}
-        onOpenChange={setIsWidgetConfigOpen}
-        widgets={widgetsWithIcons}
-        onToggleWidget={handleToggleWidget}
-        onResetLayout={handleResetLayout}
       />
     </div>
   )
