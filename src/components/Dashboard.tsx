@@ -117,7 +117,7 @@ const STATUS_COLORS: Record<Appointment['status'], string> = {
 export function Dashboard({ onNavigate }: DashboardProps) {
   const [appointments, setAppointments] = useKV<Appointment[]>('appointments', [])
   const [customers] = useKV<Customer[]>('customers', [])
-  const [staffMembers] = useKV<StaffMember[]>('staff', [])
+  const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {})
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
