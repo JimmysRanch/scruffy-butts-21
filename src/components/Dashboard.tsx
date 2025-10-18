@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { RevenueGaugeWidget } from '@/components/widgets/RevenueGaugeWidget'
 import { BookedWidget } from '@/components/widgets/BookedWidget'
+import { GroomerWorkloadWidget } from '@/components/widgets/GroomerWorkloadWidget'
 import { RecentActivity } from '@/components/RecentActivity'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 import { seedActivityData } from '@/lib/seed-activity-data'
@@ -224,7 +225,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
   return (
     <div className="space-y-6 relative z-10">
-      <div className="grid grid-cols-5 [grid-auto-rows:minmax(4rem,auto)] gap-4">
+      <div className="grid grid-cols-6 [grid-auto-rows:minmax(4rem,auto)] gap-4">
         <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
           <div className="relative z-10">
             <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
@@ -298,6 +299,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
         <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.02]">
           <RevenueGaugeWidget />
+        </div>
+
+        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+          <GroomerWorkloadWidget />
         </div>
       </div>
 
