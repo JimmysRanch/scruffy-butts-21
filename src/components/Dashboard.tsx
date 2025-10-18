@@ -360,14 +360,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                                 <div className="flex-1 min-w-0">
                                   <h3 className="font-bold text-lg leading-tight">
                                     {apt.petName}
-                                    {staffMember && (
-                                      <span className="text-sm text-white/60 font-normal ml-2">
-                                        with {staffMember.firstName} {staffMember.lastName}
-                                        {apt.groomerRequested && (
-                                          <span className="text-red-500 font-bold ml-1">R</span>
-                                        )}
-                                      </span>
-                                    )}
                                   </h3>
                                 </div>
                               </div>
@@ -378,6 +370,15 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                               </div>
 
                               <div className="flex items-center gap-3 text-sm text-white/70 flex-wrap">
+                                {staffMember && (
+                                  <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
+                                    <User size={16} className="flex-shrink-0" weight="fill" />
+                                    <span className="font-medium">{staffMember.firstName} {staffMember.lastName}</span>
+                                    {apt.groomerRequested && (
+                                      <span className="text-red-400 font-bold text-xs ml-0.5">R</span>
+                                    )}
+                                  </div>
+                                )}
                                 <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
                                   <Package size={16} className="flex-shrink-0" />
                                   <span>{apt.service}</span>
