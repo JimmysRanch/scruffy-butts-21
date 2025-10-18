@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
-import { Calendar, Users, ChartBar, Clock, Dog, Package, User, Phone, Envelope, PencilSimple, Trash, ArrowClockwise, CheckCircle, Bell, CreditCard, WarningCircle } from '@phosphor-icons/react'
+import { Calendar, Users, ChartBar, Clock, Dog, Package, User, Phone, Envelope, PencilSimple, Trash, ArrowClockwise, CheckCircle, Bell, CreditCard, WarningCircle, Gear } from '@phosphor-icons/react'
 import { isToday, startOfWeek, endOfWeek, isWithinInterval, format, parseISO, isBefore, startOfDay } from 'date-fns'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -15,6 +15,7 @@ import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsW
 import { TodayScheduleWidget } from '@/components/widgets/TodayScheduleWidget'
 import { RecentActivity } from '@/components/RecentActivity'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
+import { WidgetConfiguration, type WidgetConfig } from '@/components/WidgetConfiguration'
 import { seedActivityData } from '@/lib/seed-activity-data'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -117,14 +118,67 @@ const STATUS_COLORS: Record<Appointment['status'], string> = {
   'no-show': 'border-orange-500/40 bg-orange-500/10 text-orange-100'
 }
 
+const DEFAULT_WIDGETS: WidgetConfig[] = [
+  {
+    id: 'total-appointments',
+    name: 'Total Appointments',
+    description: 'Shows total appointment count for today',
+    icon: Calendar,
+    enabled: true,
+    defaultSize: { w: 1, h: 1 }
+  },
+  {
+    id: 'week-appointments',
+    name: 'This Week',
+    description: 'Shows appointments scheduled this week',
+    icon: Calendar,
+    enabled: true,
+    defaultSize: { w: 1, h: 1 }
+  },
+  {
+    id: 'booked-widget',
+    name: 'Booked Today',
+    description: 'Shows booking percentage for today',
+    icon: ChartBar,
+    enabled: true,
+    defaultSize: { w: 1, h: 1 }
+  },
+  {
+    id: 'revenue-gauge',
+    name: 'Revenue Gauge',
+    description: 'Shows daily revenue progress',
+    icon: ChartBar,
+    enabled: true,
+    defaultSize: { w: 1, h: 1 }
+  },
+  {
+    id: 'groomer-workload',
+    name: 'Groomer Workload',
+    description: 'Shows staff workload distribution',
+    icon: Users,
+    enabled: true,
+    defaultSize: { w: 1, h: 1 }
+  },
+  {
+    id: 'today-schedule',
+    name: "Today's Schedule",
+    description: 'Quick view of today\'s appointments',
+    icon: Clock,
+    enabled: true,
+    defaultSize: { w: 1, h: 1 }
+  }
+]
+
 export function Dashboard({ onNavigate }: DashboardProps) {
   const [appointments, setAppointments] = useKV<Appointment[]>('appointments', [])
   const [customers] = useKV<Customer[]>('customers', [])
   const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {})
+  const [widgets, setWidgets] = useKV<WidgetConfig[]>('dashboard-widgets', DEFAULT_WIDGETS)
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+  const [isWidgetConfigOpen, setIsWidgetConfigOpen] = useState(false)
 
   useEffect(() => {
     seedActivityData()
@@ -225,51 +279,94 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     return staff ? `${staff.firstName} ${staff.lastName}` : null
   }
 
+  const handleToggleWidget = (widgetId: string) => {
+    setWidgets((current) =>
+      (current || DEFAULT_WIDGETS).map(w =>
+        w.id === widgetId ? { ...w, enabled: !w.enabled } : w
+      )
+    )
+  }
+
+  const handleResetLayout = () => {
+    setWidgets(DEFAULT_WIDGETS)
+    toast.success('Dashboard layout reset to default')
+  }
+
+  const enabledWidgets = (widgets || DEFAULT_WIDGETS).filter(w => w.enabled)
+
   return (
     <div className="space-y-6 relative z-10">
-      <div className="grid grid-cols-6 [grid-auto-rows:minmax(4rem,auto)] gap-4">
-        <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
-          <TotalAppointmentsWidget />
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h1 className="text-3xl font-bold text-white/90">Dashboard</h1>
+          <p className="text-sm text-white/60 mt-1">Overview of your grooming business</p>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsWidgetConfigOpen(true)}
+          className="gap-2"
+        >
+          <Gear size={16} />
+          Customize
+        </Button>
+      </div>
 
-        <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
-          <div className="relative z-10">
-            <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
-              <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">This Week</h3>
-            </div>
-            <div className="pb-3 pt-1 px-4 min-w-0">
-              <div className="text-2xl font-bold text-white/95">
-                {weekAppointments.length}
+      <div className="grid grid-cols-6 [grid-auto-rows:minmax(4rem,auto)] gap-4">
+        {enabledWidgets.find(w => w.id === 'total-appointments') && (
+          <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
+            <TotalAppointmentsWidget />
+          </div>
+        )}
+
+        {enabledWidgets.find(w => w.id === 'week-appointments') && (
+          <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
+            <div className="relative z-10">
+              <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+                <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">This Week</h3>
               </div>
-              <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
-                {weekAppointments.length === 1 ? 'appointment' : 'appointments'} this week
-              </p>
-            </div>
-            <div className="absolute bottom-1 right-2 opacity-50">
-              <svg width="40" height="28" viewBox="0 0 40 28" fill="none">
-                <circle cx="8" cy="20" r="3" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
-                <circle cx="20" cy="12" r="4" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
-                <circle cx="32" cy="16" r="3.5" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
-              </svg>
+              <div className="pb-3 pt-1 px-4 min-w-0">
+                <div className="text-2xl font-bold text-white/95">
+                  {weekAppointments.length}
+                </div>
+                <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
+                  {weekAppointments.length === 1 ? 'appointment' : 'appointments'} this week
+                </p>
+              </div>
+              <div className="absolute bottom-1 right-2 opacity-50">
+                <svg width="40" height="28" viewBox="0 0 40 28" fill="none">
+                  <circle cx="8" cy="20" r="3" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+                  <circle cx="20" cy="12" r="4" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+                  <circle cx="32" cy="16" r="3.5" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+                </svg>
+              </div>
             </div>
           </div>
-        </div>
+        )}
         
-        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-          <BookedWidget />
-        </div>
+        {enabledWidgets.find(w => w.id === 'booked-widget') && (
+          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <BookedWidget />
+          </div>
+        )}
 
-        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-          <RevenueGaugeWidget />
-        </div>
+        {enabledWidgets.find(w => w.id === 'revenue-gauge') && (
+          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <RevenueGaugeWidget />
+          </div>
+        )}
 
-        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-          <GroomerWorkloadWidget />
-        </div>
+        {enabledWidgets.find(w => w.id === 'groomer-workload') && (
+          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <GroomerWorkloadWidget />
+          </div>
+        )}
 
-        <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-          <TodayScheduleWidget isCompact={isCompact} onAppointmentClick={handleViewAppointment} />
-        </div>
+        {enabledWidgets.find(w => w.id === 'today-schedule') && (
+          <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <TodayScheduleWidget isCompact={isCompact} onAppointmentClick={handleViewAppointment} />
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -420,6 +517,14 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           setIsCheckoutOpen(false)
           setIsDetailOpen(true)
         }}
+      />
+
+      <WidgetConfiguration
+        open={isWidgetConfigOpen}
+        onOpenChange={setIsWidgetConfigOpen}
+        widgets={widgets || DEFAULT_WIDGETS}
+        onToggleWidget={handleToggleWidget}
+        onResetLayout={handleResetLayout}
       />
     </div>
   )
