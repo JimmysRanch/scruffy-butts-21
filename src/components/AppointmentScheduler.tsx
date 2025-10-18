@@ -985,9 +985,9 @@ function ListView({
         const isPastDay = isBefore(dateObj, startOfDay(new Date())) && !isCurrentDay
         
         return (
-          <div key={date} className="space-y-2.5">
+          <div key={date} className="space-y-3">
             <div className={cn(
-              'glass-card sticky top-20 z-10 backdrop-blur-xl py-1.5 px-3.5 rounded-lg overflow-hidden shadow-lg mb-2',
+              'glass-card sticky top-20 z-10 backdrop-blur-xl py-1.5 px-3.5 rounded-lg overflow-hidden shadow-lg',
               isCurrentDay && 'ring-1 ring-primary/50 shadow-[0_0_16px_oklch(0.60_0.20_280/0.3)]'
             )}>
               <div className="flex items-center justify-between gap-3">
@@ -1005,7 +1005,7 @@ function ListView({
                 </Badge>
               </div>
             </div>
-            <div className="space-y-2 mt-2">
+            <div className="space-y-2">
               {appointmentsForDate.map((apt) => (
                 <AppointmentCard
                   key={apt.id}
