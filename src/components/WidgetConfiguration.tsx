@@ -3,13 +3,12 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
-import { Icon as PhosphorIcon } from '@phosphor-icons/react'
 
 export interface WidgetConfig {
   id: string
   name: string
   description: string
-  icon: PhosphorIcon
+  icon: React.ComponentType<{ size?: number | string; className?: string }>
   enabled: boolean
   defaultSize: { w: number; h: number }
 }
