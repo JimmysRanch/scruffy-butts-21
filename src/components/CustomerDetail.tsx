@@ -775,7 +775,18 @@ export function CustomerDetail({ customerId, onBack, onEditPet, onAddPet }: Cust
                                     Last Visit
                                   </p>
                                   <p className="text-xs font-bold text-foreground">
-                                    {new Date(getLastVisitDate(pet.id)!).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                    {(() => {
+                                      try {
+                                        const lastVisit = getLastVisitDate(pet.id)!
+                                        const dateObj = new Date(lastVisit)
+                                        if (isNaN(dateObj.getTime())) {
+                                          return lastVisit
+                                        }
+                                        return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                                      } catch {
+                                        return getLastVisitDate(pet.id)
+                                      }
+                                    })()}
                                   </p>
                                 </div>
                               )}
@@ -867,11 +878,23 @@ export function CustomerDetail({ customerId, onBack, onEditPet, onAddPet }: Cust
                           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                             <span className="flex items-center space-x-1">
                               <Calendar size={14} />
-                              <span>{new Date(visit.date).toLocaleDateString('en-US', { 
-                                month: 'short', 
-                                day: 'numeric',
-                                year: 'numeric'
-                              })}</span>
+                              <span>
+                                {(() => {
+                                  try {
+                                    const dateObj = new Date(visit.date)
+                                    if (isNaN(dateObj.getTime())) {
+                                      return visit.date
+                                    }
+                                    return dateObj.toLocaleDateString('en-US', { 
+                                      month: 'short', 
+                                      day: 'numeric',
+                                      year: 'numeric'
+                                    })
+                                  } catch {
+                                    return visit.date
+                                  }
+                                })()}
+                              </span>
                             </span>
                             <span className="flex items-center space-x-1">
                               <Clock size={14} />
