@@ -40,213 +40,74 @@ export function TotalAppointmentsWidget() {
   const startCancelledAngle = completedAngle
 
   return (
-    <div className="relative z-10 h-full flex flex-col items-center justify-center py-6 px-4">
-      <h3 className="text-xs font-bold tracking-[0.25em] uppercase text-center mb-8 text-white/70" style={{
-        textShadow: '0 0 20px oklch(0.65 0.20 240 / 0.6)',
-        letterSpacing: '0.25em'
-      }}>
-        TOTAL APPOINTMENTS
-      </h3>
-      
-      <div className="relative w-[280px] h-[280px] flex items-center justify-center">
-        <svg
-          className="absolute inset-0 w-full h-full -rotate-90"
-          viewBox="0 0 200 200"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+    <div className="relative z-10">
+      <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+        <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Today</h3>
+      </div>
+      <div className="pb-3 pt-1 px-4 min-w-0">
+        <div className="text-2xl font-bold text-white/95">
+          {total}
+        </div>
+        <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
+          {total === 1 ? 'appointment' : 'appointments'} today
+        </p>
+      </div>
+      <div className="absolute bottom-2 right-3 opacity-40">
+        <svg width="50" height="32" viewBox="0 0 50 32">
           <defs>
-            <filter id="glow-blue">
-              <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+            <filter id="glow-mini">
+              <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
               <feMerge>
                 <feMergeNode in="coloredBlur"/>
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
-            <filter id="glow-orange">
-              <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-            <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="oklch(0.70 0.25 240)" stopOpacity="1"/>
-              <stop offset="50%" stopColor="oklch(0.65 0.28 220)" stopOpacity="1"/>
-              <stop offset="100%" stopColor="oklch(0.60 0.22 200)" stopOpacity="1"/>
-            </linearGradient>
-            <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="oklch(0.65 0.25 40)" stopOpacity="1"/>
-              <stop offset="50%" stopColor="oklch(0.60 0.28 30)" stopOpacity="1"/>
-              <stop offset="100%" stopColor="oklch(0.55 0.22 20)" stopOpacity="1"/>
-            </linearGradient>
           </defs>
-          
-          <circle
-            cx="100"
-            cy="100"
-            r="70"
-            fill="none"
-            stroke="oklch(0.20 0.10 240 / 0.3)"
-            strokeWidth="12"
+          <circle 
+            cx="10" 
+            cy="22" 
+            r="4" 
+            fill="oklch(0.65 0.20 200)" 
+            filter="url(#glow-mini)"
+            className="drop-shadow-[0_0_6px_oklch(0.65_0.20_200)]"
           />
-          
-          <circle
-            cx="100"
-            cy="100"
-            r="70"
-            fill="none"
-            stroke="oklch(0.25 0.10 240 / 0.4)"
-            strokeWidth="12"
-            strokeDasharray="440"
-            strokeDashoffset="0"
-            opacity="0.5"
+          <circle 
+            cx="25" 
+            cy="14" 
+            r="5" 
+            fill="oklch(0.65 0.20 200)" 
+            filter="url(#glow-mini)"
+            className="drop-shadow-[0_0_6px_oklch(0.65_0.20_200)]"
           />
-          
-          {completedAngle > 0 && (
-            <>
-              <circle
-                cx="100"
-                cy="100"
-                r="70"
-                fill="none"
-                stroke="url(#blueGradient)"
-                strokeWidth="12"
-                strokeLinecap="round"
-                strokeDasharray={`${(completedAngle / 360) * 440} 440`}
-                filter="url(#glow-blue)"
-                style={{
-                  transition: 'stroke-dasharray 1s ease-out'
-                }}
-              />
-              <circle
-                cx="100"
-                cy="100"
-                r="78"
-                fill="none"
-                stroke="url(#blueGradient)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeDasharray={`${(completedAngle / 360) * 490} 490`}
-                opacity="0.4"
-                style={{
-                  transition: 'stroke-dasharray 1s ease-out'
-                }}
-              />
-              <circle
-                cx="100"
-                cy="100"
-                r="62"
-                fill="none"
-                stroke="url(#blueGradient)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeDasharray={`${(completedAngle / 360) * 390} 390`}
-                opacity="0.3"
-                style={{
-                  transition: 'stroke-dasharray 1s ease-out'
-                }}
-              />
-            </>
+          <circle 
+            cx="40" 
+            cy="18" 
+            r="4.5" 
+            fill="oklch(0.65 0.20 200)" 
+            filter="url(#glow-mini)"
+            className="drop-shadow-[0_0_6px_oklch(0.65_0.20_200)]"
+          />
+          {cancelled > 0 && (
+            <circle 
+              cx="17" 
+              cy="26" 
+              r="2.5" 
+              fill="oklch(0.60 0.25 30)" 
+              filter="url(#glow-mini)"
+              className="drop-shadow-[0_0_4px_oklch(0.60_0.25_30)]"
+            />
           )}
-          
-          {cancelledAngle > 0 && (
-            <>
-              <circle
-                cx="100"
-                cy="100"
-                r="70"
-                fill="none"
-                stroke="url(#orangeGradient)"
-                strokeWidth="12"
-                strokeLinecap="round"
-                strokeDasharray={`${(cancelledAngle / 360) * 440} 440`}
-                strokeDashoffset={-((startCancelledAngle / 360) * 440)}
-                filter="url(#glow-orange)"
-                style={{
-                  transition: 'stroke-dasharray 1s ease-out, stroke-dashoffset 1s ease-out'
-                }}
-              />
-              <circle
-                cx="100"
-                cy="100"
-                r="78"
-                fill="none"
-                stroke="url(#orangeGradient)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeDasharray={`${(cancelledAngle / 360) * 490} 490`}
-                strokeDashoffset={-((startCancelledAngle / 360) * 490)}
-                opacity="0.4"
-                style={{
-                  transition: 'stroke-dasharray 1s ease-out, stroke-dashoffset 1s ease-out'
-                }}
-              />
-              <circle
-                cx="100"
-                cy="100"
-                r="62"
-                fill="none"
-                stroke="url(#orangeGradient)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeDasharray={`${(cancelledAngle / 360) * 390} 390`}
-                strokeDashoffset={-((startCancelledAngle / 360) * 390)}
-                opacity="0.3"
-                style={{
-                  transition: 'stroke-dasharray 1s ease-out, stroke-dashoffset 1s ease-out'
-                }}
-              />
-            </>
+          {noShows > 0 && (
+            <circle 
+              cx="33" 
+              cy="24" 
+              r="2.5" 
+              fill="oklch(0.60 0.25 30)" 
+              filter="url(#glow-mini)"
+              className="drop-shadow-[0_0_4px_oklch(0.60_0.25_30)]"
+            />
           )}
         </svg>
-        
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="text-8xl font-bold text-white tracking-tight leading-none mb-1" style={{
-            textShadow: '0 0 40px oklch(0.70 0.25 240 / 0.8), 0 0 20px oklch(0.70 0.25 240 / 0.6)',
-            fontVariantNumeric: 'tabular-nums'
-          }}>
-            {total}
-          </div>
-          <div className="text-3xl font-bold uppercase tracking-widest" style={{
-            color: 'oklch(0.65 0.22 220)',
-            textShadow: '0 0 20px oklch(0.65 0.22 220 / 0.8)',
-            letterSpacing: '0.2em'
-          }}>
-            TOTAL
-          </div>
-        </div>
-      </div>
-      
-      <div className="flex items-center justify-between w-full max-w-[280px] mt-8 px-4">
-        <div className="flex flex-col items-center">
-          <div className="text-4xl font-bold text-red-500 mb-1" style={{
-            textShadow: '0 0 20px oklch(0.60 0.25 30 / 0.8)',
-            fontVariantNumeric: 'tabular-nums'
-          }}>
-            {cancelled}
-          </div>
-          <div className="text-xs font-bold uppercase tracking-widest text-red-400" style={{
-            textShadow: '0 0 10px oklch(0.60 0.25 30 / 0.6)',
-            letterSpacing: '0.15em'
-          }}>
-            CANCELED
-          </div>
-        </div>
-        
-        <div className="flex flex-col items-center">
-          <div className="text-4xl font-bold text-red-500 mb-1" style={{
-            textShadow: '0 0 20px oklch(0.60 0.25 30 / 0.8)',
-            fontVariantNumeric: 'tabular-nums'
-          }}>
-            {noShows}
-          </div>
-          <div className="text-xs font-bold uppercase tracking-widest text-red-400" style={{
-            textShadow: '0 0 10px oklch(0.60 0.25 30 / 0.6)',
-            letterSpacing: '0.15em'
-          }}>
-            NO-SHOWS
-          </div>
-        </div>
       </div>
     </div>
   )
