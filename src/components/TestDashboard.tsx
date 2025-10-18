@@ -434,18 +434,6 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
                     <p className="text-[10px] text-white/70 truncate">Thanks for the great service today!</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-2 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                    <User size={12} className="text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[11px] font-semibold text-white/90">Emma Wilson</span>
-                      <span className="text-[9px] text-white/50">3h ago</span>
-                    </div>
-                    <p className="text-[10px] text-white/70 truncate">Is there availability tomorrow morning?</p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
