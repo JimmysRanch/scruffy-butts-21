@@ -104,14 +104,14 @@ type ViewMode = 'day' | 'week' | 'month' | 'list'
 type FilterStatus = 'all' | 'scheduled' | 'confirmed' | 'checked-in' | 'in-progress' | 'ready-for-pickup' | 'completed' | 'cancelled' | 'no-show'
 
 const STATUS_COLORS = {
-  scheduled: 'bg-blue-100 text-blue-800 border-blue-300',
-  confirmed: 'bg-green-100 text-green-800 border-green-300',
-  'checked-in': 'bg-purple-100 text-purple-800 border-purple-300',
-  'in-progress': 'bg-orange-100 text-orange-800 border-orange-300',
-  'ready-for-pickup': 'bg-yellow-100 text-yellow-800 border-yellow-300',
-  completed: 'bg-gray-100 text-gray-800 border-gray-300',
-  cancelled: 'bg-red-100 text-red-800 border-red-300',
-  'no-show': 'bg-red-100 text-red-800 border-red-300'
+  scheduled: 'bg-primary/10 text-primary border-primary/30',
+  confirmed: 'bg-green-500/10 text-green-400 border-green-500/30',
+  'checked-in': 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+  'in-progress': 'bg-orange-500/10 text-orange-400 border-orange-500/30',
+  'ready-for-pickup': 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30',
+  completed: 'bg-white/10 text-white/70 border-white/20',
+  cancelled: 'bg-red-500/10 text-red-400 border-red-500/30',
+  'no-show': 'bg-red-500/10 text-red-400 border-red-500/30'
 }
 
 const TIME_SLOTS = [
@@ -1082,106 +1082,109 @@ function AppointmentCard({
   return (
     <div
       className={cn(
-        'border rounded-lg p-3 cursor-pointer hover:shadow-md transition-all',
+        'glass-card border-2 rounded-xl p-4 cursor-pointer hover:scale-[1.01] transition-all duration-200',
         STATUS_COLORS[appointment.status],
         isPast && 'opacity-60',
-        isActive && 'shadow-md ring-2 ring-primary/20'
+        isActive && 'ring-2 ring-primary/50 shadow-xl'
       )}
       onClick={handleCardClick}
     >
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <Dog size={18} className="flex-shrink-0 text-foreground/70" />
-            <h3 className="font-semibold text-base">
-              {appointment.petName}
-              {staffMemberData && (
-                <span className="font-normal text-muted-foreground">
-                  {' '}with {staffMemberData.firstName} {staffMemberData.lastName}
-                </span>
-              )}
-            </h3>
-          </div>
-          
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
-            <User size={16} />
-            <span>{appointment.customerFirstName} {appointment.customerLastName}</span>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="p-1.5 rounded-lg bg-current/10 flex-shrink-0">
+                <Dog size={20} className="opacity-80" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-lg leading-tight">
+                  {appointment.petName}
+                </h3>
+                {staffMemberData && (
+                  <p className="text-sm text-white/60 leading-tight">
+                    with {staffMemberData.firstName} {staffMemberData.lastName}
+                  </p>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2 text-sm text-white/70 mb-2.5">
+              <User size={16} className="flex-shrink-0" />
+              <span>{appointment.customerFirstName} {appointment.customerLastName}</span>
+            </div>
+
+            <div className="flex items-center gap-3 text-sm text-white/70 flex-wrap">
+              <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
+                <Package size={16} className="flex-shrink-0" />
+                <span>{appointment.service}</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
+                <Calendar size={16} className="flex-shrink-0" />
+                <span>{format(parseISO(appointment.date), 'MMM d')}</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
+                <Clock size={16} className="flex-shrink-0" />
+                <span className="font-medium">{appointment.time}</span>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
-            <div className="flex items-center gap-1.5">
-              <Package size={16} />
-              <span>{appointment.service}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Calendar size={16} />
-              <span>{format(parseISO(appointment.date), 'MMM d')}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Clock size={16} />
-              <span>{appointment.time}</span>
-            </div>
+          <div className="flex flex-col items-end gap-2 flex-shrink-0">
+            <Badge variant="outline" className="border-current/30 bg-current/10 font-semibold whitespace-nowrap">
+              {appointment.status.replace('-', ' ')}
+            </Badge>
+            <div className="text-2xl font-bold text-white/90">${appointment.price}</div>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 flex-shrink-0">
-          <Badge variant="outline" className="flex-shrink-0 text-sm">
-            {appointment.status}
-          </Badge>
-          <div className="text-lg font-bold">${appointment.price}</div>
-          {appointment.staffId && (
-            <div className={cn('w-3 h-3 rounded-full', getStaffColor(appointment.staffId))} />
-          )}
-        </div>
+        {showActions && isActive && onEdit && onStatusChange && (
+          <div className="pt-3 border-t border-current/20 flex items-center gap-2 flex-wrap animate-in fade-in slide-in-from-top-2 duration-200" onClick={(e) => e.stopPropagation()}>
+            {appointment.status === 'scheduled' && (
+              <Button size="sm" variant="secondary" onClick={() => onStatusChange('confirmed')} className="text-xs h-8">
+                <CheckCircle size={14} className="mr-1.5" />
+                Confirm
+              </Button>
+            )}
+            {(appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
+              <Button size="sm" variant="secondary" onClick={() => onStatusChange('checked-in')} className="text-xs h-8">
+                <CheckCircle size={14} className="mr-1.5" />
+                Check In
+              </Button>
+            )}
+            {appointment.status === 'checked-in' && (
+              <Button size="sm" variant="secondary" onClick={() => onStatusChange('in-progress')} className="text-xs h-8">
+                <Clock size={14} className="mr-1.5" />
+                Start
+              </Button>
+            )}
+            {appointment.status === 'in-progress' && (
+              <Button size="sm" variant="secondary" onClick={() => onStatusChange('ready-for-pickup')} className="text-xs h-8">
+                <Bell size={14} className="mr-1.5" />
+                Ready for Pickup
+              </Button>
+            )}
+            {appointment.status === 'ready-for-pickup' && (
+              <Button size="sm" variant="default" onClick={(e) => {
+                e.stopPropagation()
+                onClick()
+              }} className="text-xs h-8 bg-primary hover:bg-primary/90">
+                <CreditCard size={14} className="mr-1.5" />
+                Checkout
+              </Button>
+            )}
+            <Button size="sm" variant="secondary" onClick={onEdit} className="text-xs h-8">
+              <PencilSimple size={14} className="mr-1.5" />
+              Edit
+            </Button>
+            {onRebook && (
+              <Button size="sm" variant="secondary" onClick={onRebook} className="text-xs h-8">
+                <ArrowClockwise size={14} className="mr-1.5" />
+                Rebook
+              </Button>
+            )}
+          </div>
+        )}
       </div>
-
-      {showActions && isActive && onEdit && onStatusChange && (
-        <div className="mt-3 pt-3 border-t flex items-center gap-2 flex-wrap animate-in fade-in slide-in-from-top-2 duration-200" onClick={(e) => e.stopPropagation()}>
-          {appointment.status === 'scheduled' && (
-            <Button size="sm" variant="outline" onClick={() => onStatusChange('confirmed')} className="text-sm">
-              <CheckCircle size={16} className="mr-1.5" />
-              Confirm
-            </Button>
-          )}
-          {(appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
-            <Button size="sm" variant="outline" onClick={() => onStatusChange('checked-in')} className="text-sm">
-              <CheckCircle size={16} className="mr-1.5" />
-              Check In
-            </Button>
-          )}
-          {appointment.status === 'checked-in' && (
-            <Button size="sm" variant="outline" onClick={() => onStatusChange('in-progress')} className="text-sm">
-              <Clock size={16} className="mr-1.5" />
-              Start
-            </Button>
-          )}
-          {appointment.status === 'in-progress' && (
-            <Button size="sm" variant="outline" onClick={() => onStatusChange('ready-for-pickup')}>
-              <Bell size={14} className="mr-1" />
-              Ready for Pickup
-            </Button>
-          )}
-          {appointment.status === 'ready-for-pickup' && (
-            <Button size="sm" variant="default" onClick={(e) => {
-              e.stopPropagation()
-              onClick()
-            }}>
-              <CreditCard size={14} className="mr-1" />
-              Checkout
-            </Button>
-          )}
-          <Button size="sm" variant="outline" onClick={onEdit} className="text-sm">
-            <PencilSimple size={16} className="mr-1.5" />
-            Edit
-          </Button>
-          {onRebook && (
-            <Button size="sm" variant="outline" onClick={onRebook} className="text-sm">
-              <ArrowClockwise size={16} className="mr-1.5" />
-              Rebook
-            </Button>
-          )}
-        </div>
-      )}
     </div>
   )
 }
@@ -1217,26 +1220,31 @@ function DayView({
         {timeSlots.map((timeSlot) => {
           const aptsAtTime = appointments.filter(apt => apt.time === timeSlot)
           return (
-            <div key={timeSlot} className="flex gap-3 min-h-[60px]">
-              <div className="w-24 flex-shrink-0 text-sm font-medium text-white/70 pt-2">
+            <div key={timeSlot} className="flex gap-3 min-h-[70px]">
+              <div className="w-20 flex-shrink-0 text-sm font-semibold text-white/80 pt-2">
                 {timeSlot}
               </div>
               <div className="flex-1 space-y-2">
                 {aptsAtTime.length > 0 ? (
                   aptsAtTime.map((apt) => (
-                    <AppointmentCard
+                    <div 
                       key={apt.id}
-                      appointment={apt}
                       onClick={() => onViewAppointment(apt)}
-                      onEdit={() => onEditAppointment(apt)}
-                      onDelete={() => onDeleteAppointment(apt)}
-                      onDuplicate={() => onDuplicateAppointment(apt)}
-                      onRebook={() => onRebookAppointment(apt)}
-                      onStatusChange={(status) => onStatusChange(apt.id, status)}
-                      getStaffColor={getStaffColor}
-                      staffMembers={staffMembers}
-                      showActions={false}
-                    />
+                      className={cn(
+                        'glass-card border-2 rounded-lg p-3 cursor-pointer hover:scale-[1.01] transition-all',
+                        STATUS_COLORS[apt.status]
+                      )}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-sm truncate">{apt.petName}</p>
+                          <p className="text-xs text-white/60 truncate">{apt.customerFirstName} {apt.customerLastName}</p>
+                        </div>
+                        <Badge variant="outline" className="border-current/30 bg-current/10 text-xs flex-shrink-0">
+                          ${apt.price}
+                        </Badge>
+                      </div>
+                    </div>
                   ))
                 ) : (
                   <div className="h-full min-h-[60px] border-2 border-dashed border-white/10 rounded-lg" />
@@ -1275,33 +1283,33 @@ function WeekView({
             <div
               key={dateStr}
               className={cn(
-                'border rounded-lg p-2 min-h-[200px]',
-                isCurrentDay ? 'bg-primary/10 border-primary/40' : 'border-white/10'
+                'glass-card border-2 rounded-xl p-3 min-h-[240px]',
+                isCurrentDay ? 'bg-primary/5 border-primary/40 ring-1 ring-primary/30' : 'border-white/10'
               )}
             >
-              <div className="text-center mb-2">
-                <div className="text-xs font-medium text-white/60">
+              <div className="text-center mb-3 pb-2 border-b border-white/10">
+                <div className="text-xs font-medium text-white/60 uppercase tracking-wider">
                   {format(date, 'EEE')}
                 </div>
                 <div className={cn(
-                  'text-lg font-bold',
+                  'text-2xl font-bold mt-1',
                   isCurrentDay ? 'text-primary' : 'text-white/90'
                 )}>
                   {format(date, 'd')}
                 </div>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 {dayAppts.map((apt) => (
                   <div
                     key={apt.id}
                     onClick={() => onViewAppointment(apt)}
                     className={cn(
-                      'text-xs p-2 rounded cursor-pointer hover:opacity-80 transition-opacity',
+                      'text-xs p-2 rounded-lg cursor-pointer hover:scale-105 transition-transform border-2',
                       STATUS_COLORS[apt.status]
                     )}
                   >
-                    <div className="font-semibold truncate">{apt.petName}</div>
-                    <div className="truncate text-xs">{apt.time}</div>
+                    <div className="font-bold truncate">{apt.petName}</div>
+                    <div className="text-xs font-medium opacity-80 mt-0.5">{apt.time}</div>
                   </div>
                 ))}
               </div>
@@ -1332,7 +1340,7 @@ function MonthView({
     <div className="glass-card rounded-[1.25rem] overflow-hidden p-4">
       <div className="grid grid-cols-7 gap-1 mb-2">
         {daysOfWeek.map((day) => (
-          <div key={day} className="text-center text-sm font-semibold text-white/70 py-2">
+          <div key={day} className="text-center text-sm font-bold text-white/80 py-2">
             {day}
           </div>
         ))}
@@ -1348,14 +1356,14 @@ function MonthView({
             <div
               key={dateStr}
               className={cn(
-                'border rounded-lg p-2 min-h-[100px]',
-                isCurrentDay && 'bg-primary/10 border-primary/40',
+                'glass-card border-2 rounded-lg p-2 min-h-[100px]',
+                isCurrentDay && 'bg-primary/5 border-primary/40 ring-1 ring-primary/30',
                 !isCurrentDay && 'border-white/10',
                 !isCurrentMonth && 'opacity-40'
               )}
             >
               <div className={cn(
-                'text-sm font-semibold mb-1',
+                'text-sm font-bold mb-1',
                 isCurrentDay ? 'text-primary' : 'text-white/90'
               )}>
                 {format(date, 'd')}
@@ -1366,7 +1374,7 @@ function MonthView({
                     key={apt.id}
                     onClick={() => onViewAppointment(apt)}
                     className={cn(
-                      'text-xs px-1 py-0.5 rounded cursor-pointer hover:opacity-80 transition-opacity truncate',
+                      'text-xs px-1.5 py-1 rounded cursor-pointer hover:scale-105 transition-transform truncate border-2',
                       STATUS_COLORS[apt.status]
                     )}
                   >
@@ -1374,7 +1382,7 @@ function MonthView({
                   </div>
                 ))}
                 {dayAppts.length > 3 && (
-                  <div className="text-xs text-white/60 px-1">
+                  <div className="text-xs text-white/60 px-1 font-medium">
                     +{dayAppts.length - 3} more
                   </div>
                 )}
@@ -1435,38 +1443,38 @@ function AppointmentDetails({
     <div className="space-y-4 py-2">
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-3">
-          <div className="p-2.5 rounded-lg bg-primary/10">
+          <div className="p-2.5 rounded-lg bg-primary/15 ring-1 ring-primary/30">
             <Dog size={24} className="text-primary" />
           </div>
           <div>
-            <h2 className="text-xl font-bold">{appointment.petName}</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="text-xl font-bold text-white">{appointment.petName}</h2>
+            <p className="text-sm text-white/60">
               {appointment.customerFirstName} {appointment.customerLastName}
             </p>
           </div>
         </div>
-        <Badge className={cn('text-xs', STATUS_COLORS[appointment.status])}>
+        <Badge className={cn('text-xs font-semibold', STATUS_COLORS[appointment.status])}>
           {appointment.status.replace('-', ' ')}
         </Badge>
       </div>
 
-      <Card>
+      <Card className="glass-card border-white/20">
         <CardContent className="p-4">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm">
-                <Calendar size={16} className="text-muted-foreground" />
+              <div className="flex items-center gap-2 text-sm text-white/80">
+                <Calendar size={16} className="text-white/60" />
                 <span>{format(parseISO(appointment.date), 'EEE, MMM d, yyyy')}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Clock size={16} className="text-muted-foreground" />
-                <span>{appointment.time}</span>
+              <div className="flex items-center gap-2 text-sm text-white/80">
+                <Clock size={16} className="text-white/60" />
+                <span className="font-semibold">{appointment.time}</span>
               </div>
             </div>
-            <Separator />
+            <Separator className="bg-white/10" />
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm">
-                <Package size={16} className="text-muted-foreground" />
+              <div className="flex items-center gap-2 text-sm text-white/80">
+                <Package size={16} className="text-white/60" />
                 <span>{appointment.service}</span>
               </div>
               <div className="text-lg font-bold text-primary">${appointment.price}</div>
@@ -1476,19 +1484,19 @@ function AppointmentDetails({
       </Card>
 
       {customer && (
-        <Card>
+        <Card className="glass-card border-white/20">
           <CardContent className="p-4 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            <div className="flex items-center gap-2 text-xs font-medium text-white/60 uppercase tracking-wide">
               <User size={14} />
               Contact
             </div>
-            <div className="space-y-1.5 text-sm">
+            <div className="space-y-1.5 text-sm text-white/80">
               <div className="flex items-center gap-2">
-                <Phone size={14} className="text-muted-foreground" />
+                <Phone size={14} className="text-white/60" />
                 <span>{customer.phone}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Envelope size={14} className="text-muted-foreground" />
+                <Envelope size={14} className="text-white/60" />
                 <span className="truncate">{customer.email}</span>
               </div>
             </div>
@@ -1497,17 +1505,17 @@ function AppointmentDetails({
       )}
 
       {staffMember && (
-        <Card>
+        <Card className="glass-card border-white/20">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
+              <div className="w-9 h-9 rounded-full bg-primary/15 ring-1 ring-primary/30 flex items-center justify-center text-primary font-semibold text-sm">
                 {staffMember.firstName[0]}{staffMember.lastName[0]}
               </div>
               <div className="flex-1">
-                <div className="text-sm font-semibold">
+                <div className="text-sm font-semibold text-white">
                   {staffMember.firstName} {staffMember.lastName}
                 </div>
-                <div className="text-xs text-muted-foreground">{staffMember.position}</div>
+                <div className="text-xs text-white/60">{staffMember.position}</div>
               </div>
             </div>
           </CardContent>
@@ -1515,21 +1523,21 @@ function AppointmentDetails({
       )}
 
       {appointment.notes && (
-        <Card className="border-dashed">
+        <Card className="glass-card border-white/20 border-dashed">
           <CardContent className="p-4">
-            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+            <div className="text-xs font-medium text-white/60 uppercase tracking-wide mb-2">
               Notes
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">{appointment.notes}</p>
+            <p className="text-sm text-white/80 leading-relaxed">{appointment.notes}</p>
           </CardContent>
         </Card>
       )}
 
       {isPast && appointment.status !== 'completed' && appointment.status !== 'cancelled' && appointment.status !== 'no-show' && (
-        <Card className="border-amber-300 bg-amber-50">
+        <Card className="border-amber-500/30 bg-amber-500/10">
           <CardContent className="p-3 flex items-start gap-2">
-            <WarningCircle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
-            <div className="text-xs text-amber-900">
+            <WarningCircle size={18} className="text-amber-400 flex-shrink-0 mt-0.5" />
+            <div className="text-xs text-amber-200">
               <div className="font-semibold">Past appointment</div>
               <div>Update status to complete or cancel</div>
             </div>
@@ -1537,16 +1545,16 @@ function AppointmentDetails({
         </Card>
       )}
 
-      <Separator />
+      <Separator className="bg-white/10" />
 
       {nextAction && appointment.status !== 'completed' && appointment.status !== 'cancelled' && appointment.status !== 'no-show' && (
         <div className="space-y-2">
-          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+          <div className="text-xs font-medium text-white/60 uppercase tracking-wide">
             Next Step
           </div>
           <Button 
             onClick={nextAction.action} 
-            className="w-full" 
+            className="w-full bg-primary hover:bg-primary/90" 
             size="lg"
           >
             <nextAction.icon size={18} className="mr-2" />
@@ -1556,15 +1564,15 @@ function AppointmentDetails({
       )}
 
       <div className="space-y-2">
-        <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        <div className="text-xs font-medium text-white/60 uppercase tracking-wide">
           More Actions
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" onClick={() => onEdit(appointment)}>
+          <Button variant="outline" onClick={() => onEdit(appointment)} className="border-white/20 hover:bg-white/5">
             <PencilSimple size={16} className="mr-2" />
             Edit
           </Button>
-          <Button variant="outline" onClick={() => onRebook(appointment)}>
+          <Button variant="outline" onClick={() => onRebook(appointment)} className="border-white/20 hover:bg-white/5">
             <ArrowClockwise size={16} className="mr-2" />
             Rebook
           </Button>
@@ -1572,7 +1580,7 @@ function AppointmentDetails({
         <Button 
           variant="outline" 
           onClick={onDelete} 
-          className="w-full text-destructive hover:bg-destructive/10"
+          className="w-full text-destructive hover:bg-destructive/10 border-destructive/30"
         >
           <Trash size={16} className="mr-2" />
           Delete Appointment
@@ -1581,13 +1589,13 @@ function AppointmentDetails({
 
       {appointment.status !== 'completed' && appointment.status !== 'cancelled' && appointment.status !== 'no-show' && (
         <>
-          <Separator />
+          <Separator className="bg-white/10" />
           <div className="space-y-2">
-            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            <div className="text-xs font-medium text-white/60 uppercase tracking-wide">
               Update Status
             </div>
             <Select value={appointment.status} onValueChange={(value) => onStatusChange(value as Appointment['status'])}>
-              <SelectTrigger>
+              <SelectTrigger className="border-white/20 bg-white/5">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
