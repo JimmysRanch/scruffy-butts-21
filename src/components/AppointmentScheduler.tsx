@@ -230,7 +230,6 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
                 service: service.name,
                 serviceId: service.id,
                 staffId: formStaff === 'unassigned' ? undefined : formStaff || undefined,
-                groomerRequested: formStaff !== 'unassigned' && formStaff !== '',
                 date: formDate,
                 time: formTime,
                 endTime,
@@ -255,7 +254,6 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
         service: service.name,
         serviceId: service.id,
         staffId: formStaff === 'unassigned' ? undefined : formStaff || undefined,
-        groomerRequested: formStaff !== 'unassigned' && formStaff !== '',
         date: formDate,
         time: formTime,
         endTime,
@@ -1098,7 +1096,7 @@ function AppointmentCard({
                     <span className="text-sm text-white/60 font-normal ml-2">
                       with {staffMemberData.firstName} {staffMemberData.lastName}
                       {appointment.groomerRequested && (
-                        <span className="font-bold text-white/90 ml-1">R</span>
+                        <span className="text-red-500 font-bold ml-1">R</span>
                       )}
                     </span>
                   )}
