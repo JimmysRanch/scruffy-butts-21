@@ -118,12 +118,28 @@ const STATUS_COLORS: Record<Appointment['status'], string> = {
   'no-show': 'border-orange-500/40 bg-orange-500/10 text-orange-100'
 }
 
-const DEFAULT_WIDGETS: WidgetConfig[] = [
+const WIDGET_ICON_MAP: Record<string, React.ComponentType<{ size?: number | string; className?: string }>> = {
+  'total-appointments': Calendar,
+  'week-appointments': Calendar,
+  'booked-widget': ChartBar,
+  'revenue-gauge': ChartBar,
+  'groomer-workload': Users,
+  'today-schedule': Clock
+}
+
+interface StoredWidgetConfig {
+  id: string
+  name: string
+  description: string
+  enabled: boolean
+  defaultSize: { w: number; h: number }
+}
+
+const DEFAULT_WIDGETS: StoredWidgetConfig[] = [
   {
     id: 'total-appointments',
     name: 'Total Appointments',
     description: 'Shows total appointment count for today',
-    icon: Calendar,
     enabled: true,
     defaultSize: { w: 1, h: 1 }
   },
@@ -131,7 +147,6 @@ const DEFAULT_WIDGETS: WidgetConfig[] = [
     id: 'week-appointments',
     name: 'This Week',
     description: 'Shows appointments scheduled this week',
-    icon: Calendar,
     enabled: true,
     defaultSize: { w: 1, h: 1 }
   },
@@ -139,7 +154,6 @@ const DEFAULT_WIDGETS: WidgetConfig[] = [
     id: 'booked-widget',
     name: 'Booked Today',
     description: 'Shows booking percentage for today',
-    icon: ChartBar,
     enabled: true,
     defaultSize: { w: 1, h: 1 }
   },
@@ -147,7 +161,6 @@ const DEFAULT_WIDGETS: WidgetConfig[] = [
     id: 'revenue-gauge',
     name: 'Revenue Gauge',
     description: 'Shows daily revenue progress',
-    icon: ChartBar,
     enabled: true,
     defaultSize: { w: 1, h: 1 }
   },
@@ -155,7 +168,6 @@ const DEFAULT_WIDGETS: WidgetConfig[] = [
     id: 'groomer-workload',
     name: 'Groomer Workload',
     description: 'Shows staff workload distribution',
-    icon: Users,
     enabled: true,
     defaultSize: { w: 1, h: 1 }
   },
@@ -163,7 +175,6 @@ const DEFAULT_WIDGETS: WidgetConfig[] = [
     id: 'today-schedule',
     name: "Today's Schedule",
     description: 'Quick view of today\'s appointments',
-    icon: Clock,
     enabled: true,
     defaultSize: { w: 1, h: 1 }
   }
@@ -174,11 +185,16 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [customers] = useKV<Customer[]>('customers', [])
   const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {})
-  const [widgets, setWidgets] = useKV<WidgetConfig[]>('dashboard-widgets', DEFAULT_WIDGETS)
+  const [widgets, setWidgets] = useKV<StoredWidgetConfig[]>('dashboard-widgets', DEFAULT_WIDGETS)
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [isWidgetConfigOpen, setIsWidgetConfigOpen] = useState(false)
+
+  const widgetsWithIcons: WidgetConfig[] = (widgets || DEFAULT_WIDGETS).map(w => ({
+    ...w,
+    icon: WIDGET_ICON_MAP[w.id] || Calendar
+  }))
 
   useEffect(() => {
     seedActivityData()
@@ -292,7 +308,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     toast.success('Dashboard layout reset to default')
   }
 
-  const enabledWidgets = (widgets || DEFAULT_WIDGETS).filter(w => w.enabled)
+  const enabledWidgets = widgetsWithIcons.filter(w => w.enabled)
 
   return (
     <div className="space-y-6 relative z-10">
@@ -522,7 +538,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       <WidgetConfiguration
         open={isWidgetConfigOpen}
         onOpenChange={setIsWidgetConfigOpen}
-        widgets={widgets || DEFAULT_WIDGETS}
+        widgets={widgetsWithIcons}
         onToggleWidget={handleToggleWidget}
         onResetLayout={handleResetLayout}
       />
