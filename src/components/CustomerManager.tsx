@@ -3,16 +3,12 @@ import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { Plus, User, Phone, Heart } from '@phosphor-icons/react'
-import { toast } from 'sonner'
 import { CustomerDetail } from './CustomerDetail'
 import { NewCustomer } from './NewCustomer'
 import { EditPet } from './EditPet'
+import { AddPet } from './AddPet'
 
 interface Pet {
   id: string
@@ -42,8 +38,7 @@ export function CustomerManager() {
   const [customers, setCustomers] = useKV<Customer[]>('customers', [])
   const [appearance] = useKV<{ compactMode?: boolean }>('appearance-settings', {})
   const [isCreatingCustomer, setIsCreatingCustomer] = useState(false)
-  const [isNewPetOpen, setIsNewPetOpen] = useState(false)
-  const [selectedCustomerId, setSelectedCustomerId] = useState('')
+  const [isAddingPet, setIsAddingPet] = useState(false)
   const [viewingCustomerId, setViewingCustomerId] = useState<string | null>(null)
   const [editingPet, setEditingPet] = useState<{ customerId: string; petId: string } | null>(null)
   
@@ -72,41 +67,6 @@ export function CustomerManager() {
       }
     }
   }, [customers, setCustomers])
-  
-  const [petForm, setPetForm] = useState({
-    name: '',
-    breed: '',
-    size: 'medium' as 'small' | 'medium' | 'large',
-    notes: ''
-  })
-
-  const handleAddPet = () => {
-    if (!petForm.name || !petForm.breed || !selectedCustomerId) {
-      toast.error('Please fill in all required fields')
-      return
-    }
-
-    const newPet: Pet = {
-      id: `pet-${Date.now()}`,
-      name: petForm.name,
-      breed: petForm.breed,
-      size: petForm.size,
-      notes: petForm.notes
-    }
-
-    setCustomers((current) =>
-      (current || []).map(customer =>
-        customer.id === selectedCustomerId
-          ? { ...customer, pets: [...customer.pets, newPet] }
-          : customer
-      )
-    )
-
-    toast.success('Pet added successfully!')
-    setPetForm({ name: '', breed: '', size: 'medium', notes: '' })
-    setSelectedCustomerId('')
-    setIsNewPetOpen(false)
-  }
 
   const getSizeColor = (size: string | undefined) => {
     if (!size) return 'secondary'
@@ -125,6 +85,11 @@ export function CustomerManager() {
   // If creating a new customer, show the creation page
   if (isCreatingCustomer) {
     return <NewCustomer onBack={() => setIsCreatingCustomer(false)} />
+  }
+
+  // If adding a pet, show the add pet page
+  if (isAddingPet) {
+    return <AddPet onBack={() => setIsAddingPet(false)} />
   }
 
   // If editing a pet, show the edit pet page
@@ -148,6 +113,7 @@ export function CustomerManager() {
         customerId={viewingCustomerId} 
         onBack={() => setViewingCustomerId(null)}
         onEditPet={(petId) => setEditingPet({ customerId: viewingCustomerId, petId })}
+        onAddPet={() => setIsAddingPet(true)}
       />
     )
   }
@@ -163,88 +129,14 @@ export function CustomerManager() {
         </div>
         
         <div className="flex gap-2 shrink-0 self-stretch sm:self-auto">
-          <Dialog open={isNewPetOpen} onOpenChange={setIsNewPetOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="flex items-center space-x-2 h-8 text-xs">
-                <Heart size={16} />
-                <span>Add Pet</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Add New Pet</DialogTitle>
-                <DialogDescription>
-                  Add a pet to an existing client's profile.
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="customer-select">Client</Label>
-                  <Select value={selectedCustomerId} onValueChange={setSelectedCustomerId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a client" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(customers || []).map((customer) => (
-                        <SelectItem key={customer.id} value={customer.id}>
-                          {customer.firstName} {customer.lastName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="pet-name">Pet Name</Label>
-                  <Input
-                    id="pet-name"
-                    value={petForm.name}
-                    onChange={(e) => setPetForm({ ...petForm, name: e.target.value })}
-                    placeholder="Enter pet name"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="pet-breed">Breed</Label>
-                  <Input
-                    id="pet-breed"
-                    value={petForm.breed}
-                    onChange={(e) => setPetForm({ ...petForm, breed: e.target.value })}
-                    placeholder="Enter breed"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="pet-size">Size</Label>
-                  <Select value={petForm.size} onValueChange={(value: 'small' | 'medium' | 'large') => setPetForm({ ...petForm, size: value })}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="small">Small</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="large">Large</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="pet-notes">Special Notes</Label>
-                  <Textarea
-                    id="pet-notes"
-                    value={petForm.notes}
-                    onChange={(e) => setPetForm({ ...petForm, notes: e.target.value })}
-                    placeholder="Any special care instructions or notes..."
-                  />
-                </div>
-
-                <Button onClick={handleAddPet} className="w-full">
-                  Add Pet
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            variant="outline" 
+            className="flex items-center space-x-2 h-8 text-xs"
+            onClick={() => setIsAddingPet(true)}
+          >
+            <Heart size={16} />
+            <span>Add Pet</span>
+          </Button>
 
           <Button 
             className="flex items-center space-x-2 h-8 text-xs"
@@ -326,8 +218,7 @@ export function CustomerManager() {
                   size="sm"
                   onClick={(e) => {
                     e.stopPropagation()
-                    setSelectedCustomerId(customer.id)
-                    setIsNewPetOpen(true)
+                    setIsAddingPet(true)
                   }}
                   className="h-8 text-sm px-3"
                 >

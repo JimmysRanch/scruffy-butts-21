@@ -12,7 +12,7 @@ import { Navigation } from '@/components/Navigation'
 import { GroomerStats } from '@/components/GroomerStats'
 import { NewAppointment } from '@/components/NewAppointment'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet'
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'system'
@@ -24,7 +24,7 @@ function App() {
   const [currentView, setCurrentView] = useState<View>(() => {
     const params = new URLSearchParams(window.location.search)
     const view = params.get('view') as View | null
-    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings', 'new-appointment'].includes(view)
+    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings', 'new-appointment', 'add-pet', 'edit-pet'].includes(view)
       ? view
       : 'dashboard'
   })
