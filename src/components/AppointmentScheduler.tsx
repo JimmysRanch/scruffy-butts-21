@@ -1005,8 +1005,7 @@ function ListView({
                 </Badge>
               </div>
             </div>
-            
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {appointmentsForDate.map((apt) => (
                 <AppointmentCard
                   key={apt.id}
