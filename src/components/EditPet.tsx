@@ -1,47 +1,19 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { 
   ArrowLeft, 
-  Dog,
-  UploadSimple,
-  X,
   FloppyDisk
 } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
-
-interface Pet {
-  id: string
-  name: string
-  breed: string
-  size?: 'small' | 'medium' | 'large'
-  notes?: string
-  avatar?: string
-  visitCount?: number
-  rating?: number
-}
-
-interface Customer {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  pets: Pet[]
-  createdAt: string
-  address?: string
-  city?: string
-  state?: string
-  zip?: string
-  notes?: string
-}
+import { WeightClass, WEIGHT_CLASSES } from '@/lib/pricing-types'
+import { Customer, Pet } from '@/lib/types'
 
 interface EditPetProps {
   customerId: string
@@ -51,7 +23,6 @@ interface EditPetProps {
 
 export function EditPet({ customerId, petId, onBack }: EditPetProps) {
   const [customers, setCustomers] = useKV<Customer[]>('customers', [])
-  const fileInputRef = useRef<HTMLInputElement>(null)
   
   const customer = (customers || []).find(c => c.id === customerId)
   const pet = customer?.pets.find(p => p.id === petId)
@@ -59,9 +30,8 @@ export function EditPet({ customerId, petId, onBack }: EditPetProps) {
   const [petForm, setPetForm] = useState({
     name: pet?.name || '',
     breed: pet?.breed || '',
-    size: (pet?.size || 'medium') as 'small' | 'medium' | 'large',
-    notes: pet?.notes || '',
-    avatar: pet?.avatar || ''
+    weightClass: pet?.weightClass as WeightClass | undefined,
+    notes: pet?.notes || ''
   })
 
   useEffect(() => {
@@ -69,9 +39,8 @@ export function EditPet({ customerId, petId, onBack }: EditPetProps) {
       setPetForm({
         name: pet.name,
         breed: pet.breed,
-        size: pet.size || 'medium',
-        notes: pet.notes || '',
-        avatar: pet.avatar || ''
+        weightClass: pet.weightClass as WeightClass | undefined,
+        notes: pet.notes || ''
       })
     }
   }, [pet])
@@ -111,9 +80,8 @@ export function EditPet({ customerId, petId, onBack }: EditPetProps) {
                       ...p,
                       name: petForm.name,
                       breed: petForm.breed,
-                      size: petForm.size,
-                      notes: petForm.notes,
-                      avatar: petForm.avatar
+                      weightClass: petForm.weightClass,
+                      notes: petForm.notes
                     }
                   : p
               )
@@ -124,35 +92,6 @@ export function EditPet({ customerId, petId, onBack }: EditPetProps) {
 
     toast.success('Pet updated successfully!')
     onBack()
-  }
-
-  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please upload an image file')
-      return
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image size should be less than 5MB')
-      return
-    }
-
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      const result = event.target?.result as string
-      setPetForm({ ...petForm, avatar: result })
-    }
-    reader.readAsDataURL(file)
-  }
-
-  const handleRemoveAvatar = () => {
-    setPetForm({ ...petForm, avatar: '' })
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
   }
 
   return (
@@ -184,62 +123,6 @@ export function EditPet({ customerId, petId, onBack }: EditPetProps) {
 
         <div className="space-y-6">
           <div className="glass-dark rounded-xl p-6">
-            <h3 className="text-lg font-bold text-white/90 mb-4 flex items-center space-x-2">
-              <Dog size={20} className="text-primary" weight="fill" />
-              <span>Pet Photo</span>
-            </h3>
-            
-            <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-              {petForm.avatar ? (
-                <div className="relative">
-                  <Avatar className="w-32 h-32 border-4 border-border shadow-xl">
-                    <AvatarImage src={petForm.avatar} alt="Pet avatar" />
-                    <AvatarFallback>
-                      <Dog size={48} weight="fill" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <Button
-                    size="icon"
-                    variant="destructive"
-                    className="absolute -top-2 -right-2 h-8 w-8 rounded-full shadow-lg"
-                    onClick={handleRemoveAvatar}
-                  >
-                    <X size={16} />
-                  </Button>
-                </div>
-              ) : (
-                <div className="w-32 h-32 border-4 border-dashed border-border rounded-xl flex items-center justify-center bg-muted/30">
-                  <Dog size={48} className="text-muted-foreground" weight="duotone" />
-                </div>
-              )}
-              
-              <div className="flex-1 w-full">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  id="edit-pet-avatar"
-                  accept="image/*"
-                  onChange={handleAvatarUpload}
-                  className="hidden"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="lg"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full md:w-auto"
-                >
-                  <UploadSimple size={20} className="mr-2" />
-                  {petForm.avatar ? 'Change Photo' : 'Upload Photo'}
-                </Button>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Upload a photo of {pet.name}. Max 5MB, JPG or PNG format.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="glass-dark rounded-xl p-6">
             <h3 className="text-lg font-bold text-white/90 mb-4">Basic Information</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -266,18 +149,19 @@ export function EditPet({ customerId, petId, onBack }: EditPetProps) {
               </div>
 
               <div>
-                <Label htmlFor="edit-pet-size" className="text-white/80">Size</Label>
+                <Label htmlFor="edit-pet-weightClass" className="text-white/80">Weight Class</Label>
                 <Select 
-                  value={petForm.size} 
-                  onValueChange={(value: 'small' | 'medium' | 'large') => setPetForm({ ...petForm, size: value })}
+                  value={petForm.weightClass || ''} 
+                  onValueChange={(value: WeightClass) => setPetForm({ ...petForm, weightClass: value })}
                 >
                   <SelectTrigger className="mt-1.5">
-                    <SelectValue />
+                    <SelectValue placeholder="Select weight class" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="small">Small</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="large">Large</SelectItem>
+                    <SelectItem value="small">{WEIGHT_CLASSES.small.label}</SelectItem>
+                    <SelectItem value="medium">{WEIGHT_CLASSES.medium.label}</SelectItem>
+                    <SelectItem value="large">{WEIGHT_CLASSES.large.label}</SelectItem>
+                    <SelectItem value="giant">{WEIGHT_CLASSES.giant.label}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
