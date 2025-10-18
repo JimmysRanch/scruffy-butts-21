@@ -3,13 +3,13 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
-import { Calendar, ChartBar, Users, Activity, TrendUp, Lightning } from '@phosphor-icons/react'
+import { Icon as PhosphorIcon } from '@phosphor-icons/react'
 
 export interface WidgetConfig {
   id: string
   name: string
   description: string
-  icon: typeof Calendar
+  icon: PhosphorIcon
   enabled: boolean
   defaultSize: { w: number; h: number }
 }
