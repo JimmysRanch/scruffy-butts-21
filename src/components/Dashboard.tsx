@@ -312,7 +312,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </Button>
       </div>
 
-      <div className="grid grid-cols-6 [grid-auto-rows:minmax(4rem,auto)] gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {enabledWidgets.find(w => w.id === 'total-appointments') && (
           <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
             <TotalAppointmentsWidget />
