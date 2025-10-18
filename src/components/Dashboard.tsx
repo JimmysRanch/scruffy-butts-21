@@ -325,57 +325,86 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 <p className="text-sm font-medium">No appointments scheduled for today</p>
               </div>
             ) : (
-              <div className="space-y-2.5">
-                {todayAppointments.slice(0, 6).map((apt) => {
-                  const staffName = getStaffName(apt.staffId)
-                  return (
-                    <div 
-                      key={apt.id} 
-                      className="rounded-xl border border-white/10 hover:border-accent/50 hover:bg-white/5 transition-all duration-300 p-3.5 min-w-0 backdrop-blur-sm hover:shadow-[0_0_20px_oklch(0.65_0.22_310/0.3)] cursor-pointer"
-                      onClick={() => handleViewAppointment(apt)}
-                    >
-                      <div className="flex flex-col gap-3 min-w-0">
-                        <div className="flex items-start justify-between gap-2.5 min-w-0">
-                          <div className="flex items-center gap-3 min-w-0 overflow-hidden flex-1">
-                            <div className="flex items-center gap-2 font-semibold min-w-[70px] bg-accent/25 text-accent px-3 py-1.5 rounded-lg shrink-0 text-sm ring-1 ring-accent/40 shadow-[0_0_12px_oklch(0.65_0.22_310/0.4)]">
-                              <Clock size={15} weight="duotone" />
-                              {apt.time}
-                            </div>
-                            <div className="min-w-0 overflow-hidden flex-1">
-                              <div className="font-semibold truncate text-sm text-white/90 flex items-center gap-2">
-                                {apt.petName}
-                                {staffName && (
-                                  <span className="text-xs text-white/60 font-normal">
-                                    with {staffName}
-                                  </span>
-                                )}
+              <div className="space-y-3">
+                <div className={cn(
+                  'glass-card py-2 px-4 rounded-lg overflow-hidden shadow-lg ring-1 ring-primary/50 shadow-[0_0_16px_oklch(0.60_0.20_280/0.3)]'
+                )}>
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="font-bold text-base leading-tight text-primary drop-shadow-[0_0_8px_oklch(0.60_0.20_280)]">
+                      Today
+                    </h3>
+                    <Badge variant="default" className="text-xs font-semibold shrink-0">
+                      {todayAppointments.length}
+                    </Badge>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  {todayAppointments.slice(0, 6).map((apt) => {
+                    const staffName = getStaffName(apt.staffId)
+                    return (
+                      <div
+                        key={apt.id}
+                        className={cn(
+                          'glass-card border-2 rounded-xl p-4 cursor-pointer hover:scale-[1.01] transition-all duration-200',
+                          STATUS_COLORS[apt.status]
+                        )}
+                        onClick={() => handleViewAppointment(apt)}
+                      >
+                        <div className="flex flex-col gap-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2.5 mb-2">
+                                <div className="p-1.5 rounded-lg bg-current/10 flex-shrink-0">
+                                  <Dog size={20} className="opacity-80" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h3 className="font-bold text-lg leading-tight">
+                                    {apt.petName}
+                                    {staffName && (
+                                      <span className="text-sm text-white/60 font-normal ml-2">
+                                        with {staffName}
+                                        {apt.groomerRequested && (
+                                          <span className="text-red-500 font-bold ml-1">R</span>
+                                        )}
+                                      </span>
+                                    )}
+                                  </h3>
+                                </div>
                               </div>
-                              <div className="text-white/50 text-xs truncate font-medium">
-                                {apt.customerFirstName} {apt.customerLastName}
+                              
+                              <div className="flex items-center gap-2 text-sm text-white/70 mb-2.5">
+                                <User size={16} className="flex-shrink-0" />
+                                <span>{apt.customerFirstName} {apt.customerLastName}</span>
+                              </div>
+
+                              <div className="flex items-center gap-3 text-sm text-white/70 flex-wrap">
+                                <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
+                                  <Package size={16} className="flex-shrink-0" />
+                                  <span>{apt.service}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
+                                  <Calendar size={16} className="flex-shrink-0" />
+                                  <span>{format(parseISO(apt.date), 'MMM d')}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
+                                  <Clock size={16} className="flex-shrink-0" />
+                                  <span className="font-medium">{apt.time}</span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <Badge className={`${getStatusColor(apt.status)} shrink-0 self-start text-[10px] px-2.5 py-1 font-semibold shadow-sm`}>
-                            {apt.status}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center gap-3 text-xs text-white/60 flex-wrap">
-                          <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
-                            <Package size={14} className="flex-shrink-0" weight="duotone" />
-                            <span>{apt.service}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
-                            <Clock size={14} className="flex-shrink-0" weight="duotone" />
-                            <span>{apt.duration} min</span>
-                          </div>
-                          <div className="flex items-center gap-1.5 bg-accent/20 text-accent rounded-md px-2 py-1 font-semibold">
-                            ${apt.price}
+
+                            <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                              <Badge variant="outline" className="border-current/30 bg-current/10 font-semibold whitespace-nowrap">
+                                {apt.status.replace('-', ' ')}
+                              </Badge>
+                              <div className="text-2xl font-bold text-white/90">${apt.price}</div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
+                </div>
               </div>
             )}
           </div>
