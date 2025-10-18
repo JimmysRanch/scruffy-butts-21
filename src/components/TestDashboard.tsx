@@ -311,19 +311,24 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
               <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
                 <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">This Week</h3>
               </div>
-              <div className="pb-3 pt-1 px-4 min-w-0">
+              <div className="pb-1 pt-1 px-4 min-w-0">
                 <div className="text-2xl font-bold text-white/95">
                   {weekAppointments.length}
                 </div>
                 <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
-                  {weekAppointments.length === 1 ? 'appointment' : 'appointments'} this week
+                  {weekAppointments.length === 1 ? 'appointment' : 'appointments'}
                 </p>
               </div>
-              <div className="absolute bottom-1 right-2 opacity-50">
-                <svg width="40" height="28" viewBox="0 0 40 28" fill="none">
-                  <circle cx="8" cy="20" r="3" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
-                  <circle cx="20" cy="12" r="4" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
-                  <circle cx="32" cy="16" r="3.5" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+              <div className="px-4 pb-2">
+                <svg width="100%" height="32" viewBox="0 0 100 32" preserveAspectRatio="none" className="opacity-70">
+                  <defs>
+                    <linearGradient id="weekGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.6"/>
+                      <stop offset="100%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.1"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0,24 L14,18 L28,12 L42,16 L56,8 L70,14 L84,10 L100,6 L100,32 L0,32 Z" fill="url(#weekGradient)"/>
+                  <path d="M0,24 L14,18 L28,12 L42,16 L56,8 L70,14 L84,10 L100,6" stroke="oklch(0.65 0.20 200)" strokeWidth="2" fill="none" className="drop-shadow-[0_0_4px_oklch(0.65_0.20_200)]"/>
                 </svg>
               </div>
             </div>
@@ -332,13 +337,63 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
         
         {enabledWidgets.find(w => w.id === 'booked-widget') && (
           <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-            <BookedWidget />
+            <div className="relative z-10">
+              <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+                <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Booked Today</h3>
+              </div>
+              <div className="pb-1 pt-1 px-4 min-w-0">
+                <div className="text-2xl font-bold text-white/95">
+                  {todayAppointments.length > 0 ? Math.round((todayAppointments.filter(a => a.status !== 'cancelled').length / Math.max(todayAppointments.length, 8)) * 100) : 0}%
+                </div>
+                <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
+                  capacity filled
+                </p>
+              </div>
+              <div className="px-4 pb-2">
+                <div className="relative h-7 bg-white/10 rounded-full overflow-hidden">
+                  <div 
+                    className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out"
+                    style={{
+                      width: `${todayAppointments.length > 0 ? Math.round((todayAppointments.filter(a => a.status !== 'cancelled').length / Math.max(todayAppointments.length, 8)) * 100) : 0}%`,
+                      background: 'linear-gradient(90deg, oklch(0.65 0.20 200), oklch(0.75 0.22 200))',
+                      boxShadow: '0 0 12px oklch(0.65 0.20 200)'
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
         {enabledWidgets.find(w => w.id === 'revenue-gauge') && (
           <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-            <RevenueGaugeWidget />
+            <div className="relative z-10">
+              <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+                <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Revenue</h3>
+              </div>
+              <div className="pb-1 pt-1 px-4 min-w-0">
+                <div className="text-2xl font-bold text-white/95">
+                  ${todayAppointments.filter(a => a.status === 'completed' && a.paymentCompleted).reduce((sum, a) => sum + (a.amountPaid || a.price), 0).toLocaleString()}
+                </div>
+                <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
+                  today's earnings
+                </p>
+              </div>
+              <div className="px-4 pb-2">
+                <svg width="100%" height="32" viewBox="0 0 100 32" preserveAspectRatio="none" className="opacity-70">
+                  <defs>
+                    <linearGradient id="revenueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.6"/>
+                      <stop offset="100%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.1"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0,20 L20,18 L40,10 L60,14 L80,6 L100,8 L100,32 L0,32 Z" fill="url(#revenueGradient)"/>
+                  <path d="M0,20 L20,18 L40,10 L60,14 L80,6 L100,8" stroke="oklch(0.65 0.20 200)" strokeWidth="2" fill="none" className="drop-shadow-[0_0_4px_oklch(0.65_0.20_200)]"/>
+                </svg>
+              </div>
+            </div>
           </div>
         )}
 
@@ -347,7 +402,7 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
             <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
               <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Active Clients</h3>
             </div>
-            <div className="pb-3 pt-1 px-4 min-w-0">
+            <div className="pb-1 pt-1 px-4 min-w-0">
               <div className="text-2xl font-bold text-white/95">
                 {(customers || []).filter(c => c.pets && c.pets.length > 0).length}
               </div>
@@ -355,11 +410,18 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
                 clients with pets
               </p>
             </div>
-            <div className="absolute bottom-1 right-2 opacity-50">
-              <svg width="40" height="28" viewBox="0 0 40 28" fill="none">
-                <circle cx="10" cy="18" r="4" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
-                <circle cx="30" cy="18" r="4" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
-              </svg>
+            <div className="px-4 pb-2 flex items-end justify-between gap-1">
+              {[16, 22, 18, 24, 20, 26, 22, 28, 24, 30, 26, 32].map((height, i) => (
+                <div 
+                  key={i}
+                  className="flex-1 rounded-sm transition-all duration-500"
+                  style={{
+                    height: `${height}px`,
+                    background: 'linear-gradient(180deg, oklch(0.65 0.20 200), oklch(0.55 0.18 200))',
+                    boxShadow: '0 0 6px oklch(0.65 0.20 200)'
+                  }}
+                ></div>
+              ))}
             </div>
           </div>
         </div>
@@ -369,20 +431,39 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
             <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
               <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Staff Members</h3>
             </div>
-            <div className="pb-3 pt-1 px-4 min-w-0">
+            <div className="pb-1 pt-1 px-4 min-w-0">
               <div className="text-2xl font-bold text-white/95">
                 {(staffMembers || []).filter(s => s.status === 'active').length}
               </div>
               <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
-                active team members
+                active members
               </p>
             </div>
-            <div className="absolute bottom-1 right-2 opacity-50">
-              <svg width="40" height="28" viewBox="0 0 40 28" fill="none">
-                <circle cx="12" cy="14" r="3.5" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
-                <circle cx="20" cy="18" r="3.5" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
-                <circle cx="28" cy="14" r="3.5" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
-              </svg>
+            <div className="px-4 pb-2">
+              <div className="relative h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="absolute inset-y-0 left-0 rounded-full"
+                  style={{
+                    width: `${((staffMembers || []).filter(s => s.status === 'active').length / Math.max((staffMembers || []).length, 1)) * 100}%`,
+                    background: 'linear-gradient(90deg, oklch(0.65 0.20 200), oklch(0.75 0.22 200))',
+                    boxShadow: '0 0 8px oklch(0.65 0.20 200)'
+                  }}
+                ></div>
+              </div>
+              <div className="mt-2 flex items-center justify-between">
+                {[65, 80, 72, 88].map((height, i) => (
+                  <div key={i} className="flex flex-col items-center gap-1">
+                    <div 
+                      className="w-3 rounded-sm"
+                      style={{
+                        height: `${height / 4}px`,
+                        background: 'linear-gradient(180deg, oklch(0.65 0.20 200), oklch(0.55 0.18 200))',
+                        boxShadow: '0 0 4px oklch(0.65 0.20 200)'
+                      }}
+                    ></div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
