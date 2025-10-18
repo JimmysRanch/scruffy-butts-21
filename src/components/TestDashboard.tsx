@@ -469,8 +469,8 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        <div className="xl:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+      <div className="grid grid-cols-6 gap-4">
+        <div className="col-span-6 sm:col-span-6 lg:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
           <div className="relative z-10">
             <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
               <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Messages</h3>
@@ -506,7 +506,7 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
           </div>
         </div>
         {enabledWidgets.find(w => w.id === 'groomer-workload') && (
-          <div className="xl:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+          <div className="col-span-6 sm:col-span-6 lg:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
             <GroomerWorkloadWidget />
           </div>
         )}
