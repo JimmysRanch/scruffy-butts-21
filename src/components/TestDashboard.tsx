@@ -13,6 +13,7 @@ import { BookedWidget } from '@/components/widgets/BookedWidget'
 import { GroomerWorkloadWidget } from '@/components/widgets/GroomerWorkloadWidget'
 import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsWidget'
 import { TodayScheduleWidget } from '@/components/widgets/TodayScheduleWidget'
+import { MonthlyRevenueWidget } from '@/components/widgets/MonthlyRevenueWidget'
 import { RecentActivity } from '@/components/RecentActivity'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 import { seedActivityData } from '@/lib/seed-activity-data'
@@ -426,46 +427,8 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
           </div>
         </div>
 
-        <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('staff')}>
-          <div className="relative z-10">
-            <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
-              <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Staff Members</h3>
-            </div>
-            <div className="pb-1 pt-1 px-4 min-w-0">
-              <div className="text-2xl font-bold text-white/95">
-                {(staffMembers || []).filter(s => s.status === 'active').length}
-              </div>
-              <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
-                active members
-              </p>
-            </div>
-            <div className="px-4 pb-2">
-              <div className="relative h-1.5 bg-white/10 rounded-full overflow-hidden">
-                <div 
-                  className="absolute inset-y-0 left-0 rounded-full"
-                  style={{
-                    width: `${((staffMembers || []).filter(s => s.status === 'active').length / Math.max((staffMembers || []).length, 1)) * 100}%`,
-                    background: 'linear-gradient(90deg, oklch(0.65 0.20 200), oklch(0.75 0.22 200))',
-                    boxShadow: '0 0 8px oklch(0.65 0.20 200)'
-                  }}
-                ></div>
-              </div>
-              <div className="mt-2 flex items-center justify-between">
-                {[65, 80, 72, 88].map((height, i) => (
-                  <div key={i} className="flex flex-col items-center gap-1">
-                    <div 
-                      className="w-3 rounded-sm"
-                      style={{
-                        height: `${height / 4}px`,
-                        background: 'linear-gradient(180deg, oklch(0.65 0.20 200), oklch(0.55 0.18 200))',
-                        boxShadow: '0 0 4px oklch(0.65 0.20 200)'
-                      }}
-                    ></div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+          <MonthlyRevenueWidget />
         </div>
       </div>
 
