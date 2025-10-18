@@ -2,12 +2,19 @@ import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, Users, ChartBar, Clock, Dog } from '@phosphor-icons/react'
-import { isToday, startOfWeek, endOfWeek, isWithinInterval, format } from 'date-fns'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Button } from '@/components/ui/button'
+import { Calendar, Users, ChartBar, Clock, Dog, Package, User, Phone, Envelope, PencilSimple, Trash, ArrowClockwise, CheckCircle, Bell, CreditCard, WarningCircle } from '@phosphor-icons/react'
+import { isToday, startOfWeek, endOfWeek, isWithinInterval, format, parseISO, isBefore, startOfDay } from 'date-fns'
+import { Separator } from '@/components/ui/separator'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { RevenueGaugeWidget } from '@/components/widgets/RevenueGaugeWidget'
 import { BookedWidget } from '@/components/widgets/BookedWidget'
 import { RecentActivity } from '@/components/RecentActivity'
+import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 import { seedActivityData } from '@/lib/seed-activity-data'
+import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment'
 
@@ -22,33 +29,99 @@ interface DashboardProps {
 
 interface Appointment {
   id: string
+  petName: string
+  petId?: string
+  customerFirstName: string
+  customerLastName: string
   customerId: string
-  petId: string
-  serviceIds: string[]
-  staffId: string
+  service: string
+  serviceId: string
+  staffId?: string
+  groomerRequested?: boolean
   date: string
   time: string
+  endTime?: string
   duration: number
-  status: 'scheduled' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'no-show'
+  price: number
+  status: 'scheduled' | 'confirmed' | 'checked-in' | 'in-progress' | 'ready-for-pickup' | 'completed' | 'cancelled' | 'no-show'
   notes?: string
+  reminderSent?: boolean
+  confirmationSent?: boolean
+  pickupNotificationSent?: boolean
+  pickupNotificationAcknowledged?: boolean
+  checkInTime?: string
+  checkOutTime?: string
+  paymentCompleted?: boolean
+  paymentMethod?: 'cash' | 'card' | 'cashapp' | 'chime'
+  amountPaid?: number
+  pickedUpTime?: string
+  createdAt: string
+  rating?: number
 }
 
 interface Customer {
   id: string
-  name: string
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  pets: Pet[]
+  name?: string
 }
 
 interface Pet {
   id: string
   name: string
-  customerId: string
+  breed: string
+  size: 'small' | 'medium' | 'large'
+  notes?: string
+  customerId?: string
+}
+
+interface Service {
+  id: string
+  name: string
+  duration: number
+  price: number
+  description: string
+}
+
+interface StaffMember {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  position: string
+  hireDate: string
+  address: string
+  city: string
+  state: string
+  zip: string
+  specialties: string[]
+  notes: string
+  status: 'active' | 'inactive'
+}
+
+const STATUS_COLORS: Record<Appointment['status'], string> = {
+  'scheduled': 'border-amber-500/40 bg-amber-500/10 text-amber-100',
+  'confirmed': 'border-emerald-500/40 bg-emerald-500/10 text-emerald-100',
+  'checked-in': 'border-blue-500/40 bg-blue-500/10 text-blue-100',
+  'in-progress': 'border-purple-500/40 bg-purple-500/10 text-purple-100',
+  'ready-for-pickup': 'border-cyan-500/40 bg-cyan-500/10 text-cyan-100',
+  'completed': 'border-gray-500/40 bg-gray-500/10 text-gray-100',
+  'cancelled': 'border-red-500/40 bg-red-500/10 text-red-100',
+  'no-show': 'border-orange-500/40 bg-orange-500/10 text-orange-100'
 }
 
 export function Dashboard({ onNavigate }: DashboardProps) {
-  const [appointments] = useKV<Appointment[]>('appointments', [])
+  const [appointments, setAppointments] = useKV<Appointment[]>('appointments', [])
   const [customers] = useKV<Customer[]>('customers', [])
-  const [pets] = useKV<Pet[]>('pets', [])
+  const [staffMembers] = useKV<StaffMember[]>('staff', [])
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {})
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
   useEffect(() => {
     seedActivityData()
@@ -60,7 +133,11 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const todayDateString = format(today, 'yyyy-MM-dd')
   const todayAppointments = (appointments || []).filter(apt => 
     apt.date === todayDateString && apt.status !== 'cancelled'
-  )
+  ).sort((a, b) => {
+    const timeA = a.time || ''
+    const timeB = b.time || ''
+    return timeA.localeCompare(timeB)
+  })
 
   const weekStart = startOfWeek(today, { weekStartsOn: 0 })
   const weekEnd = endOfWeek(today, { weekStartsOn: 0 })
@@ -69,13 +146,58 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     apt.status !== 'cancelled'
   )
 
-  const getCustomerName = (customerId: string) => {
-    return customers?.find(c => c.id === customerId)?.name || 'Unknown'
+  const handleViewAppointment = (apt: Appointment) => {
+    setSelectedAppointment(apt)
+    setIsDetailOpen(true)
   }
 
-  const getPetName = (petId: string) => {
-    return pets?.find(p => p.id === petId)?.name || 'Unknown'
+  const handleEditAppointment = (apt: Appointment) => {
+    setIsDetailOpen(false)
+    toast.info('Edit functionality - navigate to appointments view')
+    onNavigate('appointments')
   }
+
+  const handleDeleteAppointment = (id: string) => {
+    if (confirm('Are you sure you want to delete this appointment?')) {
+      setAppointments((current) => (current || []).filter(apt => apt.id !== id))
+      setIsDetailOpen(false)
+      toast.success('Appointment deleted')
+    }
+  }
+
+  const handleDuplicateAppointment = (apt: Appointment) => {
+    setIsDetailOpen(false)
+    toast.info('Duplicate functionality - navigate to appointments view')
+    onNavigate('appointments')
+  }
+
+  const handleRebookAppointment = (apt: Appointment) => {
+    setIsDetailOpen(false)
+    toast.info('Rebook functionality - navigate to appointments view')
+    onNavigate('appointments')
+  }
+
+  const updateAppointmentStatus = (id: string, status: Appointment['status']) => {
+    setAppointments((current) =>
+      (current || []).map(apt => apt.id === id ? { ...apt, status } : apt)
+    )
+    setSelectedAppointment(prev => prev ? { ...prev, status } : null)
+    toast.success(`Appointment ${status}`)
+  }
+
+  const handleCheckoutComplete = () => {
+    setIsCheckoutOpen(false)
+    setIsDetailOpen(false)
+    toast.success('Checkout completed')
+  }
+
+  const selectedCustomer = selectedAppointment 
+    ? customers?.find(c => c.id === selectedAppointment.customerId)
+    : null
+
+  const selectedStaff = selectedAppointment?.staffId
+    ? staffMembers?.find(s => s.id === selectedAppointment.staffId)
+    : null
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -92,6 +214,12 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       default:
         return 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30'
     }
+  }
+
+  const getStaffName = (staffId?: string) => {
+    if (!staffId) return null
+    const staff = staffMembers?.find(s => s.id === staffId)
+    return staff ? `${staff.firstName} ${staff.lastName}` : null
   }
 
   return (
@@ -198,30 +326,326 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               </div>
             ) : (
               <div className="space-y-2.5">
-                {todayAppointments.slice(0, 6).map((apt) => (
-                  <div key={apt.id} className="rounded-xl border border-white/10 hover:border-accent/50 hover:bg-white/5 transition-all duration-300 p-3.5 min-w-0 backdrop-blur-sm hover:shadow-[0_0_20px_oklch(0.65_0.22_310/0.3)]">
-                    <div className="flex flex-col @[480px]:flex-row @[480px]:items-center justify-between gap-2.5 min-w-0">
-                      <div className="flex items-center gap-3 min-w-0 overflow-hidden">
-                        <div className="flex items-center gap-2 font-semibold min-w-[70px] bg-accent/25 text-accent px-3 py-1.5 rounded-lg shrink-0 text-sm ring-1 ring-accent/40 shadow-[0_0_12px_oklch(0.65_0.22_310/0.4)]">
-                          <Clock size={15} weight="duotone" />
-                          {apt.time}
+                {todayAppointments.slice(0, 6).map((apt) => {
+                  const staffName = getStaffName(apt.staffId)
+                  return (
+                    <div 
+                      key={apt.id} 
+                      className="rounded-xl border border-white/10 hover:border-accent/50 hover:bg-white/5 transition-all duration-300 p-3.5 min-w-0 backdrop-blur-sm hover:shadow-[0_0_20px_oklch(0.65_0.22_310/0.3)] cursor-pointer"
+                      onClick={() => handleViewAppointment(apt)}
+                    >
+                      <div className="flex flex-col gap-3 min-w-0">
+                        <div className="flex items-start justify-between gap-2.5 min-w-0">
+                          <div className="flex items-center gap-3 min-w-0 overflow-hidden flex-1">
+                            <div className="flex items-center gap-2 font-semibold min-w-[70px] bg-accent/25 text-accent px-3 py-1.5 rounded-lg shrink-0 text-sm ring-1 ring-accent/40 shadow-[0_0_12px_oklch(0.65_0.22_310/0.4)]">
+                              <Clock size={15} weight="duotone" />
+                              {apt.time}
+                            </div>
+                            <div className="min-w-0 overflow-hidden flex-1">
+                              <div className="font-semibold truncate text-sm text-white/90 flex items-center gap-2">
+                                {apt.petName}
+                                {staffName && (
+                                  <span className="text-xs text-white/60 font-normal">
+                                    with {staffName}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-white/50 text-xs truncate font-medium">
+                                {apt.customerFirstName} {apt.customerLastName}
+                              </div>
+                            </div>
+                          </div>
+                          <Badge className={`${getStatusColor(apt.status)} shrink-0 self-start text-[10px] px-2.5 py-1 font-semibold shadow-sm`}>
+                            {apt.status}
+                          </Badge>
                         </div>
-                        <div className="min-w-0 overflow-hidden">
-                          <div className="font-semibold truncate text-sm text-white/90">{getPetName(apt.petId)}</div>
-                          <div className="text-white/50 text-xs truncate font-medium">{getCustomerName(apt.customerId)}</div>
+                        <div className="flex items-center gap-3 text-xs text-white/60 flex-wrap">
+                          <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
+                            <Package size={14} className="flex-shrink-0" weight="duotone" />
+                            <span>{apt.service}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
+                            <Clock size={14} className="flex-shrink-0" weight="duotone" />
+                            <span>{apt.duration} min</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 bg-accent/20 text-accent rounded-md px-2 py-1 font-semibold">
+                            ${apt.price}
+                          </div>
                         </div>
                       </div>
-                      <Badge className={`${getStatusColor(apt.status)} shrink-0 self-start @[480px]:self-center text-[10px] px-2.5 py-1 font-semibold shadow-sm`}>
-                        {apt.status}
-                      </Badge>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>
         </div>
       </div>
+
+      <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Appointment Details</SheetTitle>
+            <SheetDescription>View and manage appointment</SheetDescription>
+          </SheetHeader>
+          
+          {selectedAppointment && (
+            <AppointmentDetails
+              appointment={selectedAppointment}
+              customer={selectedCustomer}
+              staffMember={selectedStaff}
+              onStatusChange={(status) => updateAppointmentStatus(selectedAppointment.id, status)}
+              onEdit={handleEditAppointment}
+              onDelete={() => handleDeleteAppointment(selectedAppointment.id)}
+              onDuplicate={handleDuplicateAppointment}
+              onRebook={handleRebookAppointment}
+              onClose={() => setIsDetailOpen(false)}
+              onCheckout={() => {
+                setIsDetailOpen(false)
+                setIsCheckoutOpen(true)
+              }}
+            />
+          )}
+        </SheetContent>
+      </Sheet>
+
+      <AppointmentCheckout
+        open={isCheckoutOpen}
+        onOpenChange={setIsCheckoutOpen}
+        appointment={selectedAppointment}
+        customer={selectedCustomer || null}
+        staffMember={selectedStaff}
+        onComplete={handleCheckoutComplete}
+        onBack={() => {
+          setIsCheckoutOpen(false)
+          setIsDetailOpen(true)
+        }}
+      />
+    </div>
+  )
+}
+
+function AppointmentDetails({ 
+  appointment, 
+  customer, 
+  staffMember,
+  onStatusChange, 
+  onEdit, 
+  onDelete,
+  onDuplicate,
+  onRebook,
+  onClose,
+  onCheckout
+}: { 
+  appointment: Appointment
+  customer?: Customer | null
+  staffMember?: StaffMember | null
+  onStatusChange: (status: Appointment['status']) => void
+  onEdit: (apt: Appointment) => void
+  onDelete: () => void
+  onDuplicate: (apt: Appointment) => void
+  onRebook: (apt: Appointment) => void
+  onClose: () => void
+  onCheckout?: () => void
+}) {
+  const isPast = isBefore(parseISO(appointment.date), startOfDay(new Date()))
+
+  const getNextAction = () => {
+    switch (appointment.status) {
+      case 'scheduled':
+        return { label: 'Confirm Appointment', action: () => onStatusChange('confirmed'), icon: CheckCircle }
+      case 'confirmed':
+        return { label: 'Check In', action: () => onStatusChange('checked-in'), icon: CheckCircle }
+      case 'checked-in':
+        return { label: 'Start Grooming', action: () => onStatusChange('in-progress'), icon: Clock }
+      case 'in-progress':
+        return { label: 'Mark Ready for Pickup', action: () => onStatusChange('ready-for-pickup'), icon: Bell }
+      case 'ready-for-pickup':
+        return { label: 'Checkout & Complete', action: onCheckout || (() => {}), icon: CreditCard }
+      default:
+        return null
+    }
+  }
+
+  const nextAction = getNextAction()
+
+  return (
+    <div className="space-y-4 py-2">
+      <div className="flex items-start justify-between">
+        <div className="flex items-start gap-3">
+          <div className="p-2.5 rounded-lg bg-primary/10">
+            <Dog size={24} className="text-primary" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold">{appointment.petName}</h2>
+            <p className="text-sm text-muted-foreground">
+              {appointment.customerFirstName} {appointment.customerLastName}
+            </p>
+          </div>
+        </div>
+        <Badge className={cn('text-xs', STATUS_COLORS[appointment.status])}>
+          {appointment.status.replace('-', ' ')}
+        </Badge>
+      </div>
+
+      <Card>
+        <CardContent className="p-4">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar size={16} className="text-muted-foreground" />
+                <span>{format(parseISO(appointment.date), 'EEE, MMM d, yyyy')}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Clock size={16} className="text-muted-foreground" />
+                <span>{appointment.time}</span>
+              </div>
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm">
+                <Package size={16} className="text-muted-foreground" />
+                <span>{appointment.service}</span>
+              </div>
+              <div className="text-lg font-bold text-primary">${appointment.price}</div>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Clock size={16} />
+              <span>Duration: {appointment.duration} minutes</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {customer && (
+        <Card>
+          <CardContent className="p-4 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              <User size={14} />
+              Contact
+            </div>
+            <div className="space-y-1.5 text-sm">
+              <div className="flex items-center gap-2">
+                <Phone size={14} className="text-muted-foreground" />
+                <span>{customer.phone}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Envelope size={14} className="text-muted-foreground" />
+                <span className="truncate">{customer.email}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {staffMember && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
+                {staffMember.firstName[0]}{staffMember.lastName[0]}
+              </div>
+              <div className="flex-1">
+                <div className="text-sm font-semibold">
+                  {staffMember.firstName} {staffMember.lastName}
+                </div>
+                <div className="text-xs text-muted-foreground">{staffMember.position}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {appointment.notes && (
+        <Card className="border-dashed">
+          <CardContent className="p-4">
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+              Notes
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">{appointment.notes}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {isPast && appointment.status !== 'completed' && appointment.status !== 'cancelled' && appointment.status !== 'no-show' && (
+        <Card className="border-amber-300 bg-amber-50 dark:bg-amber-950 dark:border-amber-700">
+          <CardContent className="p-3 flex items-start gap-2">
+            <WarningCircle size={18} className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <div className="text-xs text-amber-900 dark:text-amber-100">
+              <div className="font-semibold">Past appointment</div>
+              <div>Update status to complete or cancel</div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <Separator />
+
+      {nextAction && appointment.status !== 'completed' && appointment.status !== 'cancelled' && appointment.status !== 'no-show' && (
+        <div className="space-y-2">
+          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Next Step
+          </div>
+          <Button 
+            onClick={nextAction.action} 
+            className="w-full" 
+            size="lg"
+          >
+            <nextAction.icon size={18} className="mr-2" />
+            {nextAction.label}
+          </Button>
+        </div>
+      )}
+
+      <div className="space-y-2">
+        <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+          More Actions
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="outline" onClick={() => onEdit(appointment)}>
+            <PencilSimple size={16} className="mr-2" />
+            Edit
+          </Button>
+          <Button variant="outline" onClick={() => onRebook(appointment)}>
+            <ArrowClockwise size={16} className="mr-2" />
+            Rebook
+          </Button>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={onDelete} 
+          className="w-full text-destructive hover:bg-destructive/10"
+        >
+          <Trash size={16} className="mr-2" />
+          Delete Appointment
+        </Button>
+      </div>
+
+      {appointment.status !== 'completed' && appointment.status !== 'cancelled' && appointment.status !== 'no-show' && (
+        <>
+          <Separator />
+          <div className="space-y-2">
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              Update Status
+            </div>
+            <Select value={appointment.status} onValueChange={(value) => onStatusChange(value as Appointment['status'])}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="scheduled">Scheduled</SelectItem>
+                <SelectItem value="confirmed">Confirmed</SelectItem>
+                <SelectItem value="checked-in">Checked In</SelectItem>
+                <SelectItem value="in-progress">In Progress</SelectItem>
+                <SelectItem value="ready-for-pickup">Ready for Pickup</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectItem value="no-show">No Show</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </>
+      )}
     </div>
   )
 }
