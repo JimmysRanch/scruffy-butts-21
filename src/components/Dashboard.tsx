@@ -232,29 +232,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           <TotalAppointmentsWidget />
         </div>
 
-        <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('customers')}>
-          <div className="relative z-10">
-            <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
-              <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Total Customers</h3>
-            </div>
-            <div className="pb-3 pt-1 px-4 min-w-0">
-              <div className="text-2xl font-bold text-white/95">
-                {customers?.length || 0}
-              </div>
-              <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
-                Active {customers?.length === 1 ? 'customer' : 'customers'}
-              </p>
-            </div>
-            <div className="absolute bottom-2 right-3">
-              <svg width="32" height="24" viewBox="0 0 32 24">
-                <rect x="4" y="14" width="4" height="8" rx="2" fill="oklch(0.60 0.18 200)" className="drop-shadow-[0_0_6px_oklch(0.60_0.18_200)]"/>
-                <rect x="12" y="8" width="4" height="14" rx="2" fill="oklch(0.60 0.18 200)" className="drop-shadow-[0_0_6px_oklch(0.60_0.18_200)]"/>
-                <rect x="20" y="4" width="4" height="18" rx="2" fill="oklch(0.60 0.18 200)" className="drop-shadow-[0_0_6px_oklch(0.60_0.18_200)]"/>
-              </svg>
-            </div>
-          </div>
-        </div>
-
         <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
           <div className="relative z-10">
             <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
