@@ -357,18 +357,18 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </div>
         )}
 
-        {enabledWidgets.find(w => w.id === 'groomer-workload') && (
-          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-            <GroomerWorkloadWidget />
-          </div>
-        )}
-
         {enabledWidgets.find(w => w.id === 'today-schedule') && (
           <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
             <TodayScheduleWidget isCompact={isCompact} onAppointmentClick={handleViewAppointment} />
           </div>
         )}
       </div>
+
+      {enabledWidgets.find(w => w.id === 'groomer-workload') && (
+        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02] col-span-1 sm:col-span-2">
+          <GroomerWorkloadWidget />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="glass-card rounded-[1.25rem] @container min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.01]">
