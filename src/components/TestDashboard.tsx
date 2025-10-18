@@ -364,8 +364,9 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div className="xl:col-span-3"></div>
         {enabledWidgets.find(w => w.id === 'groomer-workload') && (
-          <div className="xl:col-span-2 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+          <div className="xl:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
             <GroomerWorkloadWidget />
           </div>
         )}
