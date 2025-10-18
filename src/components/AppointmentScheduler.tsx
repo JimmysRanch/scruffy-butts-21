@@ -154,6 +154,7 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
   const [formNotes, setFormNotes] = useState('')
   const [formSendReminder, setFormSendReminder] = useState(true)
   const [formSendConfirmation, setFormSendConfirmation] = useState(true)
+  const [formGroomerRequested, setFormGroomerRequested] = useState(false)
   const [activeAppointmentId, setActiveAppointmentId] = useState<string | null>(null)
 
   const isCompact = appearance?.compactMode || false
@@ -219,6 +220,7 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
                 service: service.name,
                 serviceId: service.id,
                 staffId: formStaff === 'unassigned' ? undefined : formStaff || undefined,
+                groomerRequested: formGroomerRequested,
                 date: formDate,
                 time: formTime,
                 endTime,
@@ -243,6 +245,7 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
         service: service.name,
         serviceId: service.id,
         staffId: formStaff === 'unassigned' ? undefined : formStaff || undefined,
+        groomerRequested: formGroomerRequested,
         date: formDate,
         time: formTime,
         endTime,
@@ -273,6 +276,7 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
     setFormNotes('')
     setFormSendReminder(true)
     setFormSendConfirmation(true)
+    setFormGroomerRequested(false)
     setSelectedAppointment(null)
   }
 
@@ -286,6 +290,7 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
     setFormNotes(appointment.notes || '')
     setFormSendReminder(appointment.reminderSent || false)
     setFormSendConfirmation(appointment.confirmationSent || false)
+    setFormGroomerRequested(appointment.groomerRequested || false)
     
     const customer = (customers || []).find(c => c.id === appointment.customerId)
     if (customer) {
@@ -720,6 +725,25 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
                   </SelectContent>
                 </Select>
               </div>
+
+              {formStaff && formStaff !== 'unassigned' && (
+                <div className="col-span-2 flex items-center space-x-2 p-3 bg-primary/5 rounded-lg border border-primary/20">
+                  <Checkbox
+                    id="groomer-requested-scheduler"
+                    checked={formGroomerRequested}
+                    onCheckedChange={(checked) => setFormGroomerRequested(checked as boolean)}
+                  />
+                  <div className="flex-1">
+                    <Label
+                      htmlFor="groomer-requested-scheduler"
+                      className="text-sm font-medium cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Customer Requested This Groomer
+                    </Label>
+                    <p className="text-xs text-muted-foreground mt-1">Mark if customer specifically requested this staff member</p>
+                  </div>
+                </div>
+              )}
 
               <div>
                 <Label htmlFor="date">Date *</Label>

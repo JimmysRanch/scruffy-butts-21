@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import { Checkbox } from '@/components/ui/checkbox'
 import { ArrowLeft, Calendar, Clock, User, Dog, Package, Bell } from '@phosphor-icons/react'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
@@ -95,6 +96,7 @@ export function NewAppointment({ onBack }: NewAppointmentProps) {
   const [formNotes, setFormNotes] = useState('')
   const [formSendReminder, setFormSendReminder] = useState(true)
   const [formSendConfirmation, setFormSendConfirmation] = useState(true)
+  const [formGroomerRequested, setFormGroomerRequested] = useState(false)
 
   const selectedCustomerData = (customers || []).find(c => c.id === formCustomer)
   const selectedPetData = selectedCustomerData?.pets.find(p => p.id === formPet)
@@ -146,7 +148,7 @@ export function NewAppointment({ onBack }: NewAppointmentProps) {
       service: service.name,
       serviceId: service.id,
       staffId: formStaff === 'unassigned' ? undefined : formStaff,
-      groomerRequested: formStaff !== 'unassigned' && formStaff !== '',
+      groomerRequested: formGroomerRequested,
       date: formDate,
       time: formTime,
       endTime: calculateEndTime(formTime, service.duration),
@@ -178,6 +180,7 @@ export function NewAppointment({ onBack }: NewAppointmentProps) {
     setFormNotes('')
     setFormSendReminder(true)
     setFormSendConfirmation(true)
+    setFormGroomerRequested(false)
   }
 
   return (
@@ -316,6 +319,25 @@ export function NewAppointment({ onBack }: NewAppointmentProps) {
                 </SelectContent>
               </Select>
             </div>
+
+            {formStaff && formStaff !== 'unassigned' && (
+              <div className="flex items-center space-x-2 p-3 bg-primary/5 rounded-lg border border-primary/20">
+                <Checkbox
+                  id="groomer-requested"
+                  checked={formGroomerRequested}
+                  onCheckedChange={(checked) => setFormGroomerRequested(checked as boolean)}
+                />
+                <div className="flex-1">
+                  <Label
+                    htmlFor="groomer-requested"
+                    className="text-sm font-medium text-white/90 cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Customer Requested This Groomer
+                  </Label>
+                  <p className="text-xs text-white/60 mt-1">Mark if customer specifically requested this staff member</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
