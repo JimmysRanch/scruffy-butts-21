@@ -931,8 +931,8 @@ function ListView({
   if (appointments.length === 0) {
     return (
       <div className="glass-card rounded-[1.25rem] overflow-hidden">
-        <div className="text-center py-12 px-6">
-          <div className="w-fit mx-auto p-5 rounded-2xl mb-4 bg-white/5 ring-1 ring-white/10">
+        <div className="flex flex-col items-center justify-center gap-4 py-24">
+          <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-white/5">
             <List size={48} className="mx-auto text-white/50" weight="duotone" />
           </div>
           <p className="text-base text-white/60 font-medium">No appointments found</p>
@@ -1033,7 +1033,7 @@ function AppointmentCard({
   onRebook?: () => void
   onStatusChange?: (status: Appointment['status']) => void
   getStaffColor: (staffId?: string) => string
-  staffMembers?: StaffMember[]
+  staffMembers: StaffMember[]
   showActions?: boolean
 }) {
   const [tapCount, setTapCount] = useState(0)
