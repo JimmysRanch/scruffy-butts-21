@@ -3,7 +3,7 @@ import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Users, ChartBar, Clock, Dog } from '@phosphor-icons/react'
-import { isToday, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns'
+import { isToday, startOfWeek, endOfWeek, isWithinInterval, format } from 'date-fns'
 import { RevenueGaugeWidget } from '@/components/widgets/RevenueGaugeWidget'
 import { BookedWidget } from '@/components/widgets/BookedWidget'
 import { RecentActivity } from '@/components/RecentActivity'
@@ -57,8 +57,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const isCompact = appearance?.compactMode || false
 
   const today = new Date()
+  const todayDateString = format(today, 'yyyy-MM-dd')
   const todayAppointments = (appointments || []).filter(apt => 
-    isToday(new Date(apt.date)) && apt.status !== 'cancelled'
+    apt.date === todayDateString && apt.status !== 'cancelled'
   )
 
   const weekStart = startOfWeek(today, { weekStartsOn: 0 })
