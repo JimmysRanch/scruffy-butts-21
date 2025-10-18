@@ -158,17 +158,6 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
 
   const isCompact = appearance?.compactMode || false
 
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setActiveAppointmentId(null)
-    }
-
-    if (activeAppointmentId) {
-      document.addEventListener('click', handleClickOutside)
-      return () => document.removeEventListener('click', handleClickOutside)
-    }
-  }, [activeAppointmentId])
-
   const calculateEndTime = (startTime: string, durationMinutes: number): string => {
     const [time, period] = startTime.split(' ')
     const [hours, minutes] = time.split(':').map(Number)
@@ -836,8 +825,6 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
           onStatusChange={updateAppointmentStatus}
           getStaffColor={getStaffColor}
           staffMembers={staffMembers || []}
-          activeAppointmentId={activeAppointmentId}
-          setActiveAppointmentId={setActiveAppointmentId}
         />
       )}
 
@@ -929,9 +916,7 @@ function ListView({
   onRebookAppointment,
   onStatusChange,
   getStaffColor,
-  staffMembers,
-  activeAppointmentId,
-  setActiveAppointmentId
+  staffMembers
 }: {
   appointments: Appointment[]
   onViewAppointment: (apt: Appointment) => void
@@ -942,8 +927,6 @@ function ListView({
   onStatusChange: (id: string, status: Appointment['status']) => void
   getStaffColor: (staffId?: string) => string
   staffMembers: StaffMember[]
-  activeAppointmentId: string | null
-  setActiveAppointmentId: (id: string | null) => void
 }) {
   if (appointments.length === 0) {
     return (
@@ -1020,8 +1003,6 @@ function ListView({
                   getStaffColor={getStaffColor}
                   staffMembers={staffMembers}
                   showActions
-                  isActive={activeAppointmentId === apt.id}
-                  setActive={() => setActiveAppointmentId(apt.id)}
                 />
               ))}
             </div>
@@ -1042,9 +1023,7 @@ function AppointmentCard({
   onStatusChange,
   getStaffColor,
   staffMembers,
-  showActions = false,
-  isActive = false,
-  setActive
+  showActions = false
 }: { 
   appointment: Appointment
   onClick: () => void
@@ -1056,8 +1035,6 @@ function AppointmentCard({
   getStaffColor: (staffId?: string) => string
   staffMembers?: StaffMember[]
   showActions?: boolean
-  isActive?: boolean
-  setActive?: () => void
 }) {
   const [tapCount, setTapCount] = useState(0)
   const staffMemberData = staffMembers?.find(s => s.id === appointment.staffId)
@@ -1065,11 +1042,7 @@ function AppointmentCard({
 
   const handleCardClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!isActive && setActive) {
-      setActive()
-    } else if (isActive) {
-      onClick()
-    }
+    onClick()
   }
 
   return (
@@ -1077,8 +1050,7 @@ function AppointmentCard({
       className={cn(
         'glass-card border-2 rounded-xl p-4 cursor-pointer hover:scale-[1.01] transition-all duration-200',
         STATUS_COLORS[appointment.status],
-        isPast && 'opacity-60',
-        isActive && 'ring-2 ring-primary/50 shadow-xl'
+        isPast && 'opacity-60'
       )}
       onClick={handleCardClick}
     >
@@ -1132,54 +1104,6 @@ function AppointmentCard({
             <div className="text-2xl font-bold text-white/90">${appointment.price}</div>
           </div>
         </div>
-
-        {showActions && isActive && onEdit && onStatusChange && (
-          <div className="pt-3 border-t border-current/20 flex items-center gap-2 flex-wrap animate-in fade-in slide-in-from-top-2 duration-200" onClick={(e) => e.stopPropagation()}>
-            {appointment.status === 'scheduled' && (
-              <Button size="sm" variant="secondary" onClick={() => onStatusChange('confirmed')} className="text-xs h-8">
-                <CheckCircle size={14} className="mr-1.5" />
-                Confirm
-              </Button>
-            )}
-            {(appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
-              <Button size="sm" variant="secondary" onClick={() => onStatusChange('checked-in')} className="text-xs h-8">
-                <CheckCircle size={14} className="mr-1.5" />
-                Check In
-              </Button>
-            )}
-            {appointment.status === 'checked-in' && (
-              <Button size="sm" variant="secondary" onClick={() => onStatusChange('in-progress')} className="text-xs h-8">
-                <Clock size={14} className="mr-1.5" />
-                Start
-              </Button>
-            )}
-            {appointment.status === 'in-progress' && (
-              <Button size="sm" variant="secondary" onClick={() => onStatusChange('ready-for-pickup')} className="text-xs h-8">
-                <Bell size={14} className="mr-1.5" />
-                Ready for Pickup
-              </Button>
-            )}
-            {appointment.status === 'ready-for-pickup' && (
-              <Button size="sm" variant="default" onClick={(e) => {
-                e.stopPropagation()
-                onClick()
-              }} className="text-xs h-8 bg-primary hover:bg-primary/90">
-                <CreditCard size={14} className="mr-1.5" />
-                Checkout
-              </Button>
-            )}
-            <Button size="sm" variant="secondary" onClick={onEdit} className="text-xs h-8">
-              <PencilSimple size={14} className="mr-1.5" />
-              Edit
-            </Button>
-            {onRebook && (
-              <Button size="sm" variant="secondary" onClick={onRebook} className="text-xs h-8">
-                <ArrowClockwise size={14} className="mr-1.5" />
-                Rebook
-              </Button>
-            )}
-          </div>
-        )}
       </div>
     </div>
   )
