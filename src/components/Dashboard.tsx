@@ -227,8 +227,25 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   return (
     <div className="space-y-6 relative z-10">
       <div className="grid grid-cols-6 [grid-auto-rows:minmax(4rem,auto)] gap-4">
-        <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
-          <TotalAppointmentsWidget />
+        <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
+          <div className="relative z-10">
+            <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+              <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Today's Appointments</h3>
+            </div>
+            <div className="pb-3 pt-1 px-4 min-w-0">
+              <div className="text-2xl font-bold text-white/95">
+                {todayAppointments.length}
+              </div>
+              <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
+                {todayAppointments.length === 1 ? 'appointment' : 'appointments'} scheduled
+              </p>
+            </div>
+            <div className="absolute bottom-2 right-3 opacity-40 group-hover:opacity-60 transition-opacity">
+              <svg width="48" height="24" viewBox="0 0 48 24" fill="none">
+                <path d="M2 12 Q 12 4, 24 12 T 46 12" stroke="oklch(0.65 0.20 200)" strokeWidth="2.5" fill="none" strokeLinecap="round" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+              </svg>
+            </div>
+          </div>
         </div>
 
         <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('customers')}>
