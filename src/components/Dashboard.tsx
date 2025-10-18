@@ -340,7 +340,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 </div>
                 <div className="space-y-2">
                   {todayAppointments.slice(0, 6).map((apt) => {
-                    const staffName = getStaffName(apt.staffId)
+                    const staffMember = apt.staffId ? staffMembers?.find(s => s.id === apt.staffId) : null
                     return (
                       <div
                         key={apt.id}
@@ -360,9 +360,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                                 <div className="flex-1 min-w-0">
                                   <h3 className="font-bold text-lg leading-tight">
                                     {apt.petName}
-                                    {staffName && (
+                                    {staffMember && (
                                       <span className="text-sm text-white/60 font-normal ml-2">
-                                        with {staffName}
+                                        with {staffMember.firstName} {staffMember.lastName}
                                         {apt.groomerRequested && (
                                           <span className="text-red-500 font-bold ml-1">R</span>
                                         )}
