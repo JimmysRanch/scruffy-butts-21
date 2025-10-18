@@ -266,6 +266,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
           <GroomerWorkloadWidget />
         </div>
+
+        <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+          <TodayScheduleWidget isCompact={isCompact} onAppointmentClick={handleViewAppointment} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
