@@ -57,6 +57,7 @@ interface Appointment {
   service: string
   serviceId: string
   staffId?: string
+  groomerRequested?: boolean
   date: string
   time: string
   endTime?: string
@@ -145,6 +146,7 @@ export function NewAppointment({ onBack }: NewAppointmentProps) {
       service: service.name,
       serviceId: service.id,
       staffId: formStaff === 'unassigned' ? undefined : formStaff,
+      groomerRequested: formStaff !== 'unassigned' && formStaff !== '',
       date: formDate,
       time: formTime,
       endTime: calculateEndTime(formTime, service.duration),
