@@ -977,7 +977,7 @@ function ListView({
   })
 
   return (
-    <div className="space-y-4 pb-8">
+    <div className="space-y-6 pb-8">
       {sortedDates.map((date) => {
         const dateObj = parseISO(date)
         const appointmentsForDate = groupedByDate[date]
@@ -985,30 +985,23 @@ function ListView({
         const isPastDay = isBefore(dateObj, startOfDay(new Date())) && !isCurrentDay
         
         return (
-          <div key={date} className="space-y-3">
+          <div key={date} className="space-y-2.5">
             <div className={cn(
-              'glass-card sticky top-24 z-10 backdrop-blur-md py-2 px-4 rounded-xl overflow-hidden',
-              isCurrentDay && 'ring-1 ring-primary/40 shadow-[0_0_20px_oklch(0.60_0.20_280/0.4)]'
+              'glass-card sticky top-20 z-10 backdrop-blur-xl py-1.5 px-3.5 rounded-lg overflow-hidden shadow-lg',
+              isCurrentDay && 'ring-1 ring-primary/50 shadow-[0_0_16px_oklch(0.60_0.20_280/0.3)]'
             )}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className={cn(
-                    'font-bold text-lg',
-                    isCurrentDay ? 'text-primary drop-shadow-[0_0_8px_oklch(0.60_0.20_280)]' : 'text-white/90'
-                  )}>
-                    {isCurrentDay 
-                      ? 'Today' 
-                      : format(dateObj, 'EEEE, MMMM d, yyyy')
-                    }
-                  </h3>
-                  {!isCurrentDay && (
-                    <p className="text-sm text-white/60 font-medium">
-                      {format(dateObj, 'EEEE')}
-                    </p>
-                  )}
-                </div>
-                <Badge variant={isCurrentDay ? 'default' : 'secondary'} className="text-sm font-semibold">
-                  {appointmentsForDate.length} appointment{appointmentsForDate.length !== 1 ? 's' : ''}
+              <div className="flex items-center justify-between gap-3">
+                <h3 className={cn(
+                  'font-bold text-base leading-tight',
+                  isCurrentDay ? 'text-primary drop-shadow-[0_0_8px_oklch(0.60_0.20_280)]' : 'text-white/90'
+                )}>
+                  {isCurrentDay 
+                    ? 'Today' 
+                    : format(dateObj, 'EEEE, MMMM d, yyyy')
+                  }
+                </h3>
+                <Badge variant={isCurrentDay ? 'default' : 'secondary'} className="text-xs font-semibold shrink-0">
+                  {appointmentsForDate.length}
                 </Badge>
               </div>
             </div>
@@ -1443,38 +1436,38 @@ function AppointmentDetails({
     <div className="space-y-4 py-2">
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-3">
-          <div className="p-2.5 rounded-lg bg-primary/15 ring-1 ring-primary/30">
+          <div className="p-2.5 rounded-lg bg-primary/10">
             <Dog size={24} className="text-primary" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">{appointment.petName}</h2>
-            <p className="text-sm text-white/60">
+            <h2 className="text-xl font-bold">{appointment.petName}</h2>
+            <p className="text-sm text-muted-foreground">
               {appointment.customerFirstName} {appointment.customerLastName}
             </p>
           </div>
         </div>
-        <Badge className={cn('text-xs font-semibold', STATUS_COLORS[appointment.status])}>
+        <Badge className={cn('text-xs', STATUS_COLORS[appointment.status])}>
           {appointment.status.replace('-', ' ')}
         </Badge>
       </div>
 
-      <Card className="glass-card border-white/20">
+      <Card>
         <CardContent className="p-4">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-white/80">
-                <Calendar size={16} className="text-white/60" />
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar size={16} className="text-muted-foreground" />
                 <span>{format(parseISO(appointment.date), 'EEE, MMM d, yyyy')}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-white/80">
-                <Clock size={16} className="text-white/60" />
-                <span className="font-semibold">{appointment.time}</span>
+              <div className="flex items-center gap-2 text-sm">
+                <Clock size={16} className="text-muted-foreground" />
+                <span>{appointment.time}</span>
               </div>
             </div>
-            <Separator className="bg-white/10" />
+            <Separator />
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-white/80">
-                <Package size={16} className="text-white/60" />
+              <div className="flex items-center gap-2 text-sm">
+                <Package size={16} className="text-muted-foreground" />
                 <span>{appointment.service}</span>
               </div>
               <div className="text-lg font-bold text-primary">${appointment.price}</div>
@@ -1484,19 +1477,19 @@ function AppointmentDetails({
       </Card>
 
       {customer && (
-        <Card className="glass-card border-white/20">
+        <Card>
           <CardContent className="p-4 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-medium text-white/60 uppercase tracking-wide">
+            <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
               <User size={14} />
               Contact
             </div>
-            <div className="space-y-1.5 text-sm text-white/80">
+            <div className="space-y-1.5 text-sm">
               <div className="flex items-center gap-2">
-                <Phone size={14} className="text-white/60" />
+                <Phone size={14} className="text-muted-foreground" />
                 <span>{customer.phone}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Envelope size={14} className="text-white/60" />
+                <Envelope size={14} className="text-muted-foreground" />
                 <span className="truncate">{customer.email}</span>
               </div>
             </div>
@@ -1505,17 +1498,17 @@ function AppointmentDetails({
       )}
 
       {staffMember && (
-        <Card className="glass-card border-white/20">
+        <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-primary/15 ring-1 ring-primary/30 flex items-center justify-center text-primary font-semibold text-sm">
+              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
                 {staffMember.firstName[0]}{staffMember.lastName[0]}
               </div>
               <div className="flex-1">
-                <div className="text-sm font-semibold text-white">
+                <div className="text-sm font-semibold">
                   {staffMember.firstName} {staffMember.lastName}
                 </div>
-                <div className="text-xs text-white/60">{staffMember.position}</div>
+                <div className="text-xs text-muted-foreground">{staffMember.position}</div>
               </div>
             </div>
           </CardContent>
@@ -1523,21 +1516,21 @@ function AppointmentDetails({
       )}
 
       {appointment.notes && (
-        <Card className="glass-card border-white/20 border-dashed">
+        <Card className="border-dashed">
           <CardContent className="p-4">
-            <div className="text-xs font-medium text-white/60 uppercase tracking-wide mb-2">
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
               Notes
             </div>
-            <p className="text-sm text-white/80 leading-relaxed">{appointment.notes}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{appointment.notes}</p>
           </CardContent>
         </Card>
       )}
 
       {isPast && appointment.status !== 'completed' && appointment.status !== 'cancelled' && appointment.status !== 'no-show' && (
-        <Card className="border-amber-500/30 bg-amber-500/10">
+        <Card className="border-amber-300 bg-amber-50">
           <CardContent className="p-3 flex items-start gap-2">
-            <WarningCircle size={18} className="text-amber-400 flex-shrink-0 mt-0.5" />
-            <div className="text-xs text-amber-200">
+            <WarningCircle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
+            <div className="text-xs text-amber-900">
               <div className="font-semibold">Past appointment</div>
               <div>Update status to complete or cancel</div>
             </div>
@@ -1545,16 +1538,16 @@ function AppointmentDetails({
         </Card>
       )}
 
-      <Separator className="bg-white/10" />
+      <Separator />
 
       {nextAction && appointment.status !== 'completed' && appointment.status !== 'cancelled' && appointment.status !== 'no-show' && (
         <div className="space-y-2">
-          <div className="text-xs font-medium text-white/60 uppercase tracking-wide">
+          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             Next Step
           </div>
           <Button 
             onClick={nextAction.action} 
-            className="w-full bg-primary hover:bg-primary/90" 
+            className="w-full" 
             size="lg"
           >
             <nextAction.icon size={18} className="mr-2" />
@@ -1564,15 +1557,15 @@ function AppointmentDetails({
       )}
 
       <div className="space-y-2">
-        <div className="text-xs font-medium text-white/60 uppercase tracking-wide">
+        <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
           More Actions
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" onClick={() => onEdit(appointment)} className="border-white/20 hover:bg-white/5">
+          <Button variant="outline" onClick={() => onEdit(appointment)}>
             <PencilSimple size={16} className="mr-2" />
             Edit
           </Button>
-          <Button variant="outline" onClick={() => onRebook(appointment)} className="border-white/20 hover:bg-white/5">
+          <Button variant="outline" onClick={() => onRebook(appointment)}>
             <ArrowClockwise size={16} className="mr-2" />
             Rebook
           </Button>
@@ -1580,7 +1573,7 @@ function AppointmentDetails({
         <Button 
           variant="outline" 
           onClick={onDelete} 
-          className="w-full text-destructive hover:bg-destructive/10 border-destructive/30"
+          className="w-full text-destructive hover:bg-destructive/10"
         >
           <Trash size={16} className="mr-2" />
           Delete Appointment
@@ -1589,13 +1582,13 @@ function AppointmentDetails({
 
       {appointment.status !== 'completed' && appointment.status !== 'cancelled' && appointment.status !== 'no-show' && (
         <>
-          <Separator className="bg-white/10" />
+          <Separator />
           <div className="space-y-2">
-            <div className="text-xs font-medium text-white/60 uppercase tracking-wide">
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Update Status
             </div>
             <Select value={appointment.status} onValueChange={(value) => onStatusChange(value as Appointment['status'])}>
-              <SelectTrigger className="border-white/20 bg-white/5">
+              <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
