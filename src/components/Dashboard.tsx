@@ -300,7 +300,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-3xl font-bold text-white/90">Dashboard</h1>
-          <p className="text-sm text-white/60 mt-1">Overview of your grooming business</p>
         </div>
         <Button
           variant="outline"
