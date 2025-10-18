@@ -356,15 +356,100 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
           </div>
         )}
 
-        {enabledWidgets.find(w => w.id === 'today-schedule') && (
-          <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-            <TodayScheduleWidget isCompact={isCompact} onAppointmentClick={handleViewAppointment} />
+        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+          <div className="relative z-10">
+            <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+              <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Active Clients</h3>
+            </div>
+            <div className="pb-3 pt-1 px-4 min-w-0">
+              <div className="text-2xl font-bold text-white/95">
+                {(customers || []).filter(c => c.pets && c.pets.length > 0).length}
+              </div>
+              <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
+                clients with pets
+              </p>
+            </div>
+            <div className="absolute bottom-1 right-2 opacity-50">
+              <svg width="40" height="28" viewBox="0 0 40 28" fill="none">
+                <circle cx="10" cy="18" r="4" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+                <circle cx="30" cy="18" r="4" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+              </svg>
+            </div>
           </div>
-        )}
+        </div>
+
+        <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('staff')}>
+          <div className="relative z-10">
+            <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+              <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Staff Members</h3>
+            </div>
+            <div className="pb-3 pt-1 px-4 min-w-0">
+              <div className="text-2xl font-bold text-white/95">
+                {(staffMembers || []).filter(s => s.status === 'active').length}
+              </div>
+              <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
+                active team members
+              </p>
+            </div>
+            <div className="absolute bottom-1 right-2 opacity-50">
+              <svg width="40" height="28" viewBox="0 0 40 28" fill="none">
+                <circle cx="12" cy="14" r="3.5" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+                <circle cx="20" cy="18" r="3.5" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+                <circle cx="28" cy="14" r="3.5" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        <div className="xl:col-span-3"></div>
+        <div className="xl:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+          <div className="relative z-10 h-full">
+            <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+              <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Messages</h3>
+            </div>
+            <div className="pb-3 pt-1 px-4 min-w-0">
+              <div className="space-y-2 mt-2">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <User size={16} className="text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sm font-semibold text-white/90">Sarah Johnson</span>
+                      <span className="text-[10px] text-white/50">10m ago</span>
+                    </div>
+                    <p className="text-xs text-white/70 truncate mt-0.5">Can we reschedule Buddy's appointment?</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <User size={16} className="text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sm font-semibold text-white/90">Mike Chen</span>
+                      <span className="text-[10px] text-white/50">1h ago</span>
+                    </div>
+                    <p className="text-xs text-white/70 truncate mt-0.5">Thanks for the great service today!</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <User size={16} className="text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sm font-semibold text-white/90">Emma Wilson</span>
+                      <span className="text-[10px] text-white/50">3h ago</span>
+                    </div>
+                    <p className="text-xs text-white/70 truncate mt-0.5">Is there availability tomorrow morning?</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         {enabledWidgets.find(w => w.id === 'groomer-workload') && (
           <div className="xl:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
             <GroomerWorkloadWidget />
