@@ -11,8 +11,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { BookedWidget } from '@/components/widgets/BookedWidget'
 import { GroomerWorkloadWidget } from '@/components/widgets/GroomerWorkloadWidget'
 import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsWidget'
+import { TodayScheduleWidget } from '@/components/widgets/TodayScheduleWidget'
 import { MonthlyRevenueWidget } from '@/components/widgets/MonthlyRevenueWidget'
 import { AverageTicketWidget } from '@/components/widgets/AverageTicketWidget'
+import { UpcomingAppointmentsWidget } from '@/components/widgets/UpcomingAppointmentsWidget'
+import { QuickActionsWidget } from '@/components/widgets/QuickActionsWidget'
 import { ActivityFeedWidget } from '@/components/widgets/ActivityFeedWidget'
 import { RecentActivity } from '@/components/RecentActivity'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
@@ -481,23 +484,8 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
         )}
       </div>
 
-      {enabledWidgets.find(w => w.id === 'activity-feed') && (
-        <div className="glass-card rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.01]">
-          <ActivityFeedWidget />
-        </div>
-      )}
-
-      <div className="glass-card rounded-[1.25rem] @container min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.01]">
-        <RecentActivity />
-      </div>
-
       <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Appointment Details</SheetTitle>
-            <SheetDescription>View and manage appointment</SheetDescription>
-          </SheetHeader>
-          
           {selectedAppointment && (
             <AppointmentDetails
               appointment={selectedAppointment}
