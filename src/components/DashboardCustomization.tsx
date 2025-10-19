@@ -23,11 +23,8 @@ const WIDGET_ICON_MAP: Record<string, React.ComponentType<{ size?: number | stri
   'week-appointments': Calendar,
   'booked-widget': ChartBar,
   'revenue-gauge': ChartBar,
-  'active-clients': Users,
-  'monthly-revenue': ChartBar,
-  'average-ticket': ChartBar,
-  'messages': Calendar,
-  'groomer-workload': Users
+  'groomer-workload': Users,
+  'today-schedule': Clock
 }
 
 const DEFAULT_WIDGETS: WidgetConfig[] = [
@@ -60,39 +57,18 @@ const DEFAULT_WIDGETS: WidgetConfig[] = [
     defaultSize: { w: 1, h: 1 }
   },
   {
-    id: 'active-clients',
-    name: 'Active Clients',
-    description: 'Shows total clients with pets',
-    enabled: true,
-    defaultSize: { w: 1, h: 1 }
-  },
-  {
-    id: 'monthly-revenue',
-    name: 'Monthly Revenue',
-    description: 'Shows revenue for current month with trend',
-    enabled: true,
-    defaultSize: { w: 1, h: 1 }
-  },
-  {
-    id: 'average-ticket',
-    name: 'Average Ticket',
-    description: 'Shows average transaction value',
-    enabled: true,
-    defaultSize: { w: 1, h: 1 }
-  },
-  {
-    id: 'messages',
-    name: 'Messages',
-    description: 'Recent customer messages',
-    enabled: true,
-    defaultSize: { w: 2, h: 1 }
-  },
-  {
     id: 'groomer-workload',
     name: 'Groomer Workload',
     description: 'Shows staff workload distribution',
     enabled: true,
     defaultSize: { w: 2, h: 1 }
+  },
+  {
+    id: 'today-schedule',
+    name: "Today's Schedule",
+    description: 'Quick view of today\'s appointments',
+    enabled: true,
+    defaultSize: { w: 1, h: 1 }
   }
 ]
 
