@@ -36,27 +36,52 @@ export function RevenueGaugeWidget() {
 
   const progressPercentage = Math.min((todayRevenue / expectedRevenue) * 100, 100)
   
-  const radius = 32
-  const strokeWidth = 8
-  const circumference = 2 * Math.PI * radius
-  const strokeDashoffset = circumference - (progressPercentage / 100) * circumference
-  const center = 42
+  const radius = 50
+  const strokeWidth = 20
+  const center = 70
+  const startAngle = -180
+  const endAngle = 0
+  const arcLength = ((endAngle - startAngle) / 360) * (2 * Math.PI * radius)
+  const progressLength = (progressPercentage / 100) * arcLength
+
+  const polarToCartesian = (centerX: number, centerY: number, radius: number, angleInDegrees: number) => {
+    const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0
+    return {
+      x: centerX + (radius * Math.cos(angleInRadians)),
+      y: centerY + (radius * Math.sin(angleInRadians))
+    }
+  }
+
+  const describeArc = (x: number, y: number, radius: number, startAngle: number, endAngle: number) => {
+    const start = polarToCartesian(x, y, radius, endAngle)
+    const end = polarToCartesian(x, y, radius, startAngle)
+    const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1"
+    return [
+      "M", start.x, start.y, 
+      "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
+    ].join(" ")
+  }
+
+  const backgroundPath = describeArc(center, center, radius, startAngle, endAngle)
+  const progressPath = describeArc(center, center, radius, startAngle, startAngle + (progressPercentage / 100) * (endAngle - startAngle))
 
   return (
     <div className="relative z-10 h-full flex flex-col">
-      <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
-        <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Revenue</h3>
+      <div className="flex flex-col space-y-0 pb-0 pt-3 px-4">
+        <h3 className="text-sm font-bold tracking-tight text-white/95">Revenue</h3>
+        <p className="text-[10px] text-white/60 font-medium">Today</p>
       </div>
-      <div className="flex-1 flex items-center justify-center pb-2 px-4">
-        <div className="relative">
-          <svg width="100" height="100" viewBox="0 0 84 84" className="transform -rotate-90">
+      <div className="flex-1 flex flex-col items-center justify-end pb-3 px-4 pt-2">
+        <div className="relative w-full" style={{ maxWidth: '140px' }}>
+          <svg width="140" height="80" viewBox="0 0 140 80" preserveAspectRatio="xMidYMid meet">
             <defs>
-              <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="oklch(0.50 0.20 200)" stopOpacity="0.3"/>
-                <stop offset="100%" stopColor="oklch(0.65 0.22 200)" stopOpacity="0.8"/>
+              <linearGradient id="halfGaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="oklch(0.60 0.24 220)" />
+                <stop offset="50%" stopColor="oklch(0.65 0.25 230)" />
+                <stop offset="100%" stopColor="oklch(0.70 0.26 240)" />
               </linearGradient>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <filter id="gaugeGlow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
                 <feMerge>
                   <feMergeNode in="coloredBlur"/>
                   <feMergeNode in="SourceGraphic"/>
@@ -64,42 +89,47 @@ export function RevenueGaugeWidget() {
               </filter>
             </defs>
             
-            <circle
-              cx={center}
-              cy={center}
-              r={radius}
+            <path
+              d={backgroundPath}
               fill="none"
-              stroke="oklch(0.30 0.12 200 / 0.3)"
+              stroke="oklch(0.25 0.08 240 / 0.4)"
               strokeWidth={strokeWidth}
               strokeLinecap="round"
+            />
+            
+            <path
+              d={progressPath}
+              fill="none"
+              stroke="url(#halfGaugeGradient)"
+              strokeWidth={strokeWidth}
+              strokeLinecap="round"
+              filter="url(#gaugeGlow)"
+              className="drop-shadow-[0_0_12px_oklch(0.65_0.25_230)]"
             />
             
             <circle
               cx={center}
               cy={center}
-              r={radius}
-              fill="none"
-              stroke="url(#gaugeGradient)"
-              strokeWidth={strokeWidth}
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              filter="url(#glow)"
-              className="drop-shadow-[0_0_8px_oklch(0.65_0.22_200)]"
+              r="4"
+              fill="oklch(0.95 0.02 240 / 0.8)"
+              className="drop-shadow-[0_0_4px_oklch(0.95_0.02_240)]"
             />
           </svg>
-          
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-[9px] text-white/60 mb-0.5 font-medium">Today</div>
-            <div className="text-2xl font-bold text-white/95">
+        </div>
+        
+        <div className="flex items-end justify-between w-full mt-2 px-1">
+          <div className="flex flex-col items-start">
+            <div className="text-3xl font-bold text-white/95 leading-none">
               ${Math.round(todayRevenue)}
             </div>
-            <div className="text-[9px] text-white/60 mt-0.5 font-medium">Actual</div>
+            <div className="text-[10px] text-white/60 font-medium mt-1">Actual</div>
           </div>
           
-          <div className="absolute -right-12 top-1/2 -translate-y-1/2">
-            <div className="text-[9px] text-white/60 font-medium">Expected</div>
-            <div className="text-base font-bold text-white/80">{expectedRevenue}</div>
+          <div className="flex flex-col items-end">
+            <div className="text-xl font-bold text-white/70 leading-none">
+              {expectedRevenue}
+            </div>
+            <div className="text-[10px] text-white/60 font-medium mt-1">Expected</div>
           </div>
         </div>
       </div>
