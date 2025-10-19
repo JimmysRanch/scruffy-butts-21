@@ -84,7 +84,7 @@ export function RevenueTodayGauge({
         
         <defs>
           <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="oklch(0.60 0.22 210)" />
+            <stop offset="0%" stopColor="oklch(0.65 0.22 210)" />
             <stop offset="100%" stopColor="oklch(0.75 0.20 200)" />
           </linearGradient>
         </defs>

@@ -75,8 +75,8 @@ export function AverageTicketWidget() {
         <svg width="100%" height="32" viewBox="0 0 100 32" preserveAspectRatio="none" className="opacity-70">
           <defs>
             <linearGradient id="avgTicketGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.6"/>
-              <stop offset="100%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.1"/>
+              <stop offset="0%" stopColor="oklch(0.70 0.20 210)" stopOpacity="0.6"/>
+              <stop offset="100%" stopColor="oklch(0.70 0.20 210)" stopOpacity="0.1"/>
             </linearGradient>
           </defs>
           <path d={normalizedData.map((value, index) => {
@@ -88,7 +88,7 @@ export function AverageTicketWidget() {
             const x = (index / (normalizedData.length - 1)) * 100
             const y = 32 - (value / 100) * 32
             return `${index === 0 ? 'M' : 'L'} ${x},${y}`
-          }).join(' ')} stroke="oklch(0.65 0.20 200)" strokeWidth="2" fill="none" className="drop-shadow-[0_0_4px_oklch(0.65_0.20_200)]"/>
+          }).join(' ')} stroke="oklch(0.70 0.20 210)" strokeWidth="2" fill="none" className="drop-shadow-[0_0_4px_oklch(0.70_0.20_210)]"/>
         </svg>
       </div>
     </div>

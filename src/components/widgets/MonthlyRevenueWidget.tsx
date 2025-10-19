@@ -61,7 +61,7 @@ export function MonthlyRevenueWidget() {
   
   const pathData = sparklineData.map((value, index) => {
     const x = (index / (sparklineData.length - 1)) * 100
-    const y = 32 - ((value - minValue) / (maxValue - minValue || 1)) * 24
+    const y = 28 - ((value - minValue) / (maxValue - minValue || 1)) * 20
     return { x, y }
   })
 
@@ -69,7 +69,7 @@ export function MonthlyRevenueWidget() {
     i === 0 ? `M${point.x},${point.y}` : `L${point.x},${point.y}`
   ).join(' ')
 
-  const areaPath = `${linePath} L100,32 L0,32 Z`
+  const areaPath = `${linePath} L100,28 L0,28 Z`
 
   const isPositive = percentageChange >= 0
 
@@ -78,7 +78,7 @@ export function MonthlyRevenueWidget() {
       <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
         <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Monthly Revenue</h3>
       </div>
-      <div className="pb-1 pt-1 px-4 min-w-0">
+      <div className="pb-0 pt-1 px-4 min-w-0">
         <div className="text-2xl font-bold text-white/95">
           ${currentRevenue.toLocaleString()}
         </div>
@@ -86,27 +86,27 @@ export function MonthlyRevenueWidget() {
           <span className={`text-[10px] font-semibold ${isPositive ? 'text-cyan-400' : 'text-red-400'}`}>
             {isPositive ? '↑' : '↓'} {Math.abs(percentageChange).toFixed(1)}%
           </span>
-          <span className="text-[10px] text-white/60 font-medium">from last month</span>
         </div>
       </div>
-      <div className="px-4 pb-2">
-        <svg width="100%" height="32" viewBox="0 0 100 32" preserveAspectRatio="none" className="opacity-70">
+      <div className="px-4 pb-2 pt-0.5">
+        <p className="text-[9px] text-white/50 font-medium mb-1">from last month</p>
+        <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none" className="opacity-70">
           <defs>
             <linearGradient id="monthlyRevenueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isPositive ? "oklch(0.65 0.20 200)" : "oklch(0.65 0.20 25)"} stopOpacity="0.6"/>
-              <stop offset="100%" stopColor={isPositive ? "oklch(0.65 0.20 200)" : "oklch(0.65 0.20 25)"} stopOpacity="0.1"/>
+              <stop offset="0%" stopColor="oklch(0.70 0.20 210)" stopOpacity="0.6"/>
+              <stop offset="100%" stopColor="oklch(0.70 0.20 210)" stopOpacity="0.1"/>
             </linearGradient>
           </defs>
           <path 
-            d={areaPath} 
+            d={areaPath.replace(/32/g, '28')} 
             fill="url(#monthlyRevenueGradient)"
           />
           <path 
-            d={linePath} 
-            stroke={isPositive ? "oklch(0.65 0.20 200)" : "oklch(0.65 0.20 25)"} 
+            d={linePath.replace(/32/g, '28')} 
+            stroke="oklch(0.70 0.20 210)" 
             strokeWidth="2" 
             fill="none" 
-            className={`drop-shadow-[0_0_4px_${isPositive ? 'oklch(0.65_0.20_200)' : 'oklch(0.65_0.20_25)'}]`}
+            className="drop-shadow-[0_0_4px_oklch(0.70_0.20_210)]"
           />
         </svg>
       </div>

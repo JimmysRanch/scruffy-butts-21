@@ -67,25 +67,25 @@ export function TotalAppointmentsWidget() {
             cx="10" 
             cy="22" 
             r="4" 
-            fill="oklch(0.65 0.20 200)" 
+            fill="oklch(0.70 0.20 210)" 
             filter="url(#glow-mini)"
-            className="drop-shadow-[0_0_6px_oklch(0.65_0.20_200)]"
+            className="drop-shadow-[0_0_6px_oklch(0.70_0.20_210)]"
           />
           <circle 
             cx="25" 
             cy="14" 
             r="5" 
-            fill="oklch(0.65 0.20 200)" 
+            fill="oklch(0.70 0.20 210)" 
             filter="url(#glow-mini)"
-            className="drop-shadow-[0_0_6px_oklch(0.65_0.20_200)]"
+            className="drop-shadow-[0_0_6px_oklch(0.70_0.20_210)]"
           />
           <circle 
             cx="40" 
             cy="18" 
             r="4.5" 
-            fill="oklch(0.65 0.20 200)" 
+            fill="oklch(0.70 0.20 210)" 
             filter="url(#glow-mini)"
-            className="drop-shadow-[0_0_6px_oklch(0.65_0.20_200)]"
+            className="drop-shadow-[0_0_6px_oklch(0.70_0.20_210)]"
           />
           {cancelled > 0 && (
             <circle 

@@ -325,12 +325,12 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
                 <svg width="100%" height="32" viewBox="0 0 100 32" preserveAspectRatio="none" className="opacity-70">
                   <defs>
                     <linearGradient id="weekGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.6"/>
-                      <stop offset="100%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.1"/>
+                      <stop offset="0%" stopColor="oklch(0.70 0.20 210)" stopOpacity="0.6"/>
+                      <stop offset="100%" stopColor="oklch(0.70 0.20 210)" stopOpacity="0.1"/>
                     </linearGradient>
                   </defs>
                   <path d="M0,24 L14,18 L28,12 L42,16 L56,8 L70,14 L84,10 L100,6 L100,32 L0,32 Z" fill="url(#weekGradient)"/>
-                  <path d="M0,24 L14,18 L28,12 L42,16 L56,8 L70,14 L84,10 L100,6" stroke="oklch(0.65 0.20 200)" strokeWidth="2" fill="none" className="drop-shadow-[0_0_4px_oklch(0.65_0.20_200)]"/>
+                  <path d="M0,24 L14,18 L28,12 L42,16 L56,8 L70,14 L84,10 L100,6" stroke="oklch(0.70 0.20 210)" strokeWidth="2" fill="none" className="drop-shadow-[0_0_4px_oklch(0.70_0.20_210)]"/>
                 </svg>
               </div>
             </div>
@@ -357,8 +357,8 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
                     className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out"
                     style={{
                       width: `${todayAppointments.length > 0 ? Math.round((todayAppointments.filter(a => a.status !== 'cancelled').length / Math.max(todayAppointments.length, 8)) * 100) : 0}%`,
-                      background: 'linear-gradient(90deg, oklch(0.65 0.20 200), oklch(0.75 0.22 200))',
-                      boxShadow: '0 0 12px oklch(0.65 0.20 200)'
+                      background: 'linear-gradient(90deg, oklch(0.70 0.20 210), oklch(0.75 0.22 200))',
+                      boxShadow: '0 0 12px oklch(0.70 0.20 210)'
                     }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
@@ -395,8 +395,8 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
                   className="flex-1 rounded-sm transition-all duration-500"
                   style={{
                     height: `${height}px`,
-                    background: 'linear-gradient(180deg, oklch(0.70 0.20 200), oklch(0.60 0.18 210))',
-                    boxShadow: '0 0 6px oklch(0.65 0.20 200)'
+                    background: 'linear-gradient(180deg, oklch(0.75 0.20 210), oklch(0.65 0.18 215))',
+                    boxShadow: '0 0 6px oklch(0.70 0.20 210)'
                   }}
                 ></div>
               ))}
