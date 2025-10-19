@@ -194,6 +194,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     icon: WIDGET_ICON_MAP[w.id] || Calendar
   }))
 
+  const enabledWidgetIds = new Set(
+    widgetsWithIcons.filter(w => w.enabled).map(w => w.id)
+  )
+
   useEffect(() => {
     seedActivityData()
   }, [])
@@ -293,8 +297,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     return staff ? `${staff.firstName} ${staff.lastName}` : null
   }
 
-  const enabledWidgets = widgetsWithIcons.filter(w => w.enabled)
-
   return (
     <div className="space-y-6 relative z-10">
       <div className="flex items-center justify-between mb-4">
@@ -313,13 +315,13 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {enabledWidgets.find(w => w.id === 'total-appointments') && (
+        {enabledWidgetIds.has('total-appointments') && (
           <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
             <TotalAppointmentsWidget />
           </div>
         )}
 
-        {enabledWidgets.find(w => w.id === 'week-appointments') && (
+        {enabledWidgetIds.has('week-appointments') && (
           <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
             <div className="relative z-10">
               <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
@@ -344,25 +346,25 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </div>
         )}
         
-        {enabledWidgets.find(w => w.id === 'booked-widget') && (
+        {enabledWidgetIds.has('booked-widget') && (
           <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
             <BookedWidget />
           </div>
         )}
 
-        {enabledWidgets.find(w => w.id === 'revenue-gauge') && (
+        {enabledWidgetIds.has('revenue-gauge') && (
           <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.02]">
             <RevenueGaugeWidget />
           </div>
         )}
 
-        {enabledWidgets.find(w => w.id === 'today-schedule') && (
+        {enabledWidgetIds.has('today-schedule') && (
           <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
             <TodayScheduleWidget isCompact={isCompact} onAppointmentClick={handleViewAppointment} />
           </div>
         )}
 
-        {enabledWidgets.find(w => w.id === 'groomer-workload') && (
+        {enabledWidgetIds.has('groomer-workload') && (
           <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02] col-span-1 sm:col-span-2 lg:col-span-2 xl:col-span-2">
             <GroomerWorkloadWidget />
           </div>
