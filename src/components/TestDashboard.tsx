@@ -11,11 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { BookedWidget } from '@/components/widgets/BookedWidget'
 import { GroomerWorkloadWidget } from '@/components/widgets/GroomerWorkloadWidget'
 import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsWidget'
-import { TodayScheduleWidget } from '@/components/widgets/TodayScheduleWidget'
 import { MonthlyRevenueWidget } from '@/components/widgets/MonthlyRevenueWidget'
 import { AverageTicketWidget } from '@/components/widgets/AverageTicketWidget'
-import { UpcomingAppointmentsWidget } from '@/components/widgets/UpcomingAppointmentsWidget'
-import { QuickActionsWidget } from '@/components/widgets/QuickActionsWidget'
 import { ActivityFeedWidget } from '@/components/widgets/ActivityFeedWidget'
 import { RecentActivity } from '@/components/RecentActivity'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
@@ -198,27 +195,6 @@ const DEFAULT_WIDGETS: StoredWidgetConfig[] = [
     description: 'Shows staff workload distribution',
     enabled: true,
     defaultSize: { w: 2, h: 1 }
-  },
-  {
-    id: 'today-schedule',
-    name: 'Today\'s Schedule',
-    description: 'Detailed view of today\'s appointments',
-    enabled: true,
-    defaultSize: { w: 2, h: 2 }
-  },
-  {
-    id: 'upcoming-appointments',
-    name: 'Upcoming Appointments',
-    description: 'Next scheduled appointments',
-    enabled: true,
-    defaultSize: { w: 2, h: 1 }
-  },
-  {
-    id: 'quick-actions',
-    name: 'Quick Actions',
-    description: 'Frequently used actions',
-    enabled: true,
-    defaultSize: { w: 1, h: 1 }
   },
   {
     id: 'activity-feed',
@@ -504,24 +480,6 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
           </div>
         )}
       </div>
-
-      {enabledWidgets.find(w => w.id === 'today-schedule') && (
-        <div className="glass-card rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.01]">
-          <TodayScheduleWidget onAppointmentClick={handleViewAppointment} />
-        </div>
-      )}
-
-      {enabledWidgets.find(w => w.id === 'upcoming-appointments') && (
-        <div className="glass-card rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.01]">
-          <UpcomingAppointmentsWidget />
-        </div>
-      )}
-
-      {enabledWidgets.find(w => w.id === 'quick-actions') && (
-        <div className="glass-card rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.01]">
-          <QuickActionsWidget onNavigate={onNavigate} />
-        </div>
-      )}
 
       {enabledWidgets.find(w => w.id === 'activity-feed') && (
         <div className="glass-card rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.01]">
