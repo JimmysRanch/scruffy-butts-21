@@ -241,12 +241,11 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
   const [customers] = useKV<Customer[]>('customers', [])
   const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {})
-  const [widgets, setWidgets] = useKV<StoredWidgetConfig[]>('dashboard-widgets', DEFAULT_WIDGETS)
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
-  const widgetsWithIcons = (widgets || DEFAULT_WIDGETS).map(w => ({
+  const widgetsWithIcons = DEFAULT_WIDGETS.map(w => ({
     ...w,
     icon: WIDGET_ICON_MAP[w.id] || Calendar
   }))

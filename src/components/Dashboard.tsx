@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
-import { Calendar, Users, ChartBar, Clock, Dog, Package, User, Phone, Envelope, PencilSimple, Trash, ArrowClockwise, CheckCircle, Bell, CreditCard, WarningCircle, Gear } from '@phosphor-icons/react'
+import { Calendar, Users, ChartBar, Clock, Dog, Package, User, Phone, Envelope, PencilSimple, Trash, ArrowClockwise, CheckCircle, Bell, CreditCard, WarningCircle } from '@phosphor-icons/react'
 import { isToday, startOfWeek, endOfWeek, isWithinInterval, format, parseISO, isBefore, startOfDay } from 'date-fns'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -184,12 +184,11 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [customers] = useKV<Customer[]>('customers', [])
   const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {})
-  const [widgets, setWidgets] = useKV<StoredWidgetConfig[]>('dashboard-widgets', DEFAULT_WIDGETS)
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
-  const widgetsWithIcons = (widgets || DEFAULT_WIDGETS).map(w => ({
+  const widgetsWithIcons = DEFAULT_WIDGETS.map(w => ({
     ...w,
     icon: WIDGET_ICON_MAP[w.id] || Calendar
   }))
@@ -303,15 +302,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         <div>
           <h1 className="text-3xl font-bold text-white/90">Dashboard</h1>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onNavigate('customize-dashboard')}
-          className="gap-2"
-        >
-          <Gear size={16} />
-          Customize
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
