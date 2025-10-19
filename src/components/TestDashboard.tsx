@@ -475,6 +475,7 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
                       </div>
                       <p className="text-[10px] text-white/70 truncate">Thanks for the great service today!</p>
                     </div>
+                  </div>
                 </div>
               </div>
             </div>
