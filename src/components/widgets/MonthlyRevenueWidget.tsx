@@ -59,11 +59,11 @@ export function MonthlyRevenueWidget() {
   const maxValue = Math.max(...sparklineData, 1)
   const minValue = Math.min(...sparklineData)
   
-  const pathData = sparklineData.map((value, index) => {
+  const pathData = sparklineData.length > 1 ? sparklineData.map((value, index) => {
     const x = (index / (sparklineData.length - 1)) * 100
     const y = 28 - ((value - minValue) / (maxValue - minValue || 1)) * 20
     return { x, y }
-  })
+  }) : [{ x: 0, y: 28 }, { x: 100, y: 28 }]
 
   const linePath = pathData.map((point, i) => 
     i === 0 ? `M${point.x},${point.y}` : `L${point.x},${point.y}`

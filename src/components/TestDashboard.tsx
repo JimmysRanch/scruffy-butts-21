@@ -131,11 +131,7 @@ const WIDGET_ICON_MAP: Record<string, React.ComponentType<{ size?: number | stri
   'monthly-revenue': ChartBar,
   'average-ticket': ChartBar,
   'messages': Calendar,
-  'groomer-workload': Users,
-  'today-schedule': Calendar,
-  'upcoming-appointments': Clock,
-  'quick-actions': ChartBar,
-  'activity-feed': Bell
+  'groomer-workload': Users
 }
 
 interface StoredWidgetConfig {
