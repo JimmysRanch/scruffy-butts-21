@@ -416,8 +416,7 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
           </div>
         )}
 
-
-        {enabledWidgets.find(w => w.id === 'active-clients') && (
+        {enabledWidgets.find(w => w.id === 'clients-with-pets') && (
           <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
             <div className="relative z-10">
               <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
