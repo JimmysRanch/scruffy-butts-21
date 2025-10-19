@@ -14,7 +14,6 @@ import { GroomerWorkloadWidget } from '@/components/widgets/GroomerWorkloadWidge
 import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsWidget'
 import { TodayScheduleWidget } from '@/components/widgets/TodayScheduleWidget'
 import { MonthlyRevenueWidget } from '@/components/widgets/MonthlyRevenueWidget'
-import { DailyRevenueComparisonWidget } from '@/components/widgets/DailyRevenueComparisonWidget'
 import { AverageTicketWidget } from '@/components/widgets/AverageTicketWidget'
 import { RecentActivity } from '@/components/RecentActivity'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'

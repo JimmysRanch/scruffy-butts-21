@@ -38,9 +38,6 @@ export function AverageTicketWidget() {
     ? ((currentAverage - previousAverage) / previousAverage) * 100
     : 0
 
-  const goal = 75
-  const progressPercent = Math.min(Math.round((currentAverage / goal) * 100), 100)
-
   const last7DaysData = Array.from({ length: 7 }, (_, i) => {
     const date = format(subDays(today, 6 - i), 'yyyy-MM-dd')
     const dayAppointments = last7DaysAppointments.filter(apt => apt.date === date)
@@ -50,7 +47,7 @@ export function AverageTicketWidget() {
     return dayAverage
   })
 
-  const maxValue = Math.max(...last7DaysData, goal)
+  const maxValue = Math.max(...last7DaysData, 1)
   const normalizedData = last7DaysData.map(val => (val / maxValue) * 100)
 
   const pathData = normalizedData.map((value, index) => {
@@ -60,7 +57,6 @@ export function AverageTicketWidget() {
   }).join(' ')
 
   const areaPath = `${pathData} L 100,100 L 0,100 Z`
-  const goalY = 100 - (goal / maxValue) * 100
 
   return (
     <div className="relative z-10 h-full flex flex-col">
@@ -75,12 +71,11 @@ export function AverageTicketWidget() {
       </div>
 
       <div className="px-4 pb-2 flex-1 flex flex-col justify-center">
-        <div className="mb-1">
+        <div className="mb-3">
           <div className="text-4xl font-bold text-white/95 leading-none">${currentAverage}</div>
-          <div className="text-[11px] text-white/60 mt-1 font-medium">Goal ${goal}</div>
         </div>
 
-        <div className="relative w-full h-16 mb-2">
+        <div className="relative w-full h-20">
           <svg
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
@@ -92,17 +87,6 @@ export function AverageTicketWidget() {
                 <stop offset="100%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.05" />
               </linearGradient>
             </defs>
-
-            <line
-              x1="0"
-              y1={goalY}
-              x2="100"
-              y2={goalY}
-              stroke="oklch(0.70 0.04 240)"
-              strokeWidth="0.5"
-              strokeDasharray="2,2"
-              opacity="0.6"
-            />
 
             <path
               d={areaPath}
@@ -120,20 +104,6 @@ export function AverageTicketWidget() {
             />
           </svg>
         </div>
-
-        <div className="relative h-8 bg-white/10 rounded-full overflow-hidden">
-          <div
-            className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out"
-            style={{
-              width: `${progressPercent}%`,
-              background: 'linear-gradient(90deg, oklch(0.60 0.20 200), oklch(0.70 0.22 200))',
-              boxShadow: '0 0 12px oklch(0.65 0.20 200)'
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-          </div>
-        </div>
-        <div className="text-[11px] font-bold text-white/90 mt-1.5">{progressPercent}% of goal</div>
       </div>
     </div>
   )
