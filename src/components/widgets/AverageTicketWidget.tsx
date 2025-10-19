@@ -61,10 +61,7 @@ export function AverageTicketWidget() {
   return (
     <div className="relative z-10">
       <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
-        <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Average Ticket</h3>
-        <div className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30">
-          <span className="text-[10px] font-bold text-emerald-400">+{percentChange.toFixed(1)}%</span>
-        </div>
+        <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Avg. Ticket</h3>
       </div>
       <div className="pb-1 pt-1 px-4 min-w-0">
         <div className="text-2xl font-bold text-white/95">
