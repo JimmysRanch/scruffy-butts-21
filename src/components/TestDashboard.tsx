@@ -15,6 +15,7 @@ import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsW
 import { TodayScheduleWidget } from '@/components/widgets/TodayScheduleWidget'
 import { MonthlyRevenueWidget } from '@/components/widgets/MonthlyRevenueWidget'
 import { DailyRevenueComparisonWidget } from '@/components/widgets/DailyRevenueComparisonWidget'
+import { AverageTicketWidget } from '@/components/widgets/AverageTicketWidget'
 import { RecentActivity } from '@/components/RecentActivity'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 import { seedActivityData } from '@/lib/seed-activity-data'
@@ -406,6 +407,10 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
 
         <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
           <MonthlyRevenueWidget />
+        </div>
+
+        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+          <AverageTicketWidget />
         </div>
       </div>
 
