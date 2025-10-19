@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
-import { Calendar, Users, ChartBar, Clock, Dog, Package, User, Phone, Envelope, PencilSimple, Trash, ArrowClockwise, CheckCircle, Bell, CreditCard, WarningCircle } from '@phosphor-icons/react'
+import { Calendar, Users, ChartBar, Clock, Dog, Package, User, Phone, Envelope, PencilSimple, Trash, ArrowClockwise, CheckCircle, Bell, CreditCard, WarningCircle, Gear } from '@phosphor-icons/react'
 import { isToday, startOfWeek, endOfWeek, isWithinInterval, format, parseISO, isBefore, startOfDay } from 'date-fns'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -12,6 +12,11 @@ import { BookedWidget } from '@/components/widgets/BookedWidget'
 import { GroomerWorkloadWidget } from '@/components/widgets/GroomerWorkloadWidget'
 import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsWidget'
 import { TodayScheduleWidget } from '@/components/widgets/TodayScheduleWidget'
+import { MonthlyRevenueWidget } from '@/components/widgets/MonthlyRevenueWidget'
+import { AverageTicketWidget } from '@/components/widgets/AverageTicketWidget'
+import { UpcomingAppointmentsWidget } from '@/components/widgets/UpcomingAppointmentsWidget'
+import { QuickActionsWidget } from '@/components/widgets/QuickActionsWidget'
+import { ActivityFeedWidget } from '@/components/widgets/ActivityFeedWidget'
 import { RecentActivity } from '@/components/RecentActivity'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 import { seedActivityData } from '@/lib/seed-activity-data'
@@ -155,19 +160,48 @@ const DEFAULT_WIDGETS: StoredWidgetConfig[] = [
     enabled: true,
     defaultSize: { w: 1, h: 1 }
   },
+
+  {
+    id: 'active-clients',
+    name: 'Active Clients',
+    description: 'Shows total clients with pets',
+    enabled: true,
+    defaultSize: { w: 1, h: 1 }
+  },
+  {
+    id: 'monthly-revenue',
+    name: 'Monthly Revenue',
+    description: 'Shows revenue for current month with trend',
+    enabled: true,
+    defaultSize: { w: 1, h: 1 }
+  },
+  {
+    id: 'average-ticket',
+    name: 'Average Ticket',
+    description: 'Shows average transaction value',
+    enabled: true,
+    defaultSize: { w: 1, h: 1 }
+  },
+  {
+    id: 'messages',
+    name: 'Messages',
+    description: 'Recent customer messages',
+    enabled: true,
+    defaultSize: { w: 2, h: 1 }
+  },
   {
     id: 'groomer-workload',
     name: 'Groomer Workload',
     description: 'Shows staff workload distribution',
     enabled: true,
-    defaultSize: { w: 1, h: 1 }
+    defaultSize: { w: 2, h: 1 }
   },
   {
-    id: 'today-schedule',
-    name: "Today's Schedule",
-    description: 'Quick view of today\'s appointments',
+    id: 'activity-feed',
+    name: 'Activity Feed',
+    description: 'Recent business activities',
     enabled: true,
-    defaultSize: { w: 1, h: 1 }
+    defaultSize: { w: 2, h: 2 }
   }
 ]
 
@@ -184,10 +218,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     ...w,
     icon: WIDGET_ICON_MAP[w.id] || Calendar
   }))
-
-  const enabledWidgetIds = new Set(
-    widgetsWithIcons.filter(w => w.enabled).map(w => w.id)
-  )
 
   useEffect(() => {
     seedActivityData()
@@ -288,176 +318,171 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     return staff ? `${staff.firstName} ${staff.lastName}` : null
   }
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-3xl font-bold text-white/90">Dashboard</h1>
-        </div>
-      </div>
+  const enabledWidgets = widgetsWithIcons.filter(w => w.enabled)
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {enabledWidgetIds.has('total-appointments') && (
+  return (
+    <div className="space-y-6 relative z-10">
+
+      <div className="grid grid-cols-6 gap-4 min-w-0 overflow-x-auto">
+        {enabledWidgets.find(w => w.id === 'total-appointments') && (
           <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
             <TotalAppointmentsWidget />
           </div>
         )}
 
-        {enabledWidgetIds.has('week-appointments') && (
-          <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02] relative" onClick={() => onNavigate('appointments')}>
+        {enabledWidgets.find(w => w.id === 'week-appointments') && (
+          <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
             <div className="relative z-10">
               <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
                 <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">This Week</h3>
               </div>
-              <div className="pb-3 pt-1 px-4 min-w-0">
+              <div className="pb-1 pt-1 px-4 min-w-0">
                 <div className="text-2xl font-bold text-white/95">
                   {weekAppointments.length}
                 </div>
                 <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
-                  {weekAppointments.length === 1 ? 'appointment' : 'appointments'} this week
+                  {weekAppointments.length === 1 ? 'appointment' : 'appointments'}
                 </p>
               </div>
-              <div className="absolute bottom-1 right-2 opacity-50">
-                <svg width="40" height="28" viewBox="0 0 40 28" fill="none">
-                  <circle cx="8" cy="20" r="3" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
-                  <circle cx="20" cy="12" r="4" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
-                  <circle cx="32" cy="16" r="3.5" fill="oklch(0.65 0.20 200)" className="drop-shadow-[0_0_8px_oklch(0.65_0.20_200)]"/>
+              <div className="px-4 pb-2">
+                <svg width="100%" height="32" viewBox="0 0 100 32" preserveAspectRatio="none" className="opacity-70">
+                  <defs>
+                    <linearGradient id="weekGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="oklch(0.70 0.20 210)" stopOpacity="0.6"/>
+                      <stop offset="100%" stopColor="oklch(0.70 0.20 210)" stopOpacity="0.1"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0,24 L14,18 L28,12 L42,16 L56,8 L70,14 L84,10 L100,6 L100,32 L0,32 Z" fill="url(#weekGradient)"/>
+                  <path d="M0,24 L14,18 L28,12 L42,16 L56,8 L70,14 L84,10 L100,6" stroke="oklch(0.70 0.20 210)" strokeWidth="2" fill="none" className="drop-shadow-[0_0_4px_oklch(0.70_0.20_210)]"/>
                 </svg>
               </div>
             </div>
           </div>
         )}
         
-        {enabledWidgetIds.has('booked-widget') && (
+        {enabledWidgets.find(w => w.id === 'booked-widget') && (
           <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-            <BookedWidget />
+            <div className="relative z-10">
+              <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+                <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Booked Today</h3>
+              </div>
+              <div className="pb-1 pt-1 px-4 min-w-0">
+                <div className="text-2xl font-bold text-white/95">
+                  {todayAppointments.length > 0 ? Math.round((todayAppointments.filter(a => a.status !== 'cancelled').length / Math.max(todayAppointments.length, 8)) * 100) : 0}%
+                </div>
+                <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
+                  capacity filled
+                </p>
+              </div>
+              <div className="px-4 pb-2">
+                <div className="relative h-7 bg-white/10 rounded-full overflow-hidden">
+                  <div 
+                    className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out"
+                    style={{
+                      width: `${todayAppointments.length > 0 ? Math.round((todayAppointments.filter(a => a.status !== 'cancelled').length / Math.max(todayAppointments.length, 8)) * 100) : 0}%`,
+                      background: 'linear-gradient(90deg, oklch(0.70 0.20 210), oklch(0.75 0.22 200))',
+                      boxShadow: '0 0 12px oklch(0.70 0.20 210)'
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
-        {enabledWidgetIds.has('groomer-workload') && (
-          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02] col-span-1 sm:col-span-2 lg:col-span-2 xl:col-span-2">
+        {enabledWidgets.find(w => w.id === 'active-clients') && (
+          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <div className="relative z-10">
+              <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+                <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Active Clients</h3>
+              </div>
+              <div className="pb-1 pt-1 px-4 min-w-0">
+                <div className="text-2xl font-bold text-white/95">
+                  {(customers || []).filter(c => c.pets && c.pets.length > 0).length}
+                </div>
+                <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
+                  clients with pets
+                </p>
+              </div>
+              <div className="px-4 pb-2 flex items-end justify-between gap-1">
+                {[16, 22, 18, 24, 20, 26, 22, 28, 24, 30, 26, 32].map((height, i) => (
+                  <div 
+                    key={i}
+                    className="flex-1 rounded-sm transition-all duration-500"
+                    style={{
+                      height: `${height}px`,
+                      background: 'linear-gradient(180deg, oklch(0.75 0.20 210), oklch(0.65 0.18 215))',
+                      boxShadow: '0 0 6px oklch(0.70 0.20 210)'
+                    }}
+                  ></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {enabledWidgets.find(w => w.id === 'monthly-revenue') && (
+          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <MonthlyRevenueWidget />
+          </div>
+        )}
+
+        {enabledWidgets.find(w => w.id === 'average-ticket') && (
+          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <AverageTicketWidget />
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-6 gap-4">
+        {enabledWidgets.find(w => w.id === 'messages') && (
+          <div className="col-span-6 sm:col-span-6 lg:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <div className="relative z-10">
+              <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+                <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Messages</h3>
+              </div>
+              <div className="pb-3 pt-1 px-4 min-w-0">
+                <div className="space-y-1.5">
+                  <div className="flex items-start gap-2 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                      <User size={12} className="text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-semibold text-white/90">Sarah Johnson</span>
+                        <span className="text-[9px] text-white/50">10m ago</span>
+                      </div>
+                      <p className="text-[10px] text-white/70 truncate">Can we reschedule Buddy's appointment?</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                      <User size={12} className="text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-semibold text-white/90">Mike Chen</span>
+                        <span className="text-[9px] text-white/50">1h ago</span>
+                      </div>
+                      <p className="text-[10px] text-white/70 truncate">Thanks for the great service today!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {enabledWidgets.find(w => w.id === 'groomer-workload') && (
+          <div className="col-span-6 sm:col-span-6 lg:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
             <GroomerWorkloadWidget />
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="glass-card rounded-[1.25rem] @container min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.01]">
-          <RecentActivity />
-        </div>
-        
-        <div className="glass-card rounded-[1.25rem] @container min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.01]">
-          <div className="pb-4 pt-5 px-5">
-            <h2 className="flex items-center gap-2.5 text-lg font-bold tracking-tight text-white/90">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-accent/30 via-primary/30 to-accent/30 ring-1 ring-white/15 shrink-0 shadow-[0_0_12px_oklch(0.65_0.20_290)]">
-                <Calendar className="h-5 w-5 text-accent drop-shadow-[0_0_4px_oklch(0.65_0.22_310)]" weight="duotone" />
-              </div>
-              <span className="truncate">Today's Schedule</span>
-            </h2>
-            <p className="truncate text-xs font-medium text-white/50 mt-1">Appointments scheduled for today</p>
-          </div>
-          <div className="min-w-0 px-5 pb-5">
-            {todayAppointments.length === 0 ? (
-              <div className="text-center text-white/50 py-12">
-                <div className="w-fit mx-auto p-5 rounded-2xl mb-4 bg-white/5 ring-1 ring-white/10">
-                  <Dog className="h-12 w-12 opacity-40 text-white/50" weight="duotone" />
-                </div>
-                <p className="text-sm font-medium">No appointments scheduled for today</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <div className={cn(
-                  'glass-card py-2 px-4 rounded-lg overflow-hidden shadow-lg ring-1 ring-primary/50 shadow-[0_0_16px_oklch(0.60_0.20_280/0.3)]'
-                )}>
-                  <div className="flex items-center justify-between gap-3">
-                    <h3 className="font-bold text-base leading-tight text-primary drop-shadow-[0_0_8px_oklch(0.60_0.20_280)]">
-                      Today
-                    </h3>
-                    <Badge variant="default" className="text-xs font-semibold shrink-0">
-                      {todayAppointments.length}
-                    </Badge>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  {todayAppointments.slice(0, 6).map((apt) => {
-                    const staffMember = apt.staffId ? staffMembers?.find(s => s.id === apt.staffId) : null
-                    return (
-                      <div
-                        key={apt.id}
-                        className={cn(
-                          'glass-card border-2 rounded-xl p-4 cursor-pointer hover:scale-[1.01] transition-all duration-200',
-                          STATUS_COLORS[apt.status]
-                        )}
-                        onClick={() => handleViewAppointment(apt)}
-                      >
-                        <div className="flex flex-col gap-3">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2.5 mb-2">
-                                <div className="p-1.5 rounded-lg bg-current/10 flex-shrink-0">
-                                  <Dog size={20} className="opacity-80" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <h3 className="font-bold text-lg leading-tight">
-                                    {apt.petName}
-                                    {staffMember && (
-                                      <span className="text-sm font-medium text-white/70 ml-2">
-                                        with {staffMember.firstName} {staffMember.lastName}
-                                        {apt.groomerRequested && (
-                                          <span className="text-red-500 font-bold ml-1">R</span>
-                                        )}
-                                      </span>
-                                    )}
-                                  </h3>
-                                </div>
-                              </div>
-                              
-                              <div className="flex items-center gap-2 text-sm text-white/70 mb-2.5">
-                                <User size={16} className="flex-shrink-0" />
-                                <span>{apt.customerFirstName} {apt.customerLastName}</span>
-                              </div>
-
-                              <div className="flex items-center gap-3 text-sm text-white/70 flex-wrap">
-                                <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
-                                  <Package size={16} className="flex-shrink-0" />
-                                  <span>{apt.service}</span>
-                                </div>
-                                <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
-                                  <Calendar size={16} className="flex-shrink-0" />
-                                  <span>{format(parseISO(apt.date), 'MMM d')}</span>
-                                </div>
-                                <div className="flex items-center gap-1.5 bg-white/5 rounded-md px-2 py-1">
-                                  <Clock size={16} className="flex-shrink-0" />
-                                  <span className="font-medium">{apt.time}</span>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                              <Badge variant="outline" className="border-current/30 bg-current/10 font-semibold whitespace-nowrap">
-                                {apt.status.replace('-', ' ')}
-                              </Badge>
-                              <div className="text-2xl font-bold text-white/90">${apt.price}</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
       <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Appointment Details</SheetTitle>
-            <SheetDescription>View and manage appointment</SheetDescription>
-          </SheetHeader>
-          
           {selectedAppointment && (
             <AppointmentDetails
               appointment={selectedAppointment}
