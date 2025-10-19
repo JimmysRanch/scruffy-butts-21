@@ -334,12 +334,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </div>
         )}
 
-        {enabledWidgetIds.has('today-schedule') && (
-          <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-            <TodayScheduleWidget onAppointmentClick={handleViewAppointment} />
-          </div>
-        )}
-
         {enabledWidgetIds.has('groomer-workload') && (
           <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02] col-span-1 sm:col-span-2 lg:col-span-2 xl:col-span-2">
             <GroomerWorkloadWidget />
