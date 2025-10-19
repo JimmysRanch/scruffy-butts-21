@@ -83,7 +83,7 @@ export function MonthlyRevenueWidget() {
           ${currentRevenue.toLocaleString()}
         </div>
         <div className="flex items-center gap-1.5 mt-0.5">
-          <span className={`text-[10px] font-semibold ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+          <span className={`text-[10px] font-semibold ${isPositive ? 'text-cyan-400' : 'text-red-400'}`}>
             {isPositive ? '↑' : '↓'} {Math.abs(percentageChange).toFixed(1)}%
           </span>
           <span className="text-[10px] text-white/60 font-medium">from last month</span>
@@ -93,8 +93,8 @@ export function MonthlyRevenueWidget() {
         <svg width="100%" height="32" viewBox="0 0 100 32" preserveAspectRatio="none" className="opacity-70">
           <defs>
             <linearGradient id="monthlyRevenueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isPositive ? "oklch(0.70 0.20 145)" : "oklch(0.65 0.20 25)"} stopOpacity="0.6"/>
-              <stop offset="100%" stopColor={isPositive ? "oklch(0.70 0.20 145)" : "oklch(0.65 0.20 25)"} stopOpacity="0.1"/>
+              <stop offset="0%" stopColor={isPositive ? "oklch(0.65 0.20 200)" : "oklch(0.65 0.20 25)"} stopOpacity="0.6"/>
+              <stop offset="100%" stopColor={isPositive ? "oklch(0.65 0.20 200)" : "oklch(0.65 0.20 25)"} stopOpacity="0.1"/>
             </linearGradient>
           </defs>
           <path 
@@ -103,10 +103,10 @@ export function MonthlyRevenueWidget() {
           />
           <path 
             d={linePath} 
-            stroke={isPositive ? "oklch(0.70 0.20 145)" : "oklch(0.65 0.20 25)"} 
+            stroke={isPositive ? "oklch(0.65 0.20 200)" : "oklch(0.65 0.20 25)"} 
             strokeWidth="2" 
             fill="none" 
-            className={`drop-shadow-[0_0_4px_${isPositive ? 'oklch(0.70_0.20_145)' : 'oklch(0.65_0.20_25)'}]`}
+            className={`drop-shadow-[0_0_4px_${isPositive ? 'oklch(0.65_0.20_200)' : 'oklch(0.65_0.20_25)'}]`}
           />
         </svg>
       </div>

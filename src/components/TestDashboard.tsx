@@ -395,7 +395,7 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
                   className="flex-1 rounded-sm transition-all duration-500"
                   style={{
                     height: `${height}px`,
-                    background: 'linear-gradient(180deg, oklch(0.65 0.20 200), oklch(0.55 0.18 200))',
+                    background: 'linear-gradient(180deg, oklch(0.70 0.20 200), oklch(0.60 0.18 210))',
                     boxShadow: '0 0 6px oklch(0.65 0.20 200)'
                   }}
                 ></div>
