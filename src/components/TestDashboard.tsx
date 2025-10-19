@@ -371,7 +371,7 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
 
         {enabledWidgets.find(w => w.id === 'revenue-gauge') && (
           <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-            <DailyRevenueComparisonWidget />
+            <RevenueGaugeWidget />
           </div>
         )}
 
