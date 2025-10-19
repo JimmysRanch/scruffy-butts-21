@@ -14,6 +14,7 @@ import { GroomerWorkloadWidget } from '@/components/widgets/GroomerWorkloadWidge
 import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsWidget'
 import { TodayScheduleWidget } from '@/components/widgets/TodayScheduleWidget'
 import { MonthlyRevenueWidget } from '@/components/widgets/MonthlyRevenueWidget'
+import { DailyRevenueComparisonWidget } from '@/components/widgets/DailyRevenueComparisonWidget'
 import { RecentActivity } from '@/components/RecentActivity'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 import { seedActivityData } from '@/lib/seed-activity-data'
@@ -370,31 +371,7 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
 
         {enabledWidgets.find(w => w.id === 'revenue-gauge') && (
           <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-            <div className="relative z-10">
-              <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
-                <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Revenue</h3>
-              </div>
-              <div className="pb-1 pt-1 px-4 min-w-0">
-                <div className="text-2xl font-bold text-white/95">
-                  ${todayAppointments.filter(a => a.status === 'completed' && a.paymentCompleted).reduce((sum, a) => sum + (a.amountPaid || a.price), 0).toLocaleString()}
-                </div>
-                <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
-                  today's earnings
-                </p>
-              </div>
-              <div className="px-4 pb-2">
-                <svg width="100%" height="32" viewBox="0 0 100 32" preserveAspectRatio="none" className="opacity-70">
-                  <defs>
-                    <linearGradient id="revenueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.6"/>
-                      <stop offset="100%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.1"/>
-                    </linearGradient>
-                  </defs>
-                  <path d="M0,20 L20,18 L40,10 L60,14 L80,6 L100,8 L100,32 L0,32 Z" fill="url(#revenueGradient)"/>
-                  <path d="M0,20 L20,18 L40,10 L60,14 L80,6 L100,8" stroke="oklch(0.65 0.20 200)" strokeWidth="2" fill="none" className="drop-shadow-[0_0_4px_oklch(0.65_0.20_200)]"/>
-                </svg>
-              </div>
-            </div>
+            <DailyRevenueComparisonWidget />
           </div>
         )}
 
