@@ -486,23 +486,25 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
 
       <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
-          {selectedAppointment && (
-            <AppointmentDetails
-              appointment={selectedAppointment}
-              customer={selectedCustomer}
-              staffMember={selectedStaff}
-              onStatusChange={(status) => updateAppointmentStatus(selectedAppointment.id, status)}
-              onEdit={handleEditAppointment}
-              onDelete={() => handleDeleteAppointment(selectedAppointment.id)}
-              onDuplicate={handleDuplicateAppointment}
-              onRebook={handleRebookAppointment}
-              onClose={() => setIsDetailOpen(false)}
-              onCheckout={() => {
-                setIsDetailOpen(false)
-                setIsCheckoutOpen(true)
-              }}
-            />
-          )}
+          <div>
+            {selectedAppointment && (
+              <AppointmentDetails
+                appointment={selectedAppointment}
+                customer={selectedCustomer}
+                staffMember={selectedStaff}
+                onStatusChange={(status) => updateAppointmentStatus(selectedAppointment.id, status)}
+                onEdit={handleEditAppointment}
+                onDelete={() => handleDeleteAppointment(selectedAppointment.id)}
+                onDuplicate={handleDuplicateAppointment}
+                onRebook={handleRebookAppointment}
+                onClose={() => setIsDetailOpen(false)}
+                onCheckout={() => {
+                  setIsDetailOpen(false)
+                  setIsCheckoutOpen(true)
+                }}
+              />
+            )}
+          </div>
         </SheetContent>
       </Sheet>
 
