@@ -84,12 +84,11 @@ export function MonthlyRevenueWidget() {
         </div>
         <div className="flex items-center gap-1.5 mt-0.5">
           <span className={`text-[10px] font-semibold ${isPositive ? 'text-cyan-400' : 'text-red-400'}`}>
-            {isPositive ? '↑' : '↓'} {Math.abs(percentageChange).toFixed(1)}%
+            {isPositive ? '↑' : '↓'} {Math.abs(percentageChange).toFixed(1)}% from Sept.
           </span>
         </div>
       </div>
-      <div className="px-4 pb-2 pt-0.5">
-        <p className="text-[9px] text-white/50 font-medium mb-1">from last month</p>
+      <div className="px-4 pb-2 pt-1">
         <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none" className="opacity-70">
           <defs>
             <linearGradient id="monthlyRevenueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
