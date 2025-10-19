@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Toaster } from '@/components/ui/sonner'
 import { Dashboard } from '@/components/Dashboard'
-import { TestDashboard } from '@/components/TestDashboard'
 import { AppointmentScheduler } from '@/components/AppointmentScheduler'
 import { CustomerManager } from '@/components/CustomerManager'
 import { StaffManager } from '@/components/StaffManager'
@@ -14,7 +13,7 @@ import { GroomerStats } from '@/components/GroomerStats'
 import { NewAppointment } from '@/components/NewAppointment'
 import { DashboardCustomization } from '@/components/DashboardCustomization'
 
-type View = 'dashboard' | 'test-dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard'
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'system'
@@ -26,7 +25,7 @@ function App() {
   const [currentView, setCurrentView] = useState<View>(() => {
     const params = new URLSearchParams(window.location.search)
     const view = params.get('view') as View | null
-    return view && ['dashboard', 'test-dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings', 'new-appointment', 'add-pet', 'edit-pet', 'customize-dashboard'].includes(view)
+    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings', 'new-appointment', 'add-pet', 'edit-pet', 'customize-dashboard'].includes(view)
       ? view
       : 'dashboard'
   })
@@ -80,8 +79,6 @@ function App() {
     switch (currentView) {
       case 'dashboard':
         return <Dashboard onNavigate={setCurrentView} />
-      case 'test-dashboard':
-        return <TestDashboard onNavigate={setCurrentView} />
       case 'appointments':
         return <AppointmentScheduler onNavigateToNewAppointment={() => setCurrentView('new-appointment')} />
       case 'customers':

@@ -1,7 +1,7 @@
 import { Gear } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 
-type View = 'dashboard' | 'test-dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard'
 
 interface NavigationProps {
   currentView: View
@@ -12,7 +12,6 @@ interface NavigationProps {
 export function Navigation({ currentView, onNavigate }: NavigationProps) {
   const navItems = [
     { id: 'dashboard' as View, label: 'Dashboard' },
-    { id: 'test-dashboard' as View, label: 'Test Dashboard' },
     { id: 'appointments' as View, label: 'Appointments' },
     { id: 'customers' as View, label: 'Clients' },
     { id: 'staff' as View, label: 'Staff' },
@@ -50,17 +49,6 @@ export function Navigation({ currentView, onNavigate }: NavigationProps) {
                 )
               })}
             </div>
-            {currentView === 'test-dashboard' && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onNavigate('customize-dashboard')}
-                className="gap-1.5 px-2.5 py-1.5 h-auto text-xs shrink-0"
-              >
-                <Gear size={14} />
-                Customize
-              </Button>
-            )}
           </div>
         </div>
       </div>

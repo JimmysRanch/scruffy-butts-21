@@ -483,6 +483,11 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
       <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Appointment Details</SheetTitle>
+            <SheetDescription>View and manage appointment</SheetDescription>
+          </SheetHeader>
+          
           {selectedAppointment && (
             <AppointmentDetails
               appointment={selectedAppointment}
