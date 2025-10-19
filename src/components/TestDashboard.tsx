@@ -124,8 +124,11 @@ const WIDGET_ICON_MAP: Record<string, React.ComponentType<{ size?: number | stri
   'week-appointments': Calendar,
   'booked-widget': ChartBar,
   'revenue-gauge': ChartBar,
-  'groomer-workload': Users,
-  'today-schedule': Clock
+  'active-clients': Users,
+  'monthly-revenue': ChartBar,
+  'average-ticket': ChartBar,
+  'messages': Calendar,
+  'groomer-workload': Users
 }
 
 interface StoredWidgetConfig {
@@ -166,18 +169,39 @@ const DEFAULT_WIDGETS: StoredWidgetConfig[] = [
     defaultSize: { w: 1, h: 1 }
   },
   {
-    id: 'groomer-workload',
-    name: 'Groomer Workload',
-    description: 'Shows staff workload distribution',
+    id: 'active-clients',
+    name: 'Active Clients',
+    description: 'Shows total clients with pets',
     enabled: true,
     defaultSize: { w: 1, h: 1 }
   },
   {
-    id: 'today-schedule',
-    name: "Today's Schedule",
-    description: 'Quick view of today\'s appointments',
+    id: 'monthly-revenue',
+    name: 'Monthly Revenue',
+    description: 'Shows revenue for current month with trend',
     enabled: true,
     defaultSize: { w: 1, h: 1 }
+  },
+  {
+    id: 'average-ticket',
+    name: 'Average Ticket',
+    description: 'Shows average transaction value',
+    enabled: true,
+    defaultSize: { w: 1, h: 1 }
+  },
+  {
+    id: 'messages',
+    name: 'Messages',
+    description: 'Recent customer messages',
+    enabled: true,
+    defaultSize: { w: 2, h: 1 }
+  },
+  {
+    id: 'groomer-workload',
+    name: 'Groomer Workload',
+    description: 'Shows staff workload distribution',
+    enabled: true,
+    defaultSize: { w: 2, h: 1 }
   }
 ]
 
@@ -375,80 +399,88 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
           </div>
         )}
 
-        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-          <div className="relative z-10">
-            <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
-              <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Active Clients</h3>
-            </div>
-            <div className="pb-1 pt-1 px-4 min-w-0">
-              <div className="text-2xl font-bold text-white/95">
-                {(customers || []).filter(c => c.pets && c.pets.length > 0).length}
+        {enabledWidgets.find(w => w.id === 'active-clients') && (
+          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <div className="relative z-10">
+              <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+                <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Active Clients</h3>
               </div>
-              <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
-                clients with pets
-              </p>
-            </div>
-            <div className="px-4 pb-2 flex items-end justify-between gap-1">
-              {[16, 22, 18, 24, 20, 26, 22, 28, 24, 30, 26, 32].map((height, i) => (
-                <div 
-                  key={i}
-                  className="flex-1 rounded-sm transition-all duration-500"
-                  style={{
-                    height: `${height}px`,
-                    background: 'linear-gradient(180deg, oklch(0.75 0.20 210), oklch(0.65 0.18 215))',
-                    boxShadow: '0 0 6px oklch(0.70 0.20 210)'
-                  }}
-                ></div>
-              ))}
+              <div className="pb-1 pt-1 px-4 min-w-0">
+                <div className="text-2xl font-bold text-white/95">
+                  {(customers || []).filter(c => c.pets && c.pets.length > 0).length}
+                </div>
+                <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
+                  clients with pets
+                </p>
+              </div>
+              <div className="px-4 pb-2 flex items-end justify-between gap-1">
+                {[16, 22, 18, 24, 20, 26, 22, 28, 24, 30, 26, 32].map((height, i) => (
+                  <div 
+                    key={i}
+                    className="flex-1 rounded-sm transition-all duration-500"
+                    style={{
+                      height: `${height}px`,
+                      background: 'linear-gradient(180deg, oklch(0.75 0.20 210), oklch(0.65 0.18 215))',
+                      boxShadow: '0 0 6px oklch(0.70 0.20 210)'
+                    }}
+                  ></div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-          <MonthlyRevenueWidget />
-        </div>
+        {enabledWidgets.find(w => w.id === 'monthly-revenue') && (
+          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <MonthlyRevenueWidget />
+          </div>
+        )}
 
-        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-          <AverageTicketWidget />
-        </div>
+        {enabledWidgets.find(w => w.id === 'average-ticket') && (
+          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <AverageTicketWidget />
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-6 gap-4">
-        <div className="col-span-6 sm:col-span-6 lg:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-          <div className="relative z-10">
-            <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
-              <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Messages</h3>
-            </div>
-            <div className="pb-3 pt-1 px-4 min-w-0">
-              <div className="space-y-1.5">
-                <div className="flex items-start gap-2 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                    <User size={12} className="text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[11px] font-semibold text-white/90">Sarah Johnson</span>
-                      <span className="text-[9px] text-white/50">10m ago</span>
+        {enabledWidgets.find(w => w.id === 'messages') && (
+          <div className="col-span-6 sm:col-span-6 lg:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <div className="relative z-10">
+              <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+                <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Messages</h3>
+              </div>
+              <div className="pb-3 pt-1 px-4 min-w-0">
+                <div className="space-y-1.5">
+                  <div className="flex items-start gap-2 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                      <User size={12} className="text-primary" />
                     </div>
-                    <p className="text-[10px] text-white/70 truncate">Can we reschedule Buddy's appointment?</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                    <User size={12} className="text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[11px] font-semibold text-white/90">Mike Chen</span>
-                      <span className="text-[9px] text-white/50">1h ago</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-semibold text-white/90">Sarah Johnson</span>
+                        <span className="text-[9px] text-white/50">10m ago</span>
+                      </div>
+                      <p className="text-[10px] text-white/70 truncate">Can we reschedule Buddy's appointment?</p>
                     </div>
-                    <p className="text-[10px] text-white/70 truncate">Thanks for the great service today!</p>
+                  </div>
+                  <div className="flex items-start gap-2 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                      <User size={12} className="text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-semibold text-white/90">Mike Chen</span>
+                        <span className="text-[9px] text-white/50">1h ago</span>
+                      </div>
+                      <p className="text-[10px] text-white/70 truncate">Thanks for the great service today!</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
         {enabledWidgets.find(w => w.id === 'groomer-workload') && (
           <div className="col-span-6 sm:col-span-6 lg:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
             <GroomerWorkloadWidget />
