@@ -298,7 +298,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   }
 
   return (
-    <div className="space-y-6 relative z-10">
+    <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-3xl font-bold text-white/90">Dashboard</h1>
@@ -322,7 +322,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         )}
 
         {enabledWidgetIds.has('week-appointments') && (
-          <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
+          <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden group transition-all duration-500 hover:scale-[1.02] relative" onClick={() => onNavigate('appointments')}>
             <div className="relative z-10">
               <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
                 <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">This Week</h3>
@@ -360,7 +360,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
         {enabledWidgetIds.has('today-schedule') && (
           <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-            <TodayScheduleWidget isCompact={isCompact} onAppointmentClick={handleViewAppointment} />
+            <TodayScheduleWidget onAppointmentClick={handleViewAppointment} />
           </div>
         )}
 
