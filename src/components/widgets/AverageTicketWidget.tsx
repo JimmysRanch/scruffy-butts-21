@@ -59,51 +59,40 @@ export function AverageTicketWidget() {
   const areaPath = `${pathData} L 100,100 L 0,100 Z`
 
   return (
-    <div className="relative z-10 h-full flex flex-col">
-      <div className="flex items-start justify-between pt-3 px-4 pb-2">
-        <div className="flex-1">
-          <h3 className="text-sm font-bold tracking-tight text-foreground/90">Average Ticket</h3>
-          <p className="text-[11px] text-white/60 mt-0.5 font-medium">Last 7 days</p>
-        </div>
-        <div className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30">
-          <span className="text-xs font-bold text-emerald-400">+{percentChange.toFixed(1)}%</span>
+    <div className="relative z-10">
+      <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+        <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Average Ticket</h3>
+        <div className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30">
+          <span className="text-[10px] font-bold text-emerald-400">+{percentChange.toFixed(1)}%</span>
         </div>
       </div>
-
-      <div className="px-4 pb-2 flex-1 flex flex-col justify-center">
-        <div className="mb-3">
-          <div className="text-4xl font-bold text-white/95 leading-none">${currentAverage}</div>
+      <div className="pb-1 pt-1 px-4 min-w-0">
+        <div className="text-2xl font-bold text-white/95">
+          ${currentAverage}
         </div>
-
-        <div className="relative w-full h-20">
-          <svg
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-            className="w-full h-full"
-          >
-            <defs>
-              <linearGradient id="avgTicketAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.05" />
-              </linearGradient>
-            </defs>
-
-            <path
-              d={areaPath}
-              fill="url(#avgTicketAreaGradient)"
-            />
-
-            <path
-              d={pathData}
-              fill="none"
-              stroke="oklch(0.70 0.22 200)"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ filter: 'drop-shadow(0 0 6px oklch(0.65 0.20 200))' }}
-            />
-          </svg>
-        </div>
+        <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
+          last 7 days
+        </p>
+      </div>
+      <div className="px-4 pb-2">
+        <svg width="100%" height="32" viewBox="0 0 100 32" preserveAspectRatio="none" className="opacity-70">
+          <defs>
+            <linearGradient id="avgTicketGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.6"/>
+              <stop offset="100%" stopColor="oklch(0.65 0.20 200)" stopOpacity="0.1"/>
+            </linearGradient>
+          </defs>
+          <path d={normalizedData.map((value, index) => {
+            const x = (index / (normalizedData.length - 1)) * 100
+            const y = 32 - (value / 100) * 32
+            return `${index === 0 ? 'M' : 'L'} ${x},${y}`
+          }).join(' ') + ' L 100,32 L 0,32 Z'} fill="url(#avgTicketGradient)"/>
+          <path d={normalizedData.map((value, index) => {
+            const x = (index / (normalizedData.length - 1)) * 100
+            const y = 32 - (value / 100) * 32
+            return `${index === 0 ? 'M' : 'L'} ${x},${y}`
+          }).join(' ')} stroke="oklch(0.65 0.20 200)" strokeWidth="2" fill="none" className="drop-shadow-[0_0_4px_oklch(0.65_0.20_200)]"/>
+        </svg>
       </div>
     </div>
   )
