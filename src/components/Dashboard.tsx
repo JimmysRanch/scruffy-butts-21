@@ -8,7 +8,6 @@ import { Calendar, Users, ChartBar, Clock, Dog, Package, User, Phone, Envelope, 
 import { isToday, startOfWeek, endOfWeek, isWithinInterval, format, parseISO, isBefore, startOfDay } from 'date-fns'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { RevenueGaugeWidget } from '@/components/widgets/RevenueGaugeWidget'
 import { BookedWidget } from '@/components/widgets/BookedWidget'
 import { GroomerWorkloadWidget } from '@/components/widgets/GroomerWorkloadWidget'
 import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsWidget'
@@ -153,13 +152,6 @@ const DEFAULT_WIDGETS: StoredWidgetConfig[] = [
     id: 'booked-widget',
     name: 'Booked Today',
     description: 'Shows booking percentage for today',
-    enabled: true,
-    defaultSize: { w: 1, h: 1 }
-  },
-  {
-    id: 'revenue-gauge',
-    name: 'Revenue Gauge',
-    description: 'Shows daily revenue progress',
     enabled: true,
     defaultSize: { w: 1, h: 1 }
   },
@@ -339,12 +331,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         {enabledWidgetIds.has('booked-widget') && (
           <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
             <BookedWidget />
-          </div>
-        )}
-
-        {enabledWidgetIds.has('revenue-gauge') && (
-          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-            <RevenueGaugeWidget />
           </div>
         )}
 
