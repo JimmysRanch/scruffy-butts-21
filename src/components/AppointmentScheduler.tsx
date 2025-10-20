@@ -1361,7 +1361,7 @@ function AppointmentDetails({
   const nextAction = getNextAction()
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 py-2">
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-3">
           <div className="p-2.5 rounded-lg bg-primary/10">
