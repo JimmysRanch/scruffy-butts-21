@@ -394,7 +394,9 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
       })
     )
     setIsCheckoutOpen(false)
+    setIsDetailOpen(false)
     setSelectedAppointment(null)
+    toast.success('Appointment completed successfully!')
   }
 
   const filteredAppointments = useMemo(() => {
@@ -865,7 +867,12 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
         />
       )}
 
-      <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+      <Sheet open={isDetailOpen} onOpenChange={(open) => {
+        setIsDetailOpen(open)
+        if (!open) {
+          setSelectedAppointment(null)
+        }
+      }}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Appointment Details</SheetTitle>
@@ -884,8 +891,8 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
               onRebook={handleRebookAppointment}
               onClose={() => setIsDetailOpen(false)}
               onCheckout={() => {
-                setIsDetailOpen(false)
                 setIsCheckoutOpen(true)
+                setIsDetailOpen(false)
               }}
             />
           )}
@@ -894,7 +901,12 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
 
       <AppointmentCheckout
         open={isCheckoutOpen}
-        onOpenChange={setIsCheckoutOpen}
+        onOpenChange={(open) => {
+          setIsCheckoutOpen(open)
+          if (!open && selectedAppointment) {
+            setIsDetailOpen(true)
+          }
+        }}
         appointment={selectedAppointment}
         customer={selectedCustomer || null}
         staffMember={selectedStaff}
