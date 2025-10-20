@@ -1,25 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
-import { Calendar, Users, ChartBar, Clock, Dog, Package, User, Phone, Envelope, PencilSimple, Trash, ArrowClockwise, CheckCircle, Bell, CreditCard, WarningCircle, Gear } from '@phosphor-icons/react'
-import { isToday, startOfWeek, endOfWeek, isWithinInterval, format, parseISO, isBefore, startOfDay } from 'date-fns'
+import { Calendar, Users, Clock, Dog, Package, User, Phone, Envelope, PencilSimple, Trash, ArrowClockwise, CheckCircle, Bell, CreditCard, WarningCircle } from '@phosphor-icons/react'
+import { startOfWeek, endOfWeek, isWithinInterval, format, parseISO, isBefore, startOfDay } from 'date-fns'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { BookedWidget } from '@/components/widgets/BookedWidget'
-import { GroomerWorkloadWidget } from '@/components/widgets/GroomerWorkloadWidget'
 import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsWidget'
-import { TodayScheduleWidget } from '@/components/widgets/TodayScheduleWidget'
 import { MonthlyRevenueWidget } from '@/components/widgets/MonthlyRevenueWidget'
 import { AverageTicketWidget } from '@/components/widgets/AverageTicketWidget'
-import { UpcomingAppointmentsWidget } from '@/components/widgets/UpcomingAppointmentsWidget'
-import { QuickActionsWidget } from '@/components/widgets/QuickActionsWidget'
-import { ActivityFeedWidget } from '@/components/widgets/ActivityFeedWidget'
-import { RecentActivity } from '@/components/RecentActivity'
+import { GroomerWorkloadWidget } from '@/components/widgets/GroomerWorkloadWidget'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
-import { seedActivityData } from '@/lib/seed-activity-data'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
@@ -124,8 +117,8 @@ const STATUS_COLORS: Record<Appointment['status'], string> = {
 const WIDGET_ICON_MAP: Record<string, React.ComponentType<{ size?: number | string; className?: string }>> = {
   'total-appointments': Calendar,
   'week-appointments': Calendar,
-  'booked-widget': ChartBar,
-  'revenue-gauge': ChartBar,
+  'booked-widget': Calendar,
+  'revenue-gauge': Calendar,
   'groomer-workload': Users,
   'today-schedule': Clock
 }
@@ -218,10 +211,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     ...w,
     icon: WIDGET_ICON_MAP[w.id] || Calendar
   }))
-
-  useEffect(() => {
-    seedActivityData()
-  }, [])
 
   const isCompact = appearance?.compactMode || false
 
