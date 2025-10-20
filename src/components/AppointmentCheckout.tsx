@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -386,9 +386,9 @@ export function AppointmentCheckout({
   const availableProducts = products || []
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-3xl overflow-y-auto p-0 flex flex-col">
-        <SheetHeader className="px-6 pt-6 pb-4 border-b">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-3xl max-h-[95vh] overflow-hidden p-0 flex flex-col">
+        <DialogHeader className="px-6 pt-6 pb-4 border-b flex-shrink-0">
           <div className="flex items-center gap-3">
             {onBack && (
               <Button
@@ -401,18 +401,18 @@ export function AppointmentCheckout({
               </Button>
             )}
             <div className="flex-1">
-              <SheetTitle className="flex items-center space-x-2">
+              <DialogTitle className="flex items-center space-x-2">
                 <CreditCard size={24} className="text-primary" />
                 <span>Checkout - {appointment.petName}</span>
-              </SheetTitle>
-              <SheetDescription>
+              </DialogTitle>
+              <DialogDescription>
                 {showAddItems ? 'Add services & products' : 'Complete payment and mark as picked up'}
-              </SheetDescription>
+              </DialogDescription>
             </div>
           </div>
-        </SheetHeader>
+        </DialogHeader>
 
-        <ScrollArea className="flex-1 px-6">
+        <ScrollArea className="flex-1 px-6 overflow-y-auto">
           <div className="py-4 space-y-4">
             {!showAddItems ? (
               <>
@@ -795,7 +795,7 @@ export function AppointmentCheckout({
             )}
           </div>
         </ScrollArea>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   )
 }
