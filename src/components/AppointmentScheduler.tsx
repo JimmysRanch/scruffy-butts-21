@@ -866,29 +866,31 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
       )}
 
       <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Appointment Details</SheetTitle>
-            <SheetDescription>View and manage appointment</SheetDescription>
-          </SheetHeader>
-          
-          {selectedAppointment && (
-            <AppointmentDetails
-              appointment={selectedAppointment}
-              customer={selectedCustomer}
-              staffMember={selectedStaff}
-              onStatusChange={(status) => updateAppointmentStatus(selectedAppointment.id, status)}
-              onEdit={handleEditAppointment}
-              onDelete={() => handleDeleteAppointment(selectedAppointment.id)}
-              onDuplicate={handleDuplicateAppointment}
-              onRebook={handleRebookAppointment}
-              onClose={() => setIsDetailOpen(false)}
-              onCheckout={() => {
-                setIsDetailOpen(false)
-                setIsCheckoutOpen(true)
-              }}
-            />
-          )}
+        <SheetContent className="w-full sm:max-w-lg overflow-y-auto p-0">
+          <div className="p-6">
+            <SheetHeader className="p-0 mb-4">
+              <SheetTitle>Appointment Details</SheetTitle>
+              <SheetDescription>View and manage appointment</SheetDescription>
+            </SheetHeader>
+            
+            {selectedAppointment && (
+              <AppointmentDetails
+                appointment={selectedAppointment}
+                customer={selectedCustomer}
+                staffMember={selectedStaff}
+                onStatusChange={(status) => updateAppointmentStatus(selectedAppointment.id, status)}
+                onEdit={handleEditAppointment}
+                onDelete={() => handleDeleteAppointment(selectedAppointment.id)}
+                onDuplicate={handleDuplicateAppointment}
+                onRebook={handleRebookAppointment}
+                onClose={() => setIsDetailOpen(false)}
+                onCheckout={() => {
+                  setIsDetailOpen(false)
+                  setIsCheckoutOpen(true)
+                }}
+              />
+            )}
+          </div>
         </SheetContent>
       </Sheet>
 
