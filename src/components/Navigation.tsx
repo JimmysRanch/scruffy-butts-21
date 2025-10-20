@@ -1,7 +1,7 @@
 import { Gear } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard' | 'appointment-detail'
 
 interface NavigationProps {
   currentView: View

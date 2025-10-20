@@ -123,9 +123,10 @@ const TIME_SLOTS = [
 
 interface AppointmentSchedulerProps {
   onNavigateToNewAppointment?: () => void
+  onNavigateToDetail?: (appointmentId: string) => void
 }
 
-export function AppointmentScheduler({ onNavigateToNewAppointment }: AppointmentSchedulerProps = {}) {
+export function AppointmentScheduler({ onNavigateToNewAppointment, onNavigateToDetail }: AppointmentSchedulerProps = {}) {
   const [appointments, setAppointments] = useKV<Appointment[]>('appointments', [])
   const [customers] = useKV<Customer[]>('customers', [])
   const [services] = useKV<Service[]>('services', [])
@@ -364,8 +365,12 @@ export function AppointmentScheduler({ onNavigateToNewAppointment }: Appointment
   }
 
   const handleViewAppointment = (appointment: Appointment) => {
-    setSelectedAppointment(appointment)
-    setIsDetailOpen(true)
+    if (onNavigateToDetail) {
+      onNavigateToDetail(appointment.id)
+    } else {
+      setSelectedAppointment(appointment)
+      setIsDetailOpen(true)
+    }
   }
 
   const handleCheckoutComplete = (

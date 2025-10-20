@@ -16,7 +16,7 @@ import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'customize-dashboard'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'customize-dashboard' | 'appointment-detail'
 
 interface AppearanceSettings {
   compactMode?: boolean

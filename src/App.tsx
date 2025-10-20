@@ -12,8 +12,9 @@ import { Navigation } from '@/components/Navigation'
 import { GroomerStats } from '@/components/GroomerStats'
 import { NewAppointment } from '@/components/NewAppointment'
 import { DashboardCustomization } from '@/components/DashboardCustomization'
+import { AppointmentDetail } from '@/components/AppointmentDetail'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard' | 'appointment-detail'
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'system'
@@ -25,10 +26,15 @@ function App() {
   const [currentView, setCurrentView] = useState<View>(() => {
     const params = new URLSearchParams(window.location.search)
     const view = params.get('view') as View | null
-    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings', 'new-appointment', 'add-pet', 'edit-pet', 'customize-dashboard'].includes(view)
+    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings', 'new-appointment', 'add-pet', 'edit-pet', 'customize-dashboard', 'appointment-detail'].includes(view)
       ? view
       : 'dashboard'
   })
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(() => {
+    const params = new URLSearchParams(window.location.search)
+    return params.get('appointmentId')
+  })
+  const [appointments] = useKV<any[]>('appointments', [])
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {
     theme: 'light',
     compactMode: false,
@@ -39,12 +45,17 @@ function App() {
     const params = new URLSearchParams(window.location.search)
     if (currentView !== 'dashboard') {
       params.set('view', currentView)
+      if (currentView === 'appointment-detail' && selectedAppointmentId) {
+        params.set('appointmentId', selectedAppointmentId)
+      } else {
+        params.delete('appointmentId')
+      }
       const newUrl = `${window.location.pathname}?${params.toString()}`
       window.history.replaceState({}, '', newUrl)
     } else {
       window.history.replaceState({}, '', window.location.pathname)
     }
-  }, [currentView])
+  }, [currentView, selectedAppointmentId])
 
   useEffect(() => {
     const root = document.documentElement
@@ -80,7 +91,29 @@ function App() {
       case 'dashboard':
         return <Dashboard onNavigate={setCurrentView} />
       case 'appointments':
-        return <AppointmentScheduler onNavigateToNewAppointment={() => setCurrentView('new-appointment')} />
+        return (
+          <AppointmentScheduler 
+            onNavigateToNewAppointment={() => setCurrentView('new-appointment')}
+            onNavigateToDetail={(appointmentId: string) => {
+              setSelectedAppointmentId(appointmentId)
+              setCurrentView('appointment-detail')
+            }}
+          />
+        )
+      case 'appointment-detail':
+        if (!selectedAppointmentId) {
+          setCurrentView('appointments')
+          return null
+        }
+        return (
+          <AppointmentDetail 
+            appointmentId={selectedAppointmentId}
+            onBack={() => setCurrentView('appointments')}
+            onEdit={(appointment) => {
+              setCurrentView('appointments')
+            }}
+          />
+        )
       case 'customers':
         return <CustomerManager />
       case 'staff':
