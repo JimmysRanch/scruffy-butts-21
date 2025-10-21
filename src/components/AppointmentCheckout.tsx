@@ -434,8 +434,8 @@ export function AppointmentCheckout({
           </div>
         </SheetHeader>
 
-        <ScrollArea className="flex-1 px-6 overflow-y-auto">
-          <div className="py-4 space-y-4">
+        <ScrollArea className="flex-1 px-6">
+          <div className="py-4 pb-8 space-y-4">
             {!showAddItems ? (
               <>
                 <Card className="border-2 bg-gradient-to-br from-primary/5 to-transparent">
