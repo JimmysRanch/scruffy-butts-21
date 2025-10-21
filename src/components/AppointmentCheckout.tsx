@@ -164,6 +164,9 @@ export function AppointmentCheckout({
 
   useEffect(() => {
     if (appointment && open) {
+      window.scrollTo(0, 0)
+      document.body.style.overflow = 'hidden'
+      
       const appointmentServiceItem: LineItem = {
         id: `appointment-service-${appointment.id}`,
         type: 'service',
@@ -175,6 +178,10 @@ export function AppointmentCheckout({
       }
       setLineItems([appointmentServiceItem])
       setAcknowledged(appointment.pickupNotificationAcknowledged || false)
+    }
+    
+    return () => {
+      document.body.style.overflow = ''
     }
   }, [appointment, open])
 
@@ -387,7 +394,7 @@ export function AppointmentCheckout({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[95vh] overflow-hidden p-0 flex flex-col">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden p-0 flex flex-col">
         <DialogHeader className="px-6 pt-6 pb-4 border-b flex-shrink-0">
           <div className="flex items-center gap-3">
             {onBack && (

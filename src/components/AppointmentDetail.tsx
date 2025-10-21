@@ -13,7 +13,7 @@ import { format, parseISO, isBefore, startOfDay } from 'date-fns'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface Appointment {
   id: string
@@ -105,6 +105,10 @@ export function AppointmentDetail({ appointmentId, onBack, onEdit }: Appointment
   const [customers] = useKV<Customer[]>('customers', [])
   const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [appointmentId])
 
   const appointment = (appointments || []).find(apt => apt.id === appointmentId)
   
