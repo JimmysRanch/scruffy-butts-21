@@ -404,7 +404,7 @@ export function AppointmentCheckout({
   const availableProducts = products || []
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} modal={true}>
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full !max-w-2xl p-0 flex flex-col overflow-hidden">
         <SheetHeader className="px-6 pt-6 pb-4 border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-3">
