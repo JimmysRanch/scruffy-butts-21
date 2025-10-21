@@ -844,17 +844,6 @@ export function StaffManager() {
                         >
                           Edit
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleDelete(member.id)
-                          }}
-                          className="glass-button"
-                        >
-                          Delete
-                        </Button>
                       </div>
                     </CardContent>
                   </Card>
