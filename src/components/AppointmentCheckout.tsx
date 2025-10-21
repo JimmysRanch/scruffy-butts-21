@@ -723,11 +723,11 @@ export function AppointmentCheckout({
                       Note: Customer arrival not yet acknowledged
                     </p>
                   )}
-                  </CardContent>
-                </Card>
-              </>
-            ) : (
-              <>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <>
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold">Add Services & Products</h3>
                   <Button
