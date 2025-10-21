@@ -212,7 +212,14 @@ export function AppointmentDetail({ appointmentId, onBack, onEdit }: Appointment
       case 'in-progress':
         return { label: 'Mark Ready for Pickup', action: () => updateAppointmentStatus('ready-for-pickup'), icon: Bell }
       case 'ready-for-pickup':
-        return { label: 'Checkout & Complete', action: () => setIsCheckoutOpen(true), icon: CreditCard }
+        return { 
+          label: 'Checkout & Complete', 
+          action: () => {
+            console.log('Opening checkout sheet')
+            setIsCheckoutOpen(true)
+          }, 
+          icon: CreditCard 
+        }
       default:
         return null
     }

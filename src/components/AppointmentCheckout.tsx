@@ -163,10 +163,11 @@ export function AppointmentCheckout({
   const TAX_RATE = 0.0825
 
   useEffect(() => {
+    console.log('AppointmentCheckout - open state changed:', open, 'appointment:', appointment?.id)
+  }, [open, appointment])
+
+  useEffect(() => {
     if (appointment && open) {
-      window.scrollTo(0, 0)
-      document.body.style.overflow = 'hidden'
-      
       const appointmentServiceItem: LineItem = {
         id: `appointment-service-${appointment.id}`,
         type: 'service',
@@ -178,10 +179,11 @@ export function AppointmentCheckout({
       }
       setLineItems([appointmentServiceItem])
       setAcknowledged(appointment.pickupNotificationAcknowledged || false)
-    }
-    
-    return () => {
-      document.body.style.overflow = ''
+      setShowAddItems(false)
+      setTipAmount(0)
+      setDiscountPercent(0)
+      setPaymentMethod('card')
+      setApplyTax(true)
     }
   }, [appointment, open])
 
@@ -394,7 +396,7 @@ export function AppointmentCheckout({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl p-0 flex flex-col overflow-hidden">
+      <SheetContent side="right" className="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl p-0 flex flex-col overflow-hidden z-[150]">
         <SheetHeader className="px-6 pt-6 pb-4 border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-3">
             {onBack && (
