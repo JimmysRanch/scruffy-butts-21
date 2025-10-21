@@ -220,10 +220,6 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
     icon: WIDGET_ICON_MAP[w.id] || Calendar
   }))
 
-  useEffect(() => {
-    seedActivityData()
-  }, [])
-
   const isCompact = appearance?.compactMode || false
 
   const today = new Date()
@@ -504,6 +500,19 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
         </SheetContent>
       </Sheet>
     </div>
+  )
+}
+
+function AppointmentDetails({
+  appointment,
+  customer,
+  staffMember,
+  onStatusChange,
+  onEdit,
+  onDelete,
+  onDuplicate,
+  onRebook,
+  onClose,
   onCheckout
 }: { 
   appointment: Appointment
