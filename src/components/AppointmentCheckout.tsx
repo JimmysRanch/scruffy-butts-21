@@ -11,8 +11,6 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { 
   CreditCard, 
   Check,
-  Bell,
-  BellRinging,
   Phone,
   Dog,
   Package,
@@ -25,7 +23,6 @@ import {
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
-import { cn } from '@/lib/utils'
 
 interface Appointment {
   id: string
@@ -143,7 +140,6 @@ export function AppointmentCheckout({
   const [discountPercent, setDiscountPercent] = useState<number>(0)
   const [applyTax, setApplyTax] = useState<boolean>(true)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [acknowledged, setAcknowledged] = useState(false)
   const [showAddItems, setShowAddItems] = useState(false)
 
   const TAX_RATE = 0.0825
@@ -168,7 +164,6 @@ export function AppointmentCheckout({
       originalAppointmentService: true
     }
     setLineItems([appointmentServiceItem])
-    setAcknowledged(appointment.pickupNotificationAcknowledged || false)
     setShowAddItems(false)
     setTipAmount(0)
     setDiscountPercent(0)
@@ -294,11 +289,6 @@ export function AppointmentCheckout({
     return calculateSubtotal() - calculateDiscount() + calculateTax() + tipAmount
   }
 
-  const handleAcknowledgeNotification = () => {
-    setAcknowledged(true)
-    toast.success('Customer arrival confirmed')
-  }
-
   const handleProcessPayment = () => {
     setIsProcessing(true)
 
@@ -361,15 +351,11 @@ export function AppointmentCheckout({
       setLineItems([])
       setTipAmount(0)
       setDiscountPercent(0)
-      setAcknowledged(false)
       setShowAddItems(false)
       setIsProcessing(false)
       onComplete()
     }, 1500)
   }
-
-  const notificationSent = appointment.pickupNotificationSent
-  const notificationAck = appointment.pickupNotificationAcknowledged || acknowledged
 
   const availableServices = (services || []).filter(s => s.id !== appointment.serviceId)
   const availableProducts = products || []
@@ -433,54 +419,6 @@ export function AppointmentCheckout({
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card className={cn(
-                'border-2 transition-all',
-                notificationSent ? 'border-green-500/50 bg-green-500/10' : 'border-yellow-500/50 bg-yellow-500/10'
-              )}>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      {notificationSent ? (
-                        <BellRinging size={20} className="text-green-400" weight="fill" />
-                      ) : (
-                        <Bell size={20} className="text-yellow-400" />
-                      )}
-                      <span className="font-semibold text-sm text-white/90">Pickup Notification</span>
-                    </div>
-                    <Badge variant={notificationSent ? "default" : "secondary"}>
-                      {notificationSent ? 'Sent' : 'Not Sent'}
-                    </Badge>
-                  </div>
-                  
-                  {notificationSent && (
-                    <>
-                      <p className="text-xs text-white/70 mb-3">
-                        Customer has been notified that {appointment.petName} is ready for pickup.
-                      </p>
-                      
-                      {!notificationAck && (
-                        <Button 
-                          onClick={handleAcknowledgeNotification}
-                          variant="outline"
-                          size="sm"
-                          className="w-full"
-                        >
-                          <Check size={16} className="mr-2" />
-                          Acknowledge Customer Arrival
-                        </Button>
-                      )}
-                      
-                      {notificationAck && (
-                        <div className="flex items-center gap-2 text-sm text-green-400 font-medium">
-                          <Check size={16} weight="bold" />
-                          <span>Customer arrival confirmed</span>
-                        </div>
-                      )}
-                    </>
-                  )}
                 </CardContent>
               </Card>
 
@@ -684,12 +622,6 @@ export function AppointmentCheckout({
                       </>
                     )}
                   </Button>
-                  
-                  {!notificationAck && (
-                    <p className="text-xs text-center text-yellow-400">
-                      Note: Customer arrival not yet acknowledged
-                    </p>
-                  )}
                 </CardContent>
               </Card>
             </>
