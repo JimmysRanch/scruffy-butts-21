@@ -404,8 +404,12 @@ export function AppointmentCheckout({
   const availableProducts = products || []
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full !max-w-2xl p-0 flex flex-col overflow-hidden">
+    <Sheet open={open} onOpenChange={onOpenChange} modal={true}>
+      <SheetContent 
+        side="right" 
+        className="p-0 flex flex-col overflow-hidden"
+        style={{ width: '100%', maxWidth: '48rem' }}
+      >
         <SheetHeader className="px-6 pt-6 pb-4 border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-3">
             {onBack && (
@@ -597,8 +601,9 @@ export function AppointmentCheckout({
                   </CardContent>
                 </Card>
 
-                <div className="frosted rounded-xl p-4 space-y-4">
-                  <h3 className="font-semibold text-sm">Payment Details</h3>
+                <Card className="border-2">
+                  <CardContent className="p-4 space-y-4">
+                    <h3 className="font-semibold text-sm">Payment Details</h3>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
@@ -718,7 +723,8 @@ export function AppointmentCheckout({
                       Note: Customer arrival not yet acknowledged
                     </p>
                   )}
-                </div>
+                  </CardContent>
+                </Card>
               </>
             ) : (
               <div className="space-y-4">
@@ -751,7 +757,7 @@ export function AppointmentCheckout({
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
                             onClick={() => addService(service)}
-                            className="w-full text-left glass-dark rounded-lg p-3 hover:bg-primary/5 transition-colors"
+                            className="w-full text-left bg-card rounded-lg p-3 hover:bg-primary/5 transition-colors border border-border"
                           >
                             <div className="flex items-center justify-between">
                               <div>
@@ -789,7 +795,7 @@ export function AppointmentCheckout({
                             whileTap={{ scale: 0.99 }}
                             onClick={() => addProduct(product)}
                             disabled={product.stock === 0}
-                            className="w-full text-left glass-dark rounded-lg p-3 hover:bg-primary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full text-left bg-card rounded-lg p-3 hover:bg-primary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-border"
                           >
                             <div className="flex items-center justify-between">
                               <div>
