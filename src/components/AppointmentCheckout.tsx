@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -393,9 +393,9 @@ export function AppointmentCheckout({
   const availableProducts = products || []
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden p-0 flex flex-col">
-        <DialogHeader className="px-6 pt-6 pb-4 border-b flex-shrink-0">
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="right" className="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl p-0 flex flex-col overflow-hidden">
+        <SheetHeader className="px-6 pt-6 pb-4 border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-3">
             {onBack && (
               <Button
@@ -408,16 +408,16 @@ export function AppointmentCheckout({
               </Button>
             )}
             <div className="flex-1">
-              <DialogTitle className="flex items-center space-x-2">
+              <SheetTitle className="flex items-center space-x-2 text-lg">
                 <CreditCard size={24} className="text-primary" />
                 <span>Checkout - {appointment.petName}</span>
-              </DialogTitle>
-              <DialogDescription>
+              </SheetTitle>
+              <SheetDescription className="text-sm text-white/60 mt-1">
                 {showAddItems ? 'Add services & products' : 'Complete payment and mark as picked up'}
-              </DialogDescription>
+              </SheetDescription>
             </div>
           </div>
-        </DialogHeader>
+        </SheetHeader>
 
         <ScrollArea className="flex-1 px-6 overflow-y-auto">
           <div className="py-4 space-y-4">
@@ -802,7 +802,7 @@ export function AppointmentCheckout({
             )}
           </div>
         </ScrollArea>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   )
 }
