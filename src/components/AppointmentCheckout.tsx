@@ -164,6 +164,15 @@ export function AppointmentCheckout({
 
   useEffect(() => {
     console.log('AppointmentCheckout - open state changed:', open, 'appointment:', appointment?.id)
+    if (open) {
+      console.log('Sheet should be visible now')
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
   }, [open, appointment])
 
   useEffect(() => {
@@ -395,8 +404,8 @@ export function AppointmentCheckout({
   const availableProducts = products || []
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl p-0 flex flex-col overflow-hidden">
+    <Sheet open={open} onOpenChange={onOpenChange} modal={true}>
+      <SheetContent side="right" className="w-full !max-w-2xl p-0 flex flex-col overflow-hidden">
         <SheetHeader className="px-6 pt-6 pb-4 border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-3">
             {onBack && (
