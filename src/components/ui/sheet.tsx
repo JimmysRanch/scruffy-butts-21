@@ -23,7 +23,7 @@ function SheetClose({
 function SheetPortal({
   ...props
 }: ComponentProps<typeof SheetPrimitive.Portal>) {
-  return <SheetPrimitive.Portal data-slot="sheet-portal" container={document.body} {...props} />
+  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />
 }
 
 function SheetOverlay({
@@ -34,7 +34,7 @@ function SheetOverlay({
     <SheetPrimitive.Overlay
       data-slot="sheet-overlay"
       className={cn(
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-[9999] bg-black/70 backdrop-blur-md",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/70 backdrop-blur-md",
         className
       )}
       {...props}
@@ -56,7 +56,7 @@ function SheetContent({
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(
-          "glass-card data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-[10000] flex flex-col gap-4 shadow-2xl transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+          "glass-card data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-[51] flex flex-col gap-4 shadow-2xl transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
           side === "right" &&
             "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 sm:max-w-sm rounded-l-2xl",
           side === "left" &&
@@ -70,7 +70,7 @@ function SheetContent({
         {...props}
       >
         {children}
-        <SheetPrimitive.Close className="ring-offset-background focus:ring-accent data-[state=open]:bg-white/10 absolute top-4 right-4 rounded-lg opacity-70 transition-all hover:opacity-100 hover:bg-white/10 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none p-1.5">
+        <SheetPrimitive.Close className="ring-offset-background focus:ring-accent data-[state=open]:bg-white/10 absolute top-4 right-4 rounded-lg opacity-70 transition-all hover:opacity-100 hover:bg-white/10 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none p-1.5 z-10">
           <XIcon className="size-4" />
           <span className="sr-only">Close</span>
         </SheetPrimitive.Close>
