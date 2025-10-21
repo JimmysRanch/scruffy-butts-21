@@ -18,7 +18,6 @@ import { UpcomingAppointmentsWidget } from '@/components/widgets/UpcomingAppoint
 import { QuickActionsWidget } from '@/components/widgets/QuickActionsWidget'
 import { ActivityFeedWidget } from '@/components/widgets/ActivityFeedWidget'
 import { RecentActivity } from '@/components/RecentActivity'
-import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 import { seedActivityData } from '@/lib/seed-activity-data'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -505,19 +504,6 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
           )}
         </SheetContent>
       </Sheet>
-
-      <AppointmentCheckout
-        open={isCheckoutOpen}
-        onOpenChange={setIsCheckoutOpen}
-        appointment={selectedAppointment}
-        customer={selectedCustomer || null}
-        staffMember={selectedStaff}
-        onComplete={handleCheckoutComplete}
-        onBack={() => {
-          setIsCheckoutOpen(false)
-          setIsDetailOpen(true)
-        }}
-      />
     </div>
   )
 }

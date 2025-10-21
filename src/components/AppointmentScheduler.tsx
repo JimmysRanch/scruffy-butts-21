@@ -20,7 +20,6 @@ import {
   CaretLeft, CaretRight, List, CalendarBlank, UserCircle, Dog, Package,
   Bell, BellSlash, Copy, Check, WarningCircle, ArrowClockwise, CreditCard
 } from '@phosphor-icons/react'
-import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 import { format, addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, addWeeks, addMonths, isSameDay, parseISO, isToday, isBefore, startOfDay } from 'date-fns'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -903,24 +902,6 @@ export function AppointmentScheduler({ onNavigateToNewAppointment, onNavigateToD
           )}
         </SheetContent>
       </Sheet>
-
-      <AppointmentCheckout
-        open={isCheckoutOpen}
-        onOpenChange={(open) => {
-          setIsCheckoutOpen(open)
-          if (!open && selectedAppointment) {
-            setIsDetailOpen(true)
-          }
-        }}
-        appointment={selectedAppointment}
-        customer={selectedCustomer || null}
-        staffMember={selectedStaff}
-        onComplete={handleCheckoutComplete}
-        onBack={() => {
-          setIsCheckoutOpen(false)
-          setIsDetailOpen(true)
-        }}
-      />
     </div>
   )
 }

@@ -12,7 +12,6 @@ import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsW
 import { MonthlyRevenueWidget } from '@/components/widgets/MonthlyRevenueWidget'
 import { AverageTicketWidget } from '@/components/widgets/AverageTicketWidget'
 import { GroomerWorkloadWidget } from '@/components/widgets/GroomerWorkloadWidget'
-import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
@@ -496,19 +495,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           )}
         </SheetContent>
       </Sheet>
-
-      <AppointmentCheckout
-        open={isCheckoutOpen}
-        onOpenChange={setIsCheckoutOpen}
-        appointment={selectedAppointment}
-        customer={selectedCustomer || null}
-        staffMember={selectedStaff}
-        onComplete={handleCheckoutComplete}
-        onBack={() => {
-          setIsCheckoutOpen(false)
-          setIsDetailOpen(true)
-        }}
-      />
     </div>
   )
 }

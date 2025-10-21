@@ -13,8 +13,9 @@ import { GroomerStats } from '@/components/GroomerStats'
 import { NewAppointment } from '@/components/NewAppointment'
 import { DashboardCustomization } from '@/components/DashboardCustomization'
 import { AppointmentDetail } from '@/components/AppointmentDetail'
+import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard' | 'appointment-detail'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard' | 'appointment-detail' | 'appointment-checkout'
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'system'
@@ -26,7 +27,7 @@ function App() {
   const [currentView, setCurrentView] = useState<View>(() => {
     const params = new URLSearchParams(window.location.search)
     const view = params.get('view') as View | null
-    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings', 'new-appointment', 'add-pet', 'edit-pet', 'customize-dashboard', 'appointment-detail'].includes(view)
+    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings', 'new-appointment', 'add-pet', 'edit-pet', 'customize-dashboard', 'appointment-detail', 'appointment-checkout'].includes(view)
       ? view
       : 'dashboard'
   })
@@ -45,7 +46,7 @@ function App() {
     const params = new URLSearchParams(window.location.search)
     if (currentView !== 'dashboard') {
       params.set('view', currentView)
-      if (currentView === 'appointment-detail' && selectedAppointmentId) {
+      if ((currentView === 'appointment-detail' || currentView === 'appointment-checkout') && selectedAppointmentId) {
         params.set('appointmentId', selectedAppointmentId)
       } else {
         params.delete('appointmentId')
@@ -111,6 +112,32 @@ function App() {
             onBack={() => setCurrentView('appointments')}
             onEdit={(appointment) => {
               setCurrentView('appointments')
+            }}
+            onNavigateToCheckout={(appointmentId: string) => {
+              setSelectedAppointmentId(appointmentId)
+              setCurrentView('appointment-checkout')
+            }}
+          />
+        )
+      case 'appointment-checkout':
+        if (!selectedAppointmentId) {
+          setCurrentView('appointments')
+          return null
+        }
+        const checkoutAppointment = (appointments || []).find(apt => apt.id === selectedAppointmentId)
+        if (!checkoutAppointment) {
+          setCurrentView('appointments')
+          return null
+        }
+        return (
+          <AppointmentCheckout 
+            appointment={checkoutAppointment}
+            onBack={() => {
+              setCurrentView('appointment-detail')
+            }}
+            onComplete={() => {
+              setCurrentView('appointments')
+              setSelectedAppointmentId(null)
             }}
           />
         )

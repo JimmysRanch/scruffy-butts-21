@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,22 +8,19 @@ import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { 
   CreditCard, 
-  Money,
   Check,
   Bell,
   BellRinging,
   Phone,
   Dog,
   Package,
-  User,
   Plus,
   Minus,
   Trash,
   ShoppingBag,
-  ArrowLeft,
+  CaretLeft,
   Sparkle
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
@@ -124,30 +120,20 @@ interface LineItem {
 }
 
 interface AppointmentCheckoutProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  appointment: Appointment | null
-  customer: Customer | null
-  staffMember?: StaffMember | null
-  onComplete: (appointmentId: string, paymentData: {
-    paymentMethod: 'cash' | 'card' | 'cashapp' | 'chime'
-    amountPaid: number
-    tip: number
-    discount: number
-  }) => void
-  onBack?: () => void
+  appointment: Appointment
+  onBack: () => void
+  onComplete: () => void
 }
 
 export function AppointmentCheckout({ 
-  open, 
-  onOpenChange, 
   appointment, 
-  customer,
-  staffMember,
   onComplete,
   onBack
 }: AppointmentCheckoutProps) {
   const [transactions, setTransactions] = useKV<Transaction[]>('transactions', [])
+  const [appointments, setAppointments] = useKV<Appointment[]>('appointments', [])
+  const [customers] = useKV<Customer[]>('customers', [])
+  const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
   const [services] = useKV<Service[]>('services', [])
   const [products] = useKV<Product[]>('inventory', [])
   
@@ -162,41 +148,35 @@ export function AppointmentCheckout({
 
   const TAX_RATE = 0.0825
 
-  useEffect(() => {
-    console.log('AppointmentCheckout - open state changed:', open, 'appointment:', appointment?.id)
-    if (open) {
-      console.log('Sheet should be visible now')
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [open, appointment])
+  const customer = customers?.find(c => c.id === appointment.customerId)
+  const staffMember = appointment.staffId 
+    ? staffMembers?.find(s => s.id === appointment.staffId)
+    : null
 
   useEffect(() => {
-    if (appointment && open) {
-      const appointmentServiceItem: LineItem = {
-        id: `appointment-service-${appointment.id}`,
-        type: 'service',
-        itemId: appointment.serviceId,
-        name: appointment.service,
-        price: appointment.price,
-        quantity: 1,
-        originalAppointmentService: true
-      }
-      setLineItems([appointmentServiceItem])
-      setAcknowledged(appointment.pickupNotificationAcknowledged || false)
-      setShowAddItems(false)
-      setTipAmount(0)
-      setDiscountPercent(0)
-      setPaymentMethod('card')
-      setApplyTax(true)
-    }
-  }, [appointment, open])
+    window.scrollTo(0, 0)
+  }, [])
 
-  if (!appointment || !customer) return null
+  useEffect(() => {
+    const appointmentServiceItem: LineItem = {
+      id: `appointment-service-${appointment.id}`,
+      type: 'service',
+      itemId: appointment.serviceId,
+      name: appointment.service,
+      price: appointment.price,
+      quantity: 1,
+      originalAppointmentService: true
+    }
+    setLineItems([appointmentServiceItem])
+    setAcknowledged(appointment.pickupNotificationAcknowledged || false)
+    setShowAddItems(false)
+    setTipAmount(0)
+    setDiscountPercent(0)
+    setPaymentMethod('card')
+    setApplyTax(true)
+  }, [appointment])
+
+  if (!customer) return null
 
   const addService = (service: Service) => {
     const existingItem = lineItems.find(
@@ -354,12 +334,22 @@ export function AppointmentCheckout({
 
       setTransactions((current) => [transaction, ...(current || [])])
 
-      onComplete(appointment.id, {
-        paymentMethod,
-        amountPaid: calculateTotal(),
-        tip: tipAmount,
-        discount: calculateDiscount()
-      })
+      setAppointments((current) =>
+        (current || []).map(apt => {
+          if (apt.id === appointment.id) {
+            return {
+              ...apt,
+              status: 'completed' as const,
+              paymentCompleted: true,
+              paymentMethod: paymentMethod,
+              amountPaid: calculateTotal(),
+              pickedUpTime: new Date().toISOString(),
+              checkOutTime: new Date().toISOString()
+            }
+          }
+          return apt
+        })
+      )
 
       toast.success(
         <div className="flex items-center space-x-2">
@@ -374,27 +364,8 @@ export function AppointmentCheckout({
       setAcknowledged(false)
       setShowAddItems(false)
       setIsProcessing(false)
-      onOpenChange(false)
+      onComplete()
     }, 1500)
-  }
-
-  const handleBack = () => {
-    setShowAddItems(false)
-    setLineItems([{
-      id: `appointment-service-${appointment.id}`,
-      type: 'service',
-      itemId: appointment.serviceId,
-      name: appointment.service,
-      price: appointment.price,
-      quantity: 1,
-      originalAppointmentService: true
-    }])
-    setTipAmount(0)
-    setDiscountPercent(0)
-    if (onBack) {
-      onBack()
-      onOpenChange(false)
-    }
   }
 
   const notificationSent = appointment.pickupNotificationSent
@@ -404,206 +375,202 @@ export function AppointmentCheckout({
   const availableProducts = products || []
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} modal={true}>
-      <SheetContent 
-        side="right" 
-        className="p-0 flex flex-col overflow-hidden"
-        style={{ width: '100%', maxWidth: '48rem' }}
-      >
-        <SheetHeader className="px-6 pt-6 pb-4 border-b border-white/10 flex-shrink-0">
+    <div className="max-w-4xl mx-auto space-y-4">
+      <div className="glass-card rounded-[1.25rem] overflow-hidden p-4">
+        <Button 
+          variant="ghost" 
+          onClick={onBack}
+          className="mb-2"
+        >
+          <CaretLeft size={18} className="mr-2" />
+          Back to Appointment
+        </Button>
+      </div>
+
+      <div className="glass-card rounded-[1.25rem] overflow-hidden p-6">
+        <div className="space-y-6">
           <div className="flex items-center gap-3">
-            {onBack && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleBack}
-                className="h-9 w-9"
-              >
-                <ArrowLeft size={18} />
-              </Button>
-            )}
-            <div className="flex-1">
-              <SheetTitle className="flex items-center space-x-2 text-lg">
-                <CreditCard size={24} className="text-primary" />
-                <span>Checkout - {appointment.petName}</span>
-              </SheetTitle>
-              <SheetDescription className="text-sm text-white/60 mt-1">
+            <div className="p-3 rounded-xl bg-primary/10">
+              <CreditCard size={32} className="text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-white/90">Checkout</h1>
+              <p className="text-base text-white/60 mt-1">
                 {showAddItems ? 'Add services & products' : 'Complete payment and mark as picked up'}
-              </SheetDescription>
+              </p>
             </div>
           </div>
-        </SheetHeader>
 
-        <ScrollArea className="flex-1 px-6">
-          <div className="py-4 pb-8 space-y-4">
-            {!showAddItems ? (
-              <>
-                <Card className="border-2 bg-gradient-to-br from-primary/5 to-transparent">
-                  <CardContent className="p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-primary/10">
-                          <Dog size={24} className="text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-lg">{appointment.petName}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {customer.firstName} {customer.lastName}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <Separator />
-                      
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Package size={16} className="text-muted-foreground" />
-                          <span>{appointment.service}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Phone size={16} className="text-muted-foreground" />
-                          <span>{customer.phone}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+          <Separator />
 
-                <Card className={cn(
-                  'border-2 transition-all',
-                  notificationSent ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'
-                )}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        {notificationSent ? (
-                          <BellRinging size={20} className="text-green-600" weight="fill" />
-                        ) : (
-                          <Bell size={20} className="text-yellow-600" />
-                        )}
-                        <span className="font-semibold text-sm">Pickup Notification</span>
+          {!showAddItems ? (
+            <>
+              <Card className="border-2 bg-gradient-to-br from-primary/5 to-transparent">
+                <CardContent className="p-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-primary/10">
+                        <Dog size={24} className="text-primary" />
                       </div>
-                      <Badge variant={notificationSent ? "default" : "secondary"}>
-                        {notificationSent ? 'Sent' : 'Not Sent'}
-                      </Badge>
-                    </div>
-                    
-                    {notificationSent && (
-                      <>
-                        <p className="text-xs text-muted-foreground mb-3">
-                          Customer has been notified that {appointment.petName} is ready for pickup.
+                      <div>
+                        <h3 className="font-semibold text-lg">{appointment.petName}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {customer.firstName} {customer.lastName}
                         </p>
-                        
-                        {!notificationAck && (
-                          <Button 
-                            onClick={handleAcknowledgeNotification}
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                          >
-                            <Check size={16} className="mr-2" />
-                            Acknowledge Customer Arrival
-                          </Button>
-                        )}
-                        
-                        {notificationAck && (
-                          <div className="flex items-center gap-2 text-sm text-green-700 font-medium">
-                            <Check size={16} weight="bold" />
-                            <span>Customer arrival confirmed</span>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-
-                <Card className="border-2">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-semibold text-sm">Items</h3>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowAddItems(true)}
-                        className="h-8"
-                      >
-                        <Plus size={14} className="mr-1.5" />
-                        Add Items
-                      </Button>
+                      </div>
                     </div>
                     
-                    <div className="space-y-2">
-                      <AnimatePresence>
-                        {lineItems.map((item) => (
-                          <motion.div
-                            key={item.id}
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-                          >
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <p className="font-medium text-sm">{item.name}</p>
-                                {item.originalAppointmentService && (
-                                  <Badge variant="secondary" className="text-xs">Service</Badge>
-                                )}
-                                {item.type === 'product' && (
-                                  <Badge variant="outline" className="text-xs">Product</Badge>
-                                )}
-                              </div>
-                              <p className="text-xs text-muted-foreground">
-                                ${item.price.toFixed(2)} × {item.quantity}
-                              </p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              {!item.originalAppointmentService && (
-                                <div className="flex items-center gap-1">
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => updateQuantity(item.id, -1)}
-                                    className="h-6 w-6 p-0"
-                                  >
-                                    <Minus size={12} />
-                                  </Button>
-                                  <span className="text-sm font-medium w-6 text-center">
-                                    {item.quantity}
-                                  </span>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => updateQuantity(item.id, 1)}
-                                    className="h-6 w-6 p-0"
-                                  >
-                                    <Plus size={12} />
-                                  </Button>
-                                </div>
+                    <Separator />
+                    
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Package size={16} className="text-muted-foreground" />
+                        <span>{appointment.service}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Phone size={16} className="text-muted-foreground" />
+                        <span>{customer.phone}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className={cn(
+                'border-2 transition-all',
+                notificationSent ? 'border-green-500/50 bg-green-500/10' : 'border-yellow-500/50 bg-yellow-500/10'
+              )}>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      {notificationSent ? (
+                        <BellRinging size={20} className="text-green-400" weight="fill" />
+                      ) : (
+                        <Bell size={20} className="text-yellow-400" />
+                      )}
+                      <span className="font-semibold text-sm text-white/90">Pickup Notification</span>
+                    </div>
+                    <Badge variant={notificationSent ? "default" : "secondary"}>
+                      {notificationSent ? 'Sent' : 'Not Sent'}
+                    </Badge>
+                  </div>
+                  
+                  {notificationSent && (
+                    <>
+                      <p className="text-xs text-white/70 mb-3">
+                        Customer has been notified that {appointment.petName} is ready for pickup.
+                      </p>
+                      
+                      {!notificationAck && (
+                        <Button 
+                          onClick={handleAcknowledgeNotification}
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                        >
+                          <Check size={16} className="mr-2" />
+                          Acknowledge Customer Arrival
+                        </Button>
+                      )}
+                      
+                      {notificationAck && (
+                        <div className="flex items-center gap-2 text-sm text-green-400 font-medium">
+                          <Check size={16} weight="bold" />
+                          <span>Customer arrival confirmed</span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="border-2">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-sm text-white/90">Items</h3>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowAddItems(true)}
+                      className="h-8"
+                    >
+                      <Plus size={14} className="mr-1.5" />
+                      Add Items
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <AnimatePresence>
+                      {lineItems.map((item) => (
+                        <motion.div
+                          key={item.id}
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-sm">{item.name}</p>
+                              {item.originalAppointmentService && (
+                                <Badge variant="secondary" className="text-xs">Service</Badge>
                               )}
-                              <p className="font-bold text-sm min-w-[60px] text-right">
-                                ${(item.price * item.quantity).toFixed(2)}
-                              </p>
-                              {!item.originalAppointmentService && (
+                              {item.type === 'product' && (
+                                <Badge variant="outline" className="text-xs">Product</Badge>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              ${item.price.toFixed(2)} × {item.quantity}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            {!item.originalAppointmentService && (
+                              <div className="flex items-center gap-1">
                                 <Button
                                   size="sm"
-                                  variant="ghost"
-                                  onClick={() => removeItem(item.id)}
+                                  variant="outline"
+                                  onClick={() => updateQuantity(item.id, -1)}
                                   className="h-6 w-6 p-0"
                                 >
-                                  <Trash size={14} className="text-destructive" />
+                                  <Minus size={12} />
                                 </Button>
-                              )}
-                            </div>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </div>
-                  </CardContent>
-                </Card>
+                                <span className="text-sm font-medium w-6 text-center">
+                                  {item.quantity}
+                                </span>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => updateQuantity(item.id, 1)}
+                                  className="h-6 w-6 p-0"
+                                >
+                                  <Plus size={12} />
+                                </Button>
+                              </div>
+                            )}
+                            <p className="font-bold text-sm min-w-[60px] text-right">
+                              ${(item.price * item.quantity).toFixed(2)}
+                            </p>
+                            {!item.originalAppointmentService && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => removeItem(item.id)}
+                                className="h-6 w-6 p-0"
+                              >
+                                <Trash size={14} className="text-destructive" />
+                              </Button>
+                            )}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                </CardContent>
+              </Card>
 
-                <Card className="border-2">
-                  <CardContent className="p-4 space-y-4">
-                    <h3 className="font-semibold text-sm">Payment Details</h3>
+              <Card className="border-2">
+                <CardContent className="p-5 space-y-4">
+                  <h3 className="font-semibold text-sm text-white/90">Payment Details</h3>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
@@ -621,7 +588,7 @@ export function AppointmentCheckout({
                             Math.max(0, Math.min(100, Number(e.target.value)))
                           )
                         }
-                        className="h-9"
+                        className="h-10"
                       />
                     </div>
                     <div>
@@ -637,7 +604,7 @@ export function AppointmentCheckout({
                         onChange={(e) =>
                           setTipAmount(Math.max(0, Number(e.target.value)))
                         }
-                        className="h-9"
+                        className="h-10"
                       />
                     </div>
                   </div>
@@ -658,7 +625,7 @@ export function AppointmentCheckout({
                       Payment Method
                     </Label>
                     <Select value={paymentMethod} onValueChange={(value: any) => setPaymentMethod(value)}>
-                      <SelectTrigger className="h-9">
+                      <SelectTrigger className="h-10">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -674,30 +641,30 @@ export function AppointmentCheckout({
 
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Subtotal:</span>
-                      <span className="font-medium">${calculateSubtotal().toFixed(2)}</span>
+                      <span className="text-white/60">Subtotal:</span>
+                      <span className="font-medium text-white/90">${calculateSubtotal().toFixed(2)}</span>
                     </div>
                     {discountPercent > 0 && (
-                      <div className="flex justify-between text-green-600">
+                      <div className="flex justify-between text-green-400">
                         <span>Discount ({discountPercent}%):</span>
                         <span>-${calculateDiscount().toFixed(2)}</span>
                       </div>
                     )}
                     {applyTax && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Tax (8.25%):</span>
-                        <span className="font-medium">${calculateTax().toFixed(2)}</span>
+                        <span className="text-white/60">Tax (8.25%):</span>
+                        <span className="font-medium text-white/90">${calculateTax().toFixed(2)}</span>
                       </div>
                     )}
                     {tipAmount > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Tip:</span>
-                        <span className="font-medium">${tipAmount.toFixed(2)}</span>
+                        <span className="text-white/60">Tip:</span>
+                        <span className="font-medium text-white/90">${tipAmount.toFixed(2)}</span>
                       </div>
                     )}
                     <Separator />
                     <div className="flex justify-between text-lg font-bold">
-                      <span>Total:</span>
+                      <span className="text-white/90">Total:</span>
                       <span className="text-primary">${calculateTotal().toFixed(2)}</span>
                     </div>
                   </div>
@@ -723,117 +690,102 @@ export function AppointmentCheckout({
                       Note: Customer arrival not yet acknowledged
                     </p>
                   )}
-                  </CardContent>
-                </Card>
-              </>
-            ) : (
-              <>
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold">Add Services & Products</h3>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowAddItems(false)}
-                  >
-                    Done
-                  </Button>
-                </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-white/90">Add Services & Products</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAddItems(false)}
+                >
+                  Done
+                </Button>
+              </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <Sparkle size={16} className="text-accent" weight="fill" />
-                      <h4 className="font-semibold text-sm">Available Services</h4>
-                    </div>
-                    <div className="grid grid-cols-1 gap-2">
-                      {availableServices.length === 0 ? (
-                        <p className="text-sm text-muted-foreground py-4 text-center">
-                          No additional services available
-                        </p>
-                      ) : (
-                        availableServices.map((service) => (
-                          <motion.button
-                            key={service.id}
-                            whileHover={{ scale: 1.01 }}
-                            whileTap={{ scale: 0.99 }}
-                            onClick={() => addService(service)}
-                            className="w-full text-left bg-card rounded-lg p-3 hover:bg-primary/5 transition-colors border border-border"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="font-medium text-sm">{service.name}</p>
-                                <p className="text-xs text-muted-foreground">{service.category}</p>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Badge variant="secondary">${service.price.toFixed(2)}</Badge>
-                                <Plus size={16} className="text-primary" />
-                              </div>
-                            </div>
-                          </motion.button>
-                        ))
-                      )}
-                    </div>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkle size={16} className="text-accent" weight="fill" />
+                    <h4 className="font-semibold text-sm text-white/90">Available Services</h4>
                   </div>
-
-                  <Separator />
-
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <ShoppingBag size={16} className="text-green-500" weight="fill" />
-                      <h4 className="font-semibold text-sm">Retail Products</h4>
-                    </div>
-                    <div className="grid grid-cols-1 gap-2">
-                      {availableProducts.length === 0 ? (
-                        <p className="text-sm text-muted-foreground py-4 text-center">
-                          No products available
-                        </p>
-                      ) : (
-                        availableProducts.map((product) => (
-                          <motion.button
-                            key={product.id}
-                            whileHover={{ scale: 1.01 }}
-                            whileTap={{ scale: 0.99 }}
-                            onClick={() => addProduct(product)}
-                            disabled={product.stock === 0}
-                            className="w-full text-left bg-card rounded-lg p-3 hover:bg-primary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-border"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="font-medium text-sm">{product.name}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  Stock: {product.stock} • {product.category}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Badge variant="secondary">${product.price.toFixed(2)}</Badge>
-                                <Plus size={16} className="text-primary" />
-                              </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {availableServices.length === 0 ? (
+                      <p className="text-sm text-muted-foreground py-4 text-center">
+                        No additional services available
+                      </p>
+                    ) : (
+                      availableServices.map((service) => (
+                        <motion.button
+                          key={service.id}
+                          whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.99 }}
+                          onClick={() => addService(service)}
+                          className="w-full text-left bg-card rounded-lg p-3 hover:bg-primary/5 transition-colors border border-border"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium text-sm">{service.name}</p>
+                              <p className="text-xs text-muted-foreground">{service.category}</p>
                             </div>
-                          </motion.button>
-                        ))
-                      )}
-                    </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="secondary">${service.price.toFixed(2)}</Badge>
+                              <Plus size={16} className="text-primary" />
+                            </div>
+                          </div>
+                        </motion.button>
+                      ))
+                    )}
                   </div>
                 </div>
-              </>
-            )}
-          </div>
-        </ScrollArea>
-      </SheetContent>
-    </Sheet>
+
+                <Separator />
+
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <ShoppingBag size={16} className="text-green-500" weight="fill" />
+                    <h4 className="font-semibold text-sm text-white/90">Retail Products</h4>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {availableProducts.length === 0 ? (
+                      <p className="text-sm text-muted-foreground py-4 text-center">
+                        No products available
+                      </p>
+                    ) : (
+                      availableProducts.map((product) => (
+                        <motion.button
+                          key={product.id}
+                          whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.99 }}
+                          onClick={() => addProduct(product)}
+                          disabled={product.stock === 0}
+                          className="w-full text-left bg-card rounded-lg p-3 hover:bg-primary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-border"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium text-sm">{product.name}</p>
+                              <p className="text-xs text-muted-foreground">
+                                Stock: {product.stock} • {product.category}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="secondary">${product.price.toFixed(2)}</Badge>
+                              <Plus size={16} className="text-primary" />
+                            </div>
+                          </div>
+                        </motion.button>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
-
-/*
-OLD CODE BELOW - TO BE REMOVED
-
-            )}
-        </ScrollArea>
-      </SheetContent>
-        </ScrollArea>
-    </Sheet>
-    </Sheet>
-// TEST
-}
-
-*/

@@ -98,13 +98,13 @@ interface AppointmentDetailProps {
   appointmentId: string
   onBack: () => void
   onEdit: (appointment: Appointment) => void
+  onNavigateToCheckout: (appointmentId: string) => void
 }
 
-export function AppointmentDetail({ appointmentId, onBack, onEdit }: AppointmentDetailProps) {
+export function AppointmentDetail({ appointmentId, onBack, onEdit, onNavigateToCheckout }: AppointmentDetailProps) {
   const [appointments, setAppointments] = useKV<Appointment[]>('appointments', [])
   const [customers] = useKV<Customer[]>('customers', [])
   const [staffMembers] = useKV<StaffMember[]>('staff-members', [])
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -171,35 +171,7 @@ export function AppointmentDetail({ appointmentId, onBack, onEdit }: Appointment
     onBack()
   }
 
-  const handleCheckoutComplete = (
-    appointmentId: string, 
-    paymentData: {
-      paymentMethod: 'cash' | 'card' | 'cashapp' | 'chime'
-      amountPaid: number
-      tip: number
-      discount: number
-    }
-  ) => {
-    setAppointments((current) =>
-      (current || []).map(apt => {
-        if (apt.id === appointmentId) {
-          return {
-            ...apt,
-            status: 'completed' as const,
-            paymentCompleted: true,
-            paymentMethod: paymentData.paymentMethod,
-            amountPaid: paymentData.amountPaid,
-            pickedUpTime: new Date().toISOString(),
-            checkOutTime: new Date().toISOString()
-          }
-        }
-        return apt
-      })
-    )
-    setIsCheckoutOpen(false)
-    toast.success('Appointment completed successfully!')
-    onBack()
-  }
+
 
   const getNextAction = () => {
     switch (appointment.status) {
@@ -215,8 +187,7 @@ export function AppointmentDetail({ appointmentId, onBack, onEdit }: Appointment
         return { 
           label: 'Checkout & Complete', 
           action: () => {
-            console.log('Opening checkout sheet')
-            setIsCheckoutOpen(true)
+            onNavigateToCheckout(appointmentId)
           }, 
           icon: CreditCard 
         }
@@ -228,8 +199,7 @@ export function AppointmentDetail({ appointmentId, onBack, onEdit }: Appointment
   const nextAction = getNextAction()
 
   return (
-    <>
-      <div className="max-w-4xl mx-auto space-y-4">
+    <div className="max-w-4xl mx-auto space-y-4">
         <div className="glass-card rounded-[1.25rem] overflow-hidden p-4">
           <Button 
             variant="ghost" 
@@ -455,16 +425,5 @@ export function AppointmentDetail({ appointmentId, onBack, onEdit }: Appointment
           </div>
         </div>
       </div>
-
-      <AppointmentCheckout
-        open={isCheckoutOpen}
-        onOpenChange={setIsCheckoutOpen}
-        appointment={appointment}
-        customer={customer || null}
-        staffMember={staffMember}
-        onComplete={handleCheckoutComplete}
-        onBack={() => setIsCheckoutOpen(false)}
-      />
-    </>
   )
 }
