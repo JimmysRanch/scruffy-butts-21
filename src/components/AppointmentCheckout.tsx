@@ -396,7 +396,7 @@ export function AppointmentCheckout({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl p-0 flex flex-col overflow-hidden z-[150]">
+      <SheetContent side="right" className="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl p-0 flex flex-col overflow-hidden">
         <SheetHeader className="px-6 pt-6 pb-4 border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-3">
             {onBack && (
@@ -690,7 +690,7 @@ export function AppointmentCheckout({
 
                   <Button
                     onClick={handleProcessPayment}
-                    disabled={!notificationAck || isProcessing}
+                    disabled={isProcessing}
                     className="w-full"
                     size="lg"
                   >
@@ -705,8 +705,8 @@ export function AppointmentCheckout({
                   </Button>
                   
                   {!notificationAck && (
-                    <p className="text-xs text-center text-muted-foreground">
-                      Acknowledge customer arrival before checkout
+                    <p className="text-xs text-center text-yellow-400">
+                      Note: Customer arrival not yet acknowledged
                     </p>
                   )}
                 </div>
