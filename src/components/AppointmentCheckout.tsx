@@ -727,7 +727,7 @@ export function AppointmentCheckout({
                 </Card>
               </>
             ) : (
-              <div className="space-y-4">
+              <>
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold">Add Services & Products</h3>
                   <Button
@@ -815,7 +815,7 @@ export function AppointmentCheckout({
                     </div>
                   </div>
                 </div>
-              </div>
+              </>
             )}
           </div>
         </ScrollArea>
