@@ -289,7 +289,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                             <CaretUpDown size={16} className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[300px] p-0">
+                        <PopoverContent className="w-[300px] p-0" side="bottom" align="start">
                           <Command>
                             <CommandInput placeholder="Search breed..." />
                             <CommandList>
@@ -302,7 +302,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                                     onSelect={(currentValue) => {
                                       // Command component lowercases the value, so find the original breed
                                       const selectedBreed = DOG_BREEDS.find(b => b.toLowerCase() === currentValue.toLowerCase()) || currentValue
-                                      updatePet(index, 'breed', selectedBreed === pet.breed ? '' : selectedBreed)
+                                      updatePet(index, 'breed', selectedBreed)
                                       if (selectedBreed !== 'Other') {
                                         updatePet(index, 'customBreed', '')
                                       }
