@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Switch } from '@/components/ui/switch'
-import { Plus, UserCircle, Phone, EnvelopeSimple, MapPin, Calendar, Star, Scissors, ArrowLeft } from '@phosphor-icons/react'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Plus, UserCircle, Phone, EnvelopeSimple, MapPin, Calendar, Star, Scissors, ArrowLeft, Trash } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { StaffSchedule } from './StaffSchedule'
 
@@ -49,6 +50,18 @@ export interface StaffMember {
   rating: number
   canBeBooked: boolean
   bookableServices: string[]
+  // Compensation fields
+  commissionEnabled: boolean
+  commissionPercent: number
+  hourlyPayEnabled: boolean
+  hourlyRate: number
+  salaryEnabled: boolean
+  salaryAmount: number
+  weeklyGuaranteeEnabled: boolean
+  weeklyGuarantee: number
+  guaranteePayoutMethod: 'both' | 'higher'
+  teamOverridesEnabled: boolean
+  teamOverrides: Array<{ staffId: string; overridePercent: number }>
 }
 
 interface StaffProfileProps {
@@ -216,7 +229,19 @@ export function StaffManager() {
     status: 'active' as 'active' | 'inactive',
     rating: 5,
     canBeBooked: true,
-    bookableServices: [] as string[]
+    bookableServices: [] as string[],
+    // Compensation fields
+    commissionEnabled: false,
+    commissionPercent: 50,
+    hourlyPayEnabled: false,
+    hourlyRate: 0,
+    salaryEnabled: false,
+    salaryAmount: 0,
+    weeklyGuaranteeEnabled: false,
+    weeklyGuarantee: 0,
+    guaranteePayoutMethod: 'higher' as 'both' | 'higher',
+    teamOverridesEnabled: false,
+    teamOverrides: [] as Array<{ staffId: string; overridePercent: number }>
   })
 
   const isCompact = appearance?.compactMode || false
@@ -261,7 +286,19 @@ export function StaffManager() {
       status: 'active' as 'active' | 'inactive',
       rating: 5,
       canBeBooked: true,
-      bookableServices: []
+      bookableServices: [],
+      // Compensation fields
+      commissionEnabled: false,
+      commissionPercent: 50,
+      hourlyPayEnabled: false,
+      hourlyRate: 0,
+      salaryEnabled: false,
+      salaryAmount: 0,
+      weeklyGuaranteeEnabled: false,
+      weeklyGuarantee: 0,
+      guaranteePayoutMethod: 'higher' as 'both' | 'higher',
+      teamOverridesEnabled: false,
+      teamOverrides: []
     })
     setEditingStaff(null)
   }
@@ -269,7 +306,7 @@ export function StaffManager() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.position) {
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.position) {
       toast.error('Please fill in all required fields')
       return
     }
@@ -300,7 +337,18 @@ export function StaffManager() {
                 rating: formData.rating,
                 specialties: specialtiesArray,
                 canBeBooked: formData.canBeBooked,
-                bookableServices: formData.bookableServices
+                bookableServices: formData.bookableServices,
+                commissionEnabled: formData.commissionEnabled,
+                commissionPercent: formData.commissionPercent,
+                hourlyPayEnabled: formData.hourlyPayEnabled,
+                hourlyRate: formData.hourlyRate,
+                salaryEnabled: formData.salaryEnabled,
+                salaryAmount: formData.salaryAmount,
+                weeklyGuaranteeEnabled: formData.weeklyGuaranteeEnabled,
+                weeklyGuarantee: formData.weeklyGuarantee,
+                guaranteePayoutMethod: formData.guaranteePayoutMethod,
+                teamOverridesEnabled: formData.teamOverridesEnabled,
+                teamOverrides: formData.teamOverrides
               }
             : s
         )
@@ -325,7 +373,18 @@ export function StaffManager() {
         rating: formData.rating,
         specialties: specialtiesArray,
         canBeBooked: formData.canBeBooked,
-        bookableServices: formData.bookableServices
+        bookableServices: formData.bookableServices,
+        commissionEnabled: formData.commissionEnabled,
+        commissionPercent: formData.commissionPercent,
+        hourlyPayEnabled: formData.hourlyPayEnabled,
+        hourlyRate: formData.hourlyRate,
+        salaryEnabled: formData.salaryEnabled,
+        salaryAmount: formData.salaryAmount,
+        weeklyGuaranteeEnabled: formData.weeklyGuaranteeEnabled,
+        weeklyGuarantee: formData.weeklyGuarantee,
+        guaranteePayoutMethod: formData.guaranteePayoutMethod,
+        teamOverridesEnabled: formData.teamOverridesEnabled,
+        teamOverrides: formData.teamOverrides
       }
 
       setStaff(currentStaff => [...(currentStaff || []), newStaff])
@@ -354,7 +413,18 @@ export function StaffManager() {
       status: staffMember.status,
       rating: staffMember.rating,
       canBeBooked: staffMember.canBeBooked ?? true,
-      bookableServices: staffMember.bookableServices ?? []
+      bookableServices: staffMember.bookableServices ?? [],
+      commissionEnabled: staffMember.commissionEnabled ?? false,
+      commissionPercent: staffMember.commissionPercent ?? 50,
+      hourlyPayEnabled: staffMember.hourlyPayEnabled ?? false,
+      hourlyRate: staffMember.hourlyRate ?? 0,
+      salaryEnabled: staffMember.salaryEnabled ?? false,
+      salaryAmount: staffMember.salaryAmount ?? 0,
+      weeklyGuaranteeEnabled: staffMember.weeklyGuaranteeEnabled ?? false,
+      weeklyGuarantee: staffMember.weeklyGuarantee ?? 0,
+      guaranteePayoutMethod: staffMember.guaranteePayoutMethod ?? 'higher',
+      teamOverridesEnabled: staffMember.teamOverridesEnabled ?? false,
+      teamOverrides: staffMember.teamOverrides ?? []
     })
     setSelectedStaff(null)
     setShowForm(true)
@@ -439,12 +509,13 @@ export function StaffManager() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
+                  <Label htmlFor="phone">Phone *</Label>
                   <Input
                     id="phone"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="glass-dark"
+                    required
                   />
                 </div>
 
@@ -644,6 +715,296 @@ export function StaffManager() {
                     className="glass-dark"
                   />
                 </div>
+
+                {/* Compensation Section */}
+                <div className="md:col-span-2 space-y-4 pt-4 border-t">
+                  <h3 className="text-lg font-semibold">Compensation</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Combine hourly pay, commission, guarantee, and team overrides to match how this team member earns.
+                  </p>
+
+                  {/* Commission on personal grooms */}
+                  <div className="space-y-3 p-4 rounded-lg border border-border glass-dark">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label className="text-base font-semibold">Commission on personal grooms</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Pay a percentage of every dog this staff member personally grooms.
+                        </p>
+                      </div>
+                      <Switch
+                        checked={formData.commissionEnabled}
+                        onCheckedChange={(checked) => setFormData({ ...formData, commissionEnabled: checked })}
+                      />
+                    </div>
+                    {formData.commissionEnabled && (
+                      <div className="space-y-2">
+                        <Label htmlFor="commission-percent">Commission %</Label>
+                        <Input
+                          id="commission-percent"
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={formData.commissionPercent}
+                          onChange={(e) => setFormData({ ...formData, commissionPercent: parseFloat(e.target.value) || 0 })}
+                          className="glass-dark"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Hourly pay */}
+                  <div className="space-y-3 p-4 rounded-lg border border-border glass-dark">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label className="text-base font-semibold">Hourly pay</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Guarantee an hourly base rate in addition to any other earnings.
+                        </p>
+                      </div>
+                      <Switch
+                        checked={formData.hourlyPayEnabled}
+                        onCheckedChange={(checked) => setFormData({ ...formData, hourlyPayEnabled: checked })}
+                      />
+                    </div>
+                    {formData.hourlyPayEnabled && (
+                      <div className="space-y-2">
+                        <Label htmlFor="hourly-rate">Hourly rate ($)</Label>
+                        <Input
+                          id="hourly-rate"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={formData.hourlyRate}
+                          onChange={(e) => setFormData({ ...formData, hourlyRate: parseFloat(e.target.value) || 0 })}
+                          className="glass-dark"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Salary */}
+                  <div className="space-y-3 p-4 rounded-lg border border-border glass-dark">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label className="text-base font-semibold">Salary</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Track an annual salary amount for reporting and payroll exports.
+                        </p>
+                      </div>
+                      <Switch
+                        checked={formData.salaryEnabled}
+                        onCheckedChange={(checked) => setFormData({ ...formData, salaryEnabled: checked })}
+                      />
+                    </div>
+                    {formData.salaryEnabled && (
+                      <div className="space-y-2">
+                        <Label htmlFor="salary-amount">Salary (annual $)</Label>
+                        <Input
+                          id="salary-amount"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={formData.salaryAmount}
+                          onChange={(e) => setFormData({ ...formData, salaryAmount: parseFloat(e.target.value) || 0 })}
+                          className="glass-dark"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Weekly guarantee vs. commission */}
+                  <div className="space-y-3 p-4 rounded-lg border border-border glass-dark">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label className="text-base font-semibold">Weekly guarantee vs. commission</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Guarantee pay per week and choose whether it's paid alongside their commission or whichever amount is higher.
+                        </p>
+                      </div>
+                      <Switch
+                        checked={formData.weeklyGuaranteeEnabled}
+                        onCheckedChange={(checked) => setFormData({ ...formData, weeklyGuaranteeEnabled: checked })}
+                      />
+                    </div>
+                    {formData.weeklyGuaranteeEnabled && (
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="weekly-guarantee">Weekly guarantee ($)</Label>
+                          <Input
+                            id="weekly-guarantee"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={formData.weeklyGuarantee}
+                            onChange={(e) => setFormData({ ...formData, weeklyGuarantee: parseFloat(e.target.value) || 0 })}
+                            className="glass-dark"
+                          />
+                        </div>
+                        <div className="space-y-3">
+                          <Label>How should the guarantee pay out?</Label>
+                          <RadioGroup
+                            value={formData.guaranteePayoutMethod}
+                            onValueChange={(value: 'both' | 'higher') => setFormData({ ...formData, guaranteePayoutMethod: value })}
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="both" id="payout-both" />
+                              <Label htmlFor="payout-both" className="font-normal cursor-pointer">
+                                Pay the weekly guarantee and their commission
+                                <p className="text-xs text-muted-foreground">
+                                  They receive both the guaranteed amount and whatever commission they earn.
+                                </p>
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="higher" id="payout-higher" />
+                              <Label htmlFor="payout-higher" className="font-normal cursor-pointer">
+                                Pay whichever amount is higher
+                                <p className="text-xs text-muted-foreground">
+                                  Compare their commission earnings to the guarantee and pay the larger amount.
+                                </p>
+                              </Label>
+                            </div>
+                          </RadioGroup>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Team overrides */}
+                  <div className="space-y-3 p-4 rounded-lg border border-border glass-dark">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <Label className="text-base font-semibold">Team overrides</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Pay them an extra share of the appointments completed by groomers they manage. This amount comes out of the business share—the groomers below them keep their full commission.
+                        </p>
+                      </div>
+                      <Switch
+                        checked={formData.teamOverridesEnabled}
+                        onCheckedChange={(checked) => setFormData({ ...formData, teamOverridesEnabled: checked })}
+                      />
+                    </div>
+                    {formData.teamOverridesEnabled && (
+                      <div className="space-y-4">
+                        <p className="text-sm text-muted-foreground">
+                          Add additional staff members first to set up override relationships.
+                        </p>
+                        {formData.teamOverrides.map((override, index) => (
+                          <div key={index} className="flex gap-2 items-end">
+                            <div className="flex-1 space-y-2">
+                              <Label>Team member</Label>
+                              <Select
+                                value={override.staffId}
+                                onValueChange={(value) => {
+                                  const newOverrides = [...formData.teamOverrides]
+                                  newOverrides[index] = { ...override, staffId: value }
+                                  setFormData({ ...formData, teamOverrides: newOverrides })
+                                }}
+                              >
+                                <SelectTrigger className="glass-dark">
+                                  <SelectValue placeholder="Select a groomer" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {(staff || [])
+                                    .filter(s => s.id !== editingStaff?.id)
+                                    .map((s) => (
+                                      <SelectItem key={s.id} value={s.id}>
+                                        {s.firstName} {s.lastName}
+                                      </SelectItem>
+                                    ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="flex-1 space-y-2">
+                              <Label>Override % of appointment revenue</Label>
+                              <Input
+                                type="number"
+                                min="0"
+                                max="100"
+                                value={override.overridePercent}
+                                onChange={(e) => {
+                                  const newOverrides = [...formData.teamOverrides]
+                                  newOverrides[index] = { ...override, overridePercent: parseFloat(e.target.value) || 0 }
+                                  setFormData({ ...formData, teamOverrides: newOverrides })
+                                }}
+                                className="glass-dark"
+                              />
+                            </div>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const newOverrides = formData.teamOverrides.filter((_, i) => i !== index)
+                                setFormData({ ...formData, teamOverrides: newOverrides })
+                              }}
+                              className="glass-button"
+                            >
+                              <Trash size={16} />
+                            </Button>
+                          </div>
+                        ))}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setFormData({
+                              ...formData,
+                              teamOverrides: [...formData.teamOverrides, { staffId: '', overridePercent: 20 }]
+                            })
+                          }}
+                          className="glass-button"
+                        >
+                          Add override
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Pay Summary */}
+                {(formData.commissionEnabled || formData.hourlyPayEnabled || formData.salaryEnabled || formData.weeklyGuaranteeEnabled) && (
+                  <div className="md:col-span-2 space-y-3 p-4 rounded-lg border border-border glass-dark bg-primary/5">
+                    <h4 className="font-semibold text-base">Pay summary</h4>
+                    <ul className="space-y-1.5 text-sm">
+                      {formData.hourlyPayEnabled && formData.hourlyRate > 0 && (
+                        <li className="flex items-start">
+                          <span className="mr-2">•</span>
+                          <span>${formData.hourlyRate.toFixed(2)} per hour base pay.</span>
+                        </li>
+                      )}
+                      {formData.salaryEnabled && formData.salaryAmount > 0 && (
+                        <li className="flex items-start">
+                          <span className="mr-2">•</span>
+                          <span>${formData.salaryAmount.toFixed(2)} salary per year.</span>
+                        </li>
+                      )}
+                      {formData.weeklyGuaranteeEnabled && formData.weeklyGuarantee > 0 && formData.commissionEnabled && (
+                        <li className="flex items-start">
+                          <span className="mr-2">•</span>
+                          <span>
+                            ${formData.weeklyGuarantee.toFixed(2)} per week guaranteed or {formData.commissionPercent}% commission—
+                            {formData.guaranteePayoutMethod === 'higher' ? 'whichever pays more' : 'plus commission'}.
+                          </span>
+                        </li>
+                      )}
+                      {formData.weeklyGuaranteeEnabled && formData.weeklyGuarantee > 0 && !formData.commissionEnabled && (
+                        <li className="flex items-start">
+                          <span className="mr-2">•</span>
+                          <span>${formData.weeklyGuarantee.toFixed(2)} per week guaranteed.</span>
+                        </li>
+                      )}
+                      {formData.commissionEnabled && (!formData.weeklyGuaranteeEnabled || formData.weeklyGuarantee === 0) && (
+                        <li className="flex items-start">
+                          <span className="mr-2">•</span>
+                          <span>{formData.commissionPercent}% commission on personal grooms.</span>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t">
