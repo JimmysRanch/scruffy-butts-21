@@ -223,35 +223,13 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                 rows={4}
               />
             </div>
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button 
-                variant="outline" 
-                onClick={onBack}
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleCreateCustomer}>
-                Add Client
-              </Button>
-            </div>
           </div>
         </CardContent>
       </div>
 
       <div className="glass-card rounded-[1.25rem] overflow-hidden">
         <CardHeader className="border-b border-white/10">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-white/90">Pet Information</CardTitle>
-            <Button 
-              size="sm"
-              onClick={addPet}
-              className="h-8"
-            >
-              <Plus size={16} />
-              Add Pet
-            </Button>
-          </div>
+          <CardTitle className="text-white/90">Pet Information</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="space-y-6">
@@ -328,6 +306,28 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
             ))}
           </div>
         </CardContent>
+      </div>
+
+      <div className="flex items-center justify-between gap-3">
+        <Button 
+          size="sm"
+          onClick={addPet}
+          className="h-9"
+        >
+          <Plus size={16} />
+          Add Pet
+        </Button>
+        <div className="flex gap-3">
+          <Button 
+            variant="outline" 
+            onClick={onBack}
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleCreateCustomer}>
+            Add Client
+          </Button>
+        </div>
       </div>
     </div>
   )
