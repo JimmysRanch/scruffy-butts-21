@@ -502,18 +502,18 @@ export function StaffManager() {
                         </SelectContent>
                       </Select>
                     </div>
-                  </div>
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="hireDate">Hire Date</Label>
-                  <Input
-                    id="hireDate"
-                    type="date"
-                    value={formData.hireDate}
-                    onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
-                    className="glass-dark"
-                  />
+                    <div className="flex-1 space-y-2">
+                      <Label htmlFor="hireDate">Hire Date</Label>
+                      <Input
+                        id="hireDate"
+                        type="date"
+                        value={formData.hireDate}
+                        onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
+                        className="glass-dark"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
