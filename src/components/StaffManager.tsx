@@ -460,14 +460,14 @@ export function StaffManager() {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <div className="flex-1 space-y-2">
+                  <div className="flex gap-1.5">
+                    <div className="flex-1 min-w-0 space-y-2">
                       <Label htmlFor="position">Position *</Label>
                       <Select
                         value={formData.position}
                         onValueChange={(value) => setFormData({ ...formData, position: value })}
                       >
-                        <SelectTrigger id="position" className="glass-dark">
+                        <SelectTrigger id="position" className="glass-dark w-full">
                           <SelectValue placeholder="Select a position" />
                         </SelectTrigger>
                         <SelectContent>
@@ -487,13 +487,13 @@ export function StaffManager() {
                       </Select>
                     </div>
 
-                    <div className="flex-1 space-y-2">
+                    <div className="flex-1 min-w-0 space-y-2">
                       <Label htmlFor="status">Status</Label>
                       <Select
                         value={formData.status}
                         onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}
                       >
-                        <SelectTrigger id="status" className="glass-dark">
+                        <SelectTrigger id="status" className="glass-dark w-full">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -503,14 +503,14 @@ export function StaffManager() {
                       </Select>
                     </div>
 
-                    <div className="flex-1 space-y-2">
+                    <div className="flex-1 min-w-0 space-y-2">
                       <Label htmlFor="hireDate">Hire Date</Label>
                       <Input
                         id="hireDate"
                         type="date"
                         value={formData.hireDate}
                         onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
-                        className="glass-dark"
+                        className="glass-dark h-9"
                       />
                     </div>
                   </div>
