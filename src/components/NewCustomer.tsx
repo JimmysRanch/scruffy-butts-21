@@ -28,7 +28,8 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
     city: '',
     state: 'Texas',
     zip: '',
-    notes: ''
+    notes: '',
+    referralSource: ''
   })
 
   const [pets, setPets] = useState<Omit<Pet, 'id'>[]>([{
@@ -37,6 +38,9 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
     customBreed: '',
     isMixedBreed: false,
     weightClass: undefined,
+    age: undefined,
+    birthday: '',
+    gender: undefined,
     notes: ''
   }])
 
@@ -47,6 +51,9 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
       customBreed: '',
       isMixedBreed: false,
       weightClass: undefined,
+      age: undefined,
+      birthday: '',
+      gender: undefined,
       notes: ''
     }])
   }
@@ -57,7 +64,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
     }
   }
 
-  const updatePet = (index: number, field: keyof Omit<Pet, 'id'>, value: string | boolean) => {
+  const updatePet = (index: number, field: keyof Omit<Pet, 'id'>, value: string | boolean | number | undefined) => {
     const updatedPets = [...pets]
     updatedPets[index] = { ...updatedPets[index], [field]: value }
     setPets(updatedPets)
@@ -218,6 +225,25 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
             </div>
 
             <div>
+              <Label htmlFor="customer-referral" className="text-white/70">How did you hear about us</Label>
+              <Select
+                value={customerForm.referralSource}
+                onValueChange={(value) => setCustomerForm({ ...customerForm, referralSource: value })}
+              >
+                <SelectTrigger id="customer-referral" className="mt-1.5">
+                  <SelectValue placeholder="Select source..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Facebook">Facebook</SelectItem>
+                  <SelectItem value="Nextdoor App">Nextdoor App</SelectItem>
+                  <SelectItem value="Google">Google</SelectItem>
+                  <SelectItem value="Instagram">Instagram</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
               <Label htmlFor="customer-notes" className="text-white/70">Notes</Label>
               <Textarea
                 id="customer-notes"
@@ -314,6 +340,49 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                     />
                   </div>
                 )}
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor={`pet-age-${index}`} className="text-white/70">Age (years)</Label>
+                    <Input
+                      id={`pet-age-${index}`}
+                      type="number"
+                      min="0"
+                      max="30"
+                      value={pet.age || ''}
+                      onChange={(e) => updatePet(index, 'age', e.target.value ? parseInt(e.target.value) : undefined)}
+                      placeholder="Enter age"
+                      className="mt-1.5"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`pet-birthday-${index}`} className="text-white/70">Birthday (optional)</Label>
+                    <Input
+                      id={`pet-birthday-${index}`}
+                      type="date"
+                      value={pet.birthday || ''}
+                      onChange={(e) => updatePet(index, 'birthday', e.target.value)}
+                      className="mt-1.5"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`pet-gender-${index}`} className="text-white/70">Gender</Label>
+                    <Select
+                      value={pet.gender || ''}
+                      onValueChange={(value) => updatePet(index, 'gender', value as 'Male' | 'Female')}
+                    >
+                      <SelectTrigger id={`pet-gender-${index}`} className="mt-1.5">
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Male">Male</SelectItem>
+                        <SelectItem value="Female">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
                 <div>
                   <Label htmlFor={`pet-weight-${index}`} className="text-white/70">Weight Class</Label>

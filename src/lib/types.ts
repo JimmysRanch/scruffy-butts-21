@@ -7,6 +7,9 @@ export interface Pet {
   customBreed?: string
   isMixedBreed?: boolean
   weightClass?: WeightClass
+  age?: number
+  birthday?: string
+  gender?: 'Male' | 'Female'
   notes?: string
 }
 
@@ -23,4 +26,5 @@ export interface Customer {
   state?: string
   zip?: string
   notes?: string
+  referralSource?: string
 }
