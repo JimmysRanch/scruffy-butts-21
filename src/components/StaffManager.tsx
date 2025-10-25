@@ -539,89 +539,82 @@ export function StaffManager() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="state">State</Label>
-                  <Select
-                    value={formData.state}
-                    onValueChange={(value) => setFormData({ ...formData, state: value })}
-                  >
-                    <SelectTrigger id="state" className="glass-dark">
-                      <SelectValue placeholder="Select state" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Alabama">Alabama</SelectItem>
-                      <SelectItem value="Alaska">Alaska</SelectItem>
-                      <SelectItem value="Arizona">Arizona</SelectItem>
-                      <SelectItem value="Arkansas">Arkansas</SelectItem>
-                      <SelectItem value="California">California</SelectItem>
-                      <SelectItem value="Colorado">Colorado</SelectItem>
-                      <SelectItem value="Connecticut">Connecticut</SelectItem>
-                      <SelectItem value="Delaware">Delaware</SelectItem>
-                      <SelectItem value="Florida">Florida</SelectItem>
-                      <SelectItem value="Georgia">Georgia</SelectItem>
-                      <SelectItem value="Hawaii">Hawaii</SelectItem>
-                      <SelectItem value="Idaho">Idaho</SelectItem>
-                      <SelectItem value="Illinois">Illinois</SelectItem>
-                      <SelectItem value="Indiana">Indiana</SelectItem>
-                      <SelectItem value="Iowa">Iowa</SelectItem>
-                      <SelectItem value="Kansas">Kansas</SelectItem>
-                      <SelectItem value="Kentucky">Kentucky</SelectItem>
-                      <SelectItem value="Louisiana">Louisiana</SelectItem>
-                      <SelectItem value="Maine">Maine</SelectItem>
-                      <SelectItem value="Maryland">Maryland</SelectItem>
-                      <SelectItem value="Massachusetts">Massachusetts</SelectItem>
-                      <SelectItem value="Michigan">Michigan</SelectItem>
-                      <SelectItem value="Minnesota">Minnesota</SelectItem>
-                      <SelectItem value="Mississippi">Mississippi</SelectItem>
-                      <SelectItem value="Missouri">Missouri</SelectItem>
-                      <SelectItem value="Montana">Montana</SelectItem>
-                      <SelectItem value="Nebraska">Nebraska</SelectItem>
-                      <SelectItem value="Nevada">Nevada</SelectItem>
-                      <SelectItem value="New Hampshire">New Hampshire</SelectItem>
-                      <SelectItem value="New Jersey">New Jersey</SelectItem>
-                      <SelectItem value="New Mexico">New Mexico</SelectItem>
-                      <SelectItem value="New York">New York</SelectItem>
-                      <SelectItem value="North Carolina">North Carolina</SelectItem>
-                      <SelectItem value="North Dakota">North Dakota</SelectItem>
-                      <SelectItem value="Ohio">Ohio</SelectItem>
-                      <SelectItem value="Oklahoma">Oklahoma</SelectItem>
-                      <SelectItem value="Oregon">Oregon</SelectItem>
-                      <SelectItem value="Pennsylvania">Pennsylvania</SelectItem>
-                      <SelectItem value="Rhode Island">Rhode Island</SelectItem>
-                      <SelectItem value="South Carolina">South Carolina</SelectItem>
-                      <SelectItem value="South Dakota">South Dakota</SelectItem>
-                      <SelectItem value="Tennessee">Tennessee</SelectItem>
-                      <SelectItem value="Texas">Texas</SelectItem>
-                      <SelectItem value="Utah">Utah</SelectItem>
-                      <SelectItem value="Vermont">Vermont</SelectItem>
-                      <SelectItem value="Virginia">Virginia</SelectItem>
-                      <SelectItem value="Washington">Washington</SelectItem>
-                      <SelectItem value="West Virginia">West Virginia</SelectItem>
-                      <SelectItem value="Wisconsin">Wisconsin</SelectItem>
-                      <SelectItem value="Wyoming">Wyoming</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                  <div className="flex gap-1.5">
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <Label htmlFor="state">State</Label>
+                      <Select
+                        value={formData.state}
+                        onValueChange={(value) => setFormData({ ...formData, state: value })}
+                      >
+                        <SelectTrigger id="state" className="glass-dark w-full">
+                          <SelectValue placeholder="Select state" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Alabama">Alabama</SelectItem>
+                          <SelectItem value="Alaska">Alaska</SelectItem>
+                          <SelectItem value="Arizona">Arizona</SelectItem>
+                          <SelectItem value="Arkansas">Arkansas</SelectItem>
+                          <SelectItem value="California">California</SelectItem>
+                          <SelectItem value="Colorado">Colorado</SelectItem>
+                          <SelectItem value="Connecticut">Connecticut</SelectItem>
+                          <SelectItem value="Delaware">Delaware</SelectItem>
+                          <SelectItem value="Florida">Florida</SelectItem>
+                          <SelectItem value="Georgia">Georgia</SelectItem>
+                          <SelectItem value="Hawaii">Hawaii</SelectItem>
+                          <SelectItem value="Idaho">Idaho</SelectItem>
+                          <SelectItem value="Illinois">Illinois</SelectItem>
+                          <SelectItem value="Indiana">Indiana</SelectItem>
+                          <SelectItem value="Iowa">Iowa</SelectItem>
+                          <SelectItem value="Kansas">Kansas</SelectItem>
+                          <SelectItem value="Kentucky">Kentucky</SelectItem>
+                          <SelectItem value="Louisiana">Louisiana</SelectItem>
+                          <SelectItem value="Maine">Maine</SelectItem>
+                          <SelectItem value="Maryland">Maryland</SelectItem>
+                          <SelectItem value="Massachusetts">Massachusetts</SelectItem>
+                          <SelectItem value="Michigan">Michigan</SelectItem>
+                          <SelectItem value="Minnesota">Minnesota</SelectItem>
+                          <SelectItem value="Mississippi">Mississippi</SelectItem>
+                          <SelectItem value="Missouri">Missouri</SelectItem>
+                          <SelectItem value="Montana">Montana</SelectItem>
+                          <SelectItem value="Nebraska">Nebraska</SelectItem>
+                          <SelectItem value="Nevada">Nevada</SelectItem>
+                          <SelectItem value="New Hampshire">New Hampshire</SelectItem>
+                          <SelectItem value="New Jersey">New Jersey</SelectItem>
+                          <SelectItem value="New Mexico">New Mexico</SelectItem>
+                          <SelectItem value="New York">New York</SelectItem>
+                          <SelectItem value="North Carolina">North Carolina</SelectItem>
+                          <SelectItem value="North Dakota">North Dakota</SelectItem>
+                          <SelectItem value="Ohio">Ohio</SelectItem>
+                          <SelectItem value="Oklahoma">Oklahoma</SelectItem>
+                          <SelectItem value="Oregon">Oregon</SelectItem>
+                          <SelectItem value="Pennsylvania">Pennsylvania</SelectItem>
+                          <SelectItem value="Rhode Island">Rhode Island</SelectItem>
+                          <SelectItem value="South Carolina">South Carolina</SelectItem>
+                          <SelectItem value="South Dakota">South Dakota</SelectItem>
+                          <SelectItem value="Tennessee">Tennessee</SelectItem>
+                          <SelectItem value="Texas">Texas</SelectItem>
+                          <SelectItem value="Utah">Utah</SelectItem>
+                          <SelectItem value="Vermont">Vermont</SelectItem>
+                          <SelectItem value="Virginia">Virginia</SelectItem>
+                          <SelectItem value="Washington">Washington</SelectItem>
+                          <SelectItem value="West Virginia">West Virginia</SelectItem>
+                          <SelectItem value="Wisconsin">Wisconsin</SelectItem>
+                          <SelectItem value="Wyoming">Wyoming</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="zip">Zip Code</Label>
-                  <Input
-                    id="zip"
-                    value={formData.zip}
-                    onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
-                    placeholder="Zip code"
-                    className="glass-dark"
-                  />
-                </div>
-
-                <div className="md:col-span-2 space-y-2">
-                  <Label htmlFor="specialties">Specialties</Label>
-                  <Input
-                    id="specialties"
-                    value={formData.specialties}
-                    onChange={(e) => setFormData({ ...formData, specialties: e.target.value })}
-                    placeholder="e.g., Large Dogs, Show Cuts, Nail Trimming (comma separated)"
-                    className="glass-dark"
-                  />
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <Label htmlFor="zip">Zip Code</Label>
+                      <Input
+                        id="zip"
+                        value={formData.zip}
+                        onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
+                        placeholder="Zip code"
+                        className="glass-dark h-9"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="md:col-span-2 space-y-3 p-4 rounded-lg border border-border glass-dark">
