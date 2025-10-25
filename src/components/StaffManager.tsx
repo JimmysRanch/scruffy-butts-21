@@ -307,6 +307,7 @@ export function StaffManager() {
       )
       toast.success('Staff member updated successfully')
     } else {
+      const currentDate = new Date().toISOString().split('T')[0] // Format: YYYY-MM-DD
       const newStaff: StaffMember = {
         id: Date.now().toString(),
         firstName: formData.firstName,
@@ -314,7 +315,7 @@ export function StaffManager() {
         email: formData.email,
         phone: formData.phone,
         position: formData.position,
-        hireDate: formData.hireDate,
+        hireDate: currentDate,
         address: formData.address,
         city: formData.city,
         state: formData.state,
@@ -438,29 +439,13 @@ export function StaffManager() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="position">Position *</Label>
-                  <Select
-                    value={formData.position}
-                    onValueChange={(value) => setFormData({ ...formData, position: value })}
-                  >
-                    <SelectTrigger id="position" className="glass-dark">
-                      <SelectValue placeholder="Select a position" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {staffPositions?.map((position) => (
-                        <SelectItem key={position.id} value={position.name}>
-                          <div className="flex flex-col">
-                            <span>{position.name}</span>
-                            {position.description && (
-                              <span className="text-xs text-muted-foreground">
-                                {position.description}
-                              </span>
-                            )}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    id="phone"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="glass-dark"
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -476,40 +461,49 @@ export function StaffManager() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="glass-dark"
-                  />
-                </div>
+                  <div className="flex gap-1.5">
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <Label htmlFor="position">Position *</Label>
+                      <Select
+                        value={formData.position}
+                        onValueChange={(value) => setFormData({ ...formData, position: value })}
+                      >
+                        <SelectTrigger id="position" className="glass-dark w-full">
+                          <SelectValue placeholder="Select a position" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {staffPositions?.map((position) => (
+                            <SelectItem key={position.id} value={position.name}>
+                              <div className="flex flex-col">
+                                <span>{position.name}</span>
+                                {position.description && (
+                                  <span className="text-xs text-muted-foreground">
+                                    {position.description}
+                                  </span>
+                                )}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="hireDate">Hire Date</Label>
-                  <Input
-                    id="hireDate"
-                    type="date"
-                    value={formData.hireDate}
-                    onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
-                    className="glass-dark"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status</Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}
-                  >
-                    <SelectTrigger id="status" className="glass-dark">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <Label htmlFor="status">Status</Label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}
+                      >
+                        <SelectTrigger id="status" className="glass-dark w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -535,89 +529,82 @@ export function StaffManager() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="state">State</Label>
-                  <Select
-                    value={formData.state}
-                    onValueChange={(value) => setFormData({ ...formData, state: value })}
-                  >
-                    <SelectTrigger id="state" className="glass-dark">
-                      <SelectValue placeholder="Select state" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Alabama">Alabama</SelectItem>
-                      <SelectItem value="Alaska">Alaska</SelectItem>
-                      <SelectItem value="Arizona">Arizona</SelectItem>
-                      <SelectItem value="Arkansas">Arkansas</SelectItem>
-                      <SelectItem value="California">California</SelectItem>
-                      <SelectItem value="Colorado">Colorado</SelectItem>
-                      <SelectItem value="Connecticut">Connecticut</SelectItem>
-                      <SelectItem value="Delaware">Delaware</SelectItem>
-                      <SelectItem value="Florida">Florida</SelectItem>
-                      <SelectItem value="Georgia">Georgia</SelectItem>
-                      <SelectItem value="Hawaii">Hawaii</SelectItem>
-                      <SelectItem value="Idaho">Idaho</SelectItem>
-                      <SelectItem value="Illinois">Illinois</SelectItem>
-                      <SelectItem value="Indiana">Indiana</SelectItem>
-                      <SelectItem value="Iowa">Iowa</SelectItem>
-                      <SelectItem value="Kansas">Kansas</SelectItem>
-                      <SelectItem value="Kentucky">Kentucky</SelectItem>
-                      <SelectItem value="Louisiana">Louisiana</SelectItem>
-                      <SelectItem value="Maine">Maine</SelectItem>
-                      <SelectItem value="Maryland">Maryland</SelectItem>
-                      <SelectItem value="Massachusetts">Massachusetts</SelectItem>
-                      <SelectItem value="Michigan">Michigan</SelectItem>
-                      <SelectItem value="Minnesota">Minnesota</SelectItem>
-                      <SelectItem value="Mississippi">Mississippi</SelectItem>
-                      <SelectItem value="Missouri">Missouri</SelectItem>
-                      <SelectItem value="Montana">Montana</SelectItem>
-                      <SelectItem value="Nebraska">Nebraska</SelectItem>
-                      <SelectItem value="Nevada">Nevada</SelectItem>
-                      <SelectItem value="New Hampshire">New Hampshire</SelectItem>
-                      <SelectItem value="New Jersey">New Jersey</SelectItem>
-                      <SelectItem value="New Mexico">New Mexico</SelectItem>
-                      <SelectItem value="New York">New York</SelectItem>
-                      <SelectItem value="North Carolina">North Carolina</SelectItem>
-                      <SelectItem value="North Dakota">North Dakota</SelectItem>
-                      <SelectItem value="Ohio">Ohio</SelectItem>
-                      <SelectItem value="Oklahoma">Oklahoma</SelectItem>
-                      <SelectItem value="Oregon">Oregon</SelectItem>
-                      <SelectItem value="Pennsylvania">Pennsylvania</SelectItem>
-                      <SelectItem value="Rhode Island">Rhode Island</SelectItem>
-                      <SelectItem value="South Carolina">South Carolina</SelectItem>
-                      <SelectItem value="South Dakota">South Dakota</SelectItem>
-                      <SelectItem value="Tennessee">Tennessee</SelectItem>
-                      <SelectItem value="Texas">Texas</SelectItem>
-                      <SelectItem value="Utah">Utah</SelectItem>
-                      <SelectItem value="Vermont">Vermont</SelectItem>
-                      <SelectItem value="Virginia">Virginia</SelectItem>
-                      <SelectItem value="Washington">Washington</SelectItem>
-                      <SelectItem value="West Virginia">West Virginia</SelectItem>
-                      <SelectItem value="Wisconsin">Wisconsin</SelectItem>
-                      <SelectItem value="Wyoming">Wyoming</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                  <div className="flex gap-1.5">
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <Label htmlFor="state">State</Label>
+                      <Select
+                        value={formData.state}
+                        onValueChange={(value) => setFormData({ ...formData, state: value })}
+                      >
+                        <SelectTrigger id="state" className="glass-dark w-full">
+                          <SelectValue placeholder="Select state" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Alabama">Alabama</SelectItem>
+                          <SelectItem value="Alaska">Alaska</SelectItem>
+                          <SelectItem value="Arizona">Arizona</SelectItem>
+                          <SelectItem value="Arkansas">Arkansas</SelectItem>
+                          <SelectItem value="California">California</SelectItem>
+                          <SelectItem value="Colorado">Colorado</SelectItem>
+                          <SelectItem value="Connecticut">Connecticut</SelectItem>
+                          <SelectItem value="Delaware">Delaware</SelectItem>
+                          <SelectItem value="Florida">Florida</SelectItem>
+                          <SelectItem value="Georgia">Georgia</SelectItem>
+                          <SelectItem value="Hawaii">Hawaii</SelectItem>
+                          <SelectItem value="Idaho">Idaho</SelectItem>
+                          <SelectItem value="Illinois">Illinois</SelectItem>
+                          <SelectItem value="Indiana">Indiana</SelectItem>
+                          <SelectItem value="Iowa">Iowa</SelectItem>
+                          <SelectItem value="Kansas">Kansas</SelectItem>
+                          <SelectItem value="Kentucky">Kentucky</SelectItem>
+                          <SelectItem value="Louisiana">Louisiana</SelectItem>
+                          <SelectItem value="Maine">Maine</SelectItem>
+                          <SelectItem value="Maryland">Maryland</SelectItem>
+                          <SelectItem value="Massachusetts">Massachusetts</SelectItem>
+                          <SelectItem value="Michigan">Michigan</SelectItem>
+                          <SelectItem value="Minnesota">Minnesota</SelectItem>
+                          <SelectItem value="Mississippi">Mississippi</SelectItem>
+                          <SelectItem value="Missouri">Missouri</SelectItem>
+                          <SelectItem value="Montana">Montana</SelectItem>
+                          <SelectItem value="Nebraska">Nebraska</SelectItem>
+                          <SelectItem value="Nevada">Nevada</SelectItem>
+                          <SelectItem value="New Hampshire">New Hampshire</SelectItem>
+                          <SelectItem value="New Jersey">New Jersey</SelectItem>
+                          <SelectItem value="New Mexico">New Mexico</SelectItem>
+                          <SelectItem value="New York">New York</SelectItem>
+                          <SelectItem value="North Carolina">North Carolina</SelectItem>
+                          <SelectItem value="North Dakota">North Dakota</SelectItem>
+                          <SelectItem value="Ohio">Ohio</SelectItem>
+                          <SelectItem value="Oklahoma">Oklahoma</SelectItem>
+                          <SelectItem value="Oregon">Oregon</SelectItem>
+                          <SelectItem value="Pennsylvania">Pennsylvania</SelectItem>
+                          <SelectItem value="Rhode Island">Rhode Island</SelectItem>
+                          <SelectItem value="South Carolina">South Carolina</SelectItem>
+                          <SelectItem value="South Dakota">South Dakota</SelectItem>
+                          <SelectItem value="Tennessee">Tennessee</SelectItem>
+                          <SelectItem value="Texas">Texas</SelectItem>
+                          <SelectItem value="Utah">Utah</SelectItem>
+                          <SelectItem value="Vermont">Vermont</SelectItem>
+                          <SelectItem value="Virginia">Virginia</SelectItem>
+                          <SelectItem value="Washington">Washington</SelectItem>
+                          <SelectItem value="West Virginia">West Virginia</SelectItem>
+                          <SelectItem value="Wisconsin">Wisconsin</SelectItem>
+                          <SelectItem value="Wyoming">Wyoming</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="zip">Zip Code</Label>
-                  <Input
-                    id="zip"
-                    value={formData.zip}
-                    onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
-                    placeholder="Zip code"
-                    className="glass-dark"
-                  />
-                </div>
-
-                <div className="md:col-span-2 space-y-2">
-                  <Label htmlFor="specialties">Specialties</Label>
-                  <Input
-                    id="specialties"
-                    value={formData.specialties}
-                    onChange={(e) => setFormData({ ...formData, specialties: e.target.value })}
-                    placeholder="e.g., Large Dogs, Show Cuts, Nail Trimming (comma separated)"
-                    className="glass-dark"
-                  />
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <Label htmlFor="zip">Zip Code</Label>
+                      <Input
+                        id="zip"
+                        value={formData.zip}
+                        onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
+                        placeholder="Zip code"
+                        className="glass-dark h-9"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="md:col-span-2 space-y-3 p-4 rounded-lg border border-border glass-dark">
@@ -644,69 +631,6 @@ export function StaffManager() {
                       }}
                     />
                   </div>
-
-                  {formData.canBeBooked && (
-                    <div className="space-y-3 pt-3 border-t border-border">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-sm font-medium">Bookable Services</Label>
-                        {formData.position && (
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              const defaultServices = getDefaultBookableServices(formData.position)
-                              setFormData({ ...formData, bookableServices: defaultServices })
-                            }}
-                            className="text-xs"
-                          >
-                            Use {formData.position} defaults
-                          </Button>
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Select which services this staff member can perform
-                      </p>
-                      
-                      {!services || services.length === 0 ? (
-                        <div className="text-sm text-muted-foreground p-3 border border-dashed rounded">
-                          <Scissors size={16} className="inline mr-2" />
-                          No services available. Add services first in the Settings.
-                        </div>
-                      ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto">
-                          {services.map((service) => (
-                            <div key={service.id} className="flex items-start space-x-2">
-                              <Checkbox
-                                id={`service-${service.id}`}
-                                checked={formData.bookableServices.includes(service.id)}
-                                onCheckedChange={(checked) => {
-                                  if (checked) {
-                                    setFormData({
-                                      ...formData,
-                                      bookableServices: [...formData.bookableServices, service.id]
-                                    })
-                                  } else {
-                                    setFormData({
-                                      ...formData,
-                                      bookableServices: formData.bookableServices.filter(id => id !== service.id)
-                                    })
-                                  }
-                                }}
-                              />
-                              <Label
-                                htmlFor={`service-${service.id}`}
-                                className="text-sm font-normal cursor-pointer leading-tight"
-                              >
-                                <div>{service.name}</div>
-                                <div className="text-xs text-muted-foreground">{service.category}</div>
-                              </Label>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
