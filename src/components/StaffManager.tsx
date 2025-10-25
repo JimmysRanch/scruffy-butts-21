@@ -963,6 +963,48 @@ export function StaffManager() {
                     )}
                   </div>
                 </div>
+
+                {/* Pay Summary */}
+                {(formData.commissionEnabled || formData.hourlyPayEnabled || formData.salaryEnabled || formData.weeklyGuaranteeEnabled) && (
+                  <div className="md:col-span-2 space-y-3 p-4 rounded-lg border border-border glass-dark bg-primary/5">
+                    <h4 className="font-semibold text-base">Pay summary</h4>
+                    <ul className="space-y-1.5 text-sm">
+                      {formData.hourlyPayEnabled && formData.hourlyRate > 0 && (
+                        <li className="flex items-start">
+                          <span className="mr-2">•</span>
+                          <span>${formData.hourlyRate.toFixed(2)} per hour base pay.</span>
+                        </li>
+                      )}
+                      {formData.salaryEnabled && formData.salaryAmount > 0 && (
+                        <li className="flex items-start">
+                          <span className="mr-2">•</span>
+                          <span>${formData.salaryAmount.toFixed(2)} salary per year.</span>
+                        </li>
+                      )}
+                      {formData.weeklyGuaranteeEnabled && formData.weeklyGuarantee > 0 && formData.commissionEnabled && (
+                        <li className="flex items-start">
+                          <span className="mr-2">•</span>
+                          <span>
+                            ${formData.weeklyGuarantee.toFixed(2)} per week guaranteed or {formData.commissionPercent}% commission—
+                            {formData.guaranteePayoutMethod === 'higher' ? 'whichever pays more' : 'plus commission'}.
+                          </span>
+                        </li>
+                      )}
+                      {formData.weeklyGuaranteeEnabled && formData.weeklyGuarantee > 0 && !formData.commissionEnabled && (
+                        <li className="flex items-start">
+                          <span className="mr-2">•</span>
+                          <span>${formData.weeklyGuarantee.toFixed(2)} per week guaranteed.</span>
+                        </li>
+                      )}
+                      {formData.commissionEnabled && (!formData.weeklyGuaranteeEnabled || formData.weeklyGuarantee === 0) && (
+                        <li className="flex items-start">
+                          <span className="mr-2">•</span>
+                          <span>{formData.commissionPercent}% commission on personal grooms.</span>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t">
