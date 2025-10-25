@@ -461,7 +461,7 @@ export function StaffManager() {
 
                 <div className="space-y-2">
                   <div className="flex gap-1.5">
-                    <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex-[1.2] min-w-0 space-y-2">
                       <Label htmlFor="position">Position *</Label>
                       <Select
                         value={formData.position}
@@ -487,7 +487,7 @@ export function StaffManager() {
                       </Select>
                     </div>
 
-                    <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex-[0.8] min-w-0 space-y-2">
                       <Label htmlFor="status">Status</Label>
                       <Select
                         value={formData.status}
@@ -503,14 +503,14 @@ export function StaffManager() {
                       </Select>
                     </div>
 
-                    <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex-[1.2] min-w-0 space-y-2">
                       <Label htmlFor="hireDate">Hire Date</Label>
                       <Input
                         id="hireDate"
                         type="date"
                         value={formData.hireDate}
                         onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
-                        className="glass-dark h-9"
+                        className="glass-dark h-9 max-w-full"
                       />
                     </div>
                   </div>
