@@ -6,14 +6,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { ArrowLeft, Plus, Trash, Check, CaretUpDown } from '@phosphor-icons/react'
+import { ArrowLeft, Plus, Trash } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { WeightClass, WEIGHT_CLASSES } from '@/lib/pricing-types'
 import { Customer, Pet } from '@/lib/types'
 import { DOG_BREEDS } from '@/lib/dog-breeds'
-import { cn } from '@/lib/utils'
 
 interface NewCustomerProps {
   onBack: () => void
@@ -42,8 +39,6 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
     weightClass: undefined,
     notes: ''
   }])
-
-  const [openBreedCombobox, setOpenBreedCombobox] = useState<{ [key: number]: boolean }>({})
 
   const addPet = () => {
     setPets([...pets, {
@@ -274,64 +269,26 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                   <div>
                     <Label className="text-white/70">Breed</Label>
                     <div className="flex gap-2 mt-1.5">
-                      <Popover 
-                        open={openBreedCombobox[index] || false} 
-                        onOpenChange={(open) => setOpenBreedCombobox({ ...openBreedCombobox, [index]: open })}
+                      <Select
+                        value={pet.breed || ''}
+                        onValueChange={(value) => {
+                          updatePet(index, 'breed', value)
+                          if (value !== 'Other') {
+                            updatePet(index, 'customBreed', '')
+                          }
+                        }}
                       >
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            aria-expanded={openBreedCombobox[index] || false}
-                            className="flex-1 justify-between"
-                          >
-                            {pet.breed || "Select breed..."}
-                            <CaretUpDown size={16} className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[300px] p-0" side="bottom" align="start">
-                          <Command>
-                            <CommandInput placeholder="Search breed..." />
-                            <CommandList>
-                              <CommandEmpty>No breed found.</CommandEmpty>
-                              <CommandGroup>
-                                {DOG_BREEDS.map((breed) => (
-                                  <CommandItem
-                                    key={breed}
-                                    value={breed}
-                                    onPointerDown={(e) => {
-                                      // Use onPointerDown as it fires before onClick/onMouseDown
-                                      e.stopPropagation()
-                                      updatePet(index, 'breed', breed)
-                                      if (breed !== 'Other') {
-                                        updatePet(index, 'customBreed', '')
-                                      }
-                                      setOpenBreedCombobox({ ...openBreedCombobox, [index]: false })
-                                    }}
-                                    onSelect={() => {
-                                      // Also keep onSelect in case it starts working
-                                      updatePet(index, 'breed', breed)
-                                      if (breed !== 'Other') {
-                                        updatePet(index, 'customBreed', '')
-                                      }
-                                      setOpenBreedCombobox({ ...openBreedCombobox, [index]: false })
-                                    }}
-                                  >
-                                    <Check
-                                      size={16}
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        pet.breed === breed ? "opacity-100" : "opacity-0"
-                                      )}
-                                    />
-                                    {breed}
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
+                        <SelectTrigger className="flex-1">
+                          <SelectValue placeholder="Select breed..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DOG_BREEDS.map((breed) => (
+                            <SelectItem key={breed} value={breed}>
+                              {breed}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <Button
                         type="button"
                         variant={pet.isMixedBreed ? "default" : "outline"}
