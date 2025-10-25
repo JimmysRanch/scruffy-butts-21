@@ -307,6 +307,7 @@ export function StaffManager() {
       )
       toast.success('Staff member updated successfully')
     } else {
+      const currentDate = new Date().toISOString().split('T')[0] // Format: YYYY-MM-DD
       const newStaff: StaffMember = {
         id: Date.now().toString(),
         firstName: formData.firstName,
@@ -314,7 +315,7 @@ export function StaffManager() {
         email: formData.email,
         phone: formData.phone,
         position: formData.position,
-        hireDate: formData.hireDate,
+        hireDate: currentDate,
         address: formData.address,
         city: formData.city,
         state: formData.state,
@@ -461,7 +462,7 @@ export function StaffManager() {
 
                 <div className="space-y-2">
                   <div className="flex gap-1.5">
-                    <div className="flex-[1.2] min-w-0 space-y-2">
+                    <div className="flex-1 min-w-0 space-y-2">
                       <Label htmlFor="position">Position *</Label>
                       <Select
                         value={formData.position}
@@ -487,7 +488,7 @@ export function StaffManager() {
                       </Select>
                     </div>
 
-                    <div className="flex-[0.8] min-w-0 space-y-2">
+                    <div className="flex-1 min-w-0 space-y-2">
                       <Label htmlFor="status">Status</Label>
                       <Select
                         value={formData.status}
@@ -501,17 +502,6 @@ export function StaffManager() {
                           <SelectItem value="inactive">Inactive</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
-
-                    <div className="flex-[1.2] min-w-0 space-y-2">
-                      <Label htmlFor="hireDate">Hire Date</Label>
-                      <Input
-                        id="hireDate"
-                        type="date"
-                        value={formData.hireDate}
-                        onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
-                        className="glass-dark h-9 max-w-full"
-                      />
                     </div>
                   </div>
                 </div>
@@ -641,69 +631,6 @@ export function StaffManager() {
                       }}
                     />
                   </div>
-
-                  {formData.canBeBooked && (
-                    <div className="space-y-3 pt-3 border-t border-border">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-sm font-medium">Bookable Services</Label>
-                        {formData.position && (
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              const defaultServices = getDefaultBookableServices(formData.position)
-                              setFormData({ ...formData, bookableServices: defaultServices })
-                            }}
-                            className="text-xs"
-                          >
-                            Use {formData.position} defaults
-                          </Button>
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Select which services this staff member can perform
-                      </p>
-                      
-                      {!services || services.length === 0 ? (
-                        <div className="text-sm text-muted-foreground p-3 border border-dashed rounded">
-                          <Scissors size={16} className="inline mr-2" />
-                          No services available. Add services first in the Settings.
-                        </div>
-                      ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto">
-                          {services.map((service) => (
-                            <div key={service.id} className="flex items-start space-x-2">
-                              <Checkbox
-                                id={`service-${service.id}`}
-                                checked={formData.bookableServices.includes(service.id)}
-                                onCheckedChange={(checked) => {
-                                  if (checked) {
-                                    setFormData({
-                                      ...formData,
-                                      bookableServices: [...formData.bookableServices, service.id]
-                                    })
-                                  } else {
-                                    setFormData({
-                                      ...formData,
-                                      bookableServices: formData.bookableServices.filter(id => id !== service.id)
-                                    })
-                                  }
-                                }}
-                              />
-                              <Label
-                                htmlFor={`service-${service.id}`}
-                                className="text-sm font-normal cursor-pointer leading-tight"
-                              >
-                                <div>{service.name}</div>
-                                <div className="text-xs text-muted-foreground">{service.category}</div>
-                              </Label>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
