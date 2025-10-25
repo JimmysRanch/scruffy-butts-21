@@ -269,7 +269,7 @@ export function StaffManager() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.position) {
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.position) {
       toast.error('Please fill in all required fields')
       return
     }
@@ -439,12 +439,13 @@ export function StaffManager() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
+                  <Label htmlFor="phone">Phone *</Label>
                   <Input
                     id="phone"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="glass-dark"
+                    required
                   />
                 </div>
 
