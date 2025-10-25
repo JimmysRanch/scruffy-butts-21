@@ -299,8 +299,9 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                                   <CommandItem
                                     key={breed}
                                     value={breed}
-                                    onMouseDown={() => {
-                                      // Use onMouseDown as a workaround for onSelect not firing
+                                    onPointerDown={(e) => {
+                                      // Use onPointerDown as it fires before onClick/onMouseDown
+                                      e.stopPropagation()
                                       updatePet(index, 'breed', breed)
                                       if (breed !== 'Other') {
                                         updatePet(index, 'customBreed', '')
