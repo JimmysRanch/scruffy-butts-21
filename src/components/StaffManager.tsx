@@ -459,47 +459,49 @@ export function StaffManager() {
                   />
                 </div>
 
-                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="position">Position *</Label>
-                    <Select
-                      value={formData.position}
-                      onValueChange={(value) => setFormData({ ...formData, position: value })}
-                    >
-                      <SelectTrigger id="position" className="glass-dark">
-                        <SelectValue placeholder="Select a position" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {staffPositions?.map((position) => (
-                          <SelectItem key={position.id} value={position.name}>
-                            <div className="flex flex-col">
-                              <span>{position.name}</span>
-                              {position.description && (
-                                <span className="text-xs text-muted-foreground">
-                                  {position.description}
-                                </span>
-                              )}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <div className="flex-1 space-y-2">
+                      <Label htmlFor="position">Position *</Label>
+                      <Select
+                        value={formData.position}
+                        onValueChange={(value) => setFormData({ ...formData, position: value })}
+                      >
+                        <SelectTrigger id="position" className="glass-dark">
+                          <SelectValue placeholder="Select a position" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {staffPositions?.map((position) => (
+                            <SelectItem key={position.id} value={position.name}>
+                              <div className="flex flex-col">
+                                <span>{position.name}</span>
+                                {position.description && (
+                                  <span className="text-xs text-muted-foreground">
+                                    {position.description}
+                                  </span>
+                                )}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select
-                      value={formData.status}
-                      onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}
-                    >
-                      <SelectTrigger id="status" className="glass-dark">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="flex-1 space-y-2">
+                      <Label htmlFor="status">Status</Label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(value: 'active' | 'inactive') => setFormData({ ...formData, status: value })}
+                      >
+                        <SelectTrigger id="status" className="glass-dark">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
 
