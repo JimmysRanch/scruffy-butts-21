@@ -299,11 +299,18 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                                   <CommandItem
                                     key={breed}
                                     value={breed}
-                                    onSelect={(currentValue) => {
-                                      // Command component lowercases the value, so find the original breed
-                                      const selectedBreed = DOG_BREEDS.find(b => b.toLowerCase() === currentValue.toLowerCase()) || currentValue
-                                      updatePet(index, 'breed', selectedBreed)
-                                      if (selectedBreed !== 'Other') {
+                                    onMouseDown={() => {
+                                      // Use onMouseDown as a workaround for onSelect not firing
+                                      updatePet(index, 'breed', breed)
+                                      if (breed !== 'Other') {
+                                        updatePet(index, 'customBreed', '')
+                                      }
+                                      setOpenBreedCombobox({ ...openBreedCombobox, [index]: false })
+                                    }}
+                                    onSelect={() => {
+                                      // Also keep onSelect in case it starts working
+                                      updatePet(index, 'breed', breed)
+                                      if (breed !== 'Other') {
                                         updatePet(index, 'customBreed', '')
                                       }
                                       setOpenBreedCombobox({ ...openBreedCombobox, [index]: false })
