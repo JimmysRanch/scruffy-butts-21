@@ -6,10 +6,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ArrowLeft, Plus, Trash } from '@phosphor-icons/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { ArrowLeft, Plus, Trash, Check, CaretUpDown } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { WeightClass, WEIGHT_CLASSES } from '@/lib/pricing-types'
 import { Customer, Pet } from '@/lib/types'
+import { DOG_BREEDS } from '@/lib/dog-breeds'
+import { cn } from '@/lib/utils'
 
 interface NewCustomerProps {
   onBack: () => void
@@ -33,14 +37,20 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
   const [pets, setPets] = useState<Omit<Pet, 'id'>[]>([{
     name: '',
     breed: '',
+    customBreed: '',
+    isMixedBreed: false,
     weightClass: undefined,
     notes: ''
   }])
+
+  const [openBreedCombobox, setOpenBreedCombobox] = useState<{ [key: number]: boolean }>({})
 
   const addPet = () => {
     setPets([...pets, {
       name: '',
       breed: '',
+      customBreed: '',
+      isMixedBreed: false,
       weightClass: undefined,
       notes: ''
     }])
@@ -52,7 +62,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
     }
   }
 
-  const updatePet = (index: number, field: keyof Omit<Pet, 'id'>, value: string) => {
+  const updatePet = (index: number, field: keyof Omit<Pet, 'id'>, value: string | boolean) => {
     const updatedPets = [...pets]
     updatedPets[index] = { ...updatedPets[index], [field]: value }
     setPets(updatedPets)
@@ -262,16 +272,83 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                   </div>
 
                   <div>
-                    <Label htmlFor={`pet-breed-${index}`} className="text-white/70">Breed</Label>
+                    <Label className="text-white/70">Breed</Label>
+                    <div className="flex gap-2 mt-1.5">
+                      <Popover 
+                        open={openBreedCombobox[index] || false} 
+                        onOpenChange={(open) => setOpenBreedCombobox({ ...openBreedCombobox, [index]: open })}
+                      >
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={openBreedCombobox[index] || false}
+                            className="flex-1 justify-between"
+                          >
+                            {pet.breed || "Select breed..."}
+                            <CaretUpDown size={16} className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[300px] p-0">
+                          <Command>
+                            <CommandInput placeholder="Search breed..." />
+                            <CommandList>
+                              <CommandEmpty>No breed found.</CommandEmpty>
+                              <CommandGroup>
+                                {DOG_BREEDS.map((breed) => (
+                                  <CommandItem
+                                    key={breed}
+                                    value={breed}
+                                    onSelect={(currentValue) => {
+                                      // Command component lowercases the value, so find the original breed
+                                      const selectedBreed = DOG_BREEDS.find(b => b.toLowerCase() === currentValue.toLowerCase()) || currentValue
+                                      updatePet(index, 'breed', selectedBreed === pet.breed ? '' : selectedBreed)
+                                      if (selectedBreed !== 'Other') {
+                                        updatePet(index, 'customBreed', '')
+                                      }
+                                      setOpenBreedCombobox({ ...openBreedCombobox, [index]: false })
+                                    }}
+                                  >
+                                    <Check
+                                      size={16}
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        pet.breed === breed ? "opacity-100" : "opacity-0"
+                                      )}
+                                    />
+                                    {breed}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <Button
+                        type="button"
+                        variant={pet.isMixedBreed ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => updatePet(index, 'isMixedBreed', !pet.isMixedBreed)}
+                        className="shrink-0"
+                      >
+                        Mixed
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {pet.breed === 'Other' && (
+                  <div>
+                    <Label htmlFor={`pet-custom-breed-${index}`} className="text-white/70">Custom Breed</Label>
                     <Input
-                      id={`pet-breed-${index}`}
-                      value={pet.breed}
-                      onChange={(e) => updatePet(index, 'breed', e.target.value)}
-                      placeholder="Enter breed"
+                      id={`pet-custom-breed-${index}`}
+                      value={pet.customBreed || ''}
+                      onChange={(e) => updatePet(index, 'customBreed', e.target.value)}
+                      placeholder="Enter custom breed"
                       className="mt-1.5"
                     />
                   </div>
-                </div>
+                )}
 
                 <div>
                   <Label htmlFor={`pet-weight-${index}`} className="text-white/70">Weight Class</Label>

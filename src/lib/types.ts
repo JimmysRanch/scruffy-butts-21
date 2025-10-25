@@ -4,6 +4,8 @@ export interface Pet {
   id: string
   name: string
   breed: string
+  customBreed?: string
+  isMixedBreed?: boolean
   weightClass?: WeightClass
   notes?: string
 }
