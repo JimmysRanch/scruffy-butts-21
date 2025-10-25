@@ -312,7 +312,6 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
         <Button 
           size="sm"
           onClick={addPet}
-          className="h-9"
         >
           <Plus size={16} />
           Add Pet
