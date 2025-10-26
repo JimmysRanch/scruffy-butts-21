@@ -1173,6 +1173,7 @@ export function Settings() {
                           size="sm"
                           variant="outline"
                           onClick={() => {
+                            if (!formConfigs || !formConfigs[selectedFormIndex]) return
                             const currentForm = formConfigs[selectedFormIndex]
                             const customFieldCount = currentForm.fields.filter(f => f.isCustom).length
                             if (customFieldCount >= 2) {
@@ -1208,7 +1209,9 @@ export function Settings() {
                                   <Input
                                     value={field.customName}
                                     onChange={(e) => {
+                                      if (!formConfigs || !formConfigs[selectedFormIndex]) return
                                       const updatedConfigs = [...formConfigs]
+                                      if (!updatedConfigs[selectedFormIndex].fields[fieldIndex]) return
                                       updatedConfigs[selectedFormIndex].fields[fieldIndex].customName = e.target.value
                                       setFormConfigs(updatedConfigs)
                                     }}
@@ -1246,6 +1249,7 @@ export function Settings() {
                                     size="sm"
                                     variant="ghost"
                                     onClick={() => {
+                                      if (!formConfigs || !formConfigs[selectedFormIndex]) return
                                       const updatedConfigs = [...formConfigs]
                                       updatedConfigs[selectedFormIndex].fields = updatedConfigs[selectedFormIndex].fields.filter(f => f.id !== field.id)
                                       setFormConfigs(updatedConfigs)
@@ -1263,7 +1267,9 @@ export function Settings() {
                                   id={`${field.id}-mandatory`}
                                   checked={field.isMandatory}
                                   onCheckedChange={(checked) => {
+                                    if (!formConfigs || !formConfigs[selectedFormIndex]) return
                                     const updatedConfigs = [...formConfigs]
+                                    if (!updatedConfigs[selectedFormIndex].fields[fieldIndex]) return
                                     updatedConfigs[selectedFormIndex].fields[fieldIndex].isMandatory = !!checked
                                     setFormConfigs(updatedConfigs)
                                   }}
@@ -1277,7 +1283,9 @@ export function Settings() {
                                   id={`${field.id}-visible`}
                                   checked={field.isVisible}
                                   onCheckedChange={(checked) => {
+                                    if (!formConfigs || !formConfigs[selectedFormIndex]) return
                                     const updatedConfigs = [...formConfigs]
+                                    if (!updatedConfigs[selectedFormIndex].fields[fieldIndex]) return
                                     updatedConfigs[selectedFormIndex].fields[fieldIndex].isVisible = !!checked
                                     setFormConfigs(updatedConfigs)
                                   }}
