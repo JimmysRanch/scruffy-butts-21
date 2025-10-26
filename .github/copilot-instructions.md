@@ -81,10 +81,10 @@ Serves the production build locally for testing.
 
 ### Styling Guidelines
 - **Use Tailwind CSS** for all styling
-- **Custom theme:** The app uses a turquoise liquid glass aesthetic with:
-  - Deep ocean to teal radial gradients for backgrounds
+- **Custom theme:** The app uses a liquid glass aesthetic with:
+  - Purple/lavender gradients for backgrounds (hue 240°)
   - Glass-morphic cards with blur effects (20-24px blur, 28-35% opacity)
-  - Turquoise/cyan color palette (hue 200°)
+  - Color system based on CSS variables (see `/src/index.css`)
   - Soft glowing effects with drop shadows and underglows
   - Top-left key lighting simulation
 - **Typography:**
@@ -92,12 +92,12 @@ Serves the production build locally for testing.
   - Inter for body text and UI elements
 - **Components:** Use Radix UI primitives, customized with Tailwind
 - **Class naming:** Use Tailwind utilities, avoid custom CSS classes when possible
-- **Dark mode:** Not currently implemented, but theme system supports it via `next-themes`
+- **Dark mode:** Theme system uses `[data-appearance="dark"]` selector (see `tailwind.config.js`)
 
 ### Icon Usage
 - **Use Phosphor Icons** (`@phosphor-icons/react`)
 - **Weight:** Duotone for depth effects
-- **Enhancement:** Icons should have turquoise drop-shadow glows for consistency
+- **Enhancement:** Icons can have drop-shadow glows for visual consistency
 - **Common icons:**
   - Calendar for scheduling
   - User/UserCircle for customers
@@ -108,19 +108,25 @@ Serves the production build locally for testing.
 
 ## Design System
 
-### Color Palette (Turquoise Liquid Glass)
+### Color Palette (Liquid Glass with Purple/Lavender Hue)
+
+The color system uses CSS variables defined in `/src/index.css`. All colors use hue 240° (purple/lavender):
+
 ```css
-/* Primary Colors */
---background: oklch(0.08 0.06 200); /* Deep Ocean */
---foreground: oklch(0.98 0.01 200 / 0.85); /* White 85% */
---primary: oklch(0.60 0.20 200); /* Luminous Turquoise */
---accent: oklch(0.65 0.22 200); /* Bright Cyan */
+/* Primary Colors (from :root in src/index.css) */
+--background: oklch(0.12 0.08 240);
+--foreground: oklch(0.98 0.01 240);
+--primary: oklch(0.60 0.20 240);
+--accent: oklch(0.65 0.22 240);
+--card: oklch(0.20 0.08 240 / 0.35);
 
 /* Glass Effects */
 --glass-opacity: 0.28-0.35;
 --glass-blur: 20-24px;
 --glow-blur: 4-16px;
 ```
+
+**Important:** Use the Tailwind color classes (e.g., `bg-primary`, `text-accent`, `border-border`) rather than direct OKLCH values. The Tailwind config maps these to CSS variables via `tailwind.config.js`.
 
 ### Component States
 - **Hover:** Scale (1.02x), increased glow, enhanced border luminosity, translateY(-4px)
@@ -182,7 +188,7 @@ Serves the production build locally for testing.
 
 ## Common Pitfalls to Avoid
 
-1. **Don't break the glass aesthetic** - All new UI components should follow the turquoise liquid glass design
+1. **Don't break the glass aesthetic** - All new UI components should follow the liquid glass design (purple/lavender hue)
 2. **Don't add inline styles** - Use Tailwind classes exclusively
 3. **Don't skip TypeScript types** - Always type props, state, and function signatures
 4. **Don't bypass form validation** - Use React Hook Form with Zod schemas
@@ -260,7 +266,7 @@ Before adding new npm packages:
 ## Best Practices for AI-Generated Code
 
 1. **Read PRD.md first** - Understand the full product vision and feature requirements
-2. **Follow the design direction** - Maintain the turquoise liquid glass aesthetic
+2. **Follow the design direction** - Maintain the liquid glass aesthetic with purple/lavender hue (240°)
 3. **Keep changes minimal** - Make surgical, focused modifications
 4. **Test interactively** - Run `npm run dev` and manually test changes in browser
 5. **Validate types** - Run `npm run build` to catch TypeScript errors
