@@ -270,16 +270,56 @@ export function InventoryManager() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-foreground">Inventory Management</h1>
-          <p className="text-muted-foreground text-sm mt-0.5">Track supplies, manage stock levels, and monitor usage</p>
         </div>
-        <div className="flex gap-2">
-          <Dialog open={isSupplierDialogOpen} onOpenChange={setIsSupplierDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="h-8 text-xs">
-                <Plus className="mr-1.5" size={16} />
-                Add Supplier
-              </Button>
-            </DialogTrigger>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="pb-2 pt-2 px-3">
+            <CardTitle className="text-xs font-medium text-muted-foreground">Total Items</CardTitle>
+          </CardHeader>
+          <CardContent className="px-3 pb-2">
+            <div className="text-lg font-bold">{totalItems}</div>
+            <p className="text-[10px] text-muted-foreground mt-0.5">{(items || []).length} unique products</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2 pt-2 px-3">
+            <CardTitle className="text-xs font-medium text-muted-foreground">Total Value</CardTitle>
+          </CardHeader>
+          <CardContent className="px-3 pb-2">
+            <div className="text-lg font-bold">${totalValue.toFixed(2)}</div>
+            <p className="text-[10px] text-muted-foreground mt-0.5">At cost price</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2 pt-2 px-3">
+            <CardTitle className="text-xs font-medium text-muted-foreground">Low Stock Items</CardTitle>
+          </CardHeader>
+          <CardContent className="px-3 pb-2">
+            <div className="text-lg font-bold text-warning">{lowStockItems.length}</div>
+            <p className="text-[10px] text-muted-foreground mt-0.5">Need reordering</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2 pt-2 px-3">
+            <CardTitle className="text-xs font-medium text-muted-foreground">Suppliers</CardTitle>
+          </CardHeader>
+          <CardContent className="px-3 pb-2">
+            <div className="text-lg font-bold">{(suppliers || []).length}</div>
+            <p className="text-[10px] text-muted-foreground mt-0.5">Active suppliers</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="flex gap-2">
+        <Dialog open={isSupplierDialogOpen} onOpenChange={setIsSupplierDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="h-8 text-xs">
+              <Plus className="mr-1.5" size={16} />
+              Add Supplier
+            </Button>
+          </DialogTrigger>
             <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>Add New Supplier</DialogTitle>
@@ -336,7 +376,7 @@ export function InventoryManager() {
               </div>
             </DialogContent>
           </Dialog>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
               <Button className="h-8 text-xs">
                 <Plus className="mr-1.5" size={16} />
@@ -476,54 +516,14 @@ export function InventoryManager() {
               </div>
             </DialogContent>
           </Dialog>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Items</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalItems}</div>
-            <p className="text-xs text-muted-foreground mt-1">{(items || []).length} unique products</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2 pt-3 px-4">
-            <CardTitle className="text-xs font-medium text-muted-foreground">Total Value</CardTitle>
-          </CardHeader>
-          <CardContent className="px-4 pb-3">
-            <div className="text-xl font-bold">${totalValue.toFixed(2)}</div>
-            <p className="text-[10px] text-muted-foreground mt-0.5">At cost price</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2 pt-3 px-4">
-            <CardTitle className="text-xs font-medium text-muted-foreground">Low Stock Items</CardTitle>
-          </CardHeader>
-          <CardContent className="px-4 pb-3">
-            <div className="text-xl font-bold text-warning">{lowStockItems.length}</div>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Need reordering</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2 pt-3 px-4">
-            <CardTitle className="text-xs font-medium text-muted-foreground">Suppliers</CardTitle>
-          </CardHeader>
-          <CardContent className="px-4 pb-3">
-            <div className="text-xl font-bold">{(suppliers || []).length}</div>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Active suppliers</p>
-          </CardContent>
-        </Card>
       </div>
 
       <Tabs defaultValue="items" className="space-y-3">
-        <TabsList className="h-8">
-          <TabsTrigger value="items" className="text-xs">Inventory Items</TabsTrigger>
-          <TabsTrigger value="lowstock" className="text-xs">Low Stock Alerts</TabsTrigger>
-          <TabsTrigger value="transactions" className="text-xs">Transaction History</TabsTrigger>
-          <TabsTrigger value="suppliers" className="text-xs">Suppliers</TabsTrigger>
+        <TabsList className="h-9 bg-muted p-1 gap-1">
+          <TabsTrigger value="items" className="text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md px-4 py-1.5">Inventory Items</TabsTrigger>
+          <TabsTrigger value="lowstock" className="text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md px-4 py-1.5">Low Stock Alerts</TabsTrigger>
+          <TabsTrigger value="transactions" className="text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md px-4 py-1.5">Transaction History</TabsTrigger>
+          <TabsTrigger value="suppliers" className="text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md px-4 py-1.5">Suppliers</TabsTrigger>
         </TabsList>
 
         <TabsContent value="items" className="space-y-3">

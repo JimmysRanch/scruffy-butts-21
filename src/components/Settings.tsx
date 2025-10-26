@@ -30,7 +30,8 @@ import {
   Scissors,
   Database,
   Warning,
-  CalendarBlank
+  CalendarBlank,
+  NotePencil
 } from '@phosphor-icons/react'
 import { StaffPosition } from './StaffManager'
 import { seedShifts, seedTimeOffRequests } from '@/lib/seed-schedule-data'
@@ -75,6 +76,20 @@ interface AppearanceSettings {
   showWelcomeMessage: boolean
 }
 
+interface FormFieldConfig {
+  id: string
+  originalName: string
+  customName: string
+  isMandatory: boolean
+  isVisible: boolean
+  isCustom?: boolean
+}
+
+interface FormConfig {
+  formName: string
+  fields: FormFieldConfig[]
+}
+
 export function Settings() {
   const [businessSettings, setBusinessSettings] = useKV<BusinessSettings>('business-settings', {
     name: 'Scruffy Butts',
@@ -103,6 +118,40 @@ export function Settings() {
     compactMode: false,
     showWelcomeMessage: true
   })
+
+  const [formConfigs, setFormConfigs] = useKV<FormConfig[]>('form-configs', [
+    {
+      formName: 'Customer Form',
+      fields: [
+        { id: 'customer-name', originalName: 'Customer Name', customName: 'Customer Name', isMandatory: true, isVisible: true },
+        { id: 'customer-email', originalName: 'Email', customName: 'Email', isMandatory: true, isVisible: true },
+        { id: 'customer-phone', originalName: 'Phone', customName: 'Phone', isMandatory: true, isVisible: true },
+        { id: 'customer-address', originalName: 'Address', customName: 'Address', isMandatory: false, isVisible: true },
+      ]
+    },
+    {
+      formName: 'Pet Form',
+      fields: [
+        { id: 'pet-name', originalName: 'Pet Name', customName: 'Pet Name', isMandatory: true, isVisible: true },
+        { id: 'pet-breed', originalName: 'Breed', customName: 'Breed', isMandatory: true, isVisible: true },
+        { id: 'pet-weight', originalName: 'Weight', customName: 'Weight', isMandatory: false, isVisible: true },
+        { id: 'pet-age', originalName: 'Age', customName: 'Age', isMandatory: false, isVisible: true },
+        { id: 'pet-notes', originalName: 'Special Notes', customName: 'Special Notes', isMandatory: false, isVisible: true },
+      ]
+    },
+    {
+      formName: 'Appointment Form',
+      fields: [
+        { id: 'appt-service', originalName: 'Service', customName: 'Service', isMandatory: true, isVisible: true },
+        { id: 'appt-date', originalName: 'Date', customName: 'Date', isMandatory: true, isVisible: true },
+        { id: 'appt-time', originalName: 'Time', customName: 'Time', isMandatory: true, isVisible: true },
+        { id: 'appt-notes', originalName: 'Notes', customName: 'Notes', isMandatory: false, isVisible: true },
+      ]
+    }
+  ])
+  
+  const [selectedFormIndex, setSelectedFormIndex] = useState(0)
+  const [editingFieldId, setEditingFieldId] = useState<string | null>(null)
   
   const [staffMembers] = useKV<any[]>('staff-members', [])
   const [shifts, setShifts] = useKV<any[]>('staff-shifts', [])
@@ -124,7 +173,7 @@ export function Settings() {
 
   const [services, setServices] = useKV<ServiceWithPricing[]>('services', [])
 
-  const [activeTab, setActiveTab] = useState<'business' | 'services' | 'notifications' | 'appearance' | 'security' | 'staff-positions' | 'pricing'>('business')
+  const [activeTab, setActiveTab] = useState<'business' | 'services' | 'notifications' | 'appearance' | 'security' | 'staff-positions' | 'pricing' | 'forms'>('business')
   const [showPositionDialog, setShowPositionDialog] = useState(false)
   const [editingPosition, setEditingPosition] = useState<StaffPosition | null>(null)
   const [positionFormData, setPositionFormData] = useState({
@@ -380,6 +429,7 @@ export function Settings() {
     { id: 'business' as const, label: 'Business', icon: MapPin },
     { id: 'services' as const, label: 'Services', icon: Scissors },
     { id: 'staff-positions' as const, label: 'Staff Positions', icon: Users },
+    { id: 'forms' as const, label: 'Forms', icon: NotePencil },
     { id: 'notifications' as const, label: 'Notifications', icon: Bell },
     { id: 'appearance' as const, label: 'Appearance', icon: PaintBrush },
     { id: 'security' as const, label: 'Security', icon: Shield }
@@ -499,7 +549,7 @@ export function Settings() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="business-city">City</Label>
                     <Input
@@ -572,16 +622,15 @@ export function Settings() {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="business-zip">Zip Code</Label>
-                  <Input
-                    id="business-zip"
-                    value={businessSettings?.zip || ''}
-                    onChange={(e) => setBusinessSettings(prev => ({ ...prev!, zip: e.target.value }))}
-                    placeholder="Zip code"
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="business-zip">Zip Code</Label>
+                    <Input
+                      id="business-zip"
+                      value={businessSettings?.zip || ''}
+                      onChange={(e) => setBusinessSettings(prev => ({ ...prev!, zip: e.target.value }))}
+                      placeholder="Zip code"
+                    />
+                  </div>
                 </div>
 
                 <Separator />
@@ -1077,6 +1126,178 @@ export function Settings() {
                       Generate sample appointments and transactions for performance reports
                     </p>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeTab === 'forms' && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <NotePencil size={20} />
+                  Form Customization
+                </CardTitle>
+                <CardDescription>
+                  Customize form fields for different parts of the application
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label>Select Form</Label>
+                    <Select 
+                      value={selectedFormIndex.toString()} 
+                      onValueChange={(value) => setSelectedFormIndex(parseInt(value))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(formConfigs || []).map((form, index) => (
+                          <SelectItem key={index} value={index.toString()}>
+                            {form.formName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <Separator />
+
+                  {formConfigs && formConfigs[selectedFormIndex] && (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-base font-semibold">Form Fields</Label>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const currentForm = formConfigs[selectedFormIndex]
+                            const customFieldCount = currentForm.fields.filter(f => f.isCustom).length
+                            if (customFieldCount >= 2) {
+                              toast.error('Maximum 2 custom fields allowed per form')
+                              return
+                            }
+                            const newField: FormFieldConfig = {
+                              id: `custom-${Date.now()}`,
+                              originalName: 'Custom Field',
+                              customName: 'Custom Field',
+                              isMandatory: false,
+                              isVisible: true,
+                              isCustom: true
+                            }
+                            const updatedConfigs = [...formConfigs]
+                            updatedConfigs[selectedFormIndex].fields.push(newField)
+                            setFormConfigs(updatedConfigs)
+                            toast.success('Custom field added')
+                          }}
+                          disabled={(formConfigs[selectedFormIndex]?.fields.filter(f => f.isCustom).length || 0) >= 2}
+                        >
+                          <Plus size={16} className="mr-1" />
+                          Add Custom Field
+                        </Button>
+                      </div>
+
+                      <div className="space-y-2">
+                        {formConfigs[selectedFormIndex].fields.map((field, fieldIndex) => (
+                          <div key={field.id} className="p-3 border rounded-lg space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1 space-y-2">
+                                {editingFieldId === field.id ? (
+                                  <Input
+                                    value={field.customName}
+                                    onChange={(e) => {
+                                      const updatedConfigs = [...formConfigs]
+                                      updatedConfigs[selectedFormIndex].fields[fieldIndex].customName = e.target.value
+                                      setFormConfigs(updatedConfigs)
+                                    }}
+                                    onBlur={() => setEditingFieldId(null)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') setEditingFieldId(null)
+                                    }}
+                                    autoFocus
+                                    className="font-medium"
+                                  />
+                                ) : (
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium">{field.customName}</span>
+                                    {field.originalName !== field.customName && (
+                                      <Badge variant="secondary" className="text-xs">
+                                        was: {field.originalName}
+                                      </Badge>
+                                    )}
+                                    {field.isCustom && (
+                                      <Badge variant="outline" className="text-xs">Custom</Badge>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => setEditingFieldId(field.id)}
+                                >
+                                  <Pencil size={16} />
+                                </Button>
+                                {field.isCustom && (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      const updatedConfigs = [...formConfigs]
+                                      updatedConfigs[selectedFormIndex].fields = updatedConfigs[selectedFormIndex].fields.filter(f => f.id !== field.id)
+                                      setFormConfigs(updatedConfigs)
+                                      toast.success('Field removed')
+                                    }}
+                                  >
+                                    <Trash size={16} />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <div className="flex items-center gap-2">
+                                <Checkbox
+                                  id={`${field.id}-mandatory`}
+                                  checked={field.isMandatory}
+                                  onCheckedChange={(checked) => {
+                                    const updatedConfigs = [...formConfigs]
+                                    updatedConfigs[selectedFormIndex].fields[fieldIndex].isMandatory = !!checked
+                                    setFormConfigs(updatedConfigs)
+                                  }}
+                                />
+                                <Label htmlFor={`${field.id}-mandatory`} className="text-sm font-normal cursor-pointer">
+                                  Mandatory
+                                </Label>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Checkbox
+                                  id={`${field.id}-visible`}
+                                  checked={field.isVisible}
+                                  onCheckedChange={(checked) => {
+                                    const updatedConfigs = [...formConfigs]
+                                    updatedConfigs[selectedFormIndex].fields[fieldIndex].isVisible = !!checked
+                                    setFormConfigs(updatedConfigs)
+                                  }}
+                                />
+                                <Label htmlFor={`${field.id}-visible`} className="text-sm font-normal cursor-pointer">
+                                  Visible
+                                </Label>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <Alert>
+                        <AlertDescription className="text-sm">
+                          You can rename fields, toggle their mandatory status, hide them, or add up to 2 custom text fields per form.
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
