@@ -27,13 +27,19 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
     city: '',
     state: 'Texas',
     zip: '',
-    notes: ''
+    notes: '',
+    referralSource: ''
   })
 
   const [pets, setPets] = useState<Omit<Pet, 'id'>[]>([{
     name: '',
     breed: '',
+    customBreed: '',
+    isMixedBreed: false,
     weightClass: undefined,
+    age: undefined,
+    birthday: '',
+    gender: undefined,
     notes: ''
   }])
 
@@ -41,7 +47,12 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
     setPets([...pets, {
       name: '',
       breed: '',
+      customBreed: '',
+      isMixedBreed: false,
       weightClass: undefined,
+      age: undefined,
+      birthday: '',
+      gender: undefined,
       notes: ''
     }])
   }
@@ -52,7 +63,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
     }
   }
 
-  const updatePet = (index: number, field: keyof Omit<Pet, 'id'>, value: string) => {
+  const updatePet = (index: number, field: keyof Omit<Pet, 'id'>, value: string | boolean | number | undefined) => {
     const updatedPets = [...pets]
     updatedPets[index] = { ...updatedPets[index], [field]: value }
     setPets(updatedPets)
@@ -92,7 +103,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       <div className="flex items-center gap-3">
         <Button 
           variant="outline" 
@@ -110,12 +121,12 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
         </div>
       </div>
 
-      <div className="glass-card rounded-[1.25rem] overflow-hidden">
+      <div className="glass-card rounded-[1.25rem] overflow-hidden w-full">
         <CardHeader className="border-b border-white/10">
           <CardTitle className="text-white/90">Client Information</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="space-y-6">
+          <div className="space-y-6 w-full">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="customer-first-name" className="text-white/70">First Name *</Label>
@@ -213,89 +224,73 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
             </div>
 
             <div>
-              <Label htmlFor="customer-notes" className="text-white/70">Notes</Label>
-              <Textarea
-                id="customer-notes"
-                value={customerForm.notes}
-                onChange={(e) => setCustomerForm({ ...customerForm, notes: e.target.value })}
-                placeholder="Any additional notes about this client..."
-                className="mt-1.5"
-                rows={4}
-              />
-            </div>
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button 
-                variant="outline" 
-                onClick={onBack}
+              <Label htmlFor="customer-referral" className="text-white/70">How did you hear about us</Label>
+              <Select
+                value={customerForm.referralSource}
+                onValueChange={(value) => setCustomerForm({ ...customerForm, referralSource: value })}
               >
-                Cancel
-              </Button>
-              <Button onClick={handleCreateCustomer}>
-                Add Client
-              </Button>
+                <SelectTrigger id="customer-referral" className="mt-1.5">
+                  <SelectValue placeholder="Select source..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Facebook">Facebook</SelectItem>
+                  <SelectItem value="Nextdoor App">Nextdoor App</SelectItem>
+                  <SelectItem value="Google">Google</SelectItem>
+                  <SelectItem value="Instagram">Instagram</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardContent>
       </div>
 
-      <div className="glass-card rounded-[1.25rem] overflow-hidden">
-        <CardHeader className="border-b border-white/10">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-white/90">Pet Information</CardTitle>
-            <Button 
-              size="sm"
-              onClick={addPet}
-              className="h-8"
-            >
-              <Plus size={16} />
-              Add Pet
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="space-y-6">
-            {pets.map((pet, index) => (
-              <div key={index} className="space-y-4 pb-6 border-b border-white/10 last:border-b-0 last:pb-0">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-white/90 font-medium">Pet #{index + 1}</h3>
-                  {pets.length > 1 && (
-                    <Button 
-                      size="sm"
-                      variant="outline"
-                      onClick={() => removePet(index)}
-                      className="h-8 text-destructive hover:text-destructive"
-                    >
-                      <Trash size={16} />
-                    </Button>
-                  )}
+      {pets.map((pet, index) => (
+        <div key={index} className="glass-card rounded-[1.25rem] overflow-hidden w-full">
+          <CardHeader className="border-b border-white/10">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-white/90">Pet #{index + 1} Information</CardTitle>
+              {pets.length > 1 && (
+                <Button 
+                  size="sm"
+                  variant="outline"
+                  onClick={() => removePet(index)}
+                  className="h-8 text-destructive hover:text-destructive"
+                >
+                  <Trash size={16} />
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="space-y-4 w-full">
+              <div className="flex justify-between gap-4 w-full">
+                <div className="flex-[2]">
+                  <Label htmlFor={`pet-name-${index}`} className="text-white/70">Pet Name</Label>
+                  <Input
+                    id={`pet-name-${index}`}
+                    value={pet.name}
+                    onChange={(e) => updatePet(index, 'name', e.target.value)}
+                    placeholder="Enter pet name"
+                    className="mt-1.5"
+                  />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor={`pet-name-${index}`} className="text-white/70">Pet Name</Label>
-                    <Input
-                      id={`pet-name-${index}`}
-                      value={pet.name}
-                      onChange={(e) => updatePet(index, 'name', e.target.value)}
-                      placeholder="Enter pet name"
-                      className="mt-1.5"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor={`pet-breed-${index}`} className="text-white/70">Breed</Label>
-                    <Input
-                      id={`pet-breed-${index}`}
-                      value={pet.breed}
-                      onChange={(e) => updatePet(index, 'breed', e.target.value)}
-                      placeholder="Enter breed"
-                      className="mt-1.5"
-                    />
-                  </div>
+                <div className="w-20">
+                  <Label htmlFor={`pet-age-${index}`} className="text-white/70">Age</Label>
+                  <Input
+                    id={`pet-age-${index}`}
+                    type="number"
+                    min="0"
+                    max="30"
+                    value={pet.age || ''}
+                    onChange={(e) => updatePet(index, 'age', e.target.value ? parseInt(e.target.value) : undefined)}
+                    placeholder="Age"
+                    className="mt-1.5"
+                  />
                 </div>
 
-                <div>
+                <div className="flex-1">
                   <Label htmlFor={`pet-weight-${index}`} className="text-white/70">Weight Class</Label>
                   <Select
                     value={pet.weightClass || ''}
@@ -313,21 +308,99 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                   </Select>
                 </div>
 
-                <div>
-                  <Label htmlFor={`pet-notes-${index}`} className="text-white/70">Pet Notes</Label>
-                  <Textarea
-                    id={`pet-notes-${index}`}
-                    value={pet.notes}
-                    onChange={(e) => updatePet(index, 'notes', e.target.value)}
-                    placeholder="Special care instructions, temperament, etc..."
-                    className="mt-1.5"
-                    rows={3}
-                  />
+                <div className="flex-1">
+                  <Label className="text-white/70">Gender</Label>
+                  <div className="flex gap-2 mt-1.5">
+                    <Button
+                      type="button"
+                      variant={pet.gender === 'Male' ? "default" : "outline"}
+                      className="flex-1"
+                      onClick={() => updatePet(index, 'gender', 'Male')}
+                    >
+                      Male
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={pet.gender === 'Female' ? "default" : "outline"}
+                      className="flex-1"
+                      onClick={() => updatePet(index, 'gender', 'Female')}
+                    >
+                      Female
+                    </Button>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
+
+              <div className="flex gap-4 w-full">
+                <div className="flex-1">
+                  <Label htmlFor={`pet-breed-${index}`} className="text-white/70">Breed</Label>
+                  <Input
+                    id={`pet-breed-${index}`}
+                    value={pet.breed || ''}
+                    onChange={(e) => updatePet(index, 'breed', e.target.value)}
+                    placeholder="Enter breed"
+                    className="mt-1.5"
+                  />
+                </div>
+
+                <div className="w-40">
+                  <Label className="text-white/70">Mixed Breed</Label>
+                  <div className="flex gap-2 mt-1.5">
+                    <Button
+                      type="button"
+                      variant={pet.isMixedBreed === true ? "default" : "outline"}
+                      className="flex-1"
+                      onClick={() => updatePet(index, 'isMixedBreed', true)}
+                    >
+                      Yes
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={pet.isMixedBreed === false ? "default" : "outline"}
+                      className="flex-1"
+                      onClick={() => updatePet(index, 'isMixedBreed', false)}
+                    >
+                      No
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor={`pet-notes-${index}`} className="text-white/70">Medical, Allergies, and Behavior Information</Label>
+                <Textarea
+                  id={`pet-notes-${index}`}
+                  value={pet.notes}
+                  onChange={(e) => updatePet(index, 'notes', e.target.value)}
+                  placeholder="Special care instructions, temperament, etc..."
+                  className="mt-1.5"
+                  rows={3}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </div>
+      ))}
+
+      <div className="flex items-center justify-between gap-3">
+        <Button 
+          size="sm"
+          onClick={addPet}
+        >
+          <Plus size={16} />
+          Add Pet
+        </Button>
+        <div className="flex gap-3">
+          <Button 
+            variant="outline" 
+            onClick={onBack}
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleCreateCustomer}>
+            Add Client
+          </Button>
+        </div>
       </div>
     </div>
   )
