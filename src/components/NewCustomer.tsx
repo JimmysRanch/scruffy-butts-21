@@ -267,41 +267,34 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor={`pet-name-${index}`} className="text-white/70">Pet Name</Label>
-                  <Input
-                    id={`pet-name-${index}`}
-                    value={pet.name}
-                    onChange={(e) => updatePet(index, 'name', e.target.value)}
-                    placeholder="Enter pet name"
-                    className="mt-1.5"
-                  />
-                </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor={`pet-age-${index}`} className="text-white/70">Age (years)</Label>
+                    <Label htmlFor={`pet-name-${index}`} className="text-white/70">Pet Name</Label>
                     <Input
-                      id={`pet-age-${index}`}
-                      type="number"
-                      min="0"
-                      max="30"
-                      value={pet.age || ''}
-                      onChange={(e) => updatePet(index, 'age', e.target.value ? parseInt(e.target.value) : undefined)}
-                      placeholder="Enter age"
+                      id={`pet-name-${index}`}
+                      value={pet.name}
+                      onChange={(e) => updatePet(index, 'name', e.target.value)}
+                      placeholder="Enter pet name"
                       className="mt-1.5"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor={`pet-birthday-${index}`} className="text-white/70">Birthday (optional)</Label>
-                    <Input
-                      id={`pet-birthday-${index}`}
-                      type="date"
-                      value={pet.birthday || ''}
-                      onChange={(e) => updatePet(index, 'birthday', e.target.value)}
-                      className="mt-1.5"
-                    />
+                    <Label htmlFor={`pet-weight-${index}`} className="text-white/70">Weight Class</Label>
+                    <Select
+                      value={pet.weightClass || ''}
+                      onValueChange={(value) => updatePet(index, 'weightClass', value)}
+                    >
+                      <SelectTrigger id={`pet-weight-${index}`} className="mt-1.5">
+                        <SelectValue placeholder="Select weight class" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="small">{WEIGHT_CLASSES.small.label}</SelectItem>
+                        <SelectItem value="medium">{WEIGHT_CLASSES.medium.label}</SelectItem>
+                        <SelectItem value="large">{WEIGHT_CLASSES.large.label}</SelectItem>
+                        <SelectItem value="giant">{WEIGHT_CLASSES.giant.label}</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
@@ -327,22 +320,31 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor={`pet-weight-${index}`} className="text-white/70">Weight Class</Label>
-                  <Select
-                    value={pet.weightClass || ''}
-                    onValueChange={(value) => updatePet(index, 'weightClass', value)}
-                  >
-                    <SelectTrigger id={`pet-weight-${index}`} className="mt-1.5">
-                      <SelectValue placeholder="Select weight class" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="small">{WEIGHT_CLASSES.small.label}</SelectItem>
-                      <SelectItem value="medium">{WEIGHT_CLASSES.medium.label}</SelectItem>
-                      <SelectItem value="large">{WEIGHT_CLASSES.large.label}</SelectItem>
-                      <SelectItem value="giant">{WEIGHT_CLASSES.giant.label}</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor={`pet-age-${index}`} className="text-white/70">Age (years)</Label>
+                    <Input
+                      id={`pet-age-${index}`}
+                      type="number"
+                      min="0"
+                      max="30"
+                      value={pet.age || ''}
+                      onChange={(e) => updatePet(index, 'age', e.target.value ? parseInt(e.target.value) : undefined)}
+                      placeholder="Enter age"
+                      className="mt-1.5"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`pet-breed-${index}`} className="text-white/70">Breed</Label>
+                    <Input
+                      id={`pet-breed-${index}`}
+                      value={pet.breed || ''}
+                      onChange={(e) => updatePet(index, 'breed', e.target.value)}
+                      placeholder="Enter breed"
+                      className="mt-1.5"
+                    />
+                  </div>
                 </div>
 
                 <div>
