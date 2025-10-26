@@ -11,6 +11,7 @@ export interface Pet {
   birthday?: string
   gender?: 'Male' | 'Female'
   notes?: string
+  hasRabiesShots?: boolean
 }
 
 export interface Customer {

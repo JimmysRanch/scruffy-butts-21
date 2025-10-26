@@ -40,7 +40,8 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
     age: undefined,
     birthday: '',
     gender: undefined,
-    notes: ''
+    notes: '',
+    hasRabiesShots: false
   }])
 
   const addPet = () => {
@@ -53,7 +54,8 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
       age: undefined,
       birthday: '',
       gender: undefined,
-      notes: ''
+      notes: '',
+      hasRabiesShots: false
     }])
   }
 
@@ -264,8 +266,8 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
           </CardHeader>
           <CardContent className="p-6">
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-                <div className="md:col-span-4">
+              <div className="flex gap-4">
+                <div className="flex-1">
                   <Label htmlFor={`pet-name-${index}`} className="text-white/70">Pet Name</Label>
                   <Input
                     id={`pet-name-${index}`}
@@ -276,8 +278,8 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                   />
                 </div>
 
-                <div className="md:col-span-2">
-                  <Label htmlFor={`pet-age-${index}`} className="text-white/70">Age (years)</Label>
+                <div className="w-20">
+                  <Label htmlFor={`pet-age-${index}`} className="text-white/70">Age</Label>
                   <Input
                     id={`pet-age-${index}`}
                     type="number"
@@ -290,7 +292,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                   />
                 </div>
 
-                <div className="md:col-span-3">
+                <div className="flex-1">
                   <Label htmlFor={`pet-weight-${index}`} className="text-white/70">Weight Class</Label>
                   <Select
                     value={pet.weightClass || ''}
@@ -308,7 +310,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                   </Select>
                 </div>
 
-                <div className="md:col-span-3">
+                <div className="flex-1">
                   <Label className="text-white/70">Gender</Label>
                   <div className="flex gap-2 mt-1.5">
                     <Button
@@ -331,15 +333,45 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor={`pet-breed-${index}`} className="text-white/70">Breed</Label>
-                <Input
-                  id={`pet-breed-${index}`}
-                  value={pet.breed || ''}
-                  onChange={(e) => updatePet(index, 'breed', e.target.value)}
-                  placeholder="Enter breed"
-                  className="mt-1.5"
-                />
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <Label htmlFor={`pet-breed-${index}`} className="text-white/70">Breed</Label>
+                  <Input
+                    id={`pet-breed-${index}`}
+                    value={pet.breed || ''}
+                    onChange={(e) => updatePet(index, 'breed', e.target.value)}
+                    placeholder="Enter breed"
+                    className="mt-1.5"
+                  />
+                </div>
+
+                <div className="w-40">
+                  <Label className="text-white/70">Mixed Breed</Label>
+                  <div className="mt-1.5">
+                    <Button
+                      type="button"
+                      variant={pet.isMixedBreed ? "default" : "outline"}
+                      className="w-full"
+                      onClick={() => updatePet(index, 'isMixedBreed', !pet.isMixedBreed)}
+                    >
+                      {pet.isMixedBreed ? 'Yes' : 'No'}
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="w-48">
+                  <Label className="text-white/70">Current Rabies Shots</Label>
+                  <div className="mt-1.5">
+                    <Button
+                      type="button"
+                      variant={pet.hasRabiesShots ? "default" : "outline"}
+                      className="w-full"
+                      onClick={() => updatePet(index, 'hasRabiesShots', !pet.hasRabiesShots)}
+                    >
+                      {pet.hasRabiesShots ? 'Yes' : 'No'}
+                    </Button>
+                  </div>
+                </div>
               </div>
 
               <div>
