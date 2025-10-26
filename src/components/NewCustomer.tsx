@@ -265,7 +265,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
           <CardContent className="p-6">
             <div className="space-y-4 w-full">
               <div className="flex justify-between gap-4 w-full">
-                <div className="flex-1">
+                <div className="flex-[2]">
                   <Label htmlFor={`pet-name-${index}`} className="text-white/70">Pet Name</Label>
                   <Input
                     id={`pet-name-${index}`}
