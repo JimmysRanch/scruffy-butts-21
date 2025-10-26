@@ -269,37 +269,37 @@ export function InventoryManager() {
     <div className="space-y-3">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="gap-0 py-2">
-          <CardHeader className="pb-0 pt-0 px-3">
+          <CardHeader className="pb-0 pt-0 px-3 text-center">
             <CardTitle className="text-[11px] font-medium text-muted-foreground">Total Items</CardTitle>
           </CardHeader>
-          <CardContent className="px-3 pb-0 pt-1">
+          <CardContent className="px-3 pb-0 pt-1 text-center">
             <div className="text-base font-bold leading-tight">{totalItems}</div>
             <p className="text-[9px] text-muted-foreground leading-tight">{(items || []).length} unique products</p>
           </CardContent>
         </Card>
         <Card className="gap-0 py-2">
-          <CardHeader className="pb-0 pt-0 px-3">
+          <CardHeader className="pb-0 pt-0 px-3 text-center">
             <CardTitle className="text-[11px] font-medium text-muted-foreground">Total Value</CardTitle>
           </CardHeader>
-          <CardContent className="px-3 pb-0 pt-1">
+          <CardContent className="px-3 pb-0 pt-1 text-center">
             <div className="text-base font-bold leading-tight">${totalValue.toFixed(2)}</div>
             <p className="text-[9px] text-muted-foreground leading-tight">At cost price</p>
           </CardContent>
         </Card>
         <Card className="gap-0 py-2">
-          <CardHeader className="pb-0 pt-0 px-3">
+          <CardHeader className="pb-0 pt-0 px-3 text-center">
             <CardTitle className="text-[11px] font-medium text-muted-foreground">Low Stock Items</CardTitle>
           </CardHeader>
-          <CardContent className="px-3 pb-0 pt-1">
+          <CardContent className="px-3 pb-0 pt-1 text-center">
             <div className="text-base font-bold text-warning leading-tight">{lowStockItems.length}</div>
             <p className="text-[9px] text-muted-foreground leading-tight">Need reordering</p>
           </CardContent>
         </Card>
         <Card className="gap-0 py-2">
-          <CardHeader className="pb-0 pt-0 px-3">
+          <CardHeader className="pb-0 pt-0 px-3 text-center">
             <CardTitle className="text-[11px] font-medium text-muted-foreground">Suppliers</CardTitle>
           </CardHeader>
-          <CardContent className="px-3 pb-0 pt-1">
+          <CardContent className="px-3 pb-0 pt-1 text-center">
             <div className="text-base font-bold leading-tight">{(suppliers || []).length}</div>
             <p className="text-[9px] text-muted-foreground leading-tight">Active suppliers</p>
           </CardContent>
