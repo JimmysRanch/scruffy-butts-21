@@ -103,7 +103,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       <div className="flex items-center gap-3">
         <Button 
           variant="outline" 
@@ -121,12 +121,12 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
         </div>
       </div>
 
-      <div className="glass-card rounded-[1.25rem] overflow-hidden">
+      <div className="glass-card rounded-[1.25rem] overflow-hidden w-full">
         <CardHeader className="border-b border-white/10">
           <CardTitle className="text-white/90">Client Information</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="space-y-6">
+          <div className="space-y-6 w-full">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="customer-first-name" className="text-white/70">First Name *</Label>
@@ -246,7 +246,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
       </div>
 
       {pets.map((pet, index) => (
-        <div key={index} className="glass-card rounded-[1.25rem] overflow-hidden">
+        <div key={index} className="glass-card rounded-[1.25rem] overflow-hidden w-full">
           <CardHeader className="border-b border-white/10">
             <div className="flex items-center justify-between">
               <CardTitle className="text-white/90">Pet #{index + 1} Information</CardTitle>
@@ -263,8 +263,8 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
             </div>
           </CardHeader>
           <CardContent className="p-6">
-            <div className="space-y-4">
-              <div className="flex justify-between gap-4">
+            <div className="space-y-4 w-full">
+              <div className="flex justify-between gap-4 w-full">
                 <div className="flex-1">
                   <Label htmlFor={`pet-name-${index}`} className="text-white/70">Pet Name</Label>
                   <Input
@@ -331,7 +331,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                 </div>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex gap-4 w-full">
                 <div className="flex-1">
                   <Label htmlFor={`pet-breed-${index}`} className="text-white/70">Breed</Label>
                   <Input
