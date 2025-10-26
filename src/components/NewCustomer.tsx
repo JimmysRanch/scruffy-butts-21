@@ -277,6 +277,20 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                 </div>
 
                 <div>
+                  <Label htmlFor={`pet-age-${index}`} className="text-white/70">Age (years)</Label>
+                  <Input
+                    id={`pet-age-${index}`}
+                    type="number"
+                    min="0"
+                    max="30"
+                    value={pet.age || ''}
+                    onChange={(e) => updatePet(index, 'age', e.target.value ? parseInt(e.target.value) : undefined)}
+                    placeholder="Enter age"
+                    className="mt-1.5"
+                  />
+                </div>
+
+                <div>
                   <Label htmlFor={`pet-weight-${index}`} className="text-white/70">Weight Class</Label>
                   <Select
                     value={pet.weightClass || ''}
@@ -293,7 +307,9 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-white/70">Gender</Label>
                   <div className="flex gap-2 mt-1.5">
@@ -314,22 +330,6 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                       Female
                     </Button>
                   </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor={`pet-age-${index}`} className="text-white/70">Age (years)</Label>
-                  <Input
-                    id={`pet-age-${index}`}
-                    type="number"
-                    min="0"
-                    max="30"
-                    value={pet.age || ''}
-                    onChange={(e) => updatePet(index, 'age', e.target.value ? parseInt(e.target.value) : undefined)}
-                    placeholder="Enter age"
-                    className="mt-1.5"
-                  />
                 </div>
 
                 <div>
