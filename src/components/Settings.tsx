@@ -521,35 +521,17 @@ export function Settings() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="timezone">Timezone</Label>
-                    <Select
-                      value={businessSettings?.timezone || 'America/New_York'}
-                      onValueChange={(value) => setBusinessSettings(prev => ({ ...prev!, timezone: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="America/New_York">Eastern Time</SelectItem>
-                        <SelectItem value="America/Chicago">Central Time</SelectItem>
-                        <SelectItem value="America/Denver">Mountain Time</SelectItem>
-                        <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="business-address">Business Address</Label>
+                    <Input
+                      id="business-address"
+                      value={businessSettings?.address || ''}
+                      onChange={(e) => setBusinessSettings(prev => ({ ...prev!, address: e.target.value }))}
+                      placeholder="Street address"
+                    />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="business-address">Business Address</Label>
-                  <Input
-                    id="business-address"
-                    value={businessSettings?.address || ''}
-                    onChange={(e) => setBusinessSettings(prev => ({ ...prev!, address: e.target.value }))}
-                    placeholder="Street address"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="business-city">City</Label>
                     <Input
@@ -631,6 +613,23 @@ export function Settings() {
                       placeholder="Zip code"
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="timezone">Timezone</Label>
+                    <Select
+                      value={businessSettings?.timezone || 'America/New_York'}
+                      onValueChange={(value) => setBusinessSettings(prev => ({ ...prev!, timezone: value }))}
+                    >
+                      <SelectTrigger id="timezone">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="America/New_York">Eastern Time</SelectItem>
+                        <SelectItem value="America/Chicago">Central Time</SelectItem>
+                        <SelectItem value="America/Denver">Mountain Time</SelectItem>
+                        <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <Separator />
@@ -663,29 +662,6 @@ export function Settings() {
                       onChange={(e) => setBusinessSettings(prev => ({ ...prev!, taxRate: parseFloat(e.target.value) || 0 }))}
                     />
                   </div>
-                </div>
-
-                <Separator />
-
-                <div className="space-y-2">
-                  <Label htmlFor="default-pricing">Default Pricing Method</Label>
-                  <Select
-                    value={businessSettings?.defaultPricingMethod || 'weight'}
-                    onValueChange={(value: PricingMethod) => setBusinessSettings(prev => ({ ...prev!, defaultPricingMethod: value }))}
-                  >
-                    <SelectTrigger id="default-pricing">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="weight">Weight-Based Pricing</SelectItem>
-                      <SelectItem value="service">Flat Rate Pricing</SelectItem>
-                      <SelectItem value="breed">Breed-Based Pricing</SelectItem>
-                      <SelectItem value="hybrid">Hybrid Pricing</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-sm text-muted-foreground">
-                    This will be the default pricing method when creating new services
-                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -731,6 +707,29 @@ export function Settings() {
                 </div>
               </CardHeader>
               <CardContent>
+                <div className="mb-6">
+                  <Label htmlFor="default-pricing">Default Pricing Method</Label>
+                  <Select
+                    value={businessSettings?.defaultPricingMethod || 'weight'}
+                    onValueChange={(value: PricingMethod) => setBusinessSettings(prev => ({ ...prev!, defaultPricingMethod: value }))}
+                  >
+                    <SelectTrigger id="default-pricing">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="weight">Weight-Based Pricing</SelectItem>
+                      <SelectItem value="service">Flat Rate Pricing</SelectItem>
+                      <SelectItem value="breed">Breed-Based Pricing</SelectItem>
+                      <SelectItem value="hybrid">Hybrid Pricing</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    This will be the default pricing method when creating new services
+                  </p>
+                </div>
+
+                <Separator className="mb-6" />
+
                 {(services || []).length === 0 ? (
                   <div className="text-center py-12">
                     <Scissors size={48} className="mx-auto text-muted-foreground mb-4" />
