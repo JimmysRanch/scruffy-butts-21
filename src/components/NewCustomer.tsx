@@ -10,7 +10,6 @@ import { ArrowLeft, Plus, Trash } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { WeightClass, WEIGHT_CLASSES } from '@/lib/pricing-types'
 import { Customer, Pet } from '@/lib/types'
-import { DOG_BREEDS } from '@/lib/dog-breeds'
 
 interface NewCustomerProps {
   onBack: () => void
@@ -242,18 +241,6 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                 </SelectContent>
               </Select>
             </div>
-
-            <div>
-              <Label htmlFor="customer-notes" className="text-white/70">Notes</Label>
-              <Textarea
-                id="customer-notes"
-                value={customerForm.notes}
-                onChange={(e) => setCustomerForm({ ...customerForm, notes: e.target.value })}
-                placeholder="Any additional notes about this client..."
-                className="mt-1.5"
-                rows={4}
-              />
-            </div>
           </div>
         </CardContent>
       </div>
@@ -280,66 +267,16 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor={`pet-name-${index}`} className="text-white/70">Pet Name</Label>
-                    <Input
-                      id={`pet-name-${index}`}
-                      value={pet.name}
-                      onChange={(e) => updatePet(index, 'name', e.target.value)}
-                      placeholder="Enter pet name"
-                      className="mt-1.5"
-                    />
-                  </div>
-
-                  <div>
-                    <Label className="text-white/70">Breed</Label>
-                    <div className="flex gap-2 mt-1.5">
-                      <Select
-                        value={pet.breed || ''}
-                        onValueChange={(value) => {
-                          updatePet(index, 'breed', value)
-                          if (value !== 'Other') {
-                            updatePet(index, 'customBreed', '')
-                          }
-                        }}
-                      >
-                        <SelectTrigger className="flex-1">
-                          <SelectValue placeholder="Select breed..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {DOG_BREEDS.map((breed) => (
-                            <SelectItem key={breed} value={breed}>
-                              {breed}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        type="button"
-                        variant={pet.isMixedBreed ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => updatePet(index, 'isMixedBreed', !pet.isMixedBreed)}
-                        className="shrink-0"
-                      >
-                        Mixed
-                      </Button>
-                    </div>
-                  </div>
+                <div>
+                  <Label htmlFor={`pet-name-${index}`} className="text-white/70">Pet Name</Label>
+                  <Input
+                    id={`pet-name-${index}`}
+                    value={pet.name}
+                    onChange={(e) => updatePet(index, 'name', e.target.value)}
+                    placeholder="Enter pet name"
+                    className="mt-1.5"
+                  />
                 </div>
-
-                {pet.breed === 'Other' && (
-                  <div>
-                    <Label htmlFor={`pet-custom-breed-${index}`} className="text-white/70">Custom Breed</Label>
-                    <Input
-                      id={`pet-custom-breed-${index}`}
-                      value={pet.customBreed || ''}
-                      onChange={(e) => updatePet(index, 'customBreed', e.target.value)}
-                      placeholder="Enter custom breed"
-                      className="mt-1.5"
-                    />
-                  </div>
-                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
@@ -368,19 +305,25 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                   </div>
 
                   <div>
-                    <Label htmlFor={`pet-gender-${index}`} className="text-white/70">Gender</Label>
-                    <Select
-                      value={pet.gender || ''}
-                      onValueChange={(value) => updatePet(index, 'gender', value as 'Male' | 'Female')}
-                    >
-                      <SelectTrigger id={`pet-gender-${index}`} className="mt-1.5">
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Male">Male</SelectItem>
-                        <SelectItem value="Female">Female</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label className="text-white/70">Gender</Label>
+                    <div className="flex gap-2 mt-1.5">
+                      <Button
+                        type="button"
+                        variant={pet.gender === 'Male' ? "default" : "outline"}
+                        className="flex-1"
+                        onClick={() => updatePet(index, 'gender', 'Male')}
+                      >
+                        Male
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={pet.gender === 'Female' ? "default" : "outline"}
+                        className="flex-1"
+                        onClick={() => updatePet(index, 'gender', 'Female')}
+                      >
+                        Female
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
@@ -403,7 +346,7 @@ export function NewCustomer({ onBack }: NewCustomerProps) {
                 </div>
 
                 <div>
-                  <Label htmlFor={`pet-notes-${index}`} className="text-white/70">Pet Notes</Label>
+                  <Label htmlFor={`pet-notes-${index}`} className="text-white/70">Medical, Allergies, and Behavior Information</Label>
                   <Textarea
                     id={`pet-notes-${index}`}
                     value={pet.notes}
