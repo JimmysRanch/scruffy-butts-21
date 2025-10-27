@@ -343,100 +343,103 @@ export function GroomerStats() {
         </Card>
       </div>
 
-      {/* Filter Controls - Moved below widgets, right-aligned */}
-      <div className="flex justify-end items-center gap-2">
-        <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
-          <SelectTrigger className="w-[130px] frosted h-8">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="today">Today</SelectItem>
-            <SelectItem value="yesterday">Yesterday</SelectItem>
-            <SelectItem value="week">This Week</SelectItem>
-            <SelectItem value="month">This Month</SelectItem>
-          </SelectContent>
-        </Select>
+      {/* Combined row: Sub-category Tabs (left) and Filter Controls (right) */}
+      <div className="flex justify-between items-center gap-4 border-b border-border">
+        {/* Sub-category Tabs */}
+        <div className="flex gap-2" role="tablist" aria-label="Report categories">
+          <button
+            role="tab"
+            aria-selected={activeCategory === 'dashboard'}
+            aria-controls="report-content"
+            onClick={() => setActiveCategory('dashboard')}
+            className={getTabButtonClassName('dashboard')}
+          >
+            Dashboard
+          </button>
+          <button
+            role="tab"
+            aria-selected={activeCategory === 'employee'}
+            aria-controls="report-content"
+            onClick={() => setActiveCategory('employee')}
+            className={getTabButtonClassName('employee')}
+          >
+            Employee
+          </button>
+          <button
+            role="tab"
+            aria-selected={activeCategory === 'appointment'}
+            aria-controls="report-content"
+            onClick={() => setActiveCategory('appointment')}
+            className={getTabButtonClassName('appointment')}
+          >
+            Appointment
+          </button>
+          <button
+            role="tab"
+            aria-selected={activeCategory === 'sales'}
+            aria-controls="report-content"
+            onClick={() => setActiveCategory('sales')}
+            className={getTabButtonClassName('sales')}
+          >
+            Sales
+          </button>
+          <button
+            role="tab"
+            aria-selected={activeCategory === 'product'}
+            aria-controls="report-content"
+            onClick={() => setActiveCategory('product')}
+            className={getTabButtonClassName('product')}
+          >
+            Product
+          </button>
+          <button
+            role="tab"
+            aria-selected={activeCategory === 'client'}
+            aria-controls="report-content"
+            onClick={() => setActiveCategory('client')}
+            className={getTabButtonClassName('client')}
+          >
+            Client
+          </button>
+        </div>
 
-        <Select value={selectedStaff} onValueChange={setSelectedStaff}>
-          <SelectTrigger className="w-[150px] frosted h-8">
-            <SelectValue placeholder="All Staff" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Staff</SelectItem>
-            {staffMembers.map(member => (
-              <SelectItem key={member.id} value={member.id}>
-                {member.firstName} {member.lastName}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {/* Filter Controls */}
+        <div className="flex items-center gap-2">
+          <Select value={dateRange} onValueChange={(v) => setDateRange(v as DateRange)}>
+            <SelectTrigger className="w-[130px] frosted h-8">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="yesterday">Yesterday</SelectItem>
+              <SelectItem value="week">This Week</SelectItem>
+              <SelectItem value="month">This Month</SelectItem>
+            </SelectContent>
+          </Select>
 
-        <Button
-          variant="outline"
-          size="sm"
-          className="frosted h-8"
-          onClick={() => handleExport('csv')}
-        >
-          <Download className="w-4 h-4" />
-        </Button>
-      </div>
+          <Select value={selectedStaff} onValueChange={setSelectedStaff}>
+            <SelectTrigger className="w-[150px] frosted h-8">
+              <SelectValue placeholder="All Staff" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Staff</SelectItem>
+              {staffMembers.map(member => (
+                <SelectItem key={member.id} value={member.id}>
+                  {member.firstName} {member.lastName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-      {/* Sub-category Tabs */}
-      <div className="flex gap-2 border-b border-border" role="tablist" aria-label="Report categories">
-        <button
-          role="tab"
-          aria-selected={activeCategory === 'dashboard'}
-          aria-controls="report-content"
-          onClick={() => setActiveCategory('dashboard')}
-          className={getTabButtonClassName('dashboard')}
-        >
-          Dashboard
-        </button>
-        <button
-          role="tab"
-          aria-selected={activeCategory === 'employee'}
-          aria-controls="report-content"
-          onClick={() => setActiveCategory('employee')}
-          className={getTabButtonClassName('employee')}
-        >
-          Employee
-        </button>
-        <button
-          role="tab"
-          aria-selected={activeCategory === 'appointment'}
-          aria-controls="report-content"
-          onClick={() => setActiveCategory('appointment')}
-          className={getTabButtonClassName('appointment')}
-        >
-          Appointment
-        </button>
-        <button
-          role="tab"
-          aria-selected={activeCategory === 'sales'}
-          aria-controls="report-content"
-          onClick={() => setActiveCategory('sales')}
-          className={getTabButtonClassName('sales')}
-        >
-          Sales
-        </button>
-        <button
-          role="tab"
-          aria-selected={activeCategory === 'product'}
-          aria-controls="report-content"
-          onClick={() => setActiveCategory('product')}
-          className={getTabButtonClassName('product')}
-        >
-          Product
-        </button>
-        <button
-          role="tab"
-          aria-selected={activeCategory === 'client'}
-          aria-controls="report-content"
-          onClick={() => setActiveCategory('client')}
-          className={getTabButtonClassName('client')}
-        >
-          Client
-        </button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="frosted h-8"
+            onClick={() => handleExport('csv')}
+          >
+            <Download className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Content based on active category */}
