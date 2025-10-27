@@ -154,11 +154,10 @@ export function Settings() {
   const [selectedFormIndex, setSelectedFormIndex] = useState(0)
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null)
   
-  const [staffMembers] = useKV<any[]>('staff-members', [])
+  const [staffMembers, setStaffMembers] = useKV<any[]>('staff-members', [])
   const [shifts, setShifts] = useKV<any[]>('staff-shifts', [])
   const [timeOffRequests, setTimeOffRequests] = useKV<any[]>('time-off-requests', [])
   
-  const [staff, setStaff] = useKV<any[]>('staff', [])
   const [customers, setCustomers] = useKV<any[]>('customers', [])
   const [appointments, setAppointments] = useKV<any[]>('appointments', [])
   const [transactions, setTransactions] = useKV<any[]>('transactions', [])
@@ -400,7 +399,44 @@ export function Settings() {
     try {
       const data = await seedReportsData()
       
-      setStaff(data.staff)
+      // Transform staff data to match StaffMember interface
+      const transformedStaff = data.staff.map((s: any) => {
+        const nameParts = s.name.split(' ')
+        const firstName = nameParts[0] || ''
+        const lastName = nameParts.slice(1).join(' ') || ''
+        
+        return {
+          id: s.id,
+          firstName,
+          lastName,
+          email: s.email,
+          phone: s.phone,
+          position: s.role,
+          hireDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          address: '123 Staff Street',
+          city: 'Austin',
+          state: 'TX',
+          zip: '78701',
+          specialties: s.specialties || [],
+          notes: '',
+          status: 'active' as const,
+          rating: 4.5,
+          canBeBooked: true,
+          bookableServices: [],
+          commissionEnabled: true,
+          commissionPercent: s.commissionRate * 100,
+          hourlyPayEnabled: true,
+          hourlyRate: s.hourlyRate,
+          salaryEnabled: false,
+          salaryAmount: 0,
+          weeklyGuaranteeEnabled: false,
+          weeklyGuarantee: 0,
+          guaranteePayoutMethod: 'both' as const,
+          teamOverridesEnabled: false,
+          teamOverrides: []
+        }
+      })
+      
       const migratedServices = data.services.map(s => ({
         ...s,
         pricingMethod: 'service' as PricingMethod,
@@ -408,15 +444,22 @@ export function Settings() {
         weightPricing: undefined,
         breedPricing: undefined
       }))
+      
+      // Set all the data
+      setStaffMembers(transformedStaff)
       setServices(migratedServices)
       setCustomers(data.customers)
       setAppointments(data.appointments)
       setTransactions(data.transactions)
       
-      toast.success(`Successfully seeded ${data.appointments.length} appointments and ${data.transactions.length} transactions for reports!`)
+      // Provide detailed success message
+      const totalPets = data.customers.reduce((sum: number, c: any) => sum + (c.pets?.length || 0), 0)
+      const message = `Successfully seeded data!\n\n• ${transformedStaff.length} staff members\n• ${data.customers.length} customers with ${totalPets} pets\n• ${data.appointments.length} appointments\n• ${data.transactions.length} transactions\n\nNavigate to Clients, Staff, or Appointments to view the seeded data.`
+      
+      toast.success(message, { duration: 8000 })
     } catch (error) {
-      toast.error('Failed to seed reports data')
-      console.error(error)
+      toast.error('Failed to seed reports data. Please ensure you are running in a properly configured Spark environment.')
+      console.error('Seed error:', error)
     }
   }
 
