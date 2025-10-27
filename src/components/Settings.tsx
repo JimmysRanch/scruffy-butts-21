@@ -36,6 +36,7 @@ import {
 import { StaffPosition } from './StaffManager'
 import { seedShifts, seedTimeOffRequests } from '@/lib/seed-schedule-data'
 import { seedReportsData } from '@/lib/seed-reports-data'
+import { seedActivityData } from '@/lib/seed-activity-data'
 import { ServiceWithPricing, PricingMethod, DEFAULT_SERVICES, WeightClass, WEIGHT_CLASSES } from '@/lib/pricing-types'
 
 interface Service {
@@ -415,6 +416,16 @@ export function Settings() {
       toast.success(`Successfully seeded ${data.appointments.length} appointments and ${data.transactions.length} transactions for reports!`)
     } catch (error) {
       toast.error('Failed to seed reports data')
+      console.error(error)
+    }
+  }
+
+  const handleSeedActivityData = async () => {
+    try {
+      await seedActivityData()
+      toast.success('Successfully seeded activity data!')
+    } catch (error) {
+      toast.error('Failed to seed activity data')
       console.error(error)
     }
   }
@@ -1123,6 +1134,21 @@ export function Settings() {
                     </Button>
                     <p className="text-sm text-muted-foreground">
                       Generate sample appointments and transactions for performance reports
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <Label>Activity Data</Label>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={handleSeedActivityData}
+                    >
+                      <NotePencil size={16} className="mr-2" />
+                      Seed Activity Data
+                    </Button>
+                    <p className="text-sm text-muted-foreground">
+                      Generate sample activity logs for the Recent Activity widget
                     </p>
                   </div>
                 </div>

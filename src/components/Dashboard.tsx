@@ -12,6 +12,7 @@ import { TotalAppointmentsWidget } from '@/components/widgets/TotalAppointmentsW
 import { MonthlyRevenueWidget } from '@/components/widgets/MonthlyRevenueWidget'
 import { AverageTicketWidget } from '@/components/widgets/AverageTicketWidget'
 import { GroomerWorkloadWidget } from '@/components/widgets/GroomerWorkloadWidget'
+import { RecentActivityWidget } from '@/components/widgets/RecentActivityWidget'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
@@ -468,6 +469,12 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </div>
         )}
       </div>
+
+      {enabledWidgets.find(w => w.id === 'activity-feed') && (
+        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+          <RecentActivityWidget />
+        </div>
+      )}
 
       <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
