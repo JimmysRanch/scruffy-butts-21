@@ -204,7 +204,7 @@ export function Taxes() {
                 Sales tax filing due in {currentQuarter.daysUntilDue} days
               </p>
               <p className="text-xs text-muted-foreground">
-                Q{currentQuarter.quarter} {currentQuarter.year} tax return due {format(currentQuarter.dueDate, 'MMMM d, yyyy')}
+                {currentQuarter.quarter} {currentQuarter.year} tax return due {format(currentQuarter.dueDate, 'MMMM d, yyyy')}
               </p>
             </div>
           </div>

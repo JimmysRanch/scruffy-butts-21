@@ -25,7 +25,8 @@ import {
   Legend,
   ResponsiveContainer,
   LineChart,
-  Line
+  Line,
+  ComposedChart
 } from 'recharts'
 import { format, startOfMonth, endOfMonth, subMonths, isWithinInterval } from 'date-fns'
 
@@ -281,7 +282,7 @@ export function FinanceDashboard({ onNavigateToTab }: FinanceDashboardProps) {
           Monthly Overview
         </h3>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={monthlyChartData}>
+          <ComposedChart data={monthlyChartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
             <XAxis dataKey="month" stroke="rgba(255,255,255,0.5)" />
             <YAxis stroke="rgba(255,255,255,0.5)" />
@@ -296,7 +297,7 @@ export function FinanceDashboard({ onNavigateToTab }: FinanceDashboardProps) {
             <Bar dataKey="revenue" fill="#10b981" name="Revenue" />
             <Bar dataKey="expenses" fill="#ef4444" name="Expenses" />
             <Line type="monotone" dataKey="profit" stroke="#6366f1" strokeWidth={2} name="Profit" />
-          </BarChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </Card>
 
