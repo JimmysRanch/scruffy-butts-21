@@ -271,6 +271,14 @@ export function GroomerStats() {
     return `${value.toFixed(1)}%`
   }
 
+  const getTabButtonClassName = (category: ReportCategory) => {
+    return `px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
+      activeCategory === category
+        ? 'border-primary text-primary'
+        : 'border-transparent text-muted-foreground hover:text-foreground'
+    }`
+  }
+
   const handleExport = async (format: 'csv' | 'pdf') => {
     toast.promise(
       new Promise((resolve) => setTimeout(resolve, 1000)),
@@ -374,71 +382,66 @@ export function GroomerStats() {
       </div>
 
       {/* Sub-category Tabs */}
-      <div className="flex gap-2 border-b border-border">
+      <div className="flex gap-2 border-b border-border" role="tablist" aria-label="Report categories">
         <button
+          role="tab"
+          aria-selected={activeCategory === 'dashboard'}
+          aria-controls="report-content"
           onClick={() => setActiveCategory('dashboard')}
-          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
-            activeCategory === 'dashboard'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
+          className={getTabButtonClassName('dashboard')}
         >
           Dashboard
         </button>
         <button
+          role="tab"
+          aria-selected={activeCategory === 'employee'}
+          aria-controls="report-content"
           onClick={() => setActiveCategory('employee')}
-          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
-            activeCategory === 'employee'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
+          className={getTabButtonClassName('employee')}
         >
           Employee
         </button>
         <button
+          role="tab"
+          aria-selected={activeCategory === 'appointment'}
+          aria-controls="report-content"
           onClick={() => setActiveCategory('appointment')}
-          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
-            activeCategory === 'appointment'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
+          className={getTabButtonClassName('appointment')}
         >
           Appointment
         </button>
         <button
+          role="tab"
+          aria-selected={activeCategory === 'sales'}
+          aria-controls="report-content"
           onClick={() => setActiveCategory('sales')}
-          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
-            activeCategory === 'sales'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
+          className={getTabButtonClassName('sales')}
         >
           Sales
         </button>
         <button
+          role="tab"
+          aria-selected={activeCategory === 'product'}
+          aria-controls="report-content"
           onClick={() => setActiveCategory('product')}
-          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
-            activeCategory === 'product'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
+          className={getTabButtonClassName('product')}
         >
           Product
         </button>
         <button
+          role="tab"
+          aria-selected={activeCategory === 'client'}
+          aria-controls="report-content"
           onClick={() => setActiveCategory('client')}
-          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
-            activeCategory === 'client'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
+          className={getTabButtonClassName('client')}
         >
           Client
         </button>
       </div>
 
       {/* Content based on active category */}
-      {activeCategory === 'dashboard' && (
+      <div id="report-content" role="tabpanel">
+        {activeCategory === 'dashboard' && (
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 min-w-0">
             <Card className="frosted p-4 @container min-w-0">
@@ -630,6 +633,7 @@ export function GroomerStats() {
           </div>
         </Card>
       )}
+      </div>
     </div>
   )
 }
