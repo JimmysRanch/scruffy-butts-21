@@ -611,10 +611,24 @@ export async function seedReportsData() {
   // Combine and format appointments
   const allAppointments = [...pastAppointments, ...upcomingAppointments]
   allAppointments.forEach((apt, index) => {
+    const serviceIds = apt.serviceId ? [apt.serviceId] : []
     appointments.push({
       id: `appointment-${index + 1}`,
-      ...apt,
-      serviceIds: apt.serviceId ? [apt.serviceId] : [],
+      petId: apt.petId,
+      petName: apt.petName,
+      customerId: apt.customerId,
+      customerFirstName: apt.customerFirstName,
+      customerLastName: apt.customerLastName,
+      serviceIds,
+      service: apt.service,
+      serviceId: apt.serviceId,
+      staffId: apt.staffId,
+      date: apt.date,
+      time: apt.time,
+      duration: apt.duration,
+      status: apt.status,
+      price: apt.price,
+      notes: apt.notes,
       createdAt: new Date(now.getTime() - (30 - index) * 24 * 60 * 60 * 1000).toISOString()
     })
   })
@@ -643,20 +657,22 @@ export async function seedReportsData() {
   const paymentMethods: Array<'cash' | 'card' | 'cashapp' | 'chime'> = ['cash', 'card', 'cashapp', 'chime']
   const tipAmounts = [0, 5, 10, 15, 20]
   
-  // Create transactions for completed appointments
+  // Create transactions for completed appointments (will be populated after appointments array is built)
+  let transactionIndex = 0
   appointments
     .filter(apt => apt.status === 'completed')
-    .forEach((apt, index) => {
-      const service = services.find(s => s.id === apt.serviceId)
+    .forEach((apt) => {
+      const serviceId = apt.serviceIds?.[0] || apt.serviceId
+      const service = services.find(s => s.id === serviceId)
       if (!service) return
       
       const subtotal = apt.price
       const tax = subtotal * 0.0825 // Texas sales tax
-      const tip = tipAmounts[index % tipAmounts.length]
+      const tip = tipAmounts[transactionIndex % tipAmounts.length]
       const total = subtotal + tax + tip
       
       transactions.push({
-        id: `transaction-${index + 1}`,
+        id: `transaction-${transactionIndex + 1}`,
         date: apt.date,
         customerId: apt.customerId,
         staffId: apt.staffId,
@@ -672,8 +688,9 @@ export async function seedReportsData() {
         tax,
         tip,
         total,
-        paymentMethod: paymentMethods[index % paymentMethods.length]
+        paymentMethod: paymentMethods[transactionIndex % paymentMethods.length]
       })
+      transactionIndex++
     })
 
   return {
