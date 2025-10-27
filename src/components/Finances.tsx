@@ -25,14 +25,6 @@ export function Finances() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-          <CurrencyDollar className="w-8 h-8 text-primary" weight="duotone" />
-          Finances
-        </h1>
-        <p className="text-muted-foreground mt-1">Real-time financial operations and control</p>
-      </div>
-
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="frosted flex-wrap h-auto">
           <TabsTrigger value="dashboard">

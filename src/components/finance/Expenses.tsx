@@ -5,14 +5,7 @@ import { TrendDown, Plus } from '@phosphor-icons/react'
 export function Expenses() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold flex items-center gap-2">
-            <TrendDown className="w-6 h-6 text-primary" weight="duotone" />
-            Expenses
-          </h2>
-          <p className="text-muted-foreground mt-1">Track and categorize business expenses</p>
-        </div>
+      <div className="flex items-center justify-end">
         <Button>
           <Plus className="w-4 h-4 mr-2" weight="bold" />
           Add Expense

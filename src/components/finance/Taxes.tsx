@@ -142,16 +142,6 @@ export function Taxes() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Percent className="w-6 h-6 text-primary" weight="duotone" />
-            Sales Tax Compliance
-          </h2>
-          <p className="text-muted-foreground mt-1">Track and manage quarterly sales tax filings</p>
-        </div>
-      </div>
-
       {/* Current Quarter Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="frosted p-6">
