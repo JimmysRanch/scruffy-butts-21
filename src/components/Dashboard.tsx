@@ -468,13 +468,12 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             <GroomerWorkloadWidget />
           </div>
         )}
+        {enabledWidgets.find(w => w.id === 'activity-feed') && (
+          <div className="col-span-6 sm:col-span-6 lg:col-span-3 glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+            <RecentActivityWidget />
+          </div>
+        )}
       </div>
-
-      {enabledWidgets.find(w => w.id === 'activity-feed') && (
-        <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-          <RecentActivityWidget />
-        </div>
-      )}
 
       <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
