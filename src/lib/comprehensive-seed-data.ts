@@ -1097,9 +1097,20 @@ export async function seedComprehensiveMockData() {
   try {
     console.log('Starting comprehensive data seeding...')
     
-    // Check if window.spark is available
+    // Check if window.spark is available - with retry logic
+    let retries = 0
+    const maxRetries = 5
+    while (retries < maxRetries) {
+      if (typeof window !== 'undefined' && window.spark && window.spark.kv) {
+        break
+      }
+      console.log(`Waiting for Spark KV to be available... (attempt ${retries + 1}/${maxRetries})`)
+      await new Promise(resolve => setTimeout(resolve, 200))
+      retries++
+    }
+    
     if (typeof window === 'undefined' || !window.spark || !window.spark.kv) {
-      console.error('❌ window.spark.kv is not available')
+      console.error('❌ window.spark.kv is not available after waiting')
       throw new Error('Spark KV storage is not available. Please ensure the app is running in a Spark environment.')
     }
     
