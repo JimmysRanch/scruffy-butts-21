@@ -1115,43 +1115,93 @@ export async function seedComprehensiveMockData() {
     }
     
     // Seed staff members
-    await window.spark.kv.set('staff-members', mockStaffMembers)
-    console.log(`✓ Seeded ${mockStaffMembers.length} staff members`)
+    try {
+      await window.spark.kv.set('staff-members', mockStaffMembers)
+      console.log(`✓ Seeded ${mockStaffMembers.length} staff members`)
+    } catch (error) {
+      console.error('Failed to seed staff-members:', error)
+      throw new Error(`Failed to set key 'staff-members': ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
     
     // Seed services
-    await window.spark.kv.set('services', mockServices)
-    console.log(`✓ Seeded ${mockServices.length} services`)
+    try {
+      await window.spark.kv.set('services', mockServices)
+      console.log(`✓ Seeded ${mockServices.length} services`)
+    } catch (error) {
+      console.error('Failed to seed services:', error)
+      throw new Error(`Failed to set key 'services': ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
     
     // Seed customers
-    await window.spark.kv.set('customers', mockCustomers)
-    console.log(`✓ Seeded ${mockCustomers.length} customers with ${mockCustomers.reduce((sum, c) => sum + c.pets.length, 0)} pets`)
+    try {
+      await window.spark.kv.set('customers', mockCustomers)
+      console.log(`✓ Seeded ${mockCustomers.length} customers with ${mockCustomers.reduce((sum, c) => sum + c.pets.length, 0)} pets`)
+    } catch (error) {
+      console.error('Failed to seed customers:', error)
+      throw new Error(`Failed to set key 'customers': ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
     
     // Seed appointments
-    const appointments = generateMockAppointments()
-    await window.spark.kv.set('appointments', appointments)
-    console.log(`✓ Seeded ${appointments.length} appointments`)
+    try {
+      const appointments = generateMockAppointments()
+      console.log(`Generated ${appointments.length} appointments`)
+      await window.spark.kv.set('appointments', appointments)
+      console.log(`✓ Seeded ${appointments.length} appointments`)
+    } catch (error) {
+      console.error('Failed to seed appointments:', error)
+      throw new Error(`Failed to set key 'appointments': ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
     
     // Seed transactions
-    const transactions = generateMockTransactions()
-    await window.spark.kv.set('transactions', transactions)
-    console.log(`✓ Seeded ${transactions.length} POS transactions`)
+    try {
+      const transactions = generateMockTransactions()
+      console.log(`Generated ${transactions.length} transactions`)
+      await window.spark.kv.set('transactions', transactions)
+      console.log(`✓ Seeded ${transactions.length} POS transactions`)
+    } catch (error) {
+      console.error('Failed to seed transactions:', error)
+      throw new Error(`Failed to set key 'transactions': ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
     
     // Seed inventory
-    await window.spark.kv.set('inventory-items', mockInventoryItems)
-    console.log(`✓ Seeded ${mockInventoryItems.length} inventory items`)
+    try {
+      await window.spark.kv.set('inventory-items', mockInventoryItems)
+      console.log(`✓ Seeded ${mockInventoryItems.length} inventory items`)
+    } catch (error) {
+      console.error('Failed to seed inventory-items:', error)
+      throw new Error(`Failed to set key 'inventory-items': ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
     
-    await window.spark.kv.set('inventory-suppliers', mockSuppliers)
-    console.log(`✓ Seeded ${mockSuppliers.length} suppliers`)
+    try {
+      await window.spark.kv.set('inventory-suppliers', mockSuppliers)
+      console.log(`✓ Seeded ${mockSuppliers.length} suppliers`)
+    } catch (error) {
+      console.error('Failed to seed inventory-suppliers:', error)
+      throw new Error(`Failed to set key 'inventory-suppliers': ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
     
-    const inventoryTransactions = generateMockInventoryTransactions()
-    await window.spark.kv.set('inventory-transactions', inventoryTransactions)
-    console.log(`✓ Seeded ${inventoryTransactions.length} inventory transactions`)
+    try {
+      const inventoryTransactions = generateMockInventoryTransactions()
+      console.log(`Generated ${inventoryTransactions.length} inventory transactions`)
+      await window.spark.kv.set('inventory-transactions', inventoryTransactions)
+      console.log(`✓ Seeded ${inventoryTransactions.length} inventory transactions`)
+    } catch (error) {
+      console.error('Failed to seed inventory-transactions:', error)
+      throw new Error(`Failed to set key 'inventory-transactions': ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
     
     // Seed schedules
-    const { shifts, timeOffRequests } = generateMockSchedules()
-    await window.spark.kv.set('staff-schedules', shifts)
-    await window.spark.kv.set('time-off-requests', timeOffRequests)
-    console.log(`✓ Seeded ${shifts.length} staff shifts and ${timeOffRequests.length} time-off requests`)
+    try {
+      const { shifts, timeOffRequests } = generateMockSchedules()
+      console.log(`Generated ${shifts.length} shifts and ${timeOffRequests.length} time-off requests`)
+      await window.spark.kv.set('staff-schedules', shifts)
+      console.log(`✓ Seeded ${shifts.length} staff shifts`)
+      await window.spark.kv.set('time-off-requests', timeOffRequests)
+      console.log(`✓ Seeded ${timeOffRequests.length} time-off requests`)
+    } catch (error) {
+      console.error('Failed to seed schedules:', error)
+      throw new Error(`Failed to set key 'staff-schedules' or 'time-off-requests': ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
     
     console.log('✅ All mock data seeded successfully!')
     console.log(`Data range: October 15, 2025 - November 15, 2025`)
