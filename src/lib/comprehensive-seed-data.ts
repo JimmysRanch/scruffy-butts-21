@@ -380,7 +380,7 @@ export const mockCustomers = [
         breed: 'Bulldog',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: 'large' as const,
+        weightClass: 'medium' as const,
         age: 4,
         gender: 'Male' as const,
         notes: 'Skin folds need special attention'
