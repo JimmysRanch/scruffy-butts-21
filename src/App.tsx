@@ -168,7 +168,21 @@ function App() {
   const isCompact = appearance?.compactMode || false
 
   return (
-    <div className="min-h-[100svh] md:min-h-[100dvh] relative">
+    <div className="min-h-[100svh] md:min-h-[100dvh] relative overflow-hidden">
+      <div className="aurora-gradient absolute inset-0 -z-40" aria-hidden="true" />
+      <div className="aurora-grid absolute inset-0 -z-30" aria-hidden="true" />
+      <div
+        className="aurora-orb aurora-orb--one absolute -top-48 -left-28 w-[520px] h-[520px] -z-20"
+        aria-hidden="true"
+      />
+      <div
+        className="aurora-orb aurora-orb--two absolute top-1/3 right-[-220px] w-[580px] h-[580px] -z-10"
+        aria-hidden="true"
+      />
+      <div
+        className="aurora-orb aurora-orb--three absolute bottom-[-240px] left-1/4 w-[640px] h-[640px] -z-10"
+        aria-hidden="true"
+      />
       <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
       <main className="pt-24 w-full px-4 max-w-[2000px] mx-auto pb-8 relative z-10">
         {renderView()}
