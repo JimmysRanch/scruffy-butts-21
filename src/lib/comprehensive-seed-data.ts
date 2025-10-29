@@ -1092,123 +1092,36 @@ export function generateMockSchedules() {
   return { shifts, timeOffRequests }
 }
 
-// Main seeding function
+// Main seeding function - returns data instead of setting directly
 export async function seedComprehensiveMockData() {
-  try {
-    console.log('Starting comprehensive data seeding...')
-    
-    // Check if window.spark is available - with retry logic
-    let retries = 0
-    const maxRetries = 5
-    while (retries < maxRetries) {
-      if (typeof window !== 'undefined' && window.spark && window.spark.kv) {
-        break
-      }
-      console.log(`Waiting for Spark KV to be available... (attempt ${retries + 1}/${maxRetries})`)
-      await new Promise(resolve => setTimeout(resolve, 200))
-      retries++
-    }
-    
-    if (typeof window === 'undefined' || !window.spark || !window.spark.kv) {
-      console.error('❌ window.spark.kv is not available after waiting')
-      throw new Error('Spark KV storage is not available. Please ensure the app is running in a Spark environment.')
-    }
-    
-    // Seed staff members
-    try {
-      await window.spark.kv.set('staff-members', mockStaffMembers)
-      console.log(`✓ Seeded ${mockStaffMembers.length} staff members`)
-    } catch (error) {
-      console.error('Failed to seed staff-members:', error)
-      throw new Error(`Failed to set key 'staff-members': ${error instanceof Error ? error.message : 'Unknown error'}`)
-    }
-    
-    // Seed services
-    try {
-      await window.spark.kv.set('services', mockServices)
-      console.log(`✓ Seeded ${mockServices.length} services`)
-    } catch (error) {
-      console.error('Failed to seed services:', error)
-      throw new Error(`Failed to set key 'services': ${error instanceof Error ? error.message : 'Unknown error'}`)
-    }
-    
-    // Seed customers
-    try {
-      await window.spark.kv.set('customers', mockCustomers)
-      console.log(`✓ Seeded ${mockCustomers.length} customers with ${mockCustomers.reduce((sum, c) => sum + c.pets.length, 0)} pets`)
-    } catch (error) {
-      console.error('Failed to seed customers:', error)
-      throw new Error(`Failed to set key 'customers': ${error instanceof Error ? error.message : 'Unknown error'}`)
-    }
-    
-    // Seed appointments
-    try {
-      const appointments = generateMockAppointments()
-      console.log(`Generated ${appointments.length} appointments`)
-      await window.spark.kv.set('appointments', appointments)
-      console.log(`✓ Seeded ${appointments.length} appointments`)
-    } catch (error) {
-      console.error('Failed to seed appointments:', error)
-      throw new Error(`Failed to set key 'appointments': ${error instanceof Error ? error.message : 'Unknown error'}`)
-    }
-    
-    // Seed transactions
-    try {
-      const transactions = generateMockTransactions()
-      console.log(`Generated ${transactions.length} transactions`)
-      await window.spark.kv.set('transactions', transactions)
-      console.log(`✓ Seeded ${transactions.length} POS transactions`)
-    } catch (error) {
-      console.error('Failed to seed transactions:', error)
-      throw new Error(`Failed to set key 'transactions': ${error instanceof Error ? error.message : 'Unknown error'}`)
-    }
-    
-    // Seed inventory
-    try {
-      await window.spark.kv.set('inventory-items', mockInventoryItems)
-      console.log(`✓ Seeded ${mockInventoryItems.length} inventory items`)
-    } catch (error) {
-      console.error('Failed to seed inventory-items:', error)
-      throw new Error(`Failed to set key 'inventory-items': ${error instanceof Error ? error.message : 'Unknown error'}`)
-    }
-    
-    try {
-      await window.spark.kv.set('inventory-suppliers', mockSuppliers)
-      console.log(`✓ Seeded ${mockSuppliers.length} suppliers`)
-    } catch (error) {
-      console.error('Failed to seed inventory-suppliers:', error)
-      throw new Error(`Failed to set key 'inventory-suppliers': ${error instanceof Error ? error.message : 'Unknown error'}`)
-    }
-    
-    try {
-      const inventoryTransactions = generateMockInventoryTransactions()
-      console.log(`Generated ${inventoryTransactions.length} inventory transactions`)
-      await window.spark.kv.set('inventory-transactions', inventoryTransactions)
-      console.log(`✓ Seeded ${inventoryTransactions.length} inventory transactions`)
-    } catch (error) {
-      console.error('Failed to seed inventory-transactions:', error)
-      throw new Error(`Failed to set key 'inventory-transactions': ${error instanceof Error ? error.message : 'Unknown error'}`)
-    }
-    
-    // Seed schedules
-    try {
-      const { shifts, timeOffRequests } = generateMockSchedules()
-      console.log(`Generated ${shifts.length} shifts and ${timeOffRequests.length} time-off requests`)
-      await window.spark.kv.set('staff-schedules', shifts)
-      console.log(`✓ Seeded ${shifts.length} staff shifts`)
-      await window.spark.kv.set('time-off-requests', timeOffRequests)
-      console.log(`✓ Seeded ${timeOffRequests.length} time-off requests`)
-    } catch (error) {
-      console.error('Failed to seed schedules:', error)
-      throw new Error(`Failed to set key 'staff-schedules' or 'time-off-requests': ${error instanceof Error ? error.message : 'Unknown error'}`)
-    }
-    
-    console.log('✅ All mock data seeded successfully!')
-    console.log(`Data range: October 15, 2025 - November 15, 2025`)
-    
-    return true
-  } catch (error) {
-    console.error('Error seeding mock data:', error)
-    throw error
+  console.log('Generating comprehensive mock data...')
+  
+  // Generate all data
+  const appointments = generateMockAppointments()
+  console.log(`Generated ${appointments.length} appointments`)
+  
+  const transactions = generateMockTransactions()
+  console.log(`Generated ${transactions.length} transactions`)
+  
+  const inventoryTransactions = generateMockInventoryTransactions()
+  console.log(`Generated ${inventoryTransactions.length} inventory transactions`)
+  
+  const { shifts, timeOffRequests } = generateMockSchedules()
+  console.log(`Generated ${shifts.length} shifts and ${timeOffRequests.length} time-off requests`)
+  
+  console.log('✅ All mock data generated successfully!')
+  console.log(`Data range: October 15, 2025 - November 15, 2025`)
+  
+  return {
+    staffMembers: mockStaffMembers,
+    services: mockServices,
+    customers: mockCustomers,
+    appointments,
+    transactions,
+    inventoryItems: mockInventoryItems,
+    inventorySuppliers: mockSuppliers,
+    inventoryTransactions,
+    shifts,
+    timeOffRequests
   }
 }

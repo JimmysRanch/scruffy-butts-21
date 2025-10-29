@@ -155,9 +155,12 @@ export function Settings() {
   const [selectedFormIndex, setSelectedFormIndex] = useState(0)
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null)
   
-  const [staffMembers] = useKV<any[]>('staff-members', [])
-  const [shifts, setShifts] = useKV<any[]>('staff-shifts', [])
+  const [staffMembers, setStaffMembers] = useKV<any[]>('staff-members', [])
+  const [shifts, setShifts] = useKV<any[]>('staff-schedules', [])
   const [timeOffRequests, setTimeOffRequests] = useKV<any[]>('time-off-requests', [])
+  const [inventoryItems, setInventoryItems] = useKV<any[]>('inventory-items', [])
+  const [inventorySuppliers, setInventorySuppliers] = useKV<any[]>('inventory-suppliers', [])
+  const [inventoryTransactions, setInventoryTransactions] = useKV<any[]>('inventory-transactions', [])
   
   const [staff, setStaff] = useKV<any[]>('staff', [])
   const [customers, setCustomers] = useKV<any[]>('customers', [])
@@ -433,14 +436,26 @@ export function Settings() {
 
   const handleSeedComprehensiveData = async () => {
     try {
-      const success = await seedComprehensiveMockData()
-      if (success) {
-        toast.success('Successfully seeded comprehensive mock data from Oct 15 - Nov 15, 2025!')
-        // Reload the page to show the new data
-        setTimeout(() => {
-          window.location.reload()
-        }, 1500)
-      }
+      const data = await seedComprehensiveMockData()
+      
+      // Set all the data using useKV setters
+      setStaffMembers(data.staffMembers)
+      setServices(data.services)
+      setCustomers(data.customers)
+      setAppointments(data.appointments)
+      setTransactions(data.transactions)
+      setInventoryItems(data.inventoryItems)
+      setInventorySuppliers(data.inventorySuppliers)
+      setInventoryTransactions(data.inventoryTransactions)
+      setShifts(data.shifts)
+      setTimeOffRequests(data.timeOffRequests)
+      
+      toast.success('Successfully seeded comprehensive mock data from Oct 15 - Nov 15, 2025!')
+      
+      // Reload the page to show the new data
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to seed comprehensive mock data'
       toast.error(errorMessage)
