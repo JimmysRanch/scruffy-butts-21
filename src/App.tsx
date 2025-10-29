@@ -15,6 +15,7 @@ import { NewAppointment } from '@/components/NewAppointment'
 import { DashboardCustomization } from '@/components/DashboardCustomization'
 import { AppointmentDetail } from '@/components/AppointmentDetail'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
+import { SupabaseCheck } from '@/components/SupabaseCheck'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'finances' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard' | 'appointment-detail' | 'appointment-checkout'
 
@@ -174,6 +175,7 @@ function App() {
         {renderView()}
       </main>
       <Toaster />
+      <SupabaseCheck />
     </div>
   )
 }
