@@ -440,12 +440,11 @@ export function Settings() {
         setTimeout(() => {
           window.location.reload()
         }, 1500)
-      } else {
-        toast.error('Failed to seed comprehensive mock data')
       }
     } catch (error) {
-      toast.error('Failed to seed comprehensive mock data')
-      console.error(error)
+      const errorMessage = error instanceof Error ? error.message : 'Failed to seed comprehensive mock data'
+      toast.error(errorMessage)
+      console.error('Seeding error:', error)
     }
   }
 

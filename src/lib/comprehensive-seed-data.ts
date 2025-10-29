@@ -1097,6 +1097,12 @@ export async function seedComprehensiveMockData() {
   try {
     console.log('Starting comprehensive data seeding...')
     
+    // Check if window.spark is available
+    if (typeof window === 'undefined' || !window.spark || !window.spark.kv) {
+      console.error('❌ window.spark.kv is not available')
+      throw new Error('Spark KV storage is not available. Please ensure the app is running in a Spark environment.')
+    }
+    
     // Seed staff members
     await window.spark.kv.set('staff-members', mockStaffMembers)
     console.log(`✓ Seeded ${mockStaffMembers.length} staff members`)
@@ -1142,6 +1148,6 @@ export async function seedComprehensiveMockData() {
     return true
   } catch (error) {
     console.error('Error seeding mock data:', error)
-    return false
+    throw error
   }
 }
