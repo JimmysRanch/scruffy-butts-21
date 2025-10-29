@@ -37,6 +37,7 @@ import { StaffPosition } from './StaffManager'
 import { seedShifts, seedTimeOffRequests } from '@/lib/seed-schedule-data'
 import { seedReportsData } from '@/lib/seed-reports-data'
 import { seedActivityData } from '@/lib/seed-activity-data'
+import { seedComprehensiveMockData } from '@/lib/comprehensive-seed-data'
 import { ServiceWithPricing, PricingMethod, DEFAULT_SERVICES, WeightClass, WEIGHT_CLASSES } from '@/lib/pricing-types'
 
 interface Service {
@@ -426,6 +427,24 @@ export function Settings() {
       toast.success('Successfully seeded activity data!')
     } catch (error) {
       toast.error('Failed to seed activity data')
+      console.error(error)
+    }
+  }
+
+  const handleSeedComprehensiveData = async () => {
+    try {
+      const success = await seedComprehensiveMockData()
+      if (success) {
+        toast.success('Successfully seeded comprehensive mock data from Oct 15 - Nov 15, 2025!')
+        // Reload the page to show the new data
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
+      } else {
+        toast.error('Failed to seed comprehensive mock data')
+      }
+    } catch (error) {
+      toast.error('Failed to seed comprehensive mock data')
       console.error(error)
     }
   }
@@ -1150,6 +1169,29 @@ export function Settings() {
                     <p className="text-sm text-muted-foreground">
                       Generate sample activity logs for the Recent Activity widget
                     </p>
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="space-y-3">
+                    <Label>Comprehensive Mock Data (Oct 15 - Nov 15, 2025)</Label>
+                    <Button 
+                      variant="default" 
+                      className="w-full justify-start"
+                      onClick={handleSeedComprehensiveData}
+                    >
+                      <Database size={16} className="mr-2" />
+                      Seed Complete App Data
+                    </Button>
+                    <Alert>
+                      <Warning size={16} />
+                      <AlertDescription>
+                        This will populate the entire app with comprehensive mock data including:
+                        3+ staff members, 15+ customers with pets, appointments, POS transactions, 
+                        inventory items, schedules, and more. Date range: Oct 15 - Nov 15, 2025.
+                        <strong> Page will reload after seeding.</strong>
+                      </AlertDescription>
+                    </Alert>
                   </div>
                 </div>
               </CardContent>
