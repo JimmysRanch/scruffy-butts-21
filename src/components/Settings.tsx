@@ -438,6 +438,19 @@ export function Settings() {
     try {
       const data = await seedComprehensiveMockData()
       
+      console.log('Setting data:', {
+        staffMembers: data.staffMembers.length,
+        services: data.services.length,
+        customers: data.customers.length,
+        appointments: data.appointments.length,
+        transactions: data.transactions.length,
+        inventoryItems: data.inventoryItems.length,
+        inventorySuppliers: data.inventorySuppliers.length,
+        inventoryTransactions: data.inventoryTransactions.length,
+        shifts: data.shifts.length,
+        timeOffRequests: data.timeOffRequests.length
+      })
+      
       // Set all the data using useKV setters
       setStaffMembers(data.staffMembers)
       setServices(data.services)
@@ -450,12 +463,17 @@ export function Settings() {
       setShifts(data.shifts)
       setTimeOffRequests(data.timeOffRequests)
       
-      toast.success('Successfully seeded comprehensive mock data from Oct 15 - Nov 15, 2025!')
+      console.log('Data set complete, waiting before reload...')
+      
+      // Give the KV storage time to persist all the data
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      toast.success('Successfully seeded comprehensive mock data from Oct 15 - Nov 15, 2025! Reloading...')
       
       // Reload the page to show the new data
       setTimeout(() => {
         window.location.reload()
-      }, 1500)
+      }, 2000)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to seed comprehensive mock data'
       toast.error(errorMessage)
