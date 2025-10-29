@@ -243,7 +243,7 @@ export const mockCustomers = [
         breed: 'Poodle',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: '20-40' as const,
+        weightClass: 'medium' as const,
         age: 4,
         gender: 'Female' as const,
         notes: 'Very friendly, loves treats'
@@ -269,7 +269,7 @@ export const mockCustomers = [
         breed: 'German Shepherd',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: '60-80' as const,
+        weightClass: 'large' as const,
         age: 3,
         gender: 'Male' as const,
         notes: 'Needs firm handling, can be nervous'
@@ -294,7 +294,7 @@ export const mockCustomers = [
         breed: 'Golden Retriever',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: '60-80' as const,
+        weightClass: 'large' as const,
         age: 6,
         gender: 'Male' as const,
         notes: 'Very calm and well-behaved'
@@ -305,7 +305,7 @@ export const mockCustomers = [
         breed: 'Beagle',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: '20-40' as const,
+        weightClass: 'medium' as const,
         age: 2,
         gender: 'Female' as const,
         notes: 'Energetic, loves to play'
@@ -330,7 +330,7 @@ export const mockCustomers = [
         breed: 'Labrador Retriever',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: '60-80' as const,
+        weightClass: 'large' as const,
         age: 5,
         gender: 'Male' as const,
         notes: 'Loves water, very playful'
@@ -355,7 +355,7 @@ export const mockCustomers = [
         breed: 'Yorkshire Terrier',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: 'under-20' as const,
+        weightClass: 'small' as const,
         age: 3,
         gender: 'Female' as const,
         notes: 'Show dog, requires special cuts'
@@ -380,7 +380,7 @@ export const mockCustomers = [
         breed: 'Bulldog',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: '40-60' as const,
+        weightClass: 'large' as const,
         age: 4,
         gender: 'Male' as const,
         notes: 'Skin folds need special attention'
@@ -405,7 +405,7 @@ export const mockCustomers = [
         breed: 'Shih Tzu',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: 'under-20' as const,
+        weightClass: 'small' as const,
         age: 7,
         gender: 'Female' as const,
         notes: 'Senior dog, very gentle'
@@ -430,7 +430,7 @@ export const mockCustomers = [
         breed: 'Cocker Spaniel',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: '20-40' as const,
+        weightClass: 'medium' as const,
         age: 5,
         gender: 'Male' as const,
         notes: 'Regular ear cleaning needed'
@@ -455,7 +455,7 @@ export const mockCustomers = [
         breed: 'French Bulldog',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: '20-40' as const,
+        weightClass: 'medium' as const,
         age: 2,
         gender: 'Female' as const,
         notes: 'Very affectionate'
@@ -480,7 +480,7 @@ export const mockCustomers = [
         breed: 'Rottweiler',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: 'over-80' as const,
+        weightClass: 'giant' as const,
         age: 4,
         gender: 'Male' as const,
         notes: 'Large dog, requires experienced groomer'
@@ -505,7 +505,7 @@ export const mockCustomers = [
         breed: 'Border Collie',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: '40-60' as const,
+        weightClass: 'large' as const,
         age: 3,
         gender: 'Female' as const,
         notes: 'High energy, needs quick service'
@@ -530,7 +530,7 @@ export const mockCustomers = [
         breed: 'Australian Shepherd',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: '40-60' as const,
+        weightClass: 'large' as const,
         age: 6,
         gender: 'Male' as const,
         notes: 'Thick coat, needs de-shedding'
@@ -555,7 +555,7 @@ export const mockCustomers = [
         breed: 'Maltese',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: 'under-20' as const,
+        weightClass: 'small' as const,
         age: 4,
         gender: 'Female' as const,
         notes: 'Likes to be pampered'
@@ -580,7 +580,7 @@ export const mockCustomers = [
         breed: 'Boxer',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: '60-80' as const,
+        weightClass: 'large' as const,
         age: 3,
         gender: 'Male' as const,
         notes: 'Very energetic, loves attention'
@@ -605,7 +605,7 @@ export const mockCustomers = [
         breed: 'Cavalier King Charles Spaniel',
         customBreed: '',
         isMixedBreed: false,
-        weightClass: 'under-20' as const,
+        weightClass: 'small' as const,
         age: 5,
         gender: 'Male' as const,
         notes: 'Very sweet temperament'
