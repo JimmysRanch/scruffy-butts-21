@@ -107,7 +107,7 @@ export function FinanceDashboard({ onNavigateToTab }: FinanceDashboardProps) {
 
   // Generate monthly overview chart data
   const monthlyChartData = useMemo(() => {
-    const months = []
+    const months: { month: string; revenue: number; expenses: number; profit: number }[] = []
     for (let i = 5; i >= 0; i--) {
       const monthDate = subMonths(new Date(), i)
       const monthStart = startOfMonth(monthDate)

@@ -215,6 +215,9 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
+  const today = new Date()
+  const todayDateString = format(today, 'yyyy-MM-dd')
+
   const widgetsWithIcons = DEFAULT_WIDGETS.map(w => ({
     ...w,
     icon: WIDGET_ICON_MAP[w.id] || Calendar
