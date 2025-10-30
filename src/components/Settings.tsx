@@ -76,6 +76,7 @@ interface AppearanceSettings {
   theme: 'light' | 'dark' | 'system'
   compactMode: boolean
   showWelcomeMessage: boolean
+  enableKiraKira: boolean
 }
 
 interface FormFieldConfig {
@@ -118,7 +119,8 @@ export function Settings() {
   const [appearance, setAppearance] = useKV<AppearanceSettings>('appearance-settings', {
     theme: 'light',
     compactMode: false,
-    showWelcomeMessage: true
+    showWelcomeMessage: true,
+    enableKiraKira: true
   })
 
   const [formConfigs, setFormConfigs] = useKV<FormConfig[]>('form-configs', [
@@ -1059,6 +1061,19 @@ export function Settings() {
                     <Switch
                       checked={appearance?.showWelcomeMessage || false}
                       onCheckedChange={(checked) => setAppearance(prev => ({ ...prev!, showWelcomeMessage: checked }))}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <Label>Sparkle Effect</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Show animated sparkles across the interface
+                      </p>
+                    </div>
+                    <Switch
+                      checked={appearance?.enableKiraKira !== undefined ? appearance.enableKiraKira : true}
+                      onCheckedChange={(checked) => setAppearance(prev => ({ ...prev!, enableKiraKira: checked }))}
                     />
                   </div>
                 </div>

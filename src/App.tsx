@@ -23,6 +23,7 @@ interface AppearanceSettings {
   theme: 'light' | 'dark' | 'system'
   compactMode: boolean
   showWelcomeMessage: boolean
+  enableKiraKira: boolean
 }
 
 function App() {
@@ -41,7 +42,8 @@ function App() {
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {
     theme: 'light',
     compactMode: false,
-    showWelcomeMessage: true
+    showWelcomeMessage: true,
+    enableKiraKira: true
   })
 
   useEffect(() => {
@@ -170,7 +172,7 @@ function App() {
 
   return (
     <div className="min-h-[100svh] md:min-h-[100dvh] relative">
-      <KiraKiraEffect />
+      {(appearance?.enableKiraKira !== undefined ? appearance.enableKiraKira : true) && <KiraKiraEffect />}
       <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
       <main className="pt-24 w-full px-4 max-w-[2000px] mx-auto pb-8 relative z-10">
         {renderView()}
