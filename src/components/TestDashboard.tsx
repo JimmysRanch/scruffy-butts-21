@@ -220,10 +220,6 @@ export function TestDashboard({ onNavigate }: TestDashboardProps) {
     icon: WIDGET_ICON_MAP[w.id] || Calendar
   }))
 
-  const isCompact = appearance?.compactMode || false
-
-  const today = new Date()
-  const todayDateString = format(today, 'yyyy-MM-dd')
   const todayAppointments = (appointments || []).filter(apt => 
     apt.date === todayDateString && apt.status !== 'cancelled'
   ).sort((a, b) => {
