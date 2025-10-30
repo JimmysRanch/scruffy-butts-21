@@ -37,7 +37,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "border-white/20 bg-white/10 backdrop-blur-sm data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-accent focus-visible:ring-accent/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex w-fit items-center justify-between gap-2 rounded-xl border px-3 py-2 text-sm whitespace-nowrap shadow-md transition-all outline-none focus-visible:ring-2 focus-visible:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 text-foreground",
+        "flex w-fit items-center justify-between gap-2 rounded-xl border border-[var(--surface-outline)] bg-[var(--surface-1)]/95 px-3 py-2 text-sm font-medium text-[var(--foreground)] shadow-[0_12px_30px_-24px_rgba(43,38,29,0.45)] transition-colors duration-200 outline-none data-[placeholder]:text-muted-foreground focus-visible:border-[var(--ring)] focus-visible:bg-[var(--surface-1)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-10 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}

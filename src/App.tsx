@@ -168,11 +168,15 @@ function App() {
   const isCompact = appearance?.compactMode || false
 
   return (
-    <div className="min-h-[100svh] md:min-h-[100dvh] relative">
-      <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
-      <main className="pt-24 w-full px-4 max-w-[2000px] mx-auto pb-8 relative z-10">
-        {renderView()}
-      </main>
+    <div className="min-h-screen bg-transparent">
+      <div className="lg:flex lg:min-h-screen">
+        <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
+        <main className="w-full flex-1 px-4 pb-12 pt-6 sm:px-6 lg:px-10 lg:py-12 xl:px-16">
+          <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-8">
+            {renderView()}
+          </div>
+        </main>
+      </div>
       <Toaster />
     </div>
   )
