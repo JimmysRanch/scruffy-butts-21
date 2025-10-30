@@ -1372,7 +1372,6 @@ export function Settings() {
               </Card>
             </div>
           )}
-        </div>
       </div>
 
       <Dialog open={showPositionDialog} onOpenChange={setShowPositionDialog}>
@@ -1408,6 +1407,7 @@ export function Settings() {
                   id="position-description"
                   value={positionFormData.description}
                   onChange={(e) => setPositionFormData({ ...positionFormData, description: e.target.value })}
+                  placeholder="Brief description of this position"
                   placeholder="Brief description of this position"
                   rows={2}
                 />
@@ -1445,7 +1445,6 @@ export function Settings() {
               <Button 
                 type="button" 
                 variant="outline" 
-                onClick={() => {
                   setShowPositionDialog(false)
                   resetPositionForm()
                 }}
