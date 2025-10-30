@@ -775,7 +775,11 @@ export function Settings() {
                 ) : (
                   <div className="space-y-4">
                     {(services || [])
-                      .sort((a, b) => a.category.localeCompare(b.category))
+                      .sort((a, b) => {
+                        const categoryA = a?.category || ''
+                        const categoryB = b?.category || ''
+                        return categoryA.localeCompare(categoryB)
+                      })
                       .map((service) => (
                         <div key={service.id} className="flex items-start justify-between p-4 border rounded-lg">
                           <div className="flex-1">

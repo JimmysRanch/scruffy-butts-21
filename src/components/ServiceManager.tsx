@@ -178,7 +178,11 @@ export function ServiceManager() {
           </Card>
         ) : (
           (services || [])
-            .sort((a, b) => (a?.category || '').localeCompare(b?.category || ''))
+            .sort((a, b) => {
+              const categoryA = a?.category || ''
+              const categoryB = b?.category || ''
+              return categoryA.localeCompare(categoryB)
+            })
             .map((service) => (
               <Card key={service.id}>
                 <CardHeader>
