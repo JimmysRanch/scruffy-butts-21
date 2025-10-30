@@ -623,7 +623,7 @@ export function CustomerDetail({ customerId, onBack, onEditPet, onAddPet }: Cust
                 </span>
                 <span className="flex items-center space-x-2">
                   <CreditCard size={16} className="text-white/60 shrink-0" weight="duotone" />
-                  <span className="text-white/90 font-medium">${lastVisit.price.toFixed(2)}</span>
+                  <span className="text-white/90 font-medium">${lastVisit.price?.toFixed(2) || '0.00'}</span>
                 </span>
               </div>
             </div>
