@@ -10,12 +10,13 @@ import { InventoryManager } from '@/components/InventoryManager'
 import { Settings } from '@/components/Settings'
 import { Navigation } from '@/components/Navigation'
 import { GroomerStats } from '@/components/GroomerStats'
+import { Finances } from '@/components/Finances'
 import { NewAppointment } from '@/components/NewAppointment'
 import { DashboardCustomization } from '@/components/DashboardCustomization'
 import { AppointmentDetail } from '@/components/AppointmentDetail'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard' | 'appointment-detail' | 'appointment-checkout'
+type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'finances' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard' | 'appointment-detail' | 'appointment-checkout'
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'system'
@@ -27,7 +28,7 @@ function App() {
   const [currentView, setCurrentView] = useState<View>(() => {
     const params = new URLSearchParams(window.location.search)
     const view = params.get('view') as View | null
-    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'reports', 'settings', 'new-appointment', 'add-pet', 'edit-pet', 'customize-dashboard', 'appointment-detail', 'appointment-checkout'].includes(view)
+    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'finances', 'reports', 'settings', 'new-appointment', 'add-pet', 'edit-pet', 'customize-dashboard', 'appointment-detail', 'appointment-checkout'].includes(view)
       ? view
       : 'dashboard'
   })
@@ -149,6 +150,8 @@ function App() {
         return <PointOfSale />
       case 'inventory':
         return <InventoryManager />
+      case 'finances':
+        return <Finances />
       case 'reports':
         return <GroomerStats />
       case 'settings':

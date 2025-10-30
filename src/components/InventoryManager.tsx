@@ -267,264 +267,260 @@ export function InventoryManager() {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-foreground">Inventory Management</h1>
-          <p className="text-muted-foreground text-sm mt-0.5">Track supplies, manage stock levels, and monitor usage</p>
-        </div>
-        <div className="flex gap-2">
-          <Dialog open={isSupplierDialogOpen} onOpenChange={setIsSupplierDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="h-8 text-xs">
-                <Plus className="mr-1.5" size={16} />
-                Add Supplier
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Add New Supplier</DialogTitle>
-                <DialogDescription>Add a supplier for your inventory items</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="supplier-name">Supplier Name *</Label>
-                  <Input
-                    id="supplier-name"
-                    value={newSupplier.name}
-                    onChange={(e) => setNewSupplier({ ...newSupplier, name: e.target.value })}
-                    placeholder="ABC Pet Supplies"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="supplier-contact">Contact Person</Label>
-                  <Input
-                    id="supplier-contact"
-                    value={newSupplier.contact}
-                    onChange={(e) => setNewSupplier({ ...newSupplier, contact: e.target.value })}
-                    placeholder="John Smith"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="supplier-email">Email</Label>
-                  <Input
-                    id="supplier-email"
-                    type="email"
-                    value={newSupplier.email}
-                    onChange={(e) => setNewSupplier({ ...newSupplier, email: e.target.value })}
-                    placeholder="contact@supplier.com"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="supplier-phone">Phone</Label>
-                  <Input
-                    id="supplier-phone"
-                    value={newSupplier.phone}
-                    onChange={(e) => setNewSupplier({ ...newSupplier, phone: e.target.value })}
-                    placeholder="(555) 123-4567"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="supplier-notes">Notes</Label>
-                  <Textarea
-                    id="supplier-notes"
-                    value={newSupplier.notes}
-                    onChange={(e) => setNewSupplier({ ...newSupplier, notes: e.target.value })}
-                    placeholder="Additional notes..."
-                  />
-                </div>
-                <Button onClick={handleAddSupplier} className="w-full">Add Supplier</Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="h-8 text-xs">
-                <Plus className="mr-1.5" size={16} />
-                Add Item
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Add Inventory Item</DialogTitle>
-                <DialogDescription>Add a new product to your inventory</DialogDescription>
-              </DialogHeader>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <Label htmlFor="item-name">Item Name *</Label>
-                  <Input
-                    id="item-name"
-                    value={newItem.name}
-                    onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-                    placeholder="Premium Dog Shampoo"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="item-category">Category</Label>
-                  <Select value={newItem.category} onValueChange={(value) => setNewItem({ ...newItem, category: value as InventoryItem['category'] })}>
-                    <SelectTrigger id="item-category">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map(cat => (
-                        <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="item-sku">SKU *</Label>
-                  <Input
-                    id="item-sku"
-                    value={newItem.sku}
-                    onChange={(e) => setNewItem({ ...newItem, sku: e.target.value })}
-                    placeholder="SHP-001"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="item-quantity">Initial Quantity</Label>
-                  <Input
-                    id="item-quantity"
-                    type="number"
-                    value={newItem.quantity}
-                    onChange={(e) => setNewItem({ ...newItem, quantity: parseInt(e.target.value) || 0 })}
-                    placeholder="0"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="item-unit">Unit</Label>
-                  <Input
-                    id="item-unit"
-                    value={newItem.unit}
-                    onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
-                    placeholder="bottle, tube, piece"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="item-reorder">Reorder Level</Label>
-                  <Input
-                    id="item-reorder"
-                    type="number"
-                    value={newItem.reorderLevel}
-                    onChange={(e) => setNewItem({ ...newItem, reorderLevel: parseInt(e.target.value) || 0 })}
-                    placeholder="5"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="item-reorder-qty">Reorder Quantity</Label>
-                  <Input
-                    id="item-reorder-qty"
-                    type="number"
-                    value={newItem.reorderQuantity}
-                    onChange={(e) => setNewItem({ ...newItem, reorderQuantity: parseInt(e.target.value) || 0 })}
-                    placeholder="10"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="item-cost">Cost Per Unit ($)</Label>
-                  <Input
-                    id="item-cost"
-                    type="number"
-                    step="0.01"
-                    value={newItem.costPerUnit}
-                    onChange={(e) => setNewItem({ ...newItem, costPerUnit: parseFloat(e.target.value) || 0 })}
-                    placeholder="0.00"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="item-price">Selling Price ($)</Label>
-                  <Input
-                    id="item-price"
-                    type="number"
-                    step="0.01"
-                    value={newItem.sellingPrice}
-                    onChange={(e) => setNewItem({ ...newItem, sellingPrice: parseFloat(e.target.value) || 0 })}
-                    placeholder="0.00"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="item-supplier">Supplier</Label>
-                  <Select value={newItem.supplier} onValueChange={(value) => setNewItem({ ...newItem, supplier: value })}>
-                    <SelectTrigger id="item-supplier">
-                      <SelectValue placeholder="Select supplier" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(suppliers || []).map(supplier => (
-                        <SelectItem key={supplier.id} value={supplier.name}>{supplier.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="item-location">Location</Label>
-                  <Input
-                    id="item-location"
-                    value={newItem.location}
-                    onChange={(e) => setNewItem({ ...newItem, location: e.target.value })}
-                    placeholder="Shelf A-1"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <Label htmlFor="item-notes">Notes</Label>
-                  <Textarea
-                    id="item-notes"
-                    value={newItem.notes}
-                    onChange={(e) => setNewItem({ ...newItem, notes: e.target.value })}
-                    placeholder="Additional notes about this item..."
-                  />
-                </div>
-                <Button onClick={handleAddItem} className="col-span-2">Add to Inventory</Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Items</CardTitle>
+        <Card className="gap-0 py-2">
+          <CardHeader className="pb-0 pt-0 px-3 text-center">
+            <CardTitle className="text-[11px] font-medium text-muted-foreground">Total Items</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalItems}</div>
-            <p className="text-xs text-muted-foreground mt-1">{(items || []).length} unique products</p>
+          <CardContent className="px-3 pb-0 pt-1 text-center">
+            <div className="text-base font-bold leading-tight">{totalItems}</div>
+            <p className="text-[9px] text-muted-foreground leading-tight">{(items || []).length} unique products</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="pb-2 pt-3 px-4">
-            <CardTitle className="text-xs font-medium text-muted-foreground">Total Value</CardTitle>
+        <Card className="gap-0 py-2">
+          <CardHeader className="pb-0 pt-0 px-3 text-center">
+            <CardTitle className="text-[11px] font-medium text-muted-foreground">Total Value</CardTitle>
           </CardHeader>
-          <CardContent className="px-4 pb-3">
-            <div className="text-xl font-bold">${totalValue.toFixed(2)}</div>
-            <p className="text-[10px] text-muted-foreground mt-0.5">At cost price</p>
+          <CardContent className="px-3 pb-0 pt-1 text-center">
+            <div className="text-base font-bold leading-tight">${totalValue.toFixed(2)}</div>
+            <p className="text-[9px] text-muted-foreground leading-tight">At cost price</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="pb-2 pt-3 px-4">
-            <CardTitle className="text-xs font-medium text-muted-foreground">Low Stock Items</CardTitle>
+        <Card className="gap-0 py-2">
+          <CardHeader className="pb-0 pt-0 px-3 text-center">
+            <CardTitle className="text-[11px] font-medium text-muted-foreground">Low Stock Items</CardTitle>
           </CardHeader>
-          <CardContent className="px-4 pb-3">
-            <div className="text-xl font-bold text-warning">{lowStockItems.length}</div>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Need reordering</p>
+          <CardContent className="px-3 pb-0 pt-1 text-center">
+            <div className="text-base font-bold text-warning leading-tight">{lowStockItems.length}</div>
+            <p className="text-[9px] text-muted-foreground leading-tight">Need reordering</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="pb-2 pt-3 px-4">
-            <CardTitle className="text-xs font-medium text-muted-foreground">Suppliers</CardTitle>
+        <Card className="gap-0 py-2">
+          <CardHeader className="pb-0 pt-0 px-3 text-center">
+            <CardTitle className="text-[11px] font-medium text-muted-foreground">Suppliers</CardTitle>
           </CardHeader>
-          <CardContent className="px-4 pb-3">
-            <div className="text-xl font-bold">{(suppliers || []).length}</div>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Active suppliers</p>
+          <CardContent className="px-3 pb-0 pt-1 text-center">
+            <div className="text-base font-bold leading-tight">{(suppliers || []).length}</div>
+            <p className="text-[9px] text-muted-foreground leading-tight">Active suppliers</p>
           </CardContent>
         </Card>
       </div>
 
       <Tabs defaultValue="items" className="space-y-3">
-        <TabsList className="h-8">
-          <TabsTrigger value="items" className="text-xs">Inventory Items</TabsTrigger>
-          <TabsTrigger value="lowstock" className="text-xs">Low Stock Alerts</TabsTrigger>
-          <TabsTrigger value="transactions" className="text-xs">Transaction History</TabsTrigger>
-          <TabsTrigger value="suppliers" className="text-xs">Suppliers</TabsTrigger>
-        </TabsList>
+        <div className="flex items-center justify-between">
+          <TabsList className="h-9 bg-muted p-1 gap-1">
+            <TabsTrigger value="items" className="text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md px-4 py-1.5">Inventory Items</TabsTrigger>
+            <TabsTrigger value="lowstock" className="text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md px-4 py-1.5">Low Stock Alerts</TabsTrigger>
+            <TabsTrigger value="transactions" className="text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md px-4 py-1.5">Transaction History</TabsTrigger>
+            <TabsTrigger value="suppliers" className="text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md px-4 py-1.5">Suppliers</TabsTrigger>
+          </TabsList>
+
+          <div className="flex gap-2">
+            <Dialog open={isSupplierDialogOpen} onOpenChange={setIsSupplierDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="h-8 text-xs">
+                  <Plus className="mr-1.5" size={16} />
+                  Add Supplier
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Add New Supplier</DialogTitle>
+                  <DialogDescription>Add a supplier for your inventory items</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="supplier-name">Supplier Name *</Label>
+                    <Input
+                      id="supplier-name"
+                      value={newSupplier.name}
+                      onChange={(e) => setNewSupplier({ ...newSupplier, name: e.target.value })}
+                      placeholder="ABC Pet Supplies"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="supplier-contact">Contact Person</Label>
+                    <Input
+                      id="supplier-contact"
+                      value={newSupplier.contact}
+                      onChange={(e) => setNewSupplier({ ...newSupplier, contact: e.target.value })}
+                      placeholder="John Smith"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="supplier-email">Email</Label>
+                    <Input
+                      id="supplier-email"
+                      type="email"
+                      value={newSupplier.email}
+                      onChange={(e) => setNewSupplier({ ...newSupplier, email: e.target.value })}
+                      placeholder="contact@supplier.com"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="supplier-phone">Phone</Label>
+                    <Input
+                      id="supplier-phone"
+                      value={newSupplier.phone}
+                      onChange={(e) => setNewSupplier({ ...newSupplier, phone: e.target.value })}
+                      placeholder="(555) 123-4567"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="supplier-notes">Notes</Label>
+                    <Textarea
+                      id="supplier-notes"
+                      value={newSupplier.notes}
+                      onChange={(e) => setNewSupplier({ ...newSupplier, notes: e.target.value })}
+                      placeholder="Additional notes..."
+                    />
+                  </div>
+                  <Button onClick={handleAddSupplier} className="w-full">Add Supplier</Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="h-8 text-xs">
+                  <Plus className="mr-1.5" size={16} />
+                  Add Item
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Add Inventory Item</DialogTitle>
+                  <DialogDescription>Add a new product to your inventory</DialogDescription>
+                </DialogHeader>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2">
+                    <Label htmlFor="item-name">Item Name *</Label>
+                    <Input
+                      id="item-name"
+                      value={newItem.name}
+                      onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                      placeholder="Premium Dog Shampoo"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="item-category">Category</Label>
+                    <Select value={newItem.category} onValueChange={(value) => setNewItem({ ...newItem, category: value as InventoryItem['category'] })}>
+                      <SelectTrigger id="item-category">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map(cat => (
+                          <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="item-sku">SKU *</Label>
+                    <Input
+                      id="item-sku"
+                      value={newItem.sku}
+                      onChange={(e) => setNewItem({ ...newItem, sku: e.target.value })}
+                      placeholder="SHP-001"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="item-quantity">Initial Quantity</Label>
+                    <Input
+                      id="item-quantity"
+                      type="number"
+                      value={newItem.quantity}
+                      onChange={(e) => setNewItem({ ...newItem, quantity: parseInt(e.target.value) || 0 })}
+                      placeholder="0"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="item-unit">Unit</Label>
+                    <Input
+                      id="item-unit"
+                      value={newItem.unit}
+                      onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
+                      placeholder="bottle, tube, piece"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="item-reorder">Reorder Level</Label>
+                    <Input
+                      id="item-reorder"
+                      type="number"
+                      value={newItem.reorderLevel}
+                      onChange={(e) => setNewItem({ ...newItem, reorderLevel: parseInt(e.target.value) || 0 })}
+                      placeholder="5"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="item-reorder-qty">Reorder Quantity</Label>
+                    <Input
+                      id="item-reorder-qty"
+                      type="number"
+                      value={newItem.reorderQuantity}
+                      onChange={(e) => setNewItem({ ...newItem, reorderQuantity: parseInt(e.target.value) || 0 })}
+                      placeholder="10"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="item-cost">Cost Per Unit ($)</Label>
+                    <Input
+                      id="item-cost"
+                      type="number"
+                      step="0.01"
+                      value={newItem.costPerUnit}
+                      onChange={(e) => setNewItem({ ...newItem, costPerUnit: parseFloat(e.target.value) || 0 })}
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="item-price">Selling Price ($)</Label>
+                    <Input
+                      id="item-price"
+                      type="number"
+                      step="0.01"
+                      value={newItem.sellingPrice}
+                      onChange={(e) => setNewItem({ ...newItem, sellingPrice: parseFloat(e.target.value) || 0 })}
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="item-supplier">Supplier</Label>
+                    <Select value={newItem.supplier} onValueChange={(value) => setNewItem({ ...newItem, supplier: value })}>
+                      <SelectTrigger id="item-supplier">
+                        <SelectValue placeholder="Select supplier" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(suppliers || []).map(supplier => (
+                          <SelectItem key={supplier.id} value={supplier.name}>{supplier.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="item-location">Location</Label>
+                    <Input
+                      id="item-location"
+                      value={newItem.location}
+                      onChange={(e) => setNewItem({ ...newItem, location: e.target.value })}
+                      placeholder="Shelf A-1"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Label htmlFor="item-notes">Notes</Label>
+                    <Textarea
+                      id="item-notes"
+                      value={newItem.notes}
+                      onChange={(e) => setNewItem({ ...newItem, notes: e.target.value })}
+                      placeholder="Additional notes about this item..."
+                    />
+                  </div>
+                  <Button onClick={handleAddItem} className="col-span-2">Add to Inventory</Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
 
         <TabsContent value="items" className="space-y-3">
           <Card>
