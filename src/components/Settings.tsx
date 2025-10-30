@@ -38,6 +38,7 @@ import { seedShifts, seedTimeOffRequests } from '@/lib/seed-schedule-data'
 import { seedReportsData } from '@/lib/seed-reports-data'
 import { seedActivityData } from '@/lib/seed-activity-data'
 import { ServiceWithPricing, PricingMethod, DEFAULT_SERVICES, WeightClass, WEIGHT_CLASSES } from '@/lib/pricing-types'
+import { DataSeeder } from './DataSeeder'
 
 interface Service {
   id: string
@@ -174,7 +175,7 @@ export function Settings() {
 
   const [services, setServices] = useKV<ServiceWithPricing[]>('services', [])
 
-  const [activeTab, setActiveTab] = useState<'business' | 'services' | 'notifications' | 'appearance' | 'security' | 'staff-positions' | 'pricing' | 'forms'>('business')
+  const [activeTab, setActiveTab] = useState<'business' | 'services' | 'notifications' | 'appearance' | 'security' | 'staff-positions' | 'pricing' | 'forms' | 'data'>('business')
   const [showPositionDialog, setShowPositionDialog] = useState(false)
   const [editingPosition, setEditingPosition] = useState<StaffPosition | null>(null)
   const [positionFormData, setPositionFormData] = useState({
@@ -443,7 +444,8 @@ export function Settings() {
     { id: 'forms' as const, label: 'Forms', icon: NotePencil },
     { id: 'notifications' as const, label: 'Notifications', icon: Bell },
     { id: 'appearance' as const, label: 'Appearance', icon: PaintBrush },
-    { id: 'security' as const, label: 'Security', icon: Shield }
+    { id: 'security' as const, label: 'Security', icon: Shield },
+    { id: 'data' as const, label: 'Sample Data', icon: Database }
   ]
 
   return (
@@ -1334,6 +1336,41 @@ export function Settings() {
                 </div>
               </CardContent>
             </Card>
+          )}
+
+          {activeTab === 'data' && (
+            <div className="space-y-4">
+              <DataSeeder />
+              <Card className="glass-card">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Database size={20} />
+                    About Sample Data
+                  </CardTitle>
+                  <CardDescription>
+                    Information about the generated data
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-sm text-muted-foreground space-y-2">
+                    <p>
+                      The sample data includes:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-2">
+                      <li>10 customers with pets</li>
+                      <li>3 staff members (groomers)</li>
+                      <li>8 service types</li>
+                      <li>10 inventory items</li>
+                      <li>150+ appointments for October and November 2024</li>
+                      <li>130+ completed transactions with payment details</li>
+                    </ul>
+                    <p className="mt-4">
+                      This data will populate all sections of the app including the dashboard, appointments calendar, customer list, staff schedule, finances, and reports.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           )}
         </div>
       </div>
