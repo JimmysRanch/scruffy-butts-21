@@ -27,11 +27,11 @@ export function AverageTicketWidget() {
   })
 
   const currentAverage = last7DaysAppointments.length > 0
-    ? Math.round(last7DaysAppointments.reduce((sum, apt) => sum + apt.price, 0) / last7DaysAppointments.length)
+    ? Math.round(last7DaysAppointments.reduce((sum, apt) => sum + (apt.price || 0), 0) / last7DaysAppointments.length)
     : 0
 
   const previousAverage = previous7DaysAppointments.length > 0
-    ? Math.round(previous7DaysAppointments.reduce((sum, apt) => sum + apt.price, 0) / previous7DaysAppointments.length)
+    ? Math.round(previous7DaysAppointments.reduce((sum, apt) => sum + (apt.price || 0), 0) / previous7DaysAppointments.length)
     : 0
 
   const percentChange = previousAverage > 0
@@ -42,7 +42,7 @@ export function AverageTicketWidget() {
     const date = format(subDays(today, 6 - i), 'yyyy-MM-dd')
     const dayAppointments = last7DaysAppointments.filter(apt => apt.date === date)
     const dayAverage = dayAppointments.length > 0
-      ? dayAppointments.reduce((sum, apt) => sum + apt.price, 0) / dayAppointments.length
+      ? dayAppointments.reduce((sum, apt) => sum + (apt.price || 0), 0) / dayAppointments.length
       : 0
     return dayAverage
   })

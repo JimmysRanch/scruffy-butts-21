@@ -26,7 +26,7 @@ export function DailyRevenueComparisonWidget() {
       apt.status === 'completed' && 
       apt.paymentCompleted
     )
-    .reduce((sum, apt) => sum + (apt.amountPaid || apt.price), 0)
+    .reduce((sum, apt) => sum + (apt.amountPaid || apt.price || 0), 0)
 
   const monthAppointments = (appointments || [])
     .filter(apt => {
@@ -37,7 +37,7 @@ export function DailyRevenueComparisonWidget() {
         apt.date !== todayDateString
     })
 
-  const monthRevenue = monthAppointments.reduce((sum, apt) => sum + (apt.amountPaid || apt.price), 0)
+  const monthRevenue = monthAppointments.reduce((sum, apt) => sum + (apt.amountPaid || apt.price || 0), 0)
 
   const uniqueDays = new Set(monthAppointments.map(apt => apt.date))
   const daysWithRevenue = uniqueDays.size

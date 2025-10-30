@@ -36,8 +36,8 @@ export function MonthlyRevenueWidget() {
         apt.paymentCompleted
     })
 
-    const currentRevenue = currentMonthAppointments.reduce((sum, apt) => sum + (apt.amountPaid || apt.price), 0)
-    const previousRevenue = previousMonthAppointments.reduce((sum, apt) => sum + (apt.amountPaid || apt.price), 0)
+    const currentRevenue = currentMonthAppointments.reduce((sum, apt) => sum + (apt.amountPaid || apt.price || 0), 0)
+    const previousRevenue = previousMonthAppointments.reduce((sum, apt) => sum + (apt.amountPaid || apt.price || 0), 0)
 
     const percentageChange = previousRevenue > 0
       ? ((currentRevenue - previousRevenue) / previousRevenue) * 100
@@ -49,7 +49,7 @@ export function MonthlyRevenueWidget() {
     for (let day = 1; day <= Math.min(daysInMonth, 30); day++) {
       const dayRevenue = currentMonthAppointments
         .filter(apt => new Date(apt.date).getDate() === day)
-        .reduce((sum, apt) => sum + (apt.amountPaid || apt.price), 0)
+        .reduce((sum, apt) => sum + (apt.amountPaid || apt.price || 0), 0)
       sparklineData.push(dayRevenue)
     }
 
