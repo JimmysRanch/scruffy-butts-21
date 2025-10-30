@@ -779,7 +779,7 @@ export function Settings() {
                     {(services || [])
                       .sort((a, b) => {
                         const categoryA = a?.category || ''
-                        return categoryA.localeCompare(categoryB)
+                        const categoryB = b?.category || ''
                         return categoryA.localeCompare(categoryB)
                       })
                       .map((service) => (

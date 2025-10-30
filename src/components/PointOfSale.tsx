@@ -389,7 +389,7 @@ export function PointOfSale() {
                         <div className="mt-2 space-y-1">
                           {items.slice(0, 2).map((item, idx) => (
                             <p key={idx} className="text-xs text-muted-foreground">
-                              • {item.service.name} × {item.quantity}
+                              • {item?.service?.name || 'Unknown Item'} × {item?.quantity || 0}
                             </p>
                           ))}
                           {items.length > 2 && (
