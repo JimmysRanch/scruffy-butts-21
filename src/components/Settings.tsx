@@ -1445,6 +1445,7 @@ export function Settings() {
               <Button 
                 type="button" 
                 variant="outline" 
+                onClick={() => {
                   setShowPositionDialog(false)
                   resetPositionForm()
                 }}
