@@ -106,12 +106,12 @@ export function Payroll() {
                 {nextPayroll.employees.map((employee) => (
                   <tr key={employee.id} className="border-b border-border/50 hover:bg-white/5">
                     <td className="p-3 font-medium">{employee.name}</td>
-                    <td className="p-3 text-right">{employee.hours}</td>
-                    <td className="p-3 text-right">${employee.hourlyRate.toFixed(2)}</td>
-                    <td className="p-3 text-right">${employee.gross.toFixed(2)}</td>
-                    <td className="p-3 text-right text-green-500">${employee.tips.toFixed(2)}</td>
-                    <td className="p-3 text-right text-red-500">${employee.deductions.toFixed(2)}</td>
-                    <td className="p-3 text-right font-bold">${employee.net.toFixed(2)}</td>
+                    <td className="p-3 text-right">{employee.hours || 0}</td>
+                    <td className="p-3 text-right">${(employee.hourlyRate || 0).toFixed(2)}</td>
+                    <td className="p-3 text-right">${(employee.gross || 0).toFixed(2)}</td>
+                    <td className="p-3 text-right text-green-500">${(employee.tips || 0).toFixed(2)}</td>
+                    <td className="p-3 text-right text-red-500">${(employee.deductions || 0).toFixed(2)}</td>
+                    <td className="p-3 text-right font-bold">${(employee.net || 0).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
