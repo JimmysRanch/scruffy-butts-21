@@ -55,15 +55,15 @@ export function Payroll() {
           <>
             <Card className="frosted p-6">
               <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Gross + Tips</h3>
-              <div className="text-2xl font-bold">${(nextPayroll.totalGross + nextPayroll.totalTips).toFixed(2)}</div>
+              <div className="text-2xl font-bold">${(Number(nextPayroll.totalGross || 0) + Number(nextPayroll.totalTips || 0)).toFixed(2)}</div>
               <p className="text-xs text-muted-foreground mt-1">
-                Gross: ${nextPayroll.totalGross.toFixed(2)} | Tips: ${nextPayroll.totalTips.toFixed(2)}
+                Gross: ${Number(nextPayroll.totalGross || 0).toFixed(2)} | Tips: ${Number(nextPayroll.totalTips || 0).toFixed(2)}
               </p>
             </Card>
 
             <Card className="frosted p-6">
               <h3 className="text-sm font-medium text-muted-foreground mb-2">Net Payout</h3>
-              <div className="text-2xl font-bold text-green-500">${nextPayroll.totalNet.toFixed(2)}</div>
+              <div className="text-2xl font-bold text-green-500">${Number(nextPayroll.totalNet || 0).toFixed(2)}</div>
               <p className="text-xs text-muted-foreground mt-1">{nextPayroll.employees.length} employees</p>
             </Card>
           </>
@@ -106,26 +106,26 @@ export function Payroll() {
                 {nextPayroll.employees.map((employee) => (
                   <tr key={employee.id} className="border-b border-border/50 hover:bg-white/5">
                     <td className="p-3 font-medium">{employee.name}</td>
-                    <td className="p-3 text-right">{employee.hours || 0}</td>
-                    <td className="p-3 text-right">${(employee.hourlyRate || 0).toFixed(2)}</td>
-                    <td className="p-3 text-right">${(employee.gross || 0).toFixed(2)}</td>
-                    <td className="p-3 text-right text-green-500">${(employee.tips || 0).toFixed(2)}</td>
-                    <td className="p-3 text-right text-red-500">${(employee.deductions || 0).toFixed(2)}</td>
-                    <td className="p-3 text-right font-bold">${(employee.net || 0).toFixed(2)}</td>
+                    <td className="p-3 text-right">{Number(employee.hours || 0)}</td>
+                    <td className="p-3 text-right">${Number(employee.hourlyRate || 0).toFixed(2)}</td>
+                    <td className="p-3 text-right">${Number(employee.gross || 0).toFixed(2)}</td>
+                    <td className="p-3 text-right text-green-500">${Number(employee.tips || 0).toFixed(2)}</td>
+                    <td className="p-3 text-right text-red-500">${Number(employee.deductions || 0).toFixed(2)}</td>
+                    <td className="p-3 text-right font-bold">${Number(employee.net || 0).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
                 <tr className="border-t-2 border-border font-bold">
                   <td className="p-3">Total</td>
-                  <td className="p-3 text-right">{nextPayroll.employees.reduce((sum, e) => sum + e.hours, 0)}</td>
+                  <td className="p-3 text-right">{nextPayroll.employees.reduce((sum, e) => sum + (Number(e.hours) || 0), 0)}</td>
                   <td className="p-3"></td>
-                  <td className="p-3 text-right">${nextPayroll.totalGross.toFixed(2)}</td>
-                  <td className="p-3 text-right text-green-500">${nextPayroll.totalTips.toFixed(2)}</td>
+                  <td className="p-3 text-right">${Number(nextPayroll.totalGross || 0).toFixed(2)}</td>
+                  <td className="p-3 text-right text-green-500">${Number(nextPayroll.totalTips || 0).toFixed(2)}</td>
                   <td className="p-3 text-right text-red-500">
-                    ${nextPayroll.employees.reduce((sum, e) => sum + e.deductions, 0).toFixed(2)}
+                    ${nextPayroll.employees.reduce((sum, e) => sum + (Number(e.deductions) || 0), 0).toFixed(2)}
                   </td>
-                  <td className="p-3 text-right">${nextPayroll.totalNet.toFixed(2)}</td>
+                  <td className="p-3 text-right">${Number(nextPayroll.totalNet || 0).toFixed(2)}</td>
                 </tr>
               </tfoot>
             </table>
@@ -157,15 +157,15 @@ export function Payroll() {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Gross</p>
-                  <p className="font-medium">${period.totalGross.toFixed(2)}</p>
+                  <p className="font-medium">${Number(period.totalGross || 0).toFixed(2)}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Tips</p>
-                  <p className="font-medium text-green-500">${period.totalTips.toFixed(2)}</p>
+                  <p className="font-medium text-green-500">${Number(period.totalTips || 0).toFixed(2)}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Net</p>
-                  <p className="font-medium">${period.totalNet.toFixed(2)}</p>
+                  <p className="font-medium">${Number(period.totalNet || 0).toFixed(2)}</p>
                 </div>
               </div>
             </div>
