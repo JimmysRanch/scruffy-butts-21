@@ -15,6 +15,7 @@ import { NewAppointment } from '@/components/NewAppointment'
 import { DashboardCustomization } from '@/components/DashboardCustomization'
 import { AppointmentDetail } from '@/components/AppointmentDetail'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
+import { DataInitializer } from '@/components/DataInitializer'
 
 type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'finances' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard' | 'appointment-detail' | 'appointment-checkout'
 
@@ -169,6 +170,7 @@ function App() {
 
   return (
     <div className="min-h-[100svh] md:min-h-[100dvh] relative">
+      <DataInitializer />
       <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
       <main className="pt-24 w-full px-4 max-w-[2000px] mx-auto pb-8 relative z-10">
         {renderView()}
