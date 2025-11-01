@@ -902,7 +902,7 @@ export function CustomerDetail({ customerId, onBack, onEditPet, onAddPet }: Cust
                             </span>
                             <span className="flex items-center space-x-1">
                               <CreditCard size={14} />
-                              <span>${visit.price.toFixed(2)}</span>
+                              <span>${(visit.price || 0).toFixed(2)}</span>
                             </span>
                           </div>
                         </div>
