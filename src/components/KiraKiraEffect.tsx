@@ -1,19 +1,19 @@
 import { useEffect, useRef } from 'react'
 
 interface Glitter {
+  baseX: number
+  baseY: number
   x: number
   y: number
   size: number
   opacity: number
-  life: number
-  maxLife: number
-  vx: number
-  vy: number
+  baseOpacity: number
   rotation: number
   rotationSpeed: number
   color: { r: number; g: number; b: number }
   shimmerPhase: number
   shimmerSpeed: number
+  sparkleIntensity: number
   shape: 'diamond' | 'hexagon' | 'square' | 'star'
 }
 
@@ -29,6 +29,10 @@ export function KiraKiraEffect() {
 
     const glitters: Glitter[] = []
     let animationFrameId: number
+    let scrollVelocity = 0
+    let lastScrollY = window.scrollY
+    let tiltX = 0
+    let tiltY = 0
 
     const glitterColors = [
       { r: 255, g: 255, b: 255 },
@@ -41,8 +45,19 @@ export function KiraKiraEffect() {
     ]
 
     const resizeCanvas = () => {
+      const oldWidth = canvas.width
+      const oldHeight = canvas.height
       canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
+      canvas.height = document.documentElement.scrollHeight
+      
+      if (oldWidth > 0) {
+        glitters.forEach(glitter => {
+          glitter.baseX = (glitter.baseX / oldWidth) * canvas.width
+          glitter.baseY = (glitter.baseY / oldHeight) * canvas.height
+          glitter.x = glitter.baseX
+          glitter.y = glitter.baseY
+        })
+      }
     }
 
     resizeCanvas()
@@ -50,27 +65,57 @@ export function KiraKiraEffect() {
 
     const createGlitter = (): Glitter => {
       const shapes: Array<'diamond' | 'hexagon' | 'square' | 'star'> = ['diamond', 'hexagon', 'square', 'star']
+      const x = Math.random() * canvas.width
+      const y = Math.random() * canvas.height
       return {
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 2.5 + 0.8,
+        baseX: x,
+        baseY: y,
+        x,
+        y,
+        size: Math.random() * 3 + 1,
         opacity: 0,
-        life: 0,
-        maxLife: Math.random() * 180 + 120,
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: Math.random() * 0.3 + 0.1,
+        baseOpacity: Math.random() * 0.3 + 0.15,
         rotation: Math.random() * Math.PI * 2,
-        rotationSpeed: (Math.random() - 0.5) * 0.03,
+        rotationSpeed: (Math.random() - 0.5) * 0.02,
         color: glitterColors[Math.floor(Math.random() * glitterColors.length)],
         shimmerPhase: Math.random() * Math.PI * 2,
-        shimmerSpeed: Math.random() * 0.08 + 0.04,
+        shimmerSpeed: Math.random() * 0.12 + 0.08,
+        sparkleIntensity: 0,
         shape: shapes[Math.floor(Math.random() * shapes.length)]
       }
     }
 
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 150; i++) {
       glitters.push(createGlitter())
     }
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      scrollVelocity = Math.abs(currentScrollY - lastScrollY)
+      lastScrollY = currentScrollY
+      
+      glitters.forEach(glitter => {
+        if (Math.random() < 0.3) {
+          glitter.sparkleIntensity = Math.min(1, scrollVelocity / 10)
+        }
+      })
+    }
+
+    const handleOrientation = (event: DeviceOrientationEvent) => {
+      if (event.gamma !== null && event.beta !== null) {
+        tiltX = event.gamma / 90
+        tiltY = event.beta / 90
+        
+        glitters.forEach(glitter => {
+          if (Math.random() < 0.2) {
+            glitter.sparkleIntensity = Math.max(glitter.sparkleIntensity, 0.7)
+          }
+        })
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('deviceorientation', handleOrientation)
 
     const drawDiamond = (size: number) => {
       ctx.beginPath()
@@ -153,34 +198,30 @@ export function KiraKiraEffect() {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
+      
+      ctx.save()
+      ctx.translate(0, -window.scrollY)
 
-      glitters.forEach((glitter, index) => {
-        glitter.life++
-        glitter.x += glitter.vx
-        glitter.y += glitter.vy
+      scrollVelocity *= 0.9
+
+      glitters.forEach((glitter) => {
         glitter.rotation += glitter.rotationSpeed
         glitter.shimmerPhase += glitter.shimmerSpeed
-
-        const lifeProgress = glitter.life / glitter.maxLife
-
-        if (lifeProgress < 0.15) {
-          glitter.opacity = lifeProgress * 6.67
-        } else if (lifeProgress > 0.85) {
-          glitter.opacity = (1 - lifeProgress) * 6.67
-        } else {
-          glitter.opacity = 1
-        }
-
-        glitter.opacity *= 0.5
-
-        if (glitter.x < -20 || glitter.x > canvas.width + 20 || 
-            glitter.y < -20 || glitter.y > canvas.height + 20 || 
-            glitter.life >= glitter.maxLife) {
-          glitters[index] = createGlitter()
-        }
+        
+        glitter.x = glitter.baseX + (tiltX * 15)
+        glitter.y = glitter.baseY + (tiltY * 15)
+        
+        glitter.sparkleIntensity *= 0.92
+        
+        const shimmer = Math.sin(glitter.shimmerPhase) * 0.5 + 0.5
+        const sparkle = Math.pow(glitter.sparkleIntensity, 1.5)
+        
+        glitter.opacity = glitter.baseOpacity + (shimmer * 0.3) + (sparkle * 0.8)
 
         drawGlitter(glitter)
       })
+      
+      ctx.restore()
 
       animationFrameId = requestAnimationFrame(animate)
     }
@@ -189,6 +230,8 @@ export function KiraKiraEffect() {
 
     return () => {
       window.removeEventListener('resize', resizeCanvas)
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('deviceorientation', handleOrientation)
       cancelAnimationFrame(animationFrameId)
     }
   }, [])
