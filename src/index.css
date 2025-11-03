@@ -42,8 +42,8 @@
   --popover: oklch(0.18 0.08 240 / 0.95);
   --popover-foreground: oklch(0.98 0.01 240);
 
-  --primary: oklch(0.65 0.25 340);
-  --primary-foreground: oklch(0.98 0.01 340);
+  --primary: oklch(0.60 0.20 200);
+  --primary-foreground: oklch(0.98 0.01 200);
 
   --secondary: oklch(0.25 0.08 240 / 0.6);
   --secondary-foreground: oklch(0.98 0.01 240);
@@ -51,23 +51,23 @@
   --muted: oklch(0.20 0.06 240 / 0.3);
   --muted-foreground: oklch(0.70 0.04 240);
 
-  --accent: oklch(0.70 0.28 340);
-  --accent-foreground: oklch(0.98 0.01 340);
+  --accent: oklch(0.65 0.22 200);
+  --accent-foreground: oklch(0.98 0.01 200);
 
   --destructive: oklch(0.58 0.22 25);
   --destructive-foreground: oklch(0.98 0.01 25);
 
-  --border: oklch(0.40 0.10 340 / 0.25);
+  --border: oklch(0.40 0.10 200 / 0.25);
   --input: oklch(0.25 0.08 240 / 0.5);
-  --ring: oklch(0.65 0.25 340);
+  --ring: oklch(0.60 0.20 200);
 
   --radius: 1.25rem;
   
   --glass-lavender: oklch(0.22 0.10 240 / 0.28);
-  --glass-turquoise: oklch(0.22 0.10 240 / 0.28);
-  --glass-rose: oklch(0.22 0.12 340 / 0.28);
-  --glass-gold: oklch(0.22 0.10 240 / 0.28);
-  --glass-emerald: oklch(0.22 0.10 240 / 0.28);
+  --glass-turquoise: oklch(0.22 0.10 200 / 0.28);
+  --glass-rose: oklch(0.22 0.12 200 / 0.28);
+  --glass-gold: oklch(0.22 0.10 200 / 0.28);
+  --glass-emerald: oklch(0.22 0.10 200 / 0.28);
 }
 
 @theme {
@@ -108,7 +108,7 @@
   );
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid oklch(0.55 0.15 340 / 0.30);
+  border: 1px solid oklch(0.55 0.15 200 / 0.30);
   box-shadow: 
     0 2px 8px -2px oklch(0.05 0.08 240 / 0.4),
     0 8px 24px -4px oklch(0.08 0.10 240 / 0.35),
@@ -116,7 +116,7 @@
     inset 0 1px 2px 0 oklch(0.95 0.02 240 / 0.15),
     inset 0 -1px 2px 0 oklch(0.05 0.08 240 / 0.20),
     0 0 0 1px oklch(0.05 0.08 240 / 0.15) inset,
-    0 0 20px -5px oklch(0.65 0.25 340 / 0.15);
+    0 0 20px -5px oklch(0.60 0.20 200 / 0.15);
 }
 
 .glass-card::before {
@@ -145,7 +145,7 @@
     oklch(0.25 0.12 240 / 0.42) 0%,
     oklch(0.20 0.10 240 / 0.38) 100%
   );
-  border-color: oklch(0.65 0.25 340 / 0.45);
+  border-color: oklch(0.60 0.20 200 / 0.45);
   box-shadow: 
     0 4px 12px -2px oklch(0.05 0.08 240 / 0.5),
     0 12px 32px -4px oklch(0.08 0.10 240 / 0.45),
@@ -153,7 +153,7 @@
     inset 0 1px 3px 0 oklch(0.95 0.02 240 / 0.20),
     inset 0 -1px 3px 0 oklch(0.05 0.08 240 / 0.25),
     0 0 0 1px oklch(0.05 0.08 240 / 0.20) inset,
-    0 0 32px -5px oklch(0.70 0.28 340 / 0.35);
+    0 0 32px -5px oklch(0.65 0.22 200 / 0.35);
   transform: translateY(-4px);
 }
 
@@ -165,11 +165,11 @@
   );
   backdrop-filter: blur(32px) saturate(180%);
   -webkit-backdrop-filter: blur(32px) saturate(180%);
-  border-bottom: 1px solid oklch(0.55 0.15 340 / 0.30);
+  border-bottom: 1px solid oklch(0.55 0.15 200 / 0.30);
   box-shadow: 
     0 4px 16px -2px oklch(0.08 0.08 240 / 0.35),
     inset 0 1px 1px 0 oklch(0.95 0.02 240 / 0.10),
-    0 0 24px -8px oklch(0.65 0.25 340 / 0.20);
+    0 0 24px -8px oklch(0.60 0.20 200 / 0.20);
 }
 
 .glass-widget {
@@ -231,14 +231,14 @@
 }
 
 .glass-widget-rose {
-  --widget-glass-start: oklch(0.24 0.14 340 / 0.35);
-  --widget-glass-end: oklch(0.20 0.12 340 / 0.30);
-  --widget-border: oklch(0.60 0.20 340 / 0.40);
-  --widget-shadow-sm: oklch(0.12 0.14 340 / 0.35);
-  --widget-shadow-md: oklch(0.14 0.16 340 / 0.40);
-  --widget-shadow-lg: oklch(0.18 0.20 340 / 0.30);
-  --widget-glow: oklch(0.65 0.25 340 / 0.30);
-  --widget-inner-shadow: oklch(0.12 0.14 340 / 0.20);
+  --widget-glass-start: oklch(0.24 0.14 200 / 0.35);
+  --widget-glass-end: oklch(0.20 0.12 200 / 0.30);
+  --widget-border: oklch(0.60 0.20 200 / 0.40);
+  --widget-shadow-sm: oklch(0.12 0.14 200 / 0.35);
+  --widget-shadow-md: oklch(0.14 0.16 200 / 0.40);
+  --widget-shadow-lg: oklch(0.18 0.20 200 / 0.30);
+  --widget-glow: oklch(0.65 0.22 200 / 0.30);
+  --widget-inner-shadow: oklch(0.12 0.14 200 / 0.20);
 }
 
 .glass-widget-gold {
