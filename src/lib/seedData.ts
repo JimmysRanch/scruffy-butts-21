@@ -234,8 +234,9 @@ export const seedData = async () => {
   const appointments: any[] = []
   const transactions: any[] = []
 
+  const today = new Date()
   const startDate = new Date(2024, 9, 1)
-  const endDate = new Date(2024, 10, 30)
+  const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 14)
   let appointmentCounter = 1
   let transactionCounter = 1
 
@@ -244,7 +245,14 @@ export const seedData = async () => {
     
     if (dayOfWeek === 0) continue
 
-    const appointmentsPerDay = dayOfWeek === 6 ? Math.floor(Math.random() * 4) + 3 : Math.floor(Math.random() * 6) + 4
+    const isToday = date.toDateString() === today.toDateString()
+    const isFutureOrToday = date >= new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    
+    const appointmentsPerDay = isToday 
+      ? Math.floor(Math.random() * 4) + 6
+      : dayOfWeek === 6 
+        ? Math.floor(Math.random() * 4) + 3 
+        : Math.floor(Math.random() * 6) + 4
 
     for (let i = 0; i < appointmentsPerDay; i++) {
       const customer = customers[Math.floor(Math.random() * customers.length)]
@@ -271,25 +279,44 @@ export const seedData = async () => {
       const totalDuration = selectedServices.reduce((sum, svc) => sum + svc.duration, 0)
 
       const isPast = appointmentDate < new Date()
-      const status = isPast 
-        ? (Math.random() > 0.1 ? 'completed' : 'cancelled')
-        : (Math.random() > 0.95 ? 'cancelled' : 'scheduled')
+      const isToday = appointmentDate.toDateString() === today.toDateString()
+      
+      let status
+      if (isToday) {
+        const statuses = ['confirmed', 'checked-in', 'in-progress', 'ready-for-pickup', 'completed']
+        status = statuses[Math.floor(Math.random() * statuses.length)]
+      } else if (isPast) {
+        status = Math.random() > 0.1 ? 'completed' : 'cancelled'
+      } else {
+        status = Math.random() > 0.95 ? 'cancelled' : 'scheduled'
+      }
+
+      const paymentMethod = ['cash', 'card', 'cashapp', 'chime'][Math.floor(Math.random() * 4)]
+      const tipAmount = status === 'completed' && Math.random() > 0.5 ? Math.floor(Math.random() * 20) + 5 : 0
+      const amountPaid = status === 'completed' ? totalPrice + tipAmount : 0
 
       const appointment = {
         id: `apt-${String(appointmentCounter).padStart(3, '0')}`,
         customerId: customer.id,
-        customerName: customer.name,
+        customerFirstName: customer.name.split(' ')[0],
+        customerLastName: customer.name.split(' ')[1] || '',
         petId: pet.id,
         petName: pet.name,
         petBreed: pet.breed,
         staffId: staffMember.id,
         staffName: staffMember.name,
-        date: appointmentDate.toISOString(),
+        date: appointmentDate.toISOString().split('T')[0],
         time: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
+        service: selectedServices[0].name,
+        serviceId: selectedServices[0].id,
         services: selectedServices.map(s => ({ id: s.id, name: s.name, price: s.price })),
+        price: totalPrice,
         totalPrice,
         duration: totalDuration,
         status,
+        paymentCompleted: status === 'completed',
+        paymentMethod: status === 'completed' ? paymentMethod : undefined,
+        amountPaid: status === 'completed' ? amountPaid : undefined,
         notes: status === 'cancelled' ? 'Customer requested cancellation' : (Math.random() > 0.7 ? 'Standard appointment' : ''),
         createdAt: new Date(appointmentDate.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
       }
