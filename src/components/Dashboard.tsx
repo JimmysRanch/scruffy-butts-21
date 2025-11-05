@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
-import { Calendar, Users, Clock, Dog, Package, User, Phone, Envelope, PencilSimple, Trash, ArrowClockwise, CheckCircle, Bell, CreditCard, WarningCircle } from '@phosphor-icons/react'
+import { Calendar, Users, Clock, Dog, Package, User, Phone, Envelope, PencilSimple, Trash, ArrowClockwise, CheckCircle, Bell, CreditCard, WarningCircle, TrendUp } from '@phosphor-icons/react'
 import { startOfWeek, endOfWeek, isWithinInterval, format, parseISO, isBefore, startOfDay } from 'date-fns'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -315,7 +315,38 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       <div className="grid grid-cols-6 gap-4 min-w-0 overflow-x-auto">
         {enabledWidgets.find(w => w.id === 'total-appointments') && (
           <div className="glass-widget glass-widget-turquoise cursor-pointer rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('appointments')}>
-            <TotalAppointmentsWidget />
+            <div className="relative z-10 h-full">
+              <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
+                <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Today</h3>
+                <div className="p-1.5 rounded-lg bg-primary/20">
+                  <Calendar size={14} className="text-primary" />
+                </div>
+              </div>
+              <div className="pb-1 pt-1 px-4 min-w-0">
+                <div className="text-2xl font-bold text-white/95">
+                  {todayAppointments.length}
+                </div>
+                <p className="text-[10px] text-white/60 mt-0.5 truncate font-medium">
+                  {todayAppointments.length === 1 ? 'appointment' : 'appointments'} today
+                </p>
+              </div>
+              <div className="px-4 pb-2 flex items-center justify-center">
+                <svg width="80" height="32" viewBox="0 0 80 32">
+                  <defs>
+                    <radialGradient id="circleGlow">
+                      <stop offset="0%" stopColor="oklch(0.70 0.20 210)" stopOpacity="0.8"/>
+                      <stop offset="100%" stopColor="oklch(0.70 0.20 210)" stopOpacity="0"/>
+                    </radialGradient>
+                  </defs>
+                  <circle cx="15" cy="16" r="6" fill="url(#circleGlow)" />
+                  <circle cx="15" cy="16" r="4" fill="oklch(0.70 0.20 210)" className="drop-shadow-[0_0_6px_oklch(0.70_0.20_210)]" />
+                  <circle cx="40" cy="16" r="6" fill="url(#circleGlow)" />
+                  <circle cx="40" cy="16" r="4" fill="oklch(0.75 0.22 200)" className="drop-shadow-[0_0_6px_oklch(0.75_0.22_200)]" />
+                  <circle cx="65" cy="16" r="6" fill="url(#circleGlow)" />
+                  <circle cx="65" cy="16" r="4" fill="oklch(0.70 0.20 210)" className="drop-shadow-[0_0_6px_oklch(0.70_0.20_210)]" />
+                </svg>
+              </div>
+            </div>
           </div>
         )}
 
@@ -324,6 +355,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             <div className="relative z-10">
               <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
                 <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">This Week</h3>
+                <div className="p-1.5 rounded-lg bg-cyan-500/20">
+                  <Calendar size={14} className="text-cyan-400" />
+                </div>
               </div>
               <div className="pb-1 pt-1 px-4 min-w-0">
                 <div className="text-2xl font-bold text-white/95">
@@ -354,6 +388,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             <div className="relative z-10">
               <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
                 <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Booked Today</h3>
+                <div className="p-1.5 rounded-lg bg-amber-500/20">
+                  <Clock size={14} className="text-amber-400" />
+                </div>
               </div>
               <div className="pb-1 pt-1 px-4 min-w-0">
                 <div className="text-2xl font-bold text-white/95">
@@ -363,29 +400,49 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                   capacity filled
                 </p>
               </div>
-              <div className="px-4 pb-2">
-                <div className="relative h-7 bg-white/10 rounded-full overflow-hidden">
-                  <div 
-                    className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out"
-                    style={{
-                      width: `${todayAppointments.length > 0 ? Math.round((todayAppointments.filter(a => a.status !== 'cancelled').length / Math.max(todayAppointments.length, 8)) * 100) : 0}%`,
-                      background: 'linear-gradient(90deg, oklch(0.70 0.20 210), oklch(0.75 0.22 200))',
-                      boxShadow: '0 0 12px oklch(0.70 0.20 210)'
-                    }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                  </div>
-                </div>
+              <div className="px-4 pb-2 flex items-center justify-center">
+                <svg width="48" height="48" viewBox="0 0 48 48" className="opacity-80">
+                  <defs>
+                    <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="oklch(0.70 0.20 210)" />
+                      <stop offset="100%" stopColor="oklch(0.75 0.22 200)" />
+                    </linearGradient>
+                  </defs>
+                  <circle 
+                    cx="24" 
+                    cy="24" 
+                    r="18" 
+                    fill="none" 
+                    stroke="oklch(0.30 0.08 240)" 
+                    strokeWidth="4"
+                  />
+                  <circle 
+                    cx="24" 
+                    cy="24" 
+                    r="18" 
+                    fill="none" 
+                    stroke="url(#progressGradient)" 
+                    strokeWidth="4"
+                    strokeDasharray={`${2 * Math.PI * 18}`}
+                    strokeDashoffset={`${2 * Math.PI * 18 * (1 - (todayAppointments.length > 0 ? (todayAppointments.filter(a => a.status !== 'cancelled').length / Math.max(todayAppointments.length, 8)) : 0))}`}
+                    strokeLinecap="round"
+                    transform="rotate(-90 24 24)"
+                    className="drop-shadow-[0_0_6px_oklch(0.70_0.20_210)]"
+                  />
+                </svg>
               </div>
             </div>
           </div>
         )}
 
         {enabledWidgets.find(w => w.id === 'active-clients') && (
-          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-            <div className="relative z-10">
+          <div className="glass-widget glass-widget-turquoise rounded-[1.25rem] min-w-0 overflow-hidden transition-all duration-500 hover:scale-[1.02]" onClick={() => onNavigate('customers')}>
+            <div className="relative z-10 cursor-pointer">
               <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
                 <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Active Clients</h3>
+                <div className="p-1.5 rounded-lg bg-emerald-500/20">
+                  <Users size={14} className="text-emerald-400" />
+                </div>
               </div>
               <div className="pb-1 pt-1 px-4 min-w-0">
                 <div className="text-2xl font-bold text-white/95">
@@ -395,18 +452,25 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                   clients with pets
                 </p>
               </div>
-              <div className="px-4 pb-2 flex items-end justify-between gap-1">
-                {[16, 22, 18, 24, 20, 26, 22, 28, 24, 30, 26, 32].map((height, i) => (
+              <div className="px-4 pb-2 flex items-center gap-1">
+                {Array.from({ length: Math.min((customers || []).filter(c => c.pets && c.pets.length > 0).length, 12) }).map((_, i) => (
                   <div 
                     key={i}
-                    className="flex-1 rounded-sm transition-all duration-500"
+                    className="w-6 h-6 rounded-full flex items-center justify-center transition-all duration-500"
                     style={{
-                      height: `${height}px`,
-                      background: 'linear-gradient(180deg, oklch(0.75 0.20 210), oklch(0.65 0.18 215))',
-                      boxShadow: '0 0 6px oklch(0.70 0.20 210)'
+                      background: 'linear-gradient(135deg, oklch(0.70 0.20 210), oklch(0.65 0.22 200))',
+                      boxShadow: '0 0 8px oklch(0.70 0.20 210)',
+                      opacity: 0.7 + (i * 0.03)
                     }}
-                  ></div>
+                  >
+                    <User size={10} className="text-white" />
+                  </div>
                 ))}
+                {(customers || []).filter(c => c.pets && c.pets.length > 0).length > 12 && (
+                  <div className="text-[9px] font-bold text-white/60 ml-1">
+                    +{(customers || []).filter(c => c.pets && c.pets.length > 0).length - 12}
+                  </div>
+                )}
               </div>
             </div>
           </div>

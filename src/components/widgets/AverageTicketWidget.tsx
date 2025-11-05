@@ -1,5 +1,6 @@
 import { useKV } from '@github/spark/hooks'
 import { format, subDays } from 'date-fns'
+import { Receipt } from '@phosphor-icons/react'
 
 interface Appointment {
   id: string
@@ -62,6 +63,9 @@ export function AverageTicketWidget() {
     <div className="relative z-10">
       <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
         <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Avg. Ticket</h3>
+        <div className="p-1.5 rounded-lg bg-purple-500/20">
+          <Receipt size={14} className="text-purple-400" />
+        </div>
       </div>
       <div className="pb-1 pt-1 px-4 min-w-0">
         <div className="text-2xl font-bold text-white/95">

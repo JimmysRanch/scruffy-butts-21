@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { startOfMonth, endOfMonth, subMonths, isWithinInterval, parseISO } from 'date-fns'
+import { TrendUp, TrendDown, CurrencyDollar } from '@phosphor-icons/react'
 
 interface Appointment {
   id: string
@@ -77,14 +78,22 @@ export function MonthlyRevenueWidget() {
     <div className="relative z-10">
       <div className="flex flex-row items-center justify-between space-y-0 pb-0 pt-3 px-4">
         <h3 className="text-xs font-semibold tracking-wide truncate text-foreground/85">Monthly Revenue</h3>
+        <div className="p-1.5 rounded-lg bg-green-500/20">
+          <CurrencyDollar size={14} className="text-green-400" />
+        </div>
       </div>
       <div className="pb-0 pt-1 px-4 min-w-0">
         <div className="text-2xl font-bold text-white/95">
           ${currentRevenue.toLocaleString()}
         </div>
         <div className="flex items-center gap-1.5 mt-0.5">
+          {isPositive ? (
+            <TrendUp size={12} className="text-cyan-400" weight="bold" />
+          ) : (
+            <TrendDown size={12} className="text-red-400" weight="bold" />
+          )}
           <span className={`text-[10px] font-semibold ${isPositive ? 'text-cyan-400' : 'text-red-400'}`}>
-            {isPositive ? '↑' : '↓'} {Math.abs(percentageChange).toFixed(1)}% from Sept.
+            {Math.abs(percentageChange).toFixed(1)}% from last month
           </span>
         </div>
       </div>
