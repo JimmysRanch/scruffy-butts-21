@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Dashboard } from '@/components/Dashboard'
@@ -16,7 +18,22 @@ import { AppointmentDetail } from '@/components/AppointmentDetail'
 import { AppointmentCheckout } from '@/components/AppointmentCheckout'
 import { KiraKiraEffect } from '@/components/KiraKiraEffect'
 
-type View = 'dashboard' | 'appointments' | 'customers' | 'staff' | 'pos' | 'inventory' | 'finances' | 'reports' | 'settings' | 'new-appointment' | 'add-pet' | 'edit-pet' | 'customize-dashboard' | 'appointment-detail' | 'appointment-checkout'
+type View =
+  | 'dashboard'
+  | 'appointments'
+  | 'customers'
+  | 'staff'
+  | 'pos'
+  | 'inventory'
+  | 'finances'
+  | 'reports'
+  | 'settings'
+  | 'new-appointment'
+  | 'add-pet'
+  | 'edit-pet'
+  | 'customize-dashboard'
+  | 'appointment-detail'
+  | 'appointment-checkout'
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'system'
@@ -25,31 +42,53 @@ interface AppearanceSettings {
   enableKiraKira: boolean
 }
 
-function App() {
+export default function App() {
   const [currentView, setCurrentView] = useState<View>(() => {
     const params = new URLSearchParams(window.location.search)
     const view = params.get('view') as View | null
-    return view && ['dashboard', 'appointments', 'customers', 'staff', 'pos', 'inventory', 'finances', 'reports', 'settings', 'new-appointment', 'add-pet', 'edit-pet', 'customize-dashboard', 'appointment-detail', 'appointment-checkout'].includes(view)
+    return view &&
+      [
+        'dashboard',
+        'appointments',
+        'customers',
+        'staff',
+        'pos',
+        'inventory',
+        'finances',
+        'reports',
+        'settings',
+        'new-appointment',
+        'add-pet',
+        'edit-pet',
+        'customize-dashboard',
+        'appointment-detail',
+        'appointment-checkout',
+      ].includes(view)
       ? view
       : 'dashboard'
   })
+
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(() => {
     const params = new URLSearchParams(window.location.search)
     return params.get('appointmentId')
   })
+
   const [appointments] = useKV<any[]>('appointments', [])
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {
     theme: 'light',
     compactMode: false,
     showWelcomeMessage: true,
-    enableKiraKira: true
+    enableKiraKira: true,
   })
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (currentView !== 'dashboard') {
       params.set('view', currentView)
-      if ((currentView === 'appointment-detail' || currentView === 'appointment-checkout') && selectedAppointmentId) {
+      if (
+        (currentView === 'appointment-detail' || currentView === 'appointment-checkout') &&
+        selectedAppointmentId
+      ) {
         params.set('appointmentId', selectedAppointmentId)
       } else {
         params.delete('appointmentId')
@@ -64,23 +103,16 @@ function App() {
   useEffect(() => {
     const root = document.documentElement
     const theme = appearance?.theme || 'light'
-    
+
     const applyTheme = (isDark: boolean) => {
-      if (isDark) {
-        root.classList.add('dark')
-      } else {
-        root.classList.remove('dark')
-      }
+      if (isDark) root.classList.add('dark')
+      else root.classList.remove('dark')
     }
-    
+
     if (theme === 'system') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
       applyTheme(mediaQuery.matches)
-      
-      const handleChange = (e: MediaQueryListEvent) => {
-        applyTheme(e.matches)
-      }
-      
+      const handleChange = (e: MediaQueryListEvent) => applyTheme(e.matches)
       mediaQuery.addEventListener('change', handleChange)
       return () => mediaQuery.removeEventListener('change', handleChange)
     } else if (theme === 'dark') {
@@ -96,7 +128,7 @@ function App() {
         return <Dashboard onNavigate={setCurrentView} />
       case 'appointments':
         return (
-          <AppointmentScheduler 
+          <AppointmentScheduler
             onNavigateToNewAppointment={() => setCurrentView('new-appointment')}
             onNavigateToDetail={(appointmentId: string) => {
               setSelectedAppointmentId(appointmentId)
@@ -110,12 +142,10 @@ function App() {
           return null
         }
         return (
-          <AppointmentDetail 
+          <AppointmentDetail
             appointmentId={selectedAppointmentId}
             onBack={() => setCurrentView('appointments')}
-            onEdit={(appointment) => {
-              setCurrentView('appointments')
-            }}
+            onEdit={() => setCurrentView('appointments')}
             onNavigateToCheckout={(appointmentId: string) => {
               setSelectedAppointmentId(appointmentId)
               setCurrentView('appointment-checkout')
@@ -127,17 +157,17 @@ function App() {
           setCurrentView('appointments')
           return null
         }
-        const checkoutAppointment = (appointments || []).find(apt => apt.id === selectedAppointmentId)
+        const checkoutAppointment = (appointments || []).find(
+          (apt) => apt.id === selectedAppointmentId
+        )
         if (!checkoutAppointment) {
           setCurrentView('appointments')
           return null
         }
         return (
-          <AppointmentCheckout 
+          <AppointmentCheckout
             appointment={checkoutAppointment}
-            onBack={() => {
-              setCurrentView('appointment-detail')
-            }}
+            onBack={() => setCurrentView('appointment-detail')}
             onComplete={() => {
               setCurrentView('appointments')
               setSelectedAppointmentId(null)
@@ -171,7 +201,7 @@ function App() {
 
   return (
     <div className="min-h-[100svh] md:min-h-[100dvh] relative">
-      {(appearance?.enableKiraKira !== undefined ? appearance.enableKiraKira : true) && <KiraKiraEffect />}
+      {(appearance?.enableKiraKira ?? true) && <KiraKiraEffect />}
       <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
       <main className="pt-24 w-full px-4 max-w-[2000px] mx-auto pb-8 relative z-10">
         {renderView()}
@@ -179,5 +209,3 @@ function App() {
     </div>
   )
 }
-
-export default App
