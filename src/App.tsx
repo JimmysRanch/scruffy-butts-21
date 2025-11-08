@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { Toaster } from '@/components/ui/sonner'
 import { Dashboard } from '@/components/Dashboard'
 import { AppointmentScheduler } from '@/components/AppointmentScheduler'
 import { CustomerManager } from '@/components/CustomerManager'
@@ -177,7 +176,6 @@ function App() {
       <main className="pt-24 w-full px-4 max-w-[2000px] mx-auto pb-8 relative z-10">
         {renderView()}
       </main>
-      <Toaster />
     </div>
   )
 }
