@@ -1,5 +1,7 @@
-import RootApp from '@/components/RootApp';
+'use client'
+
+import App from '../src/App'
 
 export default function HomePage() {
-  return <RootApp />;
+  return <App />
 }
