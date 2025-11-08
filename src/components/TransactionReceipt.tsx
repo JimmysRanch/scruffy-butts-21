@@ -5,10 +5,12 @@ import { Badge } from '@/components/ui/badge'
 import { Receipt, CreditCard, Money, Dog, User, Package } from '@phosphor-icons/react'
 
 interface CartItem {
-  service: {
+  service?: {
     name: string
     price: number
   }
+  name?: string
+  price?: number
   quantity: number
 }
 
@@ -135,21 +137,26 @@ export function TransactionReceipt({ open, onOpenChange, transaction }: Transact
             )}
             {transaction.items && transaction.items.length > 0 && (
               <>
-                {transaction.items.map((item, idx) => (
-                  <div key={idx} className="flex justify-between items-start text-sm">
-                    <div className="flex-1">
-                      <p className="font-medium">{item.service.name}</p>
-                      {item.quantity > 1 && (
-                        <p className="text-xs text-muted-foreground">
-                          Quantity: {item.quantity}
-                        </p>
-                      )}
+                {transaction.items.map((item, idx) => {
+                  const itemName = item.service?.name || item.name || 'Item'
+                  const itemPrice = item.service?.price ?? item.price ?? 0
+                  
+                  return (
+                    <div key={idx} className="flex justify-between items-start text-sm">
+                      <div className="flex-1">
+                        <p className="font-medium">{itemName}</p>
+                        {item.quantity > 1 && (
+                          <p className="text-xs text-muted-foreground">
+                            Quantity: {item.quantity}
+                          </p>
+                        )}
+                      </div>
+                      <p className="font-medium">
+                        ${(itemPrice * item.quantity).toFixed(2)}
+                      </p>
                     </div>
-                    <p className="font-medium">
-                      ${(item.service.price * item.quantity).toFixed(2)}
-                    </p>
-                  </div>
-                ))}
+                  )
+                })}
               </>
             )}
           </div>
