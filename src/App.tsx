@@ -42,36 +42,28 @@ interface AppearanceSettings {
   enableKiraKira: boolean
 }
 
-export default function App() {
-  const [currentView, setCurrentView] = useState<View>(() => {
-    const params = new URLSearchParams(window.location.search)
-    const view = params.get('view') as View | null
-    return view &&
-      [
-        'dashboard',
-        'appointments',
-        'customers',
-        'staff',
-        'pos',
-        'inventory',
-        'finances',
-        'reports',
-        'settings',
-        'new-appointment',
-        'add-pet',
-        'edit-pet',
-        'customize-dashboard',
-        'appointment-detail',
-        'appointment-checkout',
-      ].includes(view)
-      ? view
-      : 'dashboard'
-  })
+const VALID_VIEWS: View[] = [
+  'dashboard',
+  'appointments',
+  'customers',
+  'staff',
+  'pos',
+  'inventory',
+  'finances',
+  'reports',
+  'settings',
+  'new-appointment',
+  'add-pet',
+  'edit-pet',
+  'customize-dashboard',
+  'appointment-detail',
+  'appointment-checkout',
+]
 
-  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(() => {
-    const params = new URLSearchParams(window.location.search)
-    return params.get('appointmentId')
-  })
+export default function App() {
+  // Start with safe defaults; we'll sync from URL on the client
+  const [currentView, setCurrentView] = useState<View>('dashboard')
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null)
 
   const [appointments] = useKV<any[]>('appointments', [])
   const [appearance] = useKV<AppearanceSettings>('appearance-settings', {
@@ -81,10 +73,32 @@ export default function App() {
     enableKiraKira: true,
   })
 
+  // On first load (client-side), read view + appointmentId from URL
   useEffect(() => {
+    if (typeof window === 'undefined') return
+
     const params = new URLSearchParams(window.location.search)
+    const viewParam = params.get('view') as View | null
+    const appointmentIdParam = params.get('appointmentId')
+
+    if (viewParam && VALID_VIEWS.includes(viewParam)) {
+      setCurrentView(viewParam)
+    }
+
+    if (appointmentIdParam) {
+      setSelectedAppointmentId(appointmentIdParam)
+    }
+  }, [])
+
+  // Whenever currentView / selectedAppointmentId change, update URL (client-side only)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const params = new URLSearchParams(window.location.search)
+
     if (currentView !== 'dashboard') {
       params.set('view', currentView)
+
       if (
         (currentView === 'appointment-detail' || currentView === 'appointment-checkout') &&
         selectedAppointmentId
@@ -93,14 +107,19 @@ export default function App() {
       } else {
         params.delete('appointmentId')
       }
+
       const newUrl = `${window.location.pathname}?${params.toString()}`
       window.history.replaceState({}, '', newUrl)
     } else {
+      // reset to clean URL on dashboard
       window.history.replaceState({}, '', window.location.pathname)
     }
   }, [currentView, selectedAppointmentId])
 
+  // Theme handling (client-side only)
   useEffect(() => {
+    if (typeof window === 'undefined') return
+
     const root = document.documentElement
     const theme = appearance?.theme || 'light'
 
@@ -112,8 +131,10 @@ export default function App() {
     if (theme === 'system') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
       applyTheme(mediaQuery.matches)
+
       const handleChange = (e: MediaQueryListEvent) => applyTheme(e.matches)
       mediaQuery.addEventListener('change', handleChange)
+
       return () => mediaQuery.removeEventListener('change', handleChange)
     } else if (theme === 'dark') {
       root.classList.add('dark')
