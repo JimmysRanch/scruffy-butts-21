@@ -2,11 +2,11 @@
 
 ## Project Overview
 
-Scruffy Butts is a comprehensive dog grooming management Progressive Web App (PWA) built with React 19, TypeScript, and Vite. The application helps professional dog groomers manage appointments, track customer pets, process payments, manage staff, track inventory, and analyze business performance.
+Scruffy Butts is a comprehensive dog grooming management Progressive Web App (PWA) built with React 19, TypeScript, and Next.js. The application helps professional dog groomers manage appointments, track customer pets, process payments, manage staff, track inventory, and analyze business performance.
 
 **Tech Stack:**
 - **Frontend Framework:** React 19 with TypeScript
-- **Build Tool:** Vite 6.3.5
+- **Build Tool:** Next.js 15 (App Router)
 - **Styling:** Tailwind CSS 4.1.14 with custom liquid glass aesthetic
 - **UI Components:** Radix UI primitives with custom theming
 - **State Management:** React hooks and React Query (TanStack Query)
@@ -19,13 +19,13 @@ Scruffy Butts is a comprehensive dog grooming management Progressive Web App (PW
 ```bash
 npm run build
 ```
-This runs TypeScript compilation (with `--noCheck` flag) and Vite build. The output goes to the `dist` directory.
+This runs Next.js build process. The output goes to the `.next` directory.
 
 ### Development Server
 ```bash
 npm run dev
 ```
-Starts Vite dev server, typically on port 5173.
+Starts Next.js dev server, typically on port 3000.
 
 ### Linting
 ```bash
@@ -33,11 +33,11 @@ npm run lint
 ```
 Runs ESLint to check code quality. Fix any linting errors before committing.
 
-### Preview Production Build
+### Production Server
 ```bash
-npm run preview
+npm run start
 ```
-Serves the production build locally for testing.
+Serves the Next.js production build.
 
 ### Package Management
 - Use `npm install` to add dependencies
@@ -47,6 +47,9 @@ Serves the production build locally for testing.
 ## Code Style and Architecture Guidelines
 
 ### File Organization
+- **App directory:** `/app/` - Next.js App Router pages and layouts
+  - `layout.tsx` - Root layout with fonts and global setup
+  - `page.tsx` - Home page
 - **Components:** `/src/components/` - React components
   - Main feature components (e.g., `Dashboard.tsx`, `AppointmentScheduler.tsx`)
   - UI primitives: `/src/components/ui/` (shadcn/ui style components)
@@ -194,8 +197,8 @@ The color system uses CSS variables defined in `/src/index.css`. All colors use 
 4. **Don't bypass form validation** - Use React Hook Form with Zod schemas
 5. **Don't create custom CSS files** - Extend Tailwind config if needed
 6. **Don't ignore accessibility** - Maintain ARIA labels and keyboard navigation
-7. **Don't remove Spark plugin** - The Vite Spark plugins are required for the framework
-8. **Don't commit build artifacts** - The `dist` folder is gitignored
+7. **Don't commit build artifacts** - The `.next` folder is gitignored
+8. **Don't use client-side only features in Server Components** - Mark components with 'use client' when needed
 
 ## Working with Forms
 
@@ -233,7 +236,7 @@ const form = useForm({
 ## Testing Guidelines
 
 Currently, no test infrastructure exists in this repository. If adding tests:
-- Use Vitest (compatible with Vite)
+- Use Jest or Vitest (compatible with Next.js)
 - Test utilities: React Testing Library
 - Test file naming: `*.test.tsx` or `*.spec.tsx`
 - Place tests next to components or in `__tests__` folders
@@ -252,7 +255,8 @@ Currently, no test infrastructure exists in this repository. If adding tests:
 - **Theme config:** `/theme.json` - Theme customization
 - **Tailwind config:** `/tailwind.config.js` - Tailwind CSS configuration
 - **TypeScript config:** `/tsconfig.json` - TypeScript compiler options
-- **Vite config:** `/vite.config.ts` - Build tool configuration
+- **Next.js config:** `/next.config.mjs` - Next.js build configuration
+- **PostCSS config:** `/postcss.config.js` - PostCSS configuration for Tailwind
 
 ## Dependencies to Check Before Adding
 
@@ -282,7 +286,10 @@ Before adding new npm packages:
 - **PWA-SETUP.md** - Progressive Web App setup documentation
 - **SECURITY.md** - Security policies and guidelines
 - **CLEANUP_NEEDED.md** - Known technical debt and cleanup tasks
+- **MIGRATION.md** - Next.js migration documentation
 - **package.json** - Dependencies and npm scripts
+- **app/page.tsx** - Main application entry point
+- **app/layout.tsx** - Root layout with fonts and global setup
 - **src/App.tsx** - Main application component and routing
 - **src/components/Navigation.tsx** - App navigation structure
 
