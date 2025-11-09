@@ -1,4 +1,4 @@
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/lib/useKV'
 import { format, startOfMonth, endOfMonth, isWithinInterval, parseISO, startOfDay } from 'date-fns'
 import { TrendUp, TrendDown } from '@phosphor-icons/react'
 

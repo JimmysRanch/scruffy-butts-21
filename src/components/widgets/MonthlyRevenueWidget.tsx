@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/lib/useKV'
 import { startOfMonth, endOfMonth, subMonths, isWithinInterval, parseISO } from 'date-fns'
 import { TrendUp, TrendDown, CurrencyDollar } from '@phosphor-icons/react'
 

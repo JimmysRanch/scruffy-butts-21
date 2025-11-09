@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/lib/useKV'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'

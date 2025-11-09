@@ -1,4 +1,4 @@
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/lib/useKV'
 import { useMemo } from 'react'
 import { RevenueTodayGauge } from './RevenueTodayGauge'
 

@@ -1,4 +1,4 @@
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/lib/useKV'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendUp, TrendDown, CurrencyDollar } from '@phosphor-icons/react'
 import { format, startOfWeek, startOfMonth, endOfWeek, endOfMonth } from 'date-fns'

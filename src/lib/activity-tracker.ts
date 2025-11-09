@@ -25,11 +25,12 @@ export async function logActivity(
     type
   }
 
-  const activities = await window.spark.kv.get<Activity[]>('recent-activities') || []
+  const stored = window.localStorage.getItem('recent-activities')
+  const activities = stored ? (JSON.parse(stored) as Activity[]) : []
   activities.unshift(activity)
   
   const maxActivities = 100
   const trimmedActivities = activities.slice(0, maxActivities)
   
-  await window.spark.kv.set('recent-activities', trimmedActivities)
+  window.localStorage.setItem('recent-activities', JSON.stringify(trimmedActivities))
 }

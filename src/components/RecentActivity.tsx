@@ -1,4 +1,4 @@
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/lib/useKV'
 import { Badge } from '@/components/ui/badge'
 import { Activity } from '@/lib/activity-tracker'
 import { 
