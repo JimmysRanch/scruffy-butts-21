@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
 import { Dashboard } from '@/components/Dashboard'
 import { AppointmentScheduler } from '@/components/AppointmentScheduler'
 import { CustomerManager } from '@/components/CustomerManager'
@@ -61,19 +60,22 @@ const VALID_VIEWS: View[] = [
 ]
 
 export default function App() {
-  // Start with safe defaults; we'll sync from URL on the client
+  // STATE
+
+  // Start on dashboard; read URL on client after mount
   const [currentView, setCurrentView] = useState<View>('dashboard')
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null)
 
-  const [appointments] = useKV<any[]>('appointments', [])
-  const [appearance] = useKV<AppearanceSettings>('appearance-settings', {
+  // Temporary in-memory state instead of Spark useKV (so it won't crash in Next/Vercel)
+  const [appointments] = useState<any[]>([])
+  const [appearance] = useState<AppearanceSettings>({
     theme: 'light',
     compactMode: false,
     showWelcomeMessage: true,
     enableKiraKira: true,
   })
 
-  // On first load (client-side), read view + appointmentId from URL
+  // EFFECT: Read URL params on first client render
   useEffect(() => {
     if (typeof window === 'undefined') return
 
@@ -90,7 +92,7 @@ export default function App() {
     }
   }, [])
 
-  // Whenever currentView / selectedAppointmentId change, update URL (client-side only)
+  // EFFECT: Sync URL when view / selected appointment changes
   useEffect(() => {
     if (typeof window === 'undefined') return
 
@@ -111,12 +113,11 @@ export default function App() {
       const newUrl = `${window.location.pathname}?${params.toString()}`
       window.history.replaceState({}, '', newUrl)
     } else {
-      // reset to clean URL on dashboard
       window.history.replaceState({}, '', window.location.pathname)
     }
   }, [currentView, selectedAppointmentId])
 
-  // Theme handling (client-side only)
+  // EFFECT: Theme handling
   useEffect(() => {
     if (typeof window === 'undefined') return
 
@@ -142,6 +143,8 @@ export default function App() {
       root.classList.remove('dark')
     }
   }, [appearance?.theme])
+
+  // VIEW RENDERER
 
   const renderView = () => {
     switch (currentView) {
@@ -220,10 +223,16 @@ export default function App() {
 
   const isCompact = appearance?.compactMode || false
 
+  // LAYOUT
+
   return (
     <div className="min-h-[100svh] md:min-h-[100dvh] relative">
       {(appearance?.enableKiraKira ?? true) && <KiraKiraEffect />}
-      <Navigation currentView={currentView} onNavigate={setCurrentView} isCompact={isCompact} />
+      <Navigation
+        currentView={currentView}
+        onNavigate={setCurrentView}
+        isCompact={isCompact}
+      />
       <main className="pt-24 w-full px-4 max-w-[2000px] mx-auto pb-8 relative z-10">
         {renderView()}
       </main>
