@@ -1,9 +1,0 @@
-{
-  "templateVersion": 1,
-  "dbType": "kv",
-  "framework": "nextjs",
-  "buildTool": "next",
-  "buildCommand": "next build",
-  "devCommand": "next dev",
-  "outputDirectory": ".next"
-}
