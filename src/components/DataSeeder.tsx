@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/lib/useKV'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { seedData } from '@/lib/seedData'

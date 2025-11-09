@@ -1,4 +1,4 @@
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/lib/useKV'
 import { format } from 'date-fns'
 import { User, Clock } from '@phosphor-icons/react'
 

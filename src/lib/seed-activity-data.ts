@@ -94,10 +94,11 @@ export const sampleActivities: Activity[] = [
 ]
 
 export async function seedActivityData() {
-  const existingActivities = await window.spark.kv.get<Activity[]>('recent-activities')
+  const stored = window.localStorage.getItem('recent-activities')
+  const existingActivities = stored ? (JSON.parse(stored) as Activity[]) : null
   
   if (!existingActivities || existingActivities.length === 0) {
-    await window.spark.kv.set('recent-activities', sampleActivities)
+    window.localStorage.setItem('recent-activities', JSON.stringify(sampleActivities))
     console.log('Activity data seeded successfully')
   }
 }

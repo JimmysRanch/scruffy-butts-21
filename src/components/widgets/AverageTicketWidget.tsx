@@ -1,4 +1,4 @@
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/lib/useKV'
 import { format, subDays } from 'date-fns'
 import { Receipt } from '@phosphor-icons/react'
 
