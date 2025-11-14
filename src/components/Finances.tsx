@@ -28,35 +28,35 @@ export function Finances() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="frosted flex-wrap h-auto">
           <TabsTrigger value="dashboard">
-            <ChartBar className="w-4 h-4 mr-2" weight="duotone" />
+            <ChartBar className="w-4 h-4 mr-2 text-cyan-400" weight="duotone" />
             Dashboard
           </TabsTrigger>
           <TabsTrigger value="invoices">
-            <Receipt className="w-4 h-4 mr-2" weight="duotone" />
+            <Receipt className="w-4 h-4 mr-2 text-green-400" weight="duotone" />
             Invoices
           </TabsTrigger>
           <TabsTrigger value="expenses">
-            <TrendUp className="w-4 h-4 mr-2" weight="duotone" />
+            <TrendUp className="w-4 h-4 mr-2 text-red-400" weight="duotone" />
             Expenses
           </TabsTrigger>
           <TabsTrigger value="payments">
-            <Wallet className="w-4 h-4 mr-2" weight="duotone" />
+            <Wallet className="w-4 h-4 mr-2 text-emerald-400" weight="duotone" />
             Payments
           </TabsTrigger>
           <TabsTrigger value="payroll">
-            <UsersIcon className="w-4 h-4 mr-2" weight="duotone" />
+            <UsersIcon className="w-4 h-4 mr-2 text-blue-400" weight="duotone" />
             Payroll
           </TabsTrigger>
           <TabsTrigger value="taxes">
-            <Percent className="w-4 h-4 mr-2" weight="duotone" />
+            <Percent className="w-4 h-4 mr-2 text-amber-400" weight="duotone" />
             Taxes
           </TabsTrigger>
           <TabsTrigger value="vendors">
-            <UsersIcon className="w-4 h-4 mr-2" weight="duotone" />
+            <UsersIcon className="w-4 h-4 mr-2 text-purple-400" weight="duotone" />
             Vendors
           </TabsTrigger>
           <TabsTrigger value="purchase-orders">
-            <ShoppingCart className="w-4 h-4 mr-2" weight="duotone" />
+            <ShoppingCart className="w-4 h-4 mr-2 text-orange-400" weight="duotone" />
             Purchase Orders
           </TabsTrigger>
         </TabsList>
