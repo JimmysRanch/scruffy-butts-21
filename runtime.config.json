@@ -1,3 +1,6 @@
 {
-  "app": "c2cfad8d9b21192ab00a"
+  "app": "c2cfad8d9b21192ab00a",
+  "name": "Scruffy Butts",
+  "version": "1.0.0",
+  "type": "pwa"
 }
