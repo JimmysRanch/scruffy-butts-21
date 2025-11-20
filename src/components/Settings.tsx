@@ -37,6 +37,7 @@ import { StaffPosition } from './StaffManager'
 import { seedShifts, seedTimeOffRequests } from '@/lib/seed-schedule-data'
 import { seedReportsData } from '@/lib/seed-reports-data'
 import { seedActivityData } from '@/lib/seed-activity-data'
+import { seedComprehensiveMockData } from '@/lib/comprehensive-seed-data'
 import { ServiceWithPricing, PricingMethod, DEFAULT_SERVICES, WeightClass, WEIGHT_CLASSES } from '@/lib/pricing-types'
 import { DataSeeder } from './DataSeeder'
 
@@ -157,9 +158,12 @@ export function Settings() {
   const [selectedFormIndex, setSelectedFormIndex] = useState(0)
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null)
   
-  const [staffMembers] = useKV<any[]>('staff-members', [])
-  const [shifts, setShifts] = useKV<any[]>('staff-shifts', [])
+  const [staffMembers, setStaffMembers] = useKV<any[]>('staff-members', [])
+  const [shifts, setShifts] = useKV<any[]>('staff-schedules', [])
   const [timeOffRequests, setTimeOffRequests] = useKV<any[]>('time-off-requests', [])
+  const [inventoryItems, setInventoryItems] = useKV<any[]>('inventory-items', [])
+  const [inventorySuppliers, setInventorySuppliers] = useKV<any[]>('inventory-suppliers', [])
+  const [inventoryTransactions, setInventoryTransactions] = useKV<any[]>('inventory-transactions', [])
   
   const [staff, setStaff] = useKV<any[]>('staff', [])
   const [customers, setCustomers] = useKV<any[]>('customers', [])
@@ -430,6 +434,53 @@ export function Settings() {
     } catch (error) {
       toast.error('Failed to seed activity data')
       console.error(error)
+    }
+  }
+
+  const handleSeedComprehensiveData = async () => {
+    try {
+      const data = await seedComprehensiveMockData()
+      
+      console.log('Setting data:', {
+        staffMembers: data.staffMembers.length,
+        services: data.services.length,
+        customers: data.customers.length,
+        appointments: data.appointments.length,
+        transactions: data.transactions.length,
+        inventoryItems: data.inventoryItems.length,
+        inventorySuppliers: data.inventorySuppliers.length,
+        inventoryTransactions: data.inventoryTransactions.length,
+        shifts: data.shifts.length,
+        timeOffRequests: data.timeOffRequests.length
+      })
+      
+      // Set all the data using useKV setters
+      setStaffMembers(data.staffMembers)
+      setServices(data.services)
+      setCustomers(data.customers)
+      setAppointments(data.appointments)
+      setTransactions(data.transactions)
+      setInventoryItems(data.inventoryItems)
+      setInventorySuppliers(data.inventorySuppliers)
+      setInventoryTransactions(data.inventoryTransactions)
+      setShifts(data.shifts)
+      setTimeOffRequests(data.timeOffRequests)
+      
+      console.log('Data set complete, waiting before reload...')
+      
+      // Give the KV storage time to persist all the data
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      toast.success('Successfully seeded comprehensive mock data from Oct 15 - Nov 15, 2025! Reloading...')
+      
+      // Reload the page to show the new data
+      setTimeout(() => {
+        window.location.reload()
+      }, 2000)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to seed comprehensive mock data'
+      toast.error(errorMessage)
+      console.error('Seeding error:', error)
     }
   }
 
@@ -1171,6 +1222,29 @@ export function Settings() {
                     <p className="text-sm text-muted-foreground">
                       Generate sample activity logs for the Recent Activity widget
                     </p>
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="space-y-3">
+                    <Label>Comprehensive Mock Data (Oct 15 - Nov 15, 2025)</Label>
+                    <Button 
+                      variant="default" 
+                      className="w-full justify-start"
+                      onClick={handleSeedComprehensiveData}
+                    >
+                      <Database size={16} className="mr-2" />
+                      Seed Complete App Data
+                    </Button>
+                    <Alert>
+                      <Warning size={16} />
+                      <AlertDescription>
+                        This will populate the entire app with comprehensive mock data including:
+                        3+ staff members, 15+ customers with pets, appointments, POS transactions, 
+                        inventory items, schedules, and more. Date range: Oct 15 - Nov 15, 2025.
+                        <strong> Page will reload after seeding.</strong>
+                      </AlertDescription>
+                    </Alert>
                   </div>
                 </div>
               </CardContent>
