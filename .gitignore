@@ -38,3 +38,6 @@ pids
 .devcontainer/
 
 .spark-workbench-id
+
+# Temporary download files
+.azDownload-*
