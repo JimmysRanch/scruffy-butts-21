@@ -31,7 +31,8 @@ import {
   Database,
   Warning,
   CalendarBlank,
-  NotePencil
+  NotePencil,
+  CreditCard
 } from '@phosphor-icons/react'
 import { StaffPosition } from './StaffManager'
 import { seedShifts, seedTimeOffRequests } from '@/lib/seed-schedule-data'
@@ -91,6 +92,17 @@ interface FormFieldConfig {
 interface FormConfig {
   formName: string
   fields: FormFieldConfig[]
+}
+
+interface CreditCard {
+  id: string
+  cardHolderName: string
+  cardType: 'Visa' | 'Mastercard' | 'American Express' | 'Discover'
+  lastFour: string
+  expirationMonth: string
+  expirationYear: string
+  isDefault: boolean
+  createdAt: string
 }
 
 export function Settings() {
@@ -177,7 +189,9 @@ export function Settings() {
 
   const [services, setServices] = useKV<ServiceWithPricing[]>('services', [])
 
-  const [activeTab, setActiveTab] = useState<'business' | 'services' | 'notifications' | 'appearance' | 'security' | 'staff-positions' | 'pricing' | 'forms' | 'data'>('business')
+  const [creditCards, setCreditCards] = useKV<CreditCard[]>('credit-cards', [])
+
+  const [activeTab, setActiveTab] = useState<'business' | 'services' | 'notifications' | 'appearance' | 'security' | 'staff-positions' | 'pricing' | 'forms' | 'data' | 'credit-cards'>('business')
   const [showPositionDialog, setShowPositionDialog] = useState(false)
   const [editingPosition, setEditingPosition] = useState<StaffPosition | null>(null)
   const [positionFormData, setPositionFormData] = useState({
@@ -201,6 +215,17 @@ export function Settings() {
       large: 0,
       giant: 0
     }
+  })
+
+  const [showCreditCardDialog, setShowCreditCardDialog] = useState(false)
+  const [editingCreditCard, setEditingCreditCard] = useState<CreditCard | null>(null)
+  const [creditCardFormData, setCreditCardFormData] = useState({
+    cardHolderName: '',
+    cardType: 'Visa' as CreditCard['cardType'],
+    lastFour: '',
+    expirationMonth: '',
+    expirationYear: '',
+    isDefault: false
   })
 
   const availablePermissions = [
@@ -382,6 +407,97 @@ export function Settings() {
     setServices(currentServices => (currentServices || []).filter(s => s.id !== id))
     toast.success('Service deleted successfully')
   }
+
+  const resetCreditCardForm = () => {
+    setCreditCardFormData({
+      cardHolderName: '',
+      cardType: 'Visa',
+      lastFour: '',
+      expirationMonth: '',
+      expirationYear: '',
+      isDefault: false
+    })
+    setEditingCreditCard(null)
+  }
+
+  const handleCreditCardSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!creditCardFormData.cardHolderName || !creditCardFormData.lastFour || !creditCardFormData.expirationMonth || !creditCardFormData.expirationYear) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
+    if (creditCardFormData.lastFour.length !== 4 || !/^\d+$/.test(creditCardFormData.lastFour)) {
+      toast.error('Last 4 digits must be exactly 4 numbers')
+      return
+    }
+
+    if (editingCreditCard) {
+      setCreditCards(currentCards => 
+        (currentCards || []).map(c => 
+          c.id === editingCreditCard.id
+            ? {
+                ...editingCreditCard,
+                cardHolderName: creditCardFormData.cardHolderName,
+                cardType: creditCardFormData.cardType,
+                lastFour: creditCardFormData.lastFour,
+                expirationMonth: creditCardFormData.expirationMonth,
+                expirationYear: creditCardFormData.expirationYear,
+                isDefault: creditCardFormData.isDefault
+              }
+            : creditCardFormData.isDefault ? { ...c, isDefault: false } : c
+        )
+      )
+      toast.success('Credit card updated successfully')
+    } else {
+      const newCard: CreditCard = {
+        id: `card-${Date.now()}`,
+        cardHolderName: creditCardFormData.cardHolderName,
+        cardType: creditCardFormData.cardType,
+        lastFour: creditCardFormData.lastFour,
+        expirationMonth: creditCardFormData.expirationMonth,
+        expirationYear: creditCardFormData.expirationYear,
+        isDefault: creditCardFormData.isDefault,
+        createdAt: new Date().toISOString()
+      }
+
+      if (creditCardFormData.isDefault) {
+        setCreditCards(currentCards => [...(currentCards || []).map(c => ({ ...c, isDefault: false })), newCard])
+      } else {
+        setCreditCards(currentCards => [...(currentCards || []), newCard])
+      }
+      toast.success('Credit card added successfully')
+    }
+
+    setShowCreditCardDialog(false)
+    resetCreditCardForm()
+  }
+
+  const handleEditCreditCard = (card: CreditCard) => {
+    setEditingCreditCard(card)
+    setCreditCardFormData({
+      cardHolderName: card.cardHolderName,
+      cardType: card.cardType,
+      lastFour: card.lastFour,
+      expirationMonth: card.expirationMonth,
+      expirationYear: card.expirationYear,
+      isDefault: card.isDefault
+    })
+    setShowCreditCardDialog(true)
+  }
+
+  const handleDeleteCreditCard = (id: string) => {
+    setCreditCards(currentCards => (currentCards || []).filter(c => c.id !== id))
+    toast.success('Credit card deleted successfully')
+  }
+
+  const handleSetDefaultCard = (id: string) => {
+    setCreditCards(currentCards => 
+      (currentCards || []).map(c => ({ ...c, isDefault: c.id === id }))
+    )
+    toast.success('Default card updated')
+  }
   
   const handleSeedScheduleData = () => {
     if (!staffMembers || staffMembers.length === 0) {
@@ -443,6 +559,7 @@ export function Settings() {
     { id: 'business' as const, label: 'Business', icon: MapPin },
     { id: 'services' as const, label: 'Services', icon: Scissors },
     { id: 'staff-positions' as const, label: 'Staff Positions', icon: Users },
+    { id: 'credit-cards' as const, label: 'Credit Cards', icon: CreditCard },
     { id: 'forms' as const, label: 'Forms', icon: NotePencil },
     { id: 'notifications' as const, label: 'Notifications', icon: Bell },
     { id: 'appearance' as const, label: 'Appearance', icon: PaintBrush },
@@ -901,6 +1018,89 @@ export function Settings() {
                     </div>
                   ))}
                 </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeTab === 'credit-cards' && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <CreditCard size={20} />
+                      Credit Cards
+                    </CardTitle>
+                    <CardDescription>
+                      Manage payment methods for your business
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => setShowCreditCardDialog(true)} className="flex items-center gap-2">
+                    <Plus size={18} />
+                    Add Card
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {(creditCards || []).length === 0 ? (
+                  <div className="text-center py-12">
+                    <CreditCard size={48} className="mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No credit cards yet</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Add a credit card to manage your business payments
+                    </p>
+                    <Button onClick={() => setShowCreditCardDialog(true)}>
+                      <Plus size={18} className="mr-2" />
+                      Add Your First Card
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {(creditCards || []).map((card) => (
+                      <div key={card.id} className="flex items-start justify-between p-4 border rounded-lg">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <CreditCard size={20} weight="duotone" className="text-primary" />
+                            <h4 className="font-semibold">{card.cardHolderName}</h4>
+                            {card.isDefault && (
+                              <Badge variant="default" className="text-xs">Default</Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span>{card.cardType}</span>
+                            <span>•••• {card.lastFour}</span>
+                            <span>Expires {card.expirationMonth}/{card.expirationYear}</span>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 ml-4">
+                          {!card.isDefault && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleSetDefaultCard(card.id)}
+                            >
+                              Set Default
+                            </Button>
+                          )}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEditCreditCard(card)}
+                          >
+                            <Pencil size={16} />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleDeleteCreditCard(card.id)}
+                          >
+                            <Trash size={16} />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}
@@ -1664,6 +1864,133 @@ export function Settings() {
               </Button>
               <Button type="submit">
                 {editingService ? 'Update Service' : 'Add Service'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showCreditCardDialog} onOpenChange={setShowCreditCardDialog}>
+        <DialogContent className="max-w-md">
+          <form onSubmit={handleCreditCardSubmit}>
+            <DialogHeader>
+              <DialogTitle>
+                {editingCreditCard ? 'Edit Credit Card' : 'Add New Credit Card'}
+              </DialogTitle>
+              <DialogDescription>
+                {editingCreditCard 
+                  ? 'Update the credit card details'
+                  : 'Add a new payment method for your business'
+                }
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="cardholder-name">Cardholder Name *</Label>
+                <Input
+                  id="cardholder-name"
+                  value={creditCardFormData.cardHolderName}
+                  onChange={(e) => setCreditCardFormData({ ...creditCardFormData, cardHolderName: e.target.value })}
+                  placeholder="John Doe"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="card-type">Card Type *</Label>
+                <Select
+                  value={creditCardFormData.cardType}
+                  onValueChange={(value: CreditCard['cardType']) => setCreditCardFormData({ ...creditCardFormData, cardType: value })}
+                >
+                  <SelectTrigger id="card-type">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Visa">Visa</SelectItem>
+                    <SelectItem value="Mastercard">Mastercard</SelectItem>
+                    <SelectItem value="American Express">American Express</SelectItem>
+                    <SelectItem value="Discover">Discover</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="last-four">Last 4 Digits *</Label>
+                <Input
+                  id="last-four"
+                  value={creditCardFormData.lastFour}
+                  onChange={(e) => setCreditCardFormData({ ...creditCardFormData, lastFour: e.target.value })}
+                  placeholder="1234"
+                  maxLength={4}
+                  pattern="\d{4}"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="expiration-month">Expiration Month *</Label>
+                  <Select
+                    value={creditCardFormData.expirationMonth}
+                    onValueChange={(value) => setCreditCardFormData({ ...creditCardFormData, expirationMonth: value })}
+                  >
+                    <SelectTrigger id="expiration-month">
+                      <SelectValue placeholder="MM" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 12 }, (_, i) => {
+                        const month = (i + 1).toString().padStart(2, '0')
+                        return <SelectItem key={month} value={month}>{month}</SelectItem>
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="expiration-year">Expiration Year *</Label>
+                  <Select
+                    value={creditCardFormData.expirationYear}
+                    onValueChange={(value) => setCreditCardFormData({ ...creditCardFormData, expirationYear: value })}
+                  >
+                    <SelectTrigger id="expiration-year">
+                      <SelectValue placeholder="YYYY" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 10 }, (_, i) => {
+                        const year = (new Date().getFullYear() + i).toString()
+                        return <SelectItem key={year} value={year}>{year}</SelectItem>
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="is-default"
+                  checked={creditCardFormData.isDefault}
+                  onCheckedChange={(checked) => setCreditCardFormData({ ...creditCardFormData, isDefault: !!checked })}
+                />
+                <Label htmlFor="is-default" className="text-sm font-normal cursor-pointer">
+                  Set as default payment method
+                </Label>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => {
+                  setShowCreditCardDialog(false)
+                  resetCreditCardForm()
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">
+                {editingCreditCard ? 'Update Card' : 'Add Card'}
               </Button>
             </DialogFooter>
           </form>
